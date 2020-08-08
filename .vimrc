@@ -1,16 +1,15 @@
-" vimrc as of 06/21/20
+" Vimrc as of 06/21/20
 filetype plugin indent on
 syntax on
-let g:mapleader = "\<space>"
-let g:maplocalleader = ','
-set notermguicolors
+let g:mapleader = "\<Space>"
+set termguicolors
 
 
 
 call plug#begin('~/.vim/plugged')
 Plug 'ryanoasis/vim-devicons'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'fatih/vim-go', {'do': ':goinstallbinaries'} 
+Plug 'fatih/vim-go', {'do': ':GoInstallBinaries'} 
 Plug 'mileszs/ack.vim'
 Plug 'wsdjeg/vim-scriptease'
 Plug 'mhinz/vim-grepper'
@@ -19,10 +18,10 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'	"git
 Plug 'tpope/vim-fugitive'	    "git
 Plug 'tpope/vim-rhubarb'
- " use i_^-x_^-o to omnicompl github issues or proj. collab. usernames when
- " editing a commit msg.
- " use fugitives :gbrowse to browse the github url for the current buffer.
- "plug 'tpope/vim-commentary'
+  " Use i_^-X_^-O to omnicompl GitHub issues or proj. collab. usernames when
+  " editing a commit msg.
+  " Use Fugitives :Gbrowse to browse the GitHub URL for the current buffer.
+  "Plug 'tpope/vim-commentary'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'mbbill/undotree'
@@ -33,21 +32,20 @@ Plug 'junegunn/vim-easy-align'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'liuchengxu/vista.vim'
-"Plug 'liuchengxu/vim-which-key', { 'on': ['whichkey', 'whichkey!'] }
-Plug 'liuchengxu/eleline.vim'
+Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-
+" Colorscheme
 Plug 'liuchengxu/space-vim-theme'
 Plug 'connorholyday/vim-snazzy'
 Plug 'sheerun/vim-polyglot'
 Plug 't9md/vim-choosewin'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'yuki-ycino/fzf-preview.vim' { 'branch': 'release', 'do': ':UpdateRemotePlugins' }
+Plug 'yuki-ycino/fzf-preview.vim' { 'branch': 'release', "do": ':UpdateRemotePlugins' }
 Plug 'vim-scripts/YankRing.vim'
 Plug 'google/vim-searchindex'
 " Plug 'dense-analysis/ale'
-Plug 'skywind3000/asynctasks.vim' | Plug 'skywind3000/asyncrun.vim'
+Plug 'skywind3000/asyncrun.vim'
 Plug 'pedsm/sprint'
 Plug 'luochen1990/rainbow'
 Plug 'jlanzarotta/bufexplorer'
@@ -56,7 +54,6 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'haya14busa/incsearch.vim'
 
 Plug 'Yggdroot/indentLine'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
 " Haskell
 " Plug 'eagletmt/neco-ghc'
@@ -68,8 +65,8 @@ Plug 'jelera/vim-javascript-syntax'
 
 " Python
 
-" Plug 'psf/black', { 'branch': 'stable' }
-Plug 'numirias/semshi', { 'for': 'python', 'do': ':UpdateRemotePlugins'}
+Plug 'psf/black', { 'branch': 'stable' }
+Plug 'numirias/semshi', {'do': ':UpdateRemovePlugins'}
 
 " Rust
 Plug 'rust-lang/rust.vim'
@@ -83,8 +80,6 @@ Plug 'HerringtonDarkholme/yats.vim'
 
 call plug#end()
 
-let g:async_open = 6
-
 let g:AutoPairsFlyMode = 1
 let g:AutoPairsShortcutBackInsert = '<M-b>'
 
@@ -97,23 +92,12 @@ set guifont="Fira Code":h13
 set shell=/usr/local/bin/zsh
 set cmdheight=2
 set laststatus=2
-set showtabline=2
-set guioptions-=e
 set switchbuf=useopen 	    " reveal already opened files from
 		                	" the quick fix window instead of opening new buffers
 set updatetime=300 	    " Speed up updatetime so gitgutter & friends are quicker
 set visualbell 
 set noerrorbells
 set showmatch
-set scrolloff=3
-set scrolljump=5
-set mousehide
-
-set autoindent
-set autoread
-set wildmenu
-set ttyfast
-set mouse=a
 set gdefault
 set hidden		" hide buffers instead of closing them, this means
 			    " means that the current buffer can be put to background
@@ -138,14 +122,6 @@ set backspace=indent,start,eol
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-
-let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
-
-let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
-let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
-
-
 
 nmap  -  <Plug>(choosewin)
 " show big letters
@@ -156,15 +132,12 @@ let g:polyglot_disabled = ['python']
 
 let g:semshi#filetypes = ['python']
 
-let g:Hexokinase_highlighters = ['virtual']
+let g:Hexokinase_highlightrers = ['virtual']
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" clipboard usage
 if has('unnamedplus')
-    set clipboard=unnamedplus,unnamed
-else
-    set clipboard+=unnamed
+    set clipboard=unnamed,unnamedplus
 endif
 
 noremap YY "+y<CR>
@@ -184,131 +157,10 @@ noremap <Leader>c :bd<CR>
 " Clean hlsearch
 nnoremap <silent> <Leader><space> :noh<cr>
 
+
 " Splitting
 noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
-
-" Visual shifting (does not exit Visual mode)
-vnoremap < <gv
-vnoremap > >gv
-" Treat long lines as break lines (useful when moving around in them)
-nmap j gj
-nmap k gk
-vmap j gj
-vmap k gk
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~terminal emulation ~~~~~~~~~~~~~~~~~~~~~"
-nnoremap <silent> <leader>sh :terminal<CR>
-
-"~~~~~~~~~~~~~~~~~~~~~rm trailing whitespaces~~~~~~~~~~~~~~~~~"
-command! FixWhitespace :%s/\s\+$//e
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~F(x)~~~~~~~~~~~~~~~~~~~~~"
-if !exists('*s:setupWrapping')
-    function s:setupWrapping()
-        set wrap
-        set wm=2
-        set textwidth=79
-    endfunction
-endif
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~autocmd rules~~~~~~~~~~~~~~~~~~~~"
-" if pc fast enuff, syntax highlight sync from start unless 200 lines
-augroup vimrc-sync-fromstart
-    autocmd!
-    autocmd BufEnter * :syntax sync maxlines=200
-augroup END
-
-" remmeber cursor pos.
-augroup vimrc-remember-cursor-position
-    autocmd!
-    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
-
-" txt
-augroup vimrc-wrapping
-    autocmd!
-    autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
-augroup END
-
-
-" tab navigation mappings
-map tt :tabnew 
-map <M-Right> :tabn<CR>
-imap <M-Right> <ESC>:tabn<CR>
-map <M-Left> :tabp<CR>
-imap <M-Left> <ESC>:tabp<CR>   
-
-
-
-" easy align mapping
-"" start interactive EasyAlign in visual mode (ex vipga)
-xmap ga <Plug>(EasyAlign)
-
-"" Start interactive EasyAlign for a motion/text object (ex gaip)
-nmap ga <Plug>(EasyAlign)
-
-""" EasyMotion default bindings
-map <Leader> <Plug>(easymotion-prefix)
-""" EasyMotion OverWin Motions
-"" Leaderf{char} to move to {char}
-map <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-
-""" s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)
-
-" Move to Line
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-"Move to Word
-map <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
-
-
- 
-""" hayabusa incsearch bindings
-set hlsearch
-map / <Plug>(incsearch-forward)
-map ? <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-" :h g:incsearch#auto_nohlsearch
-let g:incsearch#auto_nohlsearch = 1
-map n <Plug>(incsearch-nohl-n)
-map N <Plug>(incsearch-nohl-N)
-map * <Plug>(incsearch-nohl-*)
-map # <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
-
-
-" :W sudo saves the file
-" (useful for handling the permission-denied error)
-command! W w !sudo tee % > /dev/null
-
-" Change cursor shape for iTerm2 on macOS {
-  " bar in Insert mode
-  " inside iTerm2
-  if $TERM_PROGRAM =~# 'iTerm'
-    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-    let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-  endif
-
-  " inside tmux
-  if exists('$TMUX') && $TERM != 'xterm-kitty'
-    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-    let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
-    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-  endif
-
-  " inside neovim
-  if has('nvim')
-    let $NVIM_TUI_ENABLE_CURSOR_SHAPE=2
-  endif
-" }
 
 "~~~~~~~~~~~~~~~~~~~~~~ Search mappings temp ~~~~~~~~~~~~~~~~~~~~~~~~
 " nnoremap n nzzzv
@@ -395,7 +247,6 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
-
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
 xmap if <Plug>(coc-funcobj-i)
@@ -447,89 +298,54 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 autocmd FileType json syntax match Comment +\/\/.\+$+
 
 
-let g:coc_explorer_global_presets = {
-        \   '.vim': {
-        \       'root-uri': '~/.vim',
-        \ },
-        \   'tab': {
-        \       'position': 'tab',
-        \       'quit-on-open': v:true,
-        \ },
-        \   'floating': {
-        \       'position': 'floating',
-        \       'open-action-strategy': 'sourceWindow',
-        \   },
-        \   'floatingTop': {
-        \       'position': 'floating',
-        \       'floating-position': 'center-top',
-        \       'open-action-strategy': 'sourceWindow',
-        \   },
-        \   'floatingLeftside': {
-        \       'position': 'floating',
-        \       'floating-position': 'left-center',
-        \       'floating-width': 50,
-        \       'open-action-strategy': 'sourceWindow',
-        \   },
-        \   'floatingRightside': {
-        \       'position': 'floating',
-        \       'floating-position': 'right-center',
-        \       'floating-width': 50,
-        \       'open-action-strategy': 'sourceWindow',
-        \   },
-        \   'simplify': {
-        \       'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
-        \   }
-        \ }
 
-" Use preset argument to open it
-nmap <space>e :CocCommand explorer<CR>
-nmap <space>ed :CocCommand explorer --preset .vim<CR>
-nmap <space>ef :CocCommand explorer --preset floating<CR>
 
-" List all presets
-nmap <space>el :CocList explPresets
+
+
+
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
+
+let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
+let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ WhichKey ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" autocmd! FileType which_key
-" autocmd FileType which_key set laststatus=0 noshowmode noruler
-"     \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-" 
-" 
-" 
-" let g:which_key_sep = '→'
-" " set notimeout
-" set timeoutlen=900
-" 
-" autocmd call which_key#register('<Space>', "g:which_key_map")
-" 
-" nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
-" vnoremap <silent> <leader>      :<c-u>WhichKeyVisual '<Space>'<CR>
-" nnoremap <silent> <localleader> :<c-u>WhichKey ','<CR>
+
+let g:maplocalleader = ','
+let g:which_key_sep = '→'
+set timeoutlen=900
+autocmd! User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
+
+nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
+nnoremap <silent> <localleader> :<c-u>WhichKey ','<CR>
 " Hide status line
 
 
 " This dict is necessary to provide group names/descript. text
-" let g:which_key_map['w'] = {
-"         \ 'name' : '+windows' ,
-"         \ 'w' : ['<C-W>w'       , 'other-window']          ,
-"         \ 'd' : ['<C-W>c'       , 'delete-window']         ,
-"         \ '-' : ['<C-W>s'       , 'split-window-below']    ,
-"         \ '|' : ['<C-W>v'       , 'split-window-right']    ,
-"         \ '2' : ['<C-W>v'       , 'layout-double-columns'] ,
-"         \ 'h' : ['<C-W>h'       , 'window-left']           ,
-"         \ 'j' : ['<C-W>j'       , 'window-below']          ,
-"         \ 'l' : ['<C-W>l'       , 'window-right']          ,
-"         \ 'k' : ['<C-W>k'       , 'window-up']             ,
-"         \ 'H' : ['<C-W>5<'      , 'expand-window-left']    ,
-"         \ 'J' : [':resize +5'   , 'expand-window-below']   ,
-"         \ 'L' : ['<C-W>5>'      , 'expand-window-right']   ,
-"         \ 'K' : [':resize -5'   , 'expand-window-up']      ,
-"         \ '=' : ['<C-W>='       , 'balance-window']        ,
-"         \ 's' : ['<C-W>s'       , 'split-window-below']    ,
-"         \ 'v' : ['<C-W>v'       , 'split-window-below']    ,
-"         \ '?' : ['Windows'      , 'fzf-window']            ,
-"         \ }
+let g:which_key_map['w'] = {
+        \ 'name' : '+windows' ,
+        \ 'w' : ['<C-W>w'       , 'other-window']          ,
+        \ 'd' : ['<C-W>c'       , 'delete-window']         ,
+        \ '-' : ['<C-W>s'       , 'split-window-below']    ,
+        \ '|' : ['<C-W>v'       , 'split-window-right']    ,
+        \ '2' : ['<C-W>v'       , 'layout-double-columns'] ,
+        \ 'h' : ['<C-W>h'       , 'window-left']           ,
+        \ 'j' : ['<C-W>j'       , 'window-below']          ,
+        \ 'l' : ['<C-W>l'       , 'window-right']          ,
+        \ 'k' : ['<C-W>k'       , 'window-up']             ,
+        \ 'H' : ['<C-W>5<'      , 'expand-window-left']    ,
+        \ 'J' : [':resize +5'   , 'expand-window-below']   ,
+        \ 'L' : ['<C-W>5>'      , 'expand-window-right']   ,
+        \ 'K' : [':resize -5'   , 'expand-window-up']      ,
+        \ '=' : ['<C-W>='       , 'balance-window']        ,
+        \ 's' : ['<C-W>s'       , 'split-window-below']    ,
+        \ 'v' : ['<C-W>v'       , 'split-window-below']    ,
+        \ '?' : ['Windows'      , 'fzf-window']            ,
+        \ }
 
 
 
@@ -546,63 +362,103 @@ let g:indentLine_faster = 1
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ vim-airline temp ~~~~~~~~~~~~~~~~~~~~~~~~
-" if exists("*fugitive#statusline")
-"     set statusline+=%{fugitive#statusline()}
-" endif
+if exists("*fugitive#statusline")
+    set statusline+=%{fugitive#statusline()}
+endif
 
 let g:airline_theme = 'base16_snazzy'
-"  let g:airline#extensions#branch#enabled = 1
-" " let g:airline#extensions#branch#format = 2
-"  let g:airline#extensions#fugitive#enabled = 1
-"  let g:airline#extensions#fzf#enabled = 1
-"  let g:airline#extensions#lsp#enabled = 1
-"  let g:airline#extensions#virtualenv#enabled = 1
-"  let g:airline#extensions#tabline#enabled = 1
-"  let g:airline#extensions#vista#enabled = 1
-" let g:airline#extensions#coc#enabled = 1
-" let g:airline#extensions#coc#error_symbol = 'E: '
-" let g:airline#extensions#coc#warning_symbol = 'W: '
-" let g:airline#extensions#coc#stl_format_err = '%E{[%e(#%fe)]}'
-" let g:airline#extensions#coc#stl_format_warn = '%W{[%w(#fw)]}'
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#branch#format = 2
+let g:airline#extensions#fugitive#enabled = 1
+let g:airline#extensions#fzf#enabled = 1
+let g:airline#extensions#lsp#enabled = 1
+let g:airline#extensions#virtualenv#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#vista#enabled = 1
+let g:airline#extensions#coc#enabled = 1
+let g:airline#extensions#coc#error_symbol = 'E: '
+let g:airline#extensions#coc#warning_symbol = 'W: '
+let g:airline#extensions#coc#stl_format_err = '%E{[%e(#%fe)]}'
+let g:airline#extensions#coc#stl_format_warn = '%W{[%w(#fw)]}'
 
 let g:airline_skip_empty_sections = 1
 let g:airline_powerline_fonts = 1
 
-" let g:airline_symbols = 1
-" if !exists('g:airline_symbols')
-"     let g:airline_symbols = {}
-" endif
-"
-" if !exists('g:airline_powerline_fonts')
-"    let g:airline#extensions#tabline#left_sep = ' '
-"    let g:airline#extensions#tabline#left_alt_sep = '|'
-"   " let g:airline_left_sep          = '▶'
-"   " let g:airline_left_alt_sep      = '»'
-"   " let g:airline_right_sep         = '◀'
-"   " let g:airline_right_alt_sep     = '«'
-"    let g:airline#extensions#branch#prefix     = '⤴' 
-"    let g:airline#extensions#readonly#symbol   = '⊘'
-"    let g:airline#extensions#linecolumn#prefix = '¶'
-"    let g:airline#extensions#paste#symbol      = 'ρ'
-"    let g:airline_symbols.linenr    = '␊'
-"    let g:airline_symbols.branch    = '⎇'
-"    let g:airline_symbols.paste     = 'ρ'
-"    let g:airline_symbols.paste     = 'Þ'
-"    let g:airline_symbols.paste     = '∥'
-"    let g:airline_symbols.whitespace = 'Ξ'
-"else
-"    let g:airline#extensions#tabline#left_sep = ''
-"    let g:airline#extensions#tabline#left_alt_sep = ''
-"
-"" powerline symbols
-"    let g:airline_left_sep = ''
-"    let g:airline_left_alt_sep = ''
-"    let g:airline_right_sep = ''
-"    let g:airline_right_alt_sep = ''
-"    let g:airline_symbols.branch = ''
-"    let g:airline_symbols.readonly = ''
-"    let g:airline_symbols.linenr = ''
-"endif
+let g:airline_symbols = 1
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+if !exists('g:airline_powerline_fonts')
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+   " let g:airline_left_sep          = '▶'
+   " let g:airline_left_alt_sep      = '»'
+   " let g:airline_right_sep         = '◀'
+   " let g:airline_right_alt_sep     = '«'
+    let g:airline#extensions#branch#prefix     = '⤴' 
+    let g:airline#extensions#readonly#symbol   = '⊘'
+    let g:airline#extensions#linecolumn#prefix = '¶'
+    let g:airline#extensions#paste#symbol      = 'ρ'
+    let g:airline_symbols.linenr    = '␊'
+    let g:airline_symbols.branch    = '⎇'
+    let g:airline_symbols.paste     = 'ρ'
+    let g:airline_symbols.paste     = 'Þ'
+    let g:airline_symbols.paste     = '∥'
+    let g:airline_symbols.whitespace = 'Ξ'
+else
+    let g:airline#extensions#tabline#left_sep = ''
+    let g:airline#extensions#tabline#left_alt_sep = ''
+
+" powerline symbols
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_symbols.branch = ''
+    let g:airline_symbols.readonly = ''
+    let g:airline_symbols.linenr = ''
+endif
+
+"~~~~~~~~~~~~~~~~~~~~~~~terminal emulation ~~~~~~~~~~~~~~~~~~~~~"
+nnoremap <silent> <leader>sh :terminal<CR>
+
+"~~~~~~~~~~~~~~~~~~~~~rm trailing whitespaces~~~~~~~~~~~~~~~~~"
+command! FixWhitespace :%s/\s\+$//e
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~F(x)~~~~~~~~~~~~~~~~~~~~~"
+if !exists('*s:setupWrapping')
+    function s:setupWrapping()
+        set wrap
+        set wm=2
+        set textwidth=79
+    endfunction
+endif
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~autocmd rules~~~~~~~~~~~~~~~~~~~~"
+" if pc fast enuff, syntax highlight sync from start unless 200 lines
+augroup vimrc-sync-fromstart
+    autocmd!
+    autocmd BufEnter * :syntax sync maxlines=200
+augroup END
+
+" remmeber cursor pos.
+augroup vimrc-remember-cursor-position
+    autocmd!
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
+" txt
+augroup vimrc-wrapping
+    autocmd!
+    autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+augroup END
+
+
+"~~~~~~~~~~~~~~~~~~~~~ Mappings ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALE Linting~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -621,6 +477,41 @@ let g:airline_powerline_fonts = 1
 
 
 
+" tab navigation mappings
+map tt :tabnew 
+map <M-Right> :tabn<CR>
+imap <M-Right> <ESC>:tabn<CR>
+map <M-Left> :tabp<CR>
+imap <M-Left> <ESC>:tabp<CR>   
+
+
+" save as sudo
+ca w!! w !sudo tee "%"
+
+
+" easy align mapping
+"" start interactive EasyAlign in visual mode (eg vipga)
+xmap ga <Plug>(EasyAlign)
+
+"" Start interactive EasyAlign for a motion/text object (eg gaip)
+nmap ga <Plug>(EasyAlign)
+
+""" EasyMotion default bindings
+map <Leader> <Plug>(easymotion-prefix)
+
+""" hayabusa incsearch bindings
+map / <Plug>(incsearch-forward)
+map ? <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+" :h g:incsearch#auto_nohlsearch
+set hlsearch
+let g:incsearch#auto_nohlsearch = 1
+map n <Plug>(incsearch-nohl-n)
+map N <Plug>(incsearch-nohl-N)
+map * <Plug>(incsearch-nohl-*)
+map # <Plug>(incsearch-nohl-#)
+map g* <Plug>(incsearch-nohl-g*)
+map g# <Plug>(incsearch-nohl-g#)
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~ UndoTree ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 " nnoremap <F5>:UndotreeToggle<CR>
@@ -655,7 +546,7 @@ let g:webdevicons_enable_startify = 1
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 let g:webdevicons_enable_flagship_statusline = 1
 let g:DevIconsEnableFoldersOpenClose = 1
-" let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
+let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
@@ -678,26 +569,14 @@ let g:vista_executive_for = {
     \ 'rls': 'coc',
     \ }
 " lets see if this works 08/06/20
-" autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
-"         /:<c-u>call vista#finder#fzf#Run()<CR>
+autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
+        / :<c-u>call vista#finder#fzf#Run()<CR>
 
 let g:vista_log_file = expand('~/vista.log')
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
-set statusline+=%{NearestMethodOrFunction()}
-
-" By default vista.vim never run if you don't call it explicitly.
-"
-" If you want to show the nearest function in your statusline automatically,
-" you can add the following line to your vimrc
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~ Smaller Extensions ~~~~~~~~~~~~~~~~~~~~~~~"
 " Fzf.vim
-set wildmode=list:longest,full
+set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 let $FZF_DEFAULT_COMMAND = "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o -type f -print -o -type l -print 2> /dev/null"
 
@@ -740,8 +619,8 @@ let g:auto_save_in_insert_mode = 1	" save upon entering ins-mode"
 " Haskell
 let g:haskell_conceal_wide = 1
 let g:haskell_multiline_strings = 1
-" let g:necoghc_enable_detailed_browse = 1
-" autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
+let g:necoghc_enable_detailed_browse = 1
+autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
 
 
 " Rust

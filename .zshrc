@@ -35,7 +35,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH”
 
-
+export PATH="$HOME/poetry/bin:$PATH"
 
 
 # If you come from bash you might have to change your $PATH.
@@ -50,9 +50,6 @@ HYPHEN_INSENSITIVE="true"
 DISABLE_UPDATE_PROMPT="true"
 export UPDATE_ZSH_DAYS=3
 
-# DISABLE_MAGIC_FUNCTIONS="true"
-# DISABLE_LS_COLORS="true"
-# ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 # HIST_STAMPS="mm/dd/yyyy"
@@ -78,9 +75,9 @@ export PYTHON3_HOST_PROG="$HOME/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/pyth
 
 
 
-# 
-# FD_OPTIONS="--color auto --follow --hidden --exclude .git --exclude node_modules"
-#  
+ 
+export FD_OPTIONS="--color auto --follow --hidden --exclude .git --exclude node_modules"
+  
 # export FZF_BASE="/usr/local/opt/fzf/bin"
 # export FZF_DEFAULT_OPTS="\
 #      --ansi \

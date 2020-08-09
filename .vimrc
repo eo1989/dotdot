@@ -32,15 +32,15 @@ Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'liuchengxu/vista.vim'
 " Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-Plug 'liuchengxu/eleline.vim'
-" Plug 'vim-airline/vim-airline'
+" Plug 'liuchengxu/eleline.vim'
+Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " Colorscheme
 Plug 'liuchengxu/space-vim-theme'
 Plug 'connorholyday/vim-snazzy'
-Plug 'sheerun/vim-polyglot', {'for': 'rust', 'cpp', 'typescript', 'javascript', 'yaml', 'markdown', 'haskell', 'json', 'julia', 'vim'}
+Plug 'sheerun/vim-polyglot', { 'for': [ 'rust', 'cpp', 'typescript', 'javascript', 'yaml', 'markdown', 'haskell', 'json', 'julia', 'vim' ] }
 Plug 't9md/vim-choosewin'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 "Plug 'yuki-ycino/fzf-preview.vim' { 'branch': 'release', "do": ':UpdateRemotePlugins' }
 Plug 'vim-scripts/YankRing.vim'
 Plug 'google/vim-searchindex'
@@ -50,30 +50,29 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'pedsm/sprint'
 Plug 'luochen1990/rainbow'
 Plug 'jlanzarotta/bufexplorer'
-"  Neoformat plugin for multiple languages!
-Plug 'sbdchd/neoformat', {'for': 'haskell'}
 Plug 'haya14busa/incsearch.vim'
 Plug 'Yggdroot/indentLine'
 
 " Haskell
 " Plug 'eagletmt/neco-ghc'
-Plug 'sdiehl/vim-ormolu'
-Plug 'neovimhaskell/haskell-vim'
+Plug 'sdiehl/vim-ormolu', { 'for': 'Haskell' }
+Plug 'neovimhaskell/haskell-vim', { 'for': 'Haskell' }
+Plug 'sbdchd/neoformat', { 'for': 'Haskell' }
 
 " JS
-Plug 'jelera/vim-javascript-syntax'
+Plug 'jelera/vim-javascript-syntax', { 'for': 'Javascript' }
 
 " Python
 " Plug 'psf/black', {'branch': 'stable' }
-Plug 'numirias/semshi', {'for': 'Python', 'do': ':UpdateRemovePlugins'}
+Plug 'numirias/semshi', {'for': 'Python', 'do': ':UpdateRemotePlugins'}
 
 " Rust
-Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer'
+Plug 'rust-lang/rust.vim', { 'for': 'Rust' }
+Plug 'racer-rust/vim-racer', { 'for': 'Rust' }
 
 " Typescript
-Plug 'leafgarland/typescript-vim'
-Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim', { 'for': 'Typescript' }
+Plug 'HerringtonDarkholme/yats.vim', { 'for': 'Typescript' }
 
 
 call plug#end() 
@@ -117,7 +116,7 @@ set nobackup
 set noundofile            " persistent undos - undo after u re-open the file
 set noswapfile
 set nowritebackup
-set backspace=indent,start,eol
+set backspace=indent,eol,start
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
@@ -576,10 +575,10 @@ let g:vista_executive_for = {
     \ 'rls': 'coc',
     \ }
 " lets see if this works 08/06/20
-autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
-        /:<c-u>call vista#finder#fzf#Run()<CR>
+"autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
+        "/:<c-u>call vista#finder#fzf#Run()<CR>
 
-let g:vista_log_file = expand('~/vista.log')
+"let g:vista_log_file = expand('~/vista.log')
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~ Smaller Extensions ~~~~~~~~~~~~~~~~~~~~~~~"
 " Fzf.vim

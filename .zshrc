@@ -8,11 +8,11 @@ fi
 # Homebrew
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:/usr/share:$PATH"
 # /usr/local/opt:
-# /Applications/kitty.app/Contents/MacOS:
-# /usr/local/opt/gnu-sed/libexec/gnubin: 
+# 
+#  
 #random paths
 export PATH="/usr/local/opt/ruby/bin:/usr/local/opt/curl/bin:/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
-# export PATH="/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
+export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
 
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 
@@ -77,8 +77,9 @@ export EDITOR="nvim"
 
 fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
 
+autoload -Uz compinit && compinit -u
 autoload -Uz promptinit && promptinit -u
-autoload -U +X bashcompinit && bashcompinit
+autoload -Uz bashcompinit && bashcompinit
 eval "$(stack --bash-completion-script stack)"
 eval "$(thefuck --alias)"
         # if type brew &>/dev/null; then
@@ -185,12 +186,13 @@ bindkey '^[[B' history-substring-search-down
 
 # attempt #1 08/18/20
 # Find-in-file -> usage: 'fif <SEARCH_TERM>'
+# 08/19/20 -> it works!
 fif() {
     if [ ! "$#" -gt 0 ]; then
         echo "Need a string to search for!";
         return 1;
     fi
 
-    rg --files-with-mathes --no-messages "$1" | fzf
-$FZF_PREVIEW_WINDOW --preview "rg --ignore-case --pretty --context 10 '$1' {}"
+    rg --files-with-matches --no-messages "$1" | fzf
+$FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }

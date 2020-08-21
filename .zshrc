@@ -180,7 +180,10 @@ source /usr/local/share/zsh-completions
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
- ## zsh-history-substring-search key bindings
+# source /usr/local/bin/fzf/
+
+
+## zsh-history-substring-search key bindings
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 

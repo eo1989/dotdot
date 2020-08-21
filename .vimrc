@@ -165,9 +165,9 @@ augroup END
 
 "let g:rainbow_active = 1
 
-colorscheme dracula
+" colorscheme dracula
 " colorscheme snazzy 
-" colorscheme space_vim_theme 
+colorscheme space_vim_theme 
 set guifont=Fira\ Code:h13
 
 set shell=/usr/local/bin/zsh
@@ -202,6 +202,32 @@ set noswapfile
 set nowritebackup
 set backspace=indent,eol,start
 set colorcolumn=80
+set shortmess+=c
+set signcolumn=yes
+
+if has('unnamedplus')
+    set clipboard=unnamed,unnamedplus
+endif
+
+noremap YY "+y<CR>
+noremap <Leader>p "+gP<CR>
+noremap XX "+x<CR>
+
+" Buffer nav
+noremap <Leader>z :bp<CR>
+noremap <Leader>x :bn<CR>
+" Close Buffer
+noremap <Leader>c :bd<CR>
+
+" Clean hlsearch
+nnoremap <silent> <Leader><space> :noh<cr>
+
+" Splitting
+noremap <Leader>h :<C-u>split<CR>
+noremap <Leader>v :<C-u>vsplit<CR>
+
+nnoremap <silent> <leader>sh :terminal<CR>
+
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 nmap  -  <Plug>(choosewin)
@@ -240,7 +266,7 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
-
+" old plugin version, keeping the settings just in case I return to it.
 """ hayabusa incsearch bindings
 " set hlsearch
 " let g:incsearch#auto_nohlsearch = 1
@@ -254,34 +280,6 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 " map # <Plug>(incsearch-nohl-#)
 " map g* <Plug>(incsearch-nohl-g*)
 " map g# <Plug>(incsearch-nohl-g#)
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-if has('unnamedplus')
-    set clipboard=unnamed,unnamedplus
-endif
-
-noremap YY "+y<CR>
-noremap <Leader>p "+gP<CR>
-noremap XX "+x<CR>
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" Buffer nav
-noremap <Leader>z :bp<CR>
-noremap <Leader>x :bn<CR>
-" Close Buffer
-noremap <Leader>c :bd<CR>
-
-" Clean hlsearch
-nnoremap <silent> <Leader><space> :noh<cr>
-
-
-" Splitting
-noremap <Leader>h :<C-u>split<CR>
-noremap <Leader>v :<C-u>vsplit<CR>
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~terminal emulation ~~~~~~~~~~~~~~~~~~~~~"
-nnoremap <silent> <leader>sh :terminal<CR>
 
 "~~~~~~~~~~~~~~~~~~~~~rm trailing whitespaces~~~~~~~~~~~~~~~~~"
 command! FixWhitespace :%s/\s\+$//e
@@ -309,11 +307,11 @@ augroup vimrc-remember-cursor-position
     autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
-" txt
-augroup vimrc-wrapping
-  autocmd!
-  autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
-augroup END
+" " txt
+" augroup vimrc-wrapping
+"   autocmd!
+"   autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+" augroup END
 
 "augroup vimrc-wrapping
     "autocmd!
@@ -325,9 +323,6 @@ augroup END
 " nnoremap n nzzzv
 " nnoremap N Nzzzv
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CoC Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~"
-set shortmess+=c
-set signcolumn=yes
 
 " ~~~~~~~~~~~~~~~~~ temp trial to make <tab> do everything like in ~~~~~~
 "~~~~~~~~~~~~~~~~~~~~~~~~ vscode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -337,13 +332,13 @@ set signcolumn=yes
 	  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
 	  \ <SID>check_back_space() ? "\<TAB>" :
 	  \ coc#refresh()
-
-	function! s:check_back_space() abort
+	
+    function! s:check_back_space() abort
 	  let col = col('.') - 1
 	  return !col || getline('.')[col - 1]  =~# '\s'
 	endfunction
 
-	let g:coc_snippet_next = '<tab>'
+    let g:coc_snippet_next = '<tab>'
 
 " function! s:check_back_space() abort
 "     let col = col('.') - 1
@@ -457,7 +452,16 @@ command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImpo
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
-" Mappings for CoCList
+"~~~~~~~~~~~~~~~~~~~~~ Coc-Explorer ~~~~~~~~~~~~~~~~~~~~~~~~~"
+nmap <Leader>e :CocCommand explorer<CR>
+nmap <Leader>el :CocCommand explorer --preset floating<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif 
+
+
+
+
+
+"~~~~~~~~~~~~~~~~~~~Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent> <leader>ld  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
@@ -541,7 +545,7 @@ if !exists('g:airline_symbols')
     let g:airline_symbols.readonly = '⭤'
     let g:airline_symbols.linenr = '⭡'
 else
-    let g:webdevicons_enable = 0
+    let g:webdevicons_enable = 1
 endif
 if exists("*fugitive#statusline")
      set statusline+=%{fugitive#statusline()}
@@ -557,10 +561,27 @@ let g:airline#extensions#lsp#enabled = 1
 let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline#extensions#vista#enabled = 1
+
+let g:airline#extensions#vista#enabled = 0
+
+" let g:airline#extensions#tabws#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+
+let g:airline#extensions#keymap#enabled = 1
+
 let g:airline#extensions#coc#enabled = 1
+let g:airline#extensions#hunks#coc_git = 1
 let g:airline_skip_empty_sections = 1
 
+let g:airline#extensions#windowswap#enabled = 1
+
+let g:airline#extensions#tabline#show_tab_type = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#show_close_button = 1
+let g:airline#extensions#tabline#close_symbol = 'X'
+
+let g:airline#extensions#whitespace#enabled = 0   
+let b:airline_whitespace_disabled = 1
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALE Linting~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -611,7 +632,7 @@ let g:vista#renderer#icons = {
 let g:vista_fzf_preview = ['right:60%:wrap']
 let g:vista_executive_for = {
     \ 'cpp': 'coc',
-    \ 'py': 'Try',
+    \ 'py':  'coc',
     \ 'rls': 'coc',
     \ }
 " lets see if this works 08/06/20

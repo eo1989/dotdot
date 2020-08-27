@@ -37,18 +37,19 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 export PATH="$HOME/.poetry/bin:$PATH"
 
 
+export EXA_COLORS="uu=0:gu=0"
 # If you come from bash you might hve to change your $PATH.
 source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 
 
 
-export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MANPATH"
+# export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MANPATH"
 export LANG="en_US.UTF-8"
-# export LS_COLORS="$(vivid generate snazzy)"
+export LS_COLORS="$(vivid generate snazzy)"
 
 export BAT_THEME="OneHalfDark"
 export CHEAT_USE_FZF="true"
-export GTAGSLABEL=pygments 
+export GTAGSLABEL="pygments" 
 
 
 # Path to your oh-my-zsh installation.
@@ -75,20 +76,6 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 export EDITOR="nvim"
 
-fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
-
-autoload -Uz compinit && compinit -u
-autoload -Uz promptinit && promptinit -u
-autoload -Uz bashcompinit && bashcompinit
-eval "$(stack --bash-completion-script stack)"
-eval "$(thefuck --alias)"
-        # if type brew &>/dev/null; then
-        #     fpath="$(brew --prefix)/share/zsh/site-functions:$fpath"
-        #      autoload -Uz compinit
-        #      compinit
-        # fi
-
-kitty + complete setup zsh | source /dev/stdin
 
 
 #py3 nvim
@@ -127,11 +114,15 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
 
 # alias -g preview="fzf --preview 'bat --color \"always\" {}'"
 
+# alias -g dotfiles=
+
+EXA_OPTS="--icons --group-directories-first"
 alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 
 alias -g j="jump"
-alias -g ls="exa --all --color=auto --icons --group-directories-first"
-alias -g lsa="exa -T -F --color=auto --icons --group-directories-first"
+alias -g l1="exa -F -T $EXA_OPTS"
+alias -g ls="exa -F -T -L 1 --icons --group-directories-first"
+alias -g lsa="exa --all --icons --group-directories-first --git"
 alias -g lt="exa -F -T -L 2 --icons --git-ignore"
 
 alias -g help="tldr"
@@ -153,7 +144,6 @@ alias -g yt="youtube-dl --external-downloader aria2c"
 
 alias -g ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias -g localip="ipconfig getifaddr en0"
-# alias -g dotfiles=
 
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
@@ -168,9 +158,9 @@ fi
 # Temp - See how it works out
 GITSTATUS_LOG_LEVEL=DEBUG
 
-if [[ ! -d ~/.oh-my-zsh/custom/plugins/autopair.zsh ]]; then
-    git clone https://github.com/hlissner/zsh-autopair ~/.zsh-autopair
-fi
+# if [[ ! -d ~/.oh-my-zsh/custom/plugins/autopair.zsh ]]; then
+#     git clone https://github.com/hlissner/zsh-autopair ~/.zsh-autopair
+# fi
 
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
@@ -181,7 +171,15 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # source /usr/local/bin/fzf/
+fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
 
+autoload -Uz +X compinit && compinit -u
+# autoload -Uz promptinit && promptinit -u
+# autoload -Uz bashcompinit && bashcompinit
+eval "$(stack --bash-completion-script stack)"
+eval "$(thefuck --alias)"
+
+kitty + complete setup zsh | source /dev/stdin
 
 ## zsh-history-substring-search key bindings
 bindkey '^[[A' history-substring-search-up
@@ -199,3 +197,4 @@ fif() {
     rg --files-with-matches --no-messages "$1" | fzf
 $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }
+

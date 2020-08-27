@@ -6,6 +6,54 @@ set termguicolors
 " set nocompatible " incase vim is used from time to time
 
 
+autocmd FileType json syntax match Comment +\/\/.\+$+
+autocmd FileType vista,coc-explorer setlocal signcolumn=no
+
+set mouse=a
+
+set guifont=Fira\ Code:h13:cANSI
+
+set shell=/usr/local/bin/zsh
+set cmdheight=2
+set laststatus=2
+set switchbuf=useopen 	    " reveal already opened files from
+		                	" the quick fix window instead of opening new buffers
+set updatetime=300 	    " Speed up updatetime so gitgutter & friends are quicker
+set visualbell 
+set noerrorbells
+set showmatch
+set gdefault
+set hidden		" hide buffers instead of closing them, this means
+			    " means that the current buffer can be put to background
+			    " w/o being written; & that marks & undo hist are
+			    " preserved
+set rnu nu
+set conceallevel=3
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set fillchars+=vert:\┃
+set smarttab
+set smartcase
+set ignorecase
+set formatoptions+=1    " when wrapping paragraphs, dont end lines
+			            " with 1-letter words (looks stupid)
+set nobackup
+set noundofile            " persistent undos - undo after u re-open the file
+set noswapfile
+set nowritebackup
+set backspace=indent,eol,start
+set colorcolumn=80
+set shortmess+=c
+set signcolumn=yes
+set listchars=tab:->\ ,nbsp:␣,trail:•,extends:⟩,precedes:⟨
+set showtabline=2
+set clipboard=unnamedplus 
+
+au BufEnter * set fo-=c fo-=r fo-=o
+
+
 call plug#begin('~/.vim/plugged')
 Plug 'terryma/vim-multiple-cursors'
 Plug 'fatih/vim-go', { 'for': 'Golang', 'do': ':GoInstallBinaries' } 
@@ -33,7 +81,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'ryanoasis/vim-devicons'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'} 
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight', {'on': 'NERDTreeToggle'}
-Plug 'liuchengxu/nerdtree-dash'
+" Plug 'liuchengxu/nerdtree-dash'
 " Plug 'her/synicons.vim'
 Plug 'kien/tabman.vim'
 Plug 'majutsushi/tagbar'
@@ -48,6 +96,8 @@ Plug 'liuchengxu/space-vim-theme', {'as': 'space-vim-theme'}
 Plug 'connorholyday/vim-snazzy', {'as': 'snazzy'}
 Plug 'dracula/vim', {'as': 'dracula'}
 Plug 'sheerun/vim-polyglot'
+Plug 'joshdick/onedark.vim', {'as': 'onedark'}
+Plug 'patstockwell/vim-monokai-tasty', {'as': 'monokai tasty'}
 Plug 't9md/vim-choosewin'
 Plug 'neoclide/coc.nvim', {'do': {-> coc#util#install()}}
 Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 
@@ -76,6 +126,7 @@ Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
 Plug 'sbdchd/neoformat', { 'for': 'haskell' }
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JS
+Plug 'MaxMellon/vim-jsx-pretty', {'for': 'javascript'}
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Julia
@@ -96,8 +147,7 @@ Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
 
 call plug#end() 
 
-set mouse=a
-
+map <Leader>r :source ~/.vimrc<CR>
 
 nnoremap <Leader>o <cmd>CHADopen<CR>
 
@@ -115,12 +165,6 @@ let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
 let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 let g:DevIconsEnableFoldersOpenClose = 1
 
-" let g:NERDTreeFileExtensionHighlightFullName = 1
-" let g:NERDTreeExactMatchHighlightFullName = 1
-" let g:NERDTreePatternMatchHighlightFullName = 1
-" let NERDTreeDirArrowExpandable = "\u00a0"
-" let NERDTreeDirArrowCollapsible = "\u00a0"
-" let NERDTreeNodeDelimiter = "\x07"
 
 let g:yankring_history_dir = '~/.config/nvim/'
 let g:yankring_clipboard_monitor = 1
@@ -130,16 +174,16 @@ let g:semshi#filetypes = ['python']
 
 let g:tabman_toggle = '<leader>mt'
 let g:tabman_focus = '<leader>mf'
-let g:tabman_width = 25
+let g:tabman_width = 20
 let g:tabman_side = 'left'
 
 
 " tab navigation mappings
 map tt :tabnew
 map <M-Right> :tabn<CR>
-imap <M-Right> <ESC> :tabn<CR>
+imap <M-Right><ESC> :tabn<CR>
 map <M-Left> :tabp<CR>
-imap <M-Left> <ESC> :tabp<CR>
+imap <M-Left><ESC> :tabp<CR>
 
 " Majutsushi tagbar
 nmap <F8> :TagbarToggle<CR>
@@ -153,6 +197,7 @@ nnoremap <F5> :UndotreeToggle<CR>
 
 let g:AutoPairsFlyMode = 1
 let g:AutoPairsShortcutBackInsert = '<M-b>'
+let g:AutoPairs['<']='>'
 
 "" testing masukomi/rainbowParentheses
 augroup RainbowParentheses
@@ -161,49 +206,20 @@ augroup RainbowParentheses
     au Syntax * RainbowParenthesesLoadRound
     au Syntax * RainbowParenthesesLoadSquare
     au Syntax * RainbowParenthesesLoadBraces
+    au Syntax * RainbowParenthesesLoadChevrons
 augroup END
 
 "let g:rainbow_active = 1
 
-" colorscheme dracula
-" colorscheme snazzy 
-colorscheme space_vim_theme 
-set guifont=Fira\ Code:h13
+" let g:onedark_hide_endofbuffer = 1
+" let g:onedark_terminal_italics = 1
 
-set shell=/usr/local/bin/zsh
-set cmdheight=2
-set laststatus=2
-set switchbuf=useopen 	    " reveal already opened files from
-		                	" the quick fix window instead of opening new buffers
-set updatetime=300 	    " Speed up updatetime so gitgutter & friends are quicker
-set visualbell 
-set noerrorbells
-set showmatch
-set gdefault
-set hidden		" hide buffers instead of closing them, this means
-			    " means that the current buffer can be put to background
-			    " w/o being written; & that marks & undo hist are
-			    " preserved
-set rnu nu
-set conceallevel=3
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
-set expandtab
-set fillchars+=vert:\┆
-set smarttab
-set smartcase
-set ignorecase
-set formatoptions+=1    " when wrapping paragraphs, dont end lines
-			            " with 1-letter words (looks stupid)
-set nobackup
-set noundofile            " persistent undos - undo after u re-open the file
-set noswapfile
-set nowritebackup
-set backspace=indent,eol,start
-set colorcolumn=80
-set shortmess+=c
-set signcolumn=yes
+
+colorscheme dracula
+" colorscheme snazzy 
+" colorscheme space_vim_theme 
+" colorscheme onedark
+
 
 if has('unnamedplus')
     set clipboard=unnamed,unnamedplus
@@ -227,6 +243,26 @@ noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
 
 nnoremap <silent> <leader>sh :terminal<CR>
+
+"" Switching windows
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+noremap <C-h> <C-w>h
+
+"" Vmap for maintain Visual Mode after shifting > and <
+vmap < <gv
+vmap > >gv
+
+"" Move visual block
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+"" GFiles && RipGrep!
+nnoremap <C-p> :GFiles<CR>
+nnoremap <C-f> :Rg<CR>
+
+nmap <F9> :Vista!!<CR>
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
@@ -324,33 +360,41 @@ augroup END
 " nnoremap N Nzzzv
 
 
-" ~~~~~~~~~~~~~~~~~ temp trial to make <tab> do everything like in ~~~~~~
-"~~~~~~~~~~~~~~~~~~~~~~~~ vscode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	inoremap <silent><expr> <TAB>
-	  \ pumvisible() ? coc#_select_confirm() :
-	  \ coc#expandableOrJumpable() ?
-	  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-	  \ <SID>check_back_space() ? "\<TAB>" :
-	  \ coc#refresh()
-	
-    function! s:check_back_space() abort
-	  let col = col('.') - 1
-	  return !col || getline('.')[col - 1]  =~# '\s'
-	endfunction
+"~~~~~~~~~~~~~~~~~~~~~~~~ Coc.Nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+let g:coc_glogal_extensions = [  
+    \   'coc-json',
+    \   'coc-snippets',
+    \   'coc-python',
+    \   'coc-sh',
+    \   'coc-explorer',
+    \   'coc-vimlsp',
+    \   'coc-git',
+    \   'coc-lists',
+    \]
+    
 
-    let g:coc_snippet_next = '<tab>'
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? coc#_select_confirm() :
+  \ coc#expandableOrJumpable() ?
+  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
 
-" function! s:check_back_space() abort
-"     let col = col('.') - 1
-"     return !col || getline('.')[col - 1] =~# '\s'
-" endfunction
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-" inoremap <silent><expr> <TAB>
-"         \ pumvisible() ? "\<C-n>" :
-"         \ <SID>check_back_space() ? "\<TAB>" :
-"         \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+if exists('*complete_info')
+    inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+    inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
 
+
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+    " let g:coc_snippet_next = '<tab>'
 
 "" User <c-space> to trigger completion
 "if has ('nvim')
@@ -362,11 +406,6 @@ augroup END
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
 " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-" "if exists('*complete_info')
-""  "  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-""  "else
-""  "  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" "endif
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~""
 " Use `[g` and `]g` to navigate diagnostics
@@ -442,7 +481,7 @@ xmap <silent> <C-s> <Plug>(coc-range-select)
 command! -nargs=0 Format :call CocAction('format')
 
 " Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
+" command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
@@ -453,11 +492,50 @@ command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImpo
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 "~~~~~~~~~~~~~~~~~~~~~ Coc-Explorer ~~~~~~~~~~~~~~~~~~~~~~~~~"
-nmap <Leader>e :CocCommand explorer<CR>
-nmap <Leader>el :CocCommand explorer --preset floating<CR>
+
+let g:coc_explorer_global_presets = {
+\   '.vim': {
+\     'root-uri': '~/.vim',
+\   },
+\   'tab': {
+\     'position': 'tab',
+\     'quit-on-open': v:true,
+\   },
+\   'floating': {
+\     'position': 'floating',
+\     'open-action-strategy': 'sourceWindow',
+\   },
+\   'floatingTop': {
+\     'position': 'floating',
+\     'floating-position': 'center-top',
+\     'open-action-strategy': 'sourceWindow',
+\   },
+\   'floatingLeftside': {
+\     'position': 'floating',
+\     'floating-position': 'left-center',
+\     'floating-width': 50,
+\     'open-action-strategy': 'sourceWindow',
+\   },
+\   'floatingRightside': {
+\     'position': 'floating',
+\     'floating-position': 'right-center',
+\     'floating-width': 50,
+\     'open-action-strategy': 'sourceWindow',
+\   },
+\   'simplify': {
+\     'file-child-template': '[selection | clip | 1] [indent][icon | 1] [filename omitCenter 1]'
+\   }
+\ }
+noremap <C-o> :CocCommand explorer<CR>
+noremap <Leader><C-o> :CocCommand explorer --preset floating<CR>
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif 
 
+" Use preset argument to open it
+" nmap <space>ed :CocCommand explorer --preset .vim<CR>
+" nmap <space>ef :CocCommand explore --preset floating<CR>
 
+" List all presets
+nmap <space>ep :CocList explPresets
 
 
 
@@ -483,7 +561,6 @@ nnoremap <silent> <leader>ll :<C-u>CocList locationlist<CR>
 " Find buffers
 nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>
 
-autocmd FileType json syntax match Comment +\/\/.\+$+
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
@@ -533,9 +610,11 @@ let g:indentLine_concealcursor = 0
 let g:indentLine_faster = 1
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_color_term = 6
+let g:indentLine_fileTypeExclude = ['startify', '', 'help',
+                                    \ 'CHADTree', 'coc-explorer']
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ vim-airline temp ~~~~~~~~~~~~~~~~~~~~~~~~
 let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
+if !exists('g:airline_symbols')   
     let g:airline_symbols = {}
     let g:airline_left_sep = ''
     let g:airline_left_alt_sep = ''
@@ -550,7 +629,8 @@ endif
 if exists("*fugitive#statusline")
      set statusline+=%{fugitive#statusline()}
 endif
-let g:airline_theme = "base16_snazzy"
+" onedark "base16_snazzy" "dracula"
+let g:airline_theme = "dracula"
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#format = 2
 let g:airline#extensions#fugitiveline#enabled = 1
@@ -598,27 +678,27 @@ let b:airline_whitespace_disabled = 1
 
 "~~~~~~~~~~~~~~~~~~~~~ Kite AutoComplete ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 " let g:KiteAutoEnable = 0
-let g:kite_supported_languages = ['python']
-let g:kite_auto_complete=1
-let g:kite_snippets=1
-let g:kite_tab_complete=1
-let g:kite_documentation_continual=0
-let g:kite_log=1
-" let g:kite_previous_placeholder = '<C-H>'
-" let g:kite_next_placeholder = '<C-L>'
+" let g:kite_supported_languages = ['python']
+" let g:kite_auto_complete=1
+" let g:kite_snippets=1
+" let g:kite_tab_complete=1
+" let g:kite_documentation_continual=0
+" let g:kite_log=1
+" " let g:kite_previous_placeholder = '<C-H>'
+" " let g:kite_next_placeholder = '<C-L>'
 
- set completeopt+=menuone   " show the popup menu even when there is only 1 match
- set completeopt+=noinsert  " don't insert any text until user chooses a match
- set completeopt-=longest   " don't insert the longest common text
- set completeopt+=preview
+"  set completeopt+=menuone   " show the popup menu even when there is only 1 match
+"  set completeopt+=noinsert  " don't insert any text until user chooses a match
+"  set completeopt-=longest   " don't insert the longest common text
+"  set completeopt+=preview
 
-autocmd CompleteDone * if !pumvisible() | pclose | endif
+" autocmd CompleteDone * if !pumvisible() | pclose | endif
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-let g:vista_default_executive = 'fzf'
-let g:vista_echo_cursor_strategy = ['both']
+let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_default_executive = 'coc'
+" let g:vista_echo_cursor_strategy = ['both']
 
 let g:vista_ctags_cmd = {
     \ 'haskell': 'ctags',
@@ -628,7 +708,8 @@ let g:vista_ctags_cmd = {
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#icons = {
     \ "function": "\uf794",
-    \ "variable": "\uf71b"}
+    \ "variable": "\uf71b",
+    \}
 let g:vista_fzf_preview = ['right:60%:wrap']
 let g:vista_executive_for = {
     \ 'cpp': 'coc',
@@ -639,23 +720,56 @@ let g:vista_executive_for = {
 "autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
         "/:<c-u>call vista#finder#fzf#Run()<CR>
 
-"let g:vista_log_file = expand('~/vista.log')
+let g:vista_log_file = expand('~/vista.log')
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~ Smaller Extensions ~~~~~~~~~~~~~~~~~~~~~~~"
 " Fzf.vim
+let $BAT_THEME = 'OneHalfDark'
+let g:fzf_layout = {'window': 'call OpenFloatingWin()'}
+
 set wildmenu
 set wildmode=list:longest,full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-"let $FZF_DEFAULT_COMMAND = "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o -type f -print -o -type l -print 2> /dev/null"
 
 
 " Ripgrep
-let g:rg_command = '/usr/local/bin/rg'
-if executable('Rg')
+" let g:rg_command = '/usr/local/bin/rg'
     " let $FZF_DEFAULT_COMMAND = 'rg --files --colors=ansi --hidden --follow --glob "!.git/*"'
     " set grepprg=rg\ --vimgrep
-    command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number -kno-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-endif
+command! -bang -nargs=* Rg 
+        \ call fzf#vim#grep(
+        \   <bang>0 ? fzf#vim#with_preview()
+        \           : fzf#vim#with_preview(),
+        \   <bang>0)
+
+command! -bang -nargs=? -complet=dir GFiles
+            \   call fzf#vim#gitfiles(
+            \   <q-args>,
+            \   fzf#vim#with_preview(),
+            \   <bang>0)
+
+function! OpenFloatingWin()
+    let width = min([&columns - 4, max([80, &columns - 20])])
+    let height = min([&lines - 4, max([20, &lines - 10])])
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+endfunction
 
 " Ex: :Rg myterm -g '*.md'
 " command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)

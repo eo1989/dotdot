@@ -116,15 +116,12 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
 
 # alias -g dotfiles=
 
-EXA_OPTS="--icons --group-directories-first"
 alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 
 alias -g j="jump"
-alias -g l1="exa -F -T $EXA_OPTS"
-alias -g ls="exa -F -T -L 1 --icons --group-directories-first"
-alias -g lsa="exa --all --icons --group-directories-first --git"
-alias -g lt="exa -F -T -L 2 --icons --git-ignore"
-
+alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
+# --group-directories-first 
+alias -g lsa="exa --all -T -F  --long --icons --git"
 alias -g help="tldr"
 
 alias -g ping="prettyping --nolegend"

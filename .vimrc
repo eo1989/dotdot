@@ -11,7 +11,7 @@ autocmd FileType vista,coc-explorer setlocal signcolumn=no
 
 set mouse=a
 
-set guifont=Fira\ Code:h13:cANSI
+set GuiFont=Fira_Code:h13:cANSI
 
 set shell=/usr/local/bin/zsh
 set cmdheight=2

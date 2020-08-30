@@ -121,7 +121,7 @@ alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HO
 alias -g j="jump"
 alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
 # --group-directories-first 
-alias -g lsa="exa --all -T -F  --long --icons --git"
+alias -g lsa="exa --all -T -F --long --icons --git"
 alias -g help="tldr"
 
 alias -g ping="prettyping --nolegend"
@@ -194,4 +194,4 @@ fif() {
     rg --files-with-matches --no-messages "$1" | fzf
 $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }
-
+source ~/.fzf.zsh 

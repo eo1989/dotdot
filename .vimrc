@@ -11,7 +11,7 @@ autocmd FileType vista,coc-explorer setlocal signcolumn=no
 
 set mouse=a
 
-set GuiFont=Fira_Code:h13:cANSI
+set guifont=Fira\ Code:h13:cANSI
 
 set shell=/usr/local/bin/zsh
 set cmdheight=2
@@ -28,7 +28,7 @@ set hidden		" hide buffers instead of closing them, this means
 			    " w/o being written; & that marks & undo hist are
 			    " preserved
 set rnu nu
-set conceallevel=3
+" set conceallevel=3
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -117,7 +117,7 @@ Plug 'haya14busa/is.vim'
 Plug 'Yggdroot/indentLine'
 Plug 'seletskiy/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'vn-ki/coc-clap', {'do': function('clap#helper#build_all')}
-
+Plug 'ludovicchabant/vim-gutentags'
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Haskell
 " Plug 'eagletmt/neco-ghc'
@@ -147,9 +147,6 @@ Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
 
 call plug#end() 
 
-map <Leader>r :source ~/.vimrc<CR>
-
-nnoremap <Leader>o <cmd>CHADopen<CR>
 
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
@@ -186,11 +183,25 @@ map <M-Left> :tabp<CR>
 imap <M-Left><ESC> :tabp<CR>
 
 " Majutsushi tagbar
-nmap <F8> :TagbarToggle<CR>
 let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
 let g:tagbar_autofocus = 1
 
+" Julia ctags tagbar info
+let g:tagbar_type_julia = {
+    \ 'ctagstype': 'julia',
+    \ 'kinds'    : [
+        \ 't:struct', 'f:function', 'm:macro', 'c:const']
+    \}
+
+
+
+map <Leader>r :source ~/.vimrc<CR>
+
+nnoremap <Leader>o <cmd>CHADopen<CR>
+
 nnoremap <F5> :UndotreeToggle<CR>
+nmap <F8> :TagbarToggle<CR>
+nmap <F9> :Vista!!<CR>
 
 " map <F3> :NERDTreeToggle<CR>
 " nmap <leader>t :NERDTreeFind<CR>
@@ -262,7 +273,6 @@ vnoremap K :m '<-2<CR>gv=gv
 nnoremap <C-p> :GFiles<CR>
 nnoremap <C-f> :Rg<CR>
 
-nmap <F9> :Vista!!<CR>
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
@@ -697,12 +707,12 @@ let b:airline_whitespace_disabled = 1
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["▸ ", ""]
-let g:vista_default_executive = 'coc'
+let g:vista_default_executive = 'ctags'
 " let g:vista_echo_cursor_strategy = ['both']
 
 let g:vista_ctags_cmd = {
-    \ 'haskell': 'ctags',
-    \ 'go': 'gtags',
+    \ 'haskell': 'hasktags -x -o - -c',
+    \ 'go': 'gotags',
     \}
 
 let g:vista#renderer#enable_icon = 1

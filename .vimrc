@@ -18,7 +18,7 @@ set cmdheight=2
 set laststatus=2
 set switchbuf=useopen 	    " reveal already opened files from
 		                	" the quick fix window instead of opening new buffers
-set updatetime=300 	    " Speed up updatetime so gitgutter & friends are quicker
+set updatetime=500 	    " Speed up updatetime so gitgutter & friends are quicker
 set visualbell 
 set noerrorbells
 set showmatch
@@ -96,13 +96,14 @@ Plug 'liuchengxu/space-vim-theme', {'as': 'space-vim-theme'}
 Plug 'connorholyday/vim-snazzy', {'as': 'snazzy'}
 Plug 'dracula/vim', {'as': 'dracula'}
 Plug 'sheerun/vim-polyglot'
+	let g:polyglot_disabled = ['python']
 Plug 'joshdick/onedark.vim', {'as': 'onedark'}
-Plug 'patstockwell/vim-monokai-tasty', {'as': 'monokai tasty'}
+Plug 'patstockwell/vim-monokai-tasty', {'as': 'monokai_tasty'}
 Plug 't9md/vim-choosewin'
 Plug 'neoclide/coc.nvim', {'do': {-> coc#util#install()}}
 Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 
                                     \'do': ':UpdateRemotePlugins'}
-Plug 'vim-scripts/YankRing.vim'
+" Plug 'vim-scripts/YankRing.vim'
 " Plug 'ervandew/supertab'
 Plug 'google/vim-searchindex'
 " Plug 'dense-analysis/ale'
@@ -118,12 +119,14 @@ Plug 'Yggdroot/indentLine'
 Plug 'seletskiy/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'vn-ki/coc-clap', {'do': function('clap#helper#build_all')}
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'jpalardy/vim-slime'
+    let g:slime_target = "tmux"
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Haskell
 " Plug 'eagletmt/neco-ghc'
-Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
+" Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
 Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'sbdchd/neoformat', { 'for': 'haskell' }
+Plug 'sbdchd/neoformat', {'for': 'haskell'}
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JS
 Plug 'MaxMellon/vim-jsx-pretty', {'for': 'javascript'}
@@ -134,7 +137,9 @@ Plug 'JuliaEditorSupport/julia-vim'
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python
 " Plug 'psf/black', {'branch': 'stable' }
-Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' }
+Plug 'numirias/semshi', {'for': 'python',
+                        \ 'do': ':UpdateRemotePlugins' }
+    let g:semshi#filetypes = ['python']
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rust
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
@@ -208,7 +213,7 @@ nmap <F9> :Vista!!<CR>
 
 let g:AutoPairsFlyMode = 1
 let g:AutoPairsShortcutBackInsert = '<M-b>'
-let g:AutoPairs['<']='>'
+" let g:AutoPairs['<']='>'
 
 "" testing masukomi/rainbowParentheses
 augroup RainbowParentheses
@@ -226,11 +231,11 @@ augroup END
 " let g:onedark_terminal_italics = 1
 
 
-colorscheme dracula
-" colorscheme snazzy 
+" colorscheme dracula
+colorscheme snazzy 
 " colorscheme space_vim_theme 
 " colorscheme onedark
-
+" monokai_tasty
 
 if has('unnamedplus')
     set clipboard=unnamed,unnamedplus
@@ -240,6 +245,7 @@ noremap YY "+y<CR>
 noremap <Leader>p "+gP<CR>
 noremap XX "+x<CR>
 
+
 " Buffer nav
 noremap <Leader>z :bp<CR>
 noremap <Leader>x :bn<CR>
@@ -247,11 +253,11 @@ noremap <Leader>x :bn<CR>
 noremap <Leader>c :bd<CR>
 
 " Clean hlsearch
-nnoremap <silent> <Leader><space> :noh<cr>
+nnoremap <Leader><space> :noh<cr>
 
 " Splitting
-noremap <Leader>h :<C-u>split<CR>
-noremap <Leader>v :<C-u>vsplit<CR>
+noremap <Leader>hs :<C-u>split<CR>
+noremap <Leader>vs :<C-u>vsplit<CR>
 
 nnoremap <silent> <leader>sh :terminal<CR>
 
@@ -270,8 +276,8 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 "" GFiles && RipGrep!
-nnoremap <C-p> :GFiles<CR>
-nnoremap <C-f> :Rg<CR>
+" nnoremap <C-p> :GFiles<CR>
+" nnoremap <C-f> :Rg<CR>
 
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
@@ -281,8 +287,7 @@ nmap  -  <Plug>(choosewin)
 let g:choosewin_overlay_enable = 1
 
 
-let g:polyglot_disabled = ['python']
-let python_highlight_all = 1
+" let python_highlight_all = 1
 
 let g:Hexokinase_highlighters = ['virtual']
 
@@ -315,7 +320,7 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 " old plugin version, keeping the settings just in case I return to it.
 """ hayabusa incsearch bindings
 " set hlsearch
-" let g:incsearch#auto_nohlsearch = 1
+let g:incsearch#auto_nohlsearch = 1
 " map / <Plug>(incsearch-forward)
 " map ? <Plug>(incsearch-backward)
 " map g/ <Plug>(incsearch-stay)
@@ -371,6 +376,8 @@ augroup END
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ Coc.Nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+let g:coc_node_path = '/usr/local/bin/node'
+
 let g:coc_glogal_extensions = [  
     \   'coc-json',
     \   'coc-snippets',
@@ -460,8 +467,8 @@ augroup end
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+xmap <leader>ap  <Plug>(coc-codeaction-selected)
+nmap <leader>ap  <Plug>(coc-codeaction-selected)
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
@@ -469,8 +476,6 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 nmap <leader>qf  <Plug>(coc-fix-current)
 
 " Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-
 " This needs work. TODO
 xmap if <Plug>(coc-funcobj-i)
 omap if <Plug>(coc-funcobj-i)
@@ -571,6 +576,11 @@ nnoremap <silent> <leader>ll :<C-u>CocList locationlist<CR>
 " Find buffers
 nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>
 
+" CocSEARCH
+" nnoremap <silent> <leader>lr :<C-u>CocSearch <C-R>=expand("<cword>")<CR><CR>
+nnoremap <leader>rw :CocSearch <C-R><C-W><CR>
+" Use Marketplace
+nnoremap <leader>lm :<C-u>CocList marketplace<CR>
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
@@ -640,7 +650,8 @@ if exists("*fugitive#statusline")
      set statusline+=%{fugitive#statusline()}
 endif
 " onedark "base16_snazzy" "dracula"
-let g:airline_theme = "dracula"
+
+let g:airline_theme = "base16_snazzy"
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#format = 2
 let g:airline#extensions#fugitiveline#enabled = 1
@@ -652,7 +663,7 @@ let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-let g:airline#extensions#vista#enabled = 0
+let g:airline#extensions#vista#enabled = 1
 
 " let g:airline#extensions#tabws#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
@@ -706,13 +717,14 @@ let b:airline_whitespace_disabled = 1
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 let g:vista_default_executive = 'ctags'
-" let g:vista_echo_cursor_strategy = ['both']
+let g:vista_echo_cursor_strategy = ['both']
 
 let g:vista_ctags_cmd = {
     \ 'haskell': 'hasktags -x -o - -c',
     \ 'go': 'gotags',
+	\ 'python': 'ctags'
     \}
 
 let g:vista#renderer#enable_icon = 1
@@ -725,16 +737,23 @@ let g:vista_executive_for = {
     \ 'cpp': 'coc',
     \ 'py':  'coc',
     \ 'rls': 'coc',
-    \ }
-" lets see if this works 08/06/20
-"autocmd FileType vista,vista_kind nnoremap <buffer> <silent> \
-        "/:<c-u>call vista#finder#fzf#Run()<CR>
+    \}
+
+function! NearestMethodOrFunction() abort
+	return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+set statusline+=%{NearestMethodOrFunction()}
+
+" to autmoatically show the nearetst fx in statusline automatically
+" need to add this:
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 let g:vista_log_file = expand('~/vista.log')
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~ Smaller Extensions ~~~~~~~~~~~~~~~~~~~~~~~"
 " Fzf.vim
-let $BAT_THEME = 'OneHalfDark'
+let $BAT_THEME = 'Sublime Snazzy'
 let g:fzf_layout = {'window': 'call OpenFloatingWin()'}
 
 set wildmenu
@@ -780,9 +799,15 @@ function! OpenFloatingWin()
     call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
     au BufWipeout <buffer> exe 'bw '.s:buf
 endfunction
+"" GFiles && RipGrep!
+
+" nnoremap <C-p> :GFiles<CR>
+" nnoremap <C-f> :Rg<CR>
 
 " Ex: :Rg myterm -g '*.md'
-" command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
+" command! -bang -nargs=* Rg call fzf#vim#grep("rg --column 
+            " \--line-number --no-heading --color=always --smart-case " . 
+            " <q-args>, 1, <bang>0)
 
 "" Ag
 "let g:Ag_command = '/usr/local/bin/ag'
@@ -797,7 +822,7 @@ endfunction
 "    let $FZF_DEFAULT_COMMAND = 'pt -i -f -h'
 "endif
 
-"~~~~~~~~~~~~~~~~~~~ Vim-Clap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+"~~~~~~~~~~~~~~~~~~~ Vim-Clap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:clap_provider_dotfiles = {
     \ 'source': ['~/.vimrc', '~/.zshrc', '~/.tmux.conf'],
     \ 'sink': 'e',
@@ -809,13 +834,23 @@ let g:clap_provider_commands = {
     \}
 "~~~~~~~~~~~~~~~~~~~~ UltiSnips ~~~~~~~~~~~~~~~~~~~~"
 
-"let g:UltiSnipsExpandTrigger="<tab>"
-"let g:UltiSnipsJumpForwardTrigger="<tab>"
-"let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-"let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<C-b>"
+let g:UltiSnipsEditSplit="vertical"
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 " Haskell
+" let g:haskell_indent_if = 3
+" let g:haskell_indent_case = 2
+" let g:haskell_indent_let = 4
+" let g:haskell_indent_where = 6
+" let g:haskell_indent_before_where = 2
+" let g:haskell_indent_after_bare_where = 2
+" let g:haskell_indent_do = 3
+" let g:haskell_indent_in = 1
+" let g:haskell_indent_guard = 2
+" let g:haskell_indent_case_alternative = 1
 let g:haskell_conceal_wide = 1
 let g:haskell_multiline_strings = 1
 "let g:necoghc_enable_detailed_browse = 1

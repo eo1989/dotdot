@@ -5,21 +5,22 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Homebrew
+#------------------------------- Homebrew ---------------------------------#
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:/usr/share:$PATH"
-# /usr/local/opt:
-# 
-#  
-#random paths
-export PATH="/usr/local/opt/ruby/bin:/usr/local/opt/curl/bin:/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
-export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
 
+
+#------------------------------ extra paths -------------------------------#
+export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
+export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$HOME/Library/Python/3.8/bin:$PATH"
+
+
+#-------------------- Find OpenJDK ahead of sys java ----------------------# 
+export PATH="/usr/local/opt/openjdk/bin:$PATH"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
+export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
-# haskell & Doom
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
-
 
 #Go
 export GOPATH="$HOME/go"
@@ -34,8 +35,6 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
-export PATH="$HOME/.poetry/bin:$PATH"
-
 
 export EXA_COLORS="uu=0:gu=0"
 # If you come from bash you might hve to change your $PATH.
@@ -43,14 +42,19 @@ source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 
 
 
-# export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MANPATH"
+export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$HOME/Library/Python/3.8/man/man1:$MANPATH"
 export LANG="en_US.UTF-8"
 export LS_COLORS="$(vivid generate snazzy)"
 
-export BAT_THEME="OneHalfDark"
+# export BAT_THEME="OneHalfDark"
 export CHEAT_USE_FZF="true"
 export GTAGSLABEL="pygments" 
+# export $ZSH_THEME="dracula"
 
+# export DRACULA_DISPLAY_TIME=0
+# export DRACULA_DISPLAY_CONTEXT=1
+# export DRACULA_ARROW_ICON="|>" 
+# source ~/.oh-my-zsh/themes/dracula.zsh-theme
 
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/eo/.oh-my-zsh"
@@ -67,9 +71,12 @@ ZSH_CUSTOM="${HOME}/.oh-my-zsh/custom/plugins"
 
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # removed fast-syntax-highlighting from plugins list
-plugins=(git pyenv pylint fd jump colored-man-pages
-    colorize z jump cargo httpie stack extract
-    command-not-found tmux rust golang ripgrep)
+plugins=(git pyenv pylint fd jump tig colored-man-pages
+    colorize jump cargo httpie stack extract
+    command-not-found rust golang ripgrep
+    poetry virtualenv tmuxinator compleat cp mosh 
+    copydir copyfile lein gnu-utils fzf-tab
+    )
 
 source $ZSH/oh-my-zsh.sh
 
@@ -80,7 +87,9 @@ export EDITOR="nvim"
 
 #py3 nvim
 export PYTHON3_HOST_PROG="$HOME/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/python3.8"
- 
+
+
+#---------------------------------- FZF --------------------------------#
 export FZF_BASE="/usr/local/opt/fzf"
 export FZF_DEFAULT_OPTS="
     --layout=reverse
@@ -109,18 +118,17 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
 # export FZF_ALT_C_OPTS="fd -t d $FD_OPTIONS"
 
 
+#------------------------------- alias -----------------------------------#
+
 # alias -g julia="/Applications/Julia-1.4.app/Contents/Resources/julia/bin/julia"
 # alias -g config='git --git-dir=/Users/eo/.dotfiles/ --work-tree=/Users/eo'
 
 # alias -g preview="fzf --preview 'bat --color \"always\" {}'"
-
-# alias -g dotfiles=
-
 alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 
 alias -g j="jump"
 alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
-# --group-directories-first 
+
 alias -g lsa="exa --all -T -F --long --icons --git"
 alias -g help="tldr"
 
@@ -142,6 +150,8 @@ alias -g yt="youtube-dl --external-downloader aria2c"
 alias -g ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias -g localip="ipconfig getifaddr en0"
 
+
+#------------------------------ Pyenv -----------------------------------#
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
@@ -157,7 +167,7 @@ GITSTATUS_LOG_LEVEL=DEBUG
 
 # if [[ ! -d ~/.oh-my-zsh/custom/plugins/autopair.zsh ]]; then
 #     git clone https://github.com/hlissner/zsh-autopair ~/.zsh-autopair
-# fi
+# 
 
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
@@ -171,20 +181,18 @@ source /usr/local/share/zsh-history-substring-search/zsh-history-substring-searc
 fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
 
 autoload -Uz +X compinit && compinit -u
-# autoload -Uz promptinit && promptinit -u
-# autoload -Uz bashcompinit && bashcompinit
-eval "$(stack --bash-completion-script stack)"
-eval "$(thefuck --alias)"
+autoload -Uz bashcompinit && bashcompinit -u
 
 kitty + complete setup zsh | source /dev/stdin
+
+source ~/.bash_completion.d/compleat_setup
 
 ## zsh-history-substring-search key bindings
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-# attempt #1 08/18/20
+#--------------------------------f(x)s-----------------------------------#
 # Find-in-file -> usage: 'fif <SEARCH_TERM>'
-# 08/19/20 -> it works!
 fif() {
     if [ ! "$#" -gt 0 ]; then
         echo "Need a string to search for!";
@@ -195,3 +203,26 @@ fif() {
 $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }
 source ~/.fzf.zsh 
+
+
+#--------------------------- Haskell/GHC -------------------------------#
+GHC_PATH="stack path | grep compiler-bin | sed -e 's/compiler-bin: //'"
+export PATH="$PATH:$GHC_PATH"
+
+#----------------------------- Poetry --------------------------------- #
+export PATH="$HOME/.poetry/bin:$PATH"
+
+
+#----------------------------- fuck! -----------------------------------#
+eval $(thefuck --alias)
+
+#------------------------ Zoxide! (trial) ------------------------------#
+eval "$(zoxide init zsh)"
+#------------------------- fzf-tab-completion --------------------------#
+# source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+# # bindkey '^I' fzf_completion
+
+# zstyle ':completion:*' fzf-search-display true
+
+# # trial for file preview w/ ls using bat?
+# zstyle ':completion::*:ls::*' fzf-completion-opts --preview='bat {1}'

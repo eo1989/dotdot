@@ -15,12 +15,14 @@ export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libex
 
 
 #-------------------- Find OpenJDK ahead of sys java ----------------------# 
+export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:$PATH"
 export PATH="/usr/local/opt/openjdk/bin:$PATH"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
+
 
 #Go
 export GOPATH="$HOME/go"
@@ -56,35 +58,6 @@ export GTAGSLABEL="pygments"
 # export DRACULA_ARROW_ICON="|>" 
 # source ~/.oh-my-zsh/themes/dracula.zsh-theme
 
-# Path to your oh-my-zsh installation.
-export ZSH="/Users/eo/.oh-my-zsh"
-
-HYPHEN_INSENSITIVE="true"
-DISABLE_UPDATE_PROMPT="true"
-export UPDATE_ZSH_DAYS=2
-
-COMPLETION_WAITING_DOTS="true"
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-# HIST_STAMPS="mm/dd/yyyy"
-
-ZSH_CUSTOM="${HOME}/.oh-my-zsh/custom/plugins"
-
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# removed fast-syntax-highlighting from plugins list
-plugins=(git pyenv pylint fd jump tig colored-man-pages
-    colorize jump cargo httpie stack extract
-    command-not-found rust golang ripgrep
-    poetry virtualenv tmuxinator compleat cp mosh 
-    copydir copyfile lein gnu-utils fzf-tab
-    )
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-export EDITOR="nvim"
-
-
-
 #py3 nvim
 export PYTHON3_HOST_PROG="$HOME/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/python3.8"
 
@@ -98,7 +71,7 @@ export FZF_DEFAULT_OPTS="
     --multi
     --preview-window=:hidden
     --preview='([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200'
-     --ansi
+    --ansi
     --prompt='~ ' --pointer='▶' --marker='✓'
     --bind='?:toggle-preview' 
     --bind='ctrl-a:select-all'
@@ -117,6 +90,36 @@ export FZF_CTR_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
 # export FZF_ALT_C_OPTS="fd -t d $FD_OPTIONS"
 
+
+#---------------------------- OMZ -----------------------------------#
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/eo/.oh-my-zsh"
+
+HYPHEN_INSENSITIVE="true"
+DISABLE_UPDATE_PROMPT="true"
+export UPDATE_ZSH_DAYS=2
+
+COMPLETION_WAITING_DOTS="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# HIST_STAMPS="mm/dd/yyyy"
+
+ZSH_CUSTOM="$HOME/.oh-my-zsh/custom/plugins/"
+
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+plugins=(git pyenv pylint fd fzf jump tig colored-man-pages
+    colorize jump cargo httpie stack extract
+    command-not-found rust golang ripgrep
+    poetry virtualenv tmux tmuxinator compleat cp mosh 
+    copydir copyfile copybuffer lein dash fzf-tab
+    )
+
+source $ZSH/oh-my-zsh.sh
+
+
+
+#---------------------------- Everything Else ----------------------------#
+# User configuration
+export EDITOR="nvim"
 
 #------------------------------- alias -----------------------------------#
 
@@ -172,12 +175,7 @@ GITSTATUS_LOG_LEVEL=DEBUG
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
 
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-completions
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-# source /usr/local/bin/fzf/
 fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
 
 autoload -Uz +X compinit && compinit -u
@@ -186,6 +184,11 @@ autoload -Uz bashcompinit && bashcompinit -u
 kitty + complete setup zsh | source /dev/stdin
 
 source ~/.bash_completion.d/compleat_setup
+source /usr/local/share/zsh-completions
+source /Users/eo/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 ## zsh-history-substring-search key bindings
 bindkey '^[[A' history-substring-search-up
@@ -218,6 +221,10 @@ eval $(thefuck --alias)
 
 #------------------------ Zoxide! (trial) ------------------------------#
 eval "$(zoxide init zsh)"
+
+#------------------------ gh completion (trial) ------------------------------#
+eval "$(gh completion -s zsh)"
+
 #------------------------- fzf-tab-completion --------------------------#
 # source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
 # # bindkey '^I' fzf_completion

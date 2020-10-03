@@ -49,15 +49,14 @@ set shortmess+=c
 set signcolumn=yes
 set listchars=tab:->\ ,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 set showtabline=2
-set clipboard=unnamedplus 
+" set clipboard=unnamedplus 
 
-au BufEnter * set fo-=c fo-=r fo-=o
+" au BufEnter * set fo-=c fo-=r fo-=o
 
 
 call plug#begin('~/.vim/plugged')
 Plug 'terryma/vim-multiple-cursors'
 Plug 'fatih/vim-go', { 'for': 'Golang', 'do': ':GoInstallBinaries' } 
-" Plug 'mileszs/ack.vim'
 Plug 'wsdjeg/vim-scriptease'
 Plug 'mhinz/vim-grepper'
 Plug 'mhinz/vim-startify'
@@ -71,66 +70,69 @@ Plug 'tpope/vim-rhubarb'
   "Plug 'tpope/vim-commentary'
 
 Plug 'jiangmiao/auto-pairs'
-Plug 'mbbill/undotree'
+Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
+    let g:undotree_WindowLayout = 2
+    nnoremap <F7> :UndotreeToggle<CR>
 Plug 'easymotion/vim-easymotion'
 Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'scrooloose/nerdcommenter'
-" Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'ryanoasis/vim-devicons'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'} 
-" Plug 'tiagofumo/vim-nerdtree-syntax-highlight', {'on': 'NERDTreeToggle'}
-" Plug 'liuchengxu/nerdtree-dash'
-" Plug 'her/synicons.vim'
 Plug 'kien/tabman.vim'
-Plug 'majutsushi/tagbar'
-Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
-Plug 'liuchengxu/vista.vim', {'on': 'Vista'}
+Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
+    nmap <F8> :TagbarToggle<CR>
+Plug 'liuchengxu/vista.vim', {'on': 'Vista'} | Plug 'liuchengxu/vim-clap', {'do': ':Clap install-binary'}
+
 " Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-" Plug 'liuchengxu/eleline.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-" Colorscheme
+Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes' 
+Plug 'rizzatti/dash.vim', { 'on': 'Dash' }
+
+" Colorscheme             
 Plug 'liuchengxu/space-vim-theme', {'as': 'space-vim-theme'}
 Plug 'connorholyday/vim-snazzy', {'as': 'snazzy'}
 Plug 'dracula/vim', {'as': 'dracula'}
-Plug 'sheerun/vim-polyglot'
-	let g:polyglot_disabled = ['python']
+Plug 'sheerun/vim-polyglot', {'for': ['haskell',  'julia', 'rust', 'typescript',
+                             \'golang', 'javascript', 'scala', '']}
+let g:polyglot_disabled = ['python']             
 Plug 'joshdick/onedark.vim', {'as': 'onedark'}
 Plug 'patstockwell/vim-monokai-tasty', {'as': 'monokai_tasty'}
 Plug 't9md/vim-choosewin'
-Plug 'neoclide/coc.nvim', {'do': {-> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 
                                     \'do': ':UpdateRemotePlugins'}
-" Plug 'vim-scripts/YankRing.vim'
-" Plug 'ervandew/supertab'
 Plug 'google/vim-searchindex'
-" Plug 'dense-analysis/ale'
 Plug 'skywind3000/asynctasks.vim'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'pedsm/sprint'
 Plug 'masukomi/rainbow_parentheses.vim'
-" Plug 'luochen1990/rainbow'
-" Plug 'jlanzarotta/bufexplorer'
-Plug 'haya14busa/is.vim'
-" Plug 'haya14busa/incsearch.vim'
+Plug 'haya14busa/is.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'Yggdroot/indentLine'
 Plug 'seletskiy/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'vn-ki/coc-clap', {'do': function('clap#helper#build_all')}
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'jpalardy/vim-slime'
     let g:slime_target = "tmux"
+Plug 'voldikss/vim-floaterm'
+
+Plug 'nvim-treesitter/nvim-treesitter'
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Clojure
+Plug 'kovisoft/paredit', {'for': 'Clojure'}
+    let g:paredit_smartjump = 1
+Plug 'tpope/vim-fireplace', {'for': 'Clojure'}
+Plug 'guns/vim-clojure-static', {'for': 'Clojure'}
+    let g:clojure_maxlines = 60
+    set lispwords+=match
+    let g:clojure_fuzzy_indent_patterns = ['^with', '^def', '^let']
+Plug 'guns/vim-clojure-highlight', {'for': 'Clojure'}
+Plug 'guns/vim-slamhound', {'for': 'Clojure'}
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Haskell
-" Plug 'eagletmt/neco-ghc'
-" Plug 'sdiehl/vim-ormolu', { 'for': 'haskell' }
-Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-Plug 'sbdchd/neoformat', {'for': 'haskell'}
+Plug 'neovimhaskell/haskell-vim', {'for': 'haskell'}
+Plug 'sbdchd/neoformat', {'for': ['haskell', 'python']}
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JS
-Plug 'MaxMellon/vim-jsx-pretty', {'for': 'javascript'}
-Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Julia
 Plug 'JuliaEditorSupport/julia-vim'
@@ -139,18 +141,25 @@ Plug 'JuliaEditorSupport/julia-vim'
 " Plug 'psf/black', {'branch': 'stable' }
 Plug 'numirias/semshi', {'for': 'python',
                         \ 'do': ':UpdateRemotePlugins' }
-    let g:semshi#filetypes = ['python']
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rust
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Typescript
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TS/JS
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
+Plug 'MaxMellon/vim-jsx-pretty', {'for': 'javascript'}
+Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 
 
 call plug#end() 
+
+set completeopt=noselect,menuone,preview
+" set completeopt+=longest
+set wildmenu
+set wildmode=list:longest,full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 
 
 let g:NERDSpaceDelims = 1
@@ -167,12 +176,18 @@ let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
 let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 let g:DevIconsEnableFoldersOpenClose = 1
 
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+	ensure_installed = "all",
+	highlight = {
+		enable = true,
+		disable = { "c", "haskell", "scala" },
+	},
+}
+EOF
 
-let g:yankring_history_dir = '~/.config/nvim/'
-let g:yankring_clipboard_monitor = 1
-
-
-let g:semshi#filetypes = ['python']
+" let g:polyglot_disabled = ['python']             
+" let g:semshi#filetypes = ['python']
 
 let g:tabman_toggle = '<leader>mt'
 let g:tabman_focus = '<leader>mf'
@@ -200,16 +215,11 @@ let g:tagbar_type_julia = {
 
 
 
-map <Leader>r :source ~/.vimrc<CR>
+map <Leader>re :source ~/.vimrc<CR>
 
-nnoremap <Leader>o <cmd>CHADopen<CR>
+nmap <F6> <cmd>CHADopen<CR>
 
-nnoremap <F5> :UndotreeToggle<CR>
-nmap <F8> :TagbarToggle<CR>
 nmap <F9> :Vista!!<CR>
-
-" map <F3> :NERDTreeToggle<CR>
-" nmap <leader>t :NERDTreeFind<CR>
 
 let g:AutoPairsFlyMode = 1
 let g:AutoPairsShortcutBackInsert = '<M-b>'
@@ -225,7 +235,6 @@ augroup RainbowParentheses
     au Syntax * RainbowParenthesesLoadChevrons
 augroup END
 
-"let g:rainbow_active = 1
 
 " let g:onedark_hide_endofbuffer = 1
 " let g:onedark_terminal_italics = 1
@@ -253,8 +262,9 @@ noremap <Leader>x :bn<CR>
 noremap <Leader>c :bd<CR>
 
 " Clean hlsearch
-nnoremap <Leader><space> :noh<cr>
+nnoremap <silent><expr><Leader><Space><Space> :noh <CR>
 
+let g:incsearch#auto_nohlsearch = 1
 " Splitting
 noremap <Leader>hs :<C-u>split<CR>
 noremap <Leader>vs :<C-u>vsplit<CR>
@@ -317,23 +327,11 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
-" old plugin version, keeping the settings just in case I return to it.
-""" hayabusa incsearch bindings
-" set hlsearch
-let g:incsearch#auto_nohlsearch = 1
-" map / <Plug>(incsearch-forward)
-" map ? <Plug>(incsearch-backward)
-" map g/ <Plug>(incsearch-stay)
-" " :h g:incsearch#auto_nohlsearch
-" map n <Plug>(incsearch-nohl-n)
-" map N <Plug>(incsearch-nohl-N)
-" map * <Plug>(incsearch-nohl-*)
-" map # <Plug>(incsearch-nohl-#)
-" map g* <Plug>(incsearch-nohl-g*)
-" map g# <Plug>(incsearch-nohl-g#)
 
 "~~~~~~~~~~~~~~~~~~~~~rm trailing whitespaces~~~~~~~~~~~~~~~~~"
 command! FixWhitespace :%s/\s\+$//e
+
+
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~F(x)~~~~~~~~~~~~~~~~~~~~~"
 if !exists('*s:setupWrapping')
@@ -460,7 +458,7 @@ nmap <leader>lf  <Plug>(coc-format-selected)
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  autocmd FileType typescript,json,python,markdown,golang,viml setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
@@ -496,15 +494,15 @@ xmap <silent> <C-s> <Plug>(coc-range-select)
 command! -nargs=0 Format :call CocAction('format')
 
 " Add `:Fold` command to fold current buffer.
-" command! -nargs=? Fold :call CocAction('fold', <f-args>)
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 "~~~~~~~~~~~~~~~~~~~~~ Coc-Explorer ~~~~~~~~~~~~~~~~~~~~~~~~~"
 
@@ -554,40 +552,54 @@ nmap <space>ep :CocList explPresets
 
 
 
-"~~~~~~~~~~~~~~~~~~~Mappings for CoCList
-" Show all diagnostics.
+"~~~~~~~~~~~~~~~~~~~~~~~ Mappings for CoCList ~~~~~~~~~~~~~~~~~~~~~~~~"
+"Show all diagnostics.
 nnoremap <silent> <leader>ld  :<C-u>CocList diagnostics<cr>
+
 " Manage extensions.
 nnoremap <silent> <leader>le  :<C-u>CocList extensions<cr>
+
 " Show commands.
 nnoremap <silent> <leader>lc  :<C-u>CocList commands<cr>
+
 " Find symbol of current document.
 nnoremap <silent> <leader>lo  :<C-u>CocList outline<cr>
+
 " Search workspace symbols.
 nnoremap <silent> <leader>ls  :<C-u>CocList -I symbols<cr>
+
 " Do default action for next item.
 nnoremap <silent> <leader>lj  :<C-u>CocNext<CR>
+
 " Do default action for previous item.
 nnoremap <silent> <leader>lk  :<C-u>CocPrev<CR>
+
 " Resume latest coc list.
 nnoremap <silent> <leader>lp  :<C-u>CocListResume<CR>
+
 " Find files in cwd.
 nnoremap <silent> <leader>ll :<C-u>CocList locationlist<CR>
+
 " Find buffers
 nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>
 
 " CocSEARCH
 " nnoremap <silent> <leader>lr :<C-u>CocSearch <C-R>=expand("<cword>")<CR><CR>
-nnoremap <leader>rw :CocSearch <C-R><C-W><CR>
+nnoremap <silent> <leader>rw :CocSearch <C-R><C-W><CR>
+
 " Use Marketplace
-nnoremap <leader>lm :<C-u>CocList marketplace<CR>
+nnoremap <silent> <leader>lm :<C-u>CocList marketplace<CR>
+
+" Coc-yank
+nnoremap <silent> <leader>ly  :<C-u>CocList -A --normal yank<cr>
+
+
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
 
 let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
 let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
-
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ WhichKey ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
@@ -646,9 +658,11 @@ if !exists('g:airline_symbols')
 else
     let g:webdevicons_enable = 1
 endif
+
 if exists("*fugitive#statusline")
      set statusline+=%{fugitive#statusline()}
 endif
+
 " onedark "base16_snazzy" "dracula"
 
 let g:airline_theme = "base16_snazzy"
@@ -663,9 +677,9 @@ let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-let g:airline#extensions#vista#enabled = 1
+let g:airline#extensions#vista#enabled = 0
 
-" let g:airline#extensions#tabws#enabled = 1
+let g:airline#extensions#tabws#enabled = 0
 let g:airline#extensions#tagbar#enabled = 1
 
 let g:airline#extensions#keymap#enabled = 1
@@ -683,38 +697,6 @@ let g:airline#extensions#tabline#close_symbol = 'X'
 
 let g:airline#extensions#whitespace#enabled = 0   
 let b:airline_whitespace_disabled = 1
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALE Linting~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" let g:ale_linters_explicit = 1
-" let g:ale_linters = {'python': ['Pylint', 'flake8'], 'javascript': ['eslint']}
-" let g:ale_fixers = {
-" \   '*': ['remove_trailings_lines', 'trim_whitespace'],
-" \   'javascript': ['prettier', 'eslint'],
-" \   'python': ['black', 'autopep8', 'mypy']}
-" let g:ale_lint_on_text_changed = 'never'
-" let g:ale_lint_on_enter = 0
-" let g:ale_lint_on_save = 0
-
-
-"~~~~~~~~~~~~~~~~~~~~~ Kite AutoComplete ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" let g:KiteAutoEnable = 0
-" let g:kite_supported_languages = ['python']
-" let g:kite_auto_complete=1
-" let g:kite_snippets=1
-" let g:kite_tab_complete=1
-" let g:kite_documentation_continual=0
-" let g:kite_log=1
-" " let g:kite_previous_placeholder = '<C-H>'
-" " let g:kite_next_placeholder = '<C-L>'
-
-"  set completeopt+=menuone   " show the popup menu even when there is only 1 match
-"  set completeopt+=noinsert  " don't insert any text until user chooses a match
-"  set completeopt-=longest   " don't insert the longest common text
-"  set completeopt+=preview
-
-" autocmd CompleteDone * if !pumvisible() | pclose | endif
-
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
@@ -743,11 +725,13 @@ function! NearestMethodOrFunction() abort
 	return get(b:, 'vista_nearest_method_or_function', '')
 endfunction
 
-set statusline+=%{NearestMethodOrFunction()}
 
+if exists("*NearestMethodOrFunction")
+	set statusline+=%{NearestMethodOrFunction()}
+endif
 " to autmoatically show the nearetst fx in statusline automatically
 " need to add this:
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+" autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 let g:vista_log_file = expand('~/vista.log')
 
@@ -756,9 +740,6 @@ let g:vista_log_file = expand('~/vista.log')
 let $BAT_THEME = 'Sublime Snazzy'
 let g:fzf_layout = {'window': 'call OpenFloatingWin()'}
 
-set wildmenu
-set wildmode=list:longest,full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 
 
 " Ripgrep
@@ -865,3 +846,35 @@ au FileType rust nmap <Leader>gd <Plug>(rust-doc)
 
 " TScript
 let g:yats_host_keyword = 1
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALE Linting~~~~~~~~~~~~~~~~~~~~~~~~~~"
+" let g:ale_linters_explicit = 1
+" let g:ale_linters = {'python': ['Pylint', 'flake8'], 'javascript': ['eslint']}
+" let g:ale_fixers = {
+" \   '*': ['remove_trailings_lines', 'trim_whitespace'],
+" \   'javascript': ['prettier', 'eslint'],
+" \   'python': ['black', 'autopep8', 'mypy']}
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_lint_on_enter = 0
+" let g:ale_lint_on_save = 0
+
+
+"~~~~~~~~~~~~~~~~~~~~~ Kite AutoComplete ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+" let g:KiteAutoEnable = 0
+" let g:kite_supported_languages = ['python']
+" let g:kite_auto_complete=1
+" let g:kite_snippets=1
+" let g:kite_tab_complete=1
+" let g:kite_documentation_continual=0
+" let g:kite_log=1
+" " let g:kite_previous_placeholder = '<C-H>'
+" " let g:kite_next_placeholder = '<C-L>'
+
+"  set completeopt+=menuone   " show the popup menu even when there is only 1 match
+"  set completeopt+=noinsert  " don't insert any text until user chooses a match
+"  set completeopt-=longest   " don't insert the longest common text
+"  set completeopt+=preview
+" autocmd CompleteDone * if !pumvisible() | pclose | endif
+
+

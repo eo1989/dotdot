@@ -4,15 +4,18 @@ syntax on
 
 let g:mapleader = "\<Space>"
 
-if (has("termguicolors"))
-    set termguicolors
-endif
+set termguicolors
 " set nocompatible " incase vim is used from time to time
 
 
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vista,CHADTree setlocal signcolumn=no
 
+set completeopt=menuone,noinsert,noselect
+set wildmenu
+" set wildmode=list:longest,full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
+set omnifunc=v:lua.vim.lsp.omnifunc
 set mouse=a
 set guifont=Fira\ Code:h14:cANSI
 set nowrap
@@ -22,7 +25,7 @@ set laststatus=2
 set switchbuf=useopen 	    " reveal already opened files from
 		                	" the quick fix window instead of opening new buffers
 set updatetime=500 	    " Speed up updatetime so gitgutter & friends are quicker
-set visualbell 
+set novisualbell 
 set noerrorbells
 set showmatch
 set gdefault
@@ -31,7 +34,6 @@ set hidden		" hide buffers instead of closing them, this means
 			    " w/o being written; & that marks & undo hist are
 			    " preserved
 set rnu nu
-" set conceallevel=3
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -59,17 +61,18 @@ set showtabline=2
 
 call plug#begin('~/.vim/plugged')
 Plug 'terryma/vim-multiple-cursors'
+
 Plug 'fatih/vim-go', { 'for': 'Golang', 'do': ':GoInstallBinaries' } 
-Plug 'wsdjeg/vim-scriptease'
+
+Plug 'wsdjeg/vim-scriptease' " What am I using this for?
 Plug 'mhinz/vim-grepper', {'on': 'GrepperRg'}
 Plug 'mhinz/vim-startify'
 Plug 'tpope/vim-surround'
-Plug 'airblade/vim-gitgutter', {'on': ['GitGutterSignsToggle']}
-    let g:gitgutter_enabled = 1
-    let g:gitgutter_signs = 0
+Plug 'airblade/vim-gitgutter' ", {'on': ['GitGutterSignsToggle']}
+    let g:gitgutter_signs = 1
     let g:gitgutter_map_keys = 0
-    let g:gitgutter_eager = 0
-    let g:gitgutter_realtime = 0
+    let g:gitgutter_eager = 1
+    let g:gitgutter_realtime = 1
     " nmap <leader>gg :GitGutterSignsToggle<CR>
 Plug 'tpope/vim-fugitive'	    "git
 Plug 'tpope/vim-rhubarb'
@@ -94,13 +97,14 @@ Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'kien/tabman.vim', {'on': 'TMToggle'}
 Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
     nmap <F8> :TagbarToggle<CR>
-Plug 'liuchengxu/vista.vim', {'on': 'Vista'} | Plug 'liuchengxu/vim-clap', {'do': ':Clap install-binary'}
+Plug 'liuchengxu/vista.vim' | Plug 'liuchengxu/vim-clap', {'do': ':Clap install-binary',
+            \ 'on': 'Vista' }
 
 " Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes' 
 Plug 'rizzatti/dash.vim', { 'on': 'Dash' }
 
-" Colorscheme             
+" Colorschemes             
 Plug 'liuchengxu/space-vim-theme', {'as': 'space-vim-theme'}
 Plug 'connorholyday/vim-snazzy', {'as': 'snazzy'}
 Plug 'dracula/vim', {'as': 'dracula'}
@@ -112,18 +116,23 @@ Plug 'challenger-deep-theme/vim', {'as': 'challenge'}
 Plug 'KeitaNakamura/neodark.vim', {'as': 'neodark'}
 
 
-" let g:polyglot_disabled = ['python', 'go', 'rust']             
-Plug 'sheerun/vim-polyglot', {'for': ['Golang', 'Haskell', 'Scala']}                          
+" let g:polyglot_disabled = ['python', 'rust']             
+" Plug 'sheerun/vim-polyglot' ", {'for': ['Golang', 'Haskell', 'Scala']}                          
 
 Plug 't9md/vim-choosewin'
+Plug 'itchyny/vim-parenmatch'
+	let g:loaded_matchparen = 1
 
-Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'itchyny/vim-gitbranch'
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile',
+							\ 'for': ':CocEnable'}
 
 Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 
                                     \'do': ':UpdateRemotePlugins'}
-Plug 'google/vim-searchindex'
-Plug 'skywind3000/asynctasks.vim'
-Plug 'skywind3000/asyncrun.vim'
+Plug 'google/vim-searchindex' | Plug 'romainl/vim-cool'
+" Plug 'skywind3000/asynctasks.vim'
+" Plug 'skywind3000/asyncrun.vim'
+Plug 'neomake/neomake' ", {'on': :Make'}
 Plug 'pedsm/sprint'
 Plug 'masukomi/rainbow_parentheses.vim'
 Plug 'haya14busa/is.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
@@ -136,22 +145,25 @@ Plug 'jpalardy/vim-slime'
 
 Plug 'voldikss/vim-floaterm'
 
+Plug 'vim-utils/vim-man'
 Plug 'nvim-treesitter/nvim-treesitter'
     Plug 'nvim-treesitter/nvim-treesitter-refactor'
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
     Plug 'nvim-treesitter/playground'
 
-Plug 'neovim/nvim-lspconfig'
+
 Plug 'nvim-lua/completion-nvim'
-Plug 'tjdevries/nlua.nvim'
-Plug 'tjdevries/lsp_extensions.nvim'
-Plug 'nvim-lua/lsp-status.nvim'
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'nvim-lua/lsp-status.nvim'
+    Plug 'nvim-treesitter/completion-treesitter'
+    Plug 'aca/completion-tabnine', {'do': './install.sh'}
+    Plug 'tjdevries/nlua.nvim'
+    Plug 'tjdevries/lsp_extensions.nvim'
 
 " telescope req's
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/telescope.nvim'
-
+    Plug 'nvim-lua/popup.nvim'
+    Plug 'nvim-lua/plenary.nvim'
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Clojure
 Plug 'kovisoft/paredit', {'for': 'Clojure'}
     let g:paredit_smartjump = 1
@@ -173,9 +185,9 @@ Plug 'JuliaEditorSupport/julia-vim'
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python
 " Plug 'psf/black', {'branch': 'stable' }
-Plug 'microsoft/vscode-python', {'for': 'python'}
-Plug 'numirias/semshi', {'for': 'python', 'do': ':UpdateRemotePlugins' }
-	let g:semshi#filetypes = ['python']
+" Plug 'microsoft/vscode-python', {'for': 'python'}
+" Plug 'numirias/semshi', {'for': 'python', 'do': ':UpdateRemotePlugins' }
+	" let g:semshi#filetypes = ['python']
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rust
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'racer-rust/vim-racer', { 'for': 'rust' }
@@ -189,18 +201,26 @@ Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 
 call plug#end()
 
-let loaded_matchparen = 1
 
 if executable('rg')
     let g:rg_derive_root='true'
 endif
 
+function! MyOnBattery()
+	if has('macunix')
+		return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
+	elseif has ('unix')
+		return readfile('/sys/class/power_supply/AC/online') == ['0']
+	endif
+	return 0
+endfunction
 
-set completeopt=menuone,noinsert,preview
-" set completeopt+=longest
-set wildmenu
-set wildmode=list:longest,full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
+if MyOnBattery()
+	call neomake#configure#automake('w')
+else
+	call neomake#configure#automake('nw', 1000)
+endif
+
 
 " --- vim go (polyglot) settings.
 let g:go_highlight_build_constraints = 1
@@ -233,38 +253,186 @@ let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 let g:DevIconsEnableFoldersOpenClose = 1
 
 
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+" lsp_status.config {
+"     select_symbol = function(cursor_pos, symbol)
+"         if symbol.valueRange then
+"             local value_range = {
+"                 ["start"] = {
+"                     character = 0,
+"                     line = vim.fn.byte2line(symbol.valueRange[1])
+"                 },
+"                 ["end"] = {
+"                     character = 0,
+"                     line = vim.fn.byte2line(symbol.valueRange[2])
+"                 }
+"             }
+
+"             return require("lsp-status.util").in_range(cursor_pos, value_range)
+"         end
+"     end
+" }
+
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
 	ensure_installed = "all",
 	highlight = {
 		enable = true,
-		disable = { "c", "haskell", "scala", "Golang" },
 	},
 }
 EOF
+
+let g:completion_auto_change_source = 1
+let g:completion_enale_auto_paren = 1
+let g:completion_enable_snippet = 'Ultisnips'
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+let g:completion_confirm_key = ""
+imap <expr> <cr>  pumvisible() ? complete_info()["selected"] != "-1" ?
+			\ "\<Plug>(completion_confirm_completion)"  :
+			\ "\<c-e>\<CR>" : "\<CR>"
+
+let g:completion_chain_complete_list = {
+			\'default' : {
+			\	'default' : [
+			\		{'complete_items' : ['lsp', 'snippet']},
+			\		{'complete_items' : ['tabnine']},
+			\		{'complete_items' : ['path'], 'triggered_only': ['/']},
+			\		{'mode' : [ '<TAB>', 'cmd', 'file']}
+			\	],
+			\	'comment' : [],
+			\	'string' : []
+			\	},
+            \'vim' : [
+            \	{'complete_items': ['lsp', 'snippet']},
+            \	{'mode' : 'cmd'},
+            \   {'mode' : '<TAB>'}
+            \	],
+            \'c' : [
+            \	{'complete_items': ['ts', 'lsp', 'tabnine']},
+            \   {'mode' : '<TAB>'}
+            \	],
+            \'python' : [
+            \	{'complete_items': ['lsp', 'ts', 'snippet', 'tabnine']},
+            \   {'mode' : '<TAB>'}
+            \	],
+            \'lua' : [
+            \	{'complete_items': ['lsp', 'ts', 'tabnine', 'snippet']},
+            \   {'mode' : '<TAB>'}
+            \	],
+            \'golang' : [
+            \   {'complete_items': ['ts', 'lsp', 'snippet']},
+            \   {'mode' : '<TAB>'}
+            \   ],
+            \'rust' : [
+            \   {'complete_items': ['ts', 'lsp', 'snippet']},
+            \   {'mode' : '<TAB>'}
+            \   ],
+            \'haskell' : [
+            \   {'complete_items': ['lsp', 'snippet']},
+            \   {'mode' : '<TAB>'}
+            \   ],
+            \'bash' : [
+            \   {'complete_items': ['ts', 'lsp', 'snippets']}
+            \   ],
+            \}
+
+
+autocmd BufEnter,BufWinEnter * lua require'completion'.on_attach()
+
+
+lua << EOF
+local lsp_status = require('lsp-status')
+lsp_status.register_progress()
+local on_attach_vim = function(client)
+	require'completion'.on_attach(client)
+	require'diagnostic'.on_attach(client)
+end
+require'nvim_lsp'.pyls_ms.setup{on_attach=on_attach_vim}
+require'nvim_lsp'.hls.setup{}
+require'nvim_lsp'.gopls.setup{}
+EOF
+
+nmap <tab> <Plug>(completion_smart_tab)
+nmap <s-tab> <Plug>(completion_smart_s_tab)
+" inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 lua require'nvim_lsp'.tsserver.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.clangd.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.gopls.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.rust_analyzer.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.sumneko_lua.setup{ on_attach=require'completion'.on_attach }
-lua require'nvim_lsp'.pyright-langserver.setup{ on_attach=require'completion'.on_attach }
+lua require'nvim_lsp'.pyls_ms.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.vimls.setup{ on_attach=require'completion'.on_attach }
-lua require'nvim_lsp'.hls.setup{ on_attach=require'completion'.on_attach } 
+" lua require'nvim_lsp'.bls.setup{ on_attach=require'completion'.on_attach }
+"
+" lua << END
+" local lsp_status = require('lsp-status')
+" lsp_status.register_progress()
 
-" lua vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-" lua vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-" lua vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>', opts)
+" local nvim_lsp = require('nvim_lsp')
 
-" let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
-" require'nvim_lsp'.tsserver.setup{ on_attach=require'completion'.on_attach }
-" require'nvim_lsp'.clangd.setup{ on_attach=require'completion'.on_attach }
-" require'nvim_lsp'.gopls.setup{ on_attach=require'completion'.on_attach }
-" require'nvim_lsp'.rust_analyzer.setup{ on_attach=require'completion'.on_attach }
-" require'nvim_lsp'.sumneko_lua.setup{ on_attach=require'completion'.on_attach }
-" require'nvim_lsp'.pyls.setup{ on_attach=require'completion'.on_attach }
+" nvim_lsp.clangd.setup({
+"     callbacks = lsp_status.extensions.clangd.setup(),
+"     init_options = {
+"         clangdFileStatus = true
+"     },
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.pyls_ms.setup({
+"     callbacks = lsp_status.extensions.pyls_ms.setup(),
+"     settings = { python = { workspaceSymbols = { enabled = strue }}},
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.ghcide.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.rust_analyzer.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.hls.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.gopls.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.sumneko_lua.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.tsserver.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+
+" nvim_lsp.vimls.setup({
+"     on_attach = lsp_status.on_attach,
+"     capabilities = lsp_status.capabilities
+" })
+" END
+
+" Statusline for lsp_status
+function! LspStatus() abort
+    if luaeval('#vim.lsp.buf_get_clients() > 0')
+        return luaeval("require('lsp-status').status()")
+    endif
+
+    return ''
+endfunction
+
 
 
 nnoremap <leader>gd :lua vim.lsp.buf.definition()<CR>
@@ -274,23 +442,18 @@ nnoremap <leader>grr :lua vim.lsp.buf.references()<CR>
 nnoremap <leader>grn :lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh :lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>gca :lua vim.lsp.buf.code_action()<CR>
+" nnoremap <leader>gwk :lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <leader>gty :lua vim.lsp.buf.type_definition()<CR>
+nnoremap <leader>gdc :lua vim.lsp.buf.document_symbol()<CR>
 
-" nnoremap <leader>gc :GBranches<CR>
-" nnoremap <leader>ga :Git fetch --all<CR>
-" nnoremap <leader>grum :Git rebase upstream/master<CR>
-" nnoremap <leader>grom :Git rebase origin/master<CR>
-nnoremap <leader>ghw :h <C-R>=expand("<cword>")<CR><CR>
-nnoremap <leader>prw :CocSearch <C-R>=expand("<cword>")<CR><CR>
+
+nnoremap <leader>gH :h <C-R>=expand("<cword>")<CR><CR>
+" nnoremap <leader>prw :CocSearch <C-R>=expand("<cword>")<CR><CR>
 nnoremap <leader>pw :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
-nnoremap <leader>bs /<C-R>=escape(expand("<cWORD>"), "/")<CR><CR>
-" nnoremap <leader>h :wincmd h<CR>
-" nnoremap <leader>j :wincmd j<CR>
-" nnoremap <leader>k :wincmd k<CR>
-" nnoremap <leader>l :wincmd l<CR>
-" nnoremap <leader>u :UndotreeShow<CR>
+" nnoremap <leader>bs /<C-R>=escape(expand("<cWORD>"), "/")<CR><CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For >")})<CR>
-nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
+" nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
 nnoremap <Leader>pf :Files<CR>
 " nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
@@ -298,8 +461,12 @@ nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>rp :resize 100<CR>
 nnoremap <Leader>ee oif err != nil {<CR>log.Fatalf("%+v\n", err)<CR>}<CR><esc>kkI<esc
 
-" let g:polyglot_disabled = ['python']             
-" let g:semshi#filetypes = ['python']
+
+
+lua<<EOF
+EOF
+
+
 
 let g:tabman_toggle = '<leader>mt'
 let g:tabman_focus = '<leader>mf'
@@ -335,7 +502,6 @@ nmap <F9> :Vista!!<CR>
 
 let g:AutoPairsFlyMode = 1
 let g:AutoPairsShortcutBackInsert = '<M-b>'
-" let g:AutoPairs['<']='>'
 
 "" testing masukomi/rainbowParentheses
 augroup RainbowParentheses
@@ -413,10 +579,6 @@ highlight ColorColumn ctermbg=0 guibg=lightgrey
 nmap  -  <Plug>(choosewin)
 " show big letters
 let g:choosewin_overlay_enable = 1
-
-
-" let python_highlight_all = 1
-
 let g:Hexokinase_highlighters = ['virtual']
 
 " save as sudo
@@ -444,6 +606,8 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 " Move to word
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+au TextYankPost * silent! lua vim.highlight.on_yank()
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~autocmd rules~~~~~~~~~~~~~~~~~~~~"
@@ -763,17 +927,22 @@ let g:airline#extensions#fugitiveline#enabled = 1
 let g:airline#extensions#grepper#enabled = 1
 let g:airline#extensions#fzf#enabled = 1
 let g:airline#extensions#hunks#enabled = 1
-let g:airline#extensions#lsp#enabled = 1
+let g:airline#extensions#nvimlsp#enabled = 1
+let g:airline#extensions#nvimlsp#error_symbol = 'E:'
+let g:airline#extensions#nvimlsp#warning_symbol = 'W:'
 let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_section_z = "" " disable the line info
 let g:airline#extensions#vista#enabled = 0
 
+
 let g:airline#extensions#tabws#enabled = 0
 let g:airline#extensions#tagbar#enabled = 1
 
 let g:airline#extensions#keymap#enabled = 1
+let g:airline#extensions#quickfix#quickfix_text = 'QuickFix'
+let g:airline#extensions#quickfix#location_text = 'Location'
 
 let g:airline#extensions#coc#enabled = 0
 let g:airline#extensions#hunks#coc_git = 0
@@ -781,6 +950,9 @@ let g:airline_skip_empty_sections = 1
 
 let g:airline#extensions#windowswap#enabled = 1
 
+let g:airline#extensions#tabline#current_first = 1
+let g:airline#extensions#tabline#show_tabs = 1
+let g:airline#extensions#tabline#show_tab_count = 2
 let g:airline#extensions#tabline#show_tab_type = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#show_close_button = 1
@@ -791,7 +963,7 @@ let b:airline_whitespace_disabled = 1
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-let g:vista_default_executive = 'fzf'
+let g:vista_default_executive = 'ctags'
 let g:vista_echo_cursor_strategy = ['both']
 
 let g:vista_ctags_cmd = {
@@ -800,16 +972,19 @@ let g:vista_ctags_cmd = {
 	\ 'python': 'ctags'
     \}
 
-let g:vista#renderer#enable_icon = 1
-let g:vista#renderer#icons = {
-    \ "function": "\uf794",
-    \ "variable": "\uf71b",
-    \}
+if exists('g:vista#renderer#icons') || exists('g:airline_powerline_fonts')
+    let g:vista#renderer#enable_icon = 1
+        let g:vista#renderer#icons = {
+        \ "function": "\uf794",
+        \ "variable": "\uf71b",
+        \}
+endif
+
 let g:vista_fzf_preview = ['right:60%:wrap']
 let g:vista_executive_for = {
-    \ 'cpp': 'coc',
-    \ 'py':  'coc',
-    \ 'rls': 'coc',
+    \ 'cpp': 'nvim_lsp',
+    \ 'py':  'nvim_lsp',
+    \ 'rls': 'nvim_lsp',
     \}
 
 function! NearestMethodOrFunction() abort
@@ -913,16 +1088,6 @@ let g:UltiSnipsEditSplit="vertical"
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 " Haskell
-" let g:haskell_indent_if = 3
-" let g:haskell_indent_case = 2
-" let g:haskell_indent_let = 4
-" let g:haskell_indent_where = 6
-" let g:haskell_indent_before_where = 2
-" let g:haskell_indent_after_bare_where = 2
-" let g:haskell_indent_do = 3
-" let g:haskell_indent_in = 1
-" let g:haskell_indent_guard = 2
-" let g:haskell_indent_case_alternative = 1
 let g:haskell_conceal_wide = 1
 let g:haskell_multiline_strings = 1
 "let g:necoghc_enable_detailed_browse = 1
@@ -949,23 +1114,3 @@ let g:yats_host_keyword = 1
 " let g:ale_lint_on_text_changed = 'never'
 " let g:ale_lint_on_enter = 0
 " let g:ale_lint_on_save = 0
-
-
-"~~~~~~~~~~~~~~~~~~~~~ Kite AutoComplete ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-" let g:KiteAutoEnable = 0
-" let g:kite_supported_languages = ['python']
-" let g:kite_auto_complete=1
-" let g:kite_snippets=1
-" let g:kite_tab_complete=1
-" let g:kite_documentation_continual=0
-" let g:kite_log=1
-" " let g:kite_previous_placeholder = '<C-H>'
-" " let g:kite_next_placeholder = '<C-L>'
-
-"  set completeopt+=menuone   " show the popup menu even when there is only 1 match
-"  set completeopt+=noinsert  " don't insert any text until user chooses a match
-"  set completeopt-=longest   " don't insert the longest common text
-"  set completeopt+=preview
-" autocmd CompleteDone * if !pumvisible() | pclose | endif
-
-

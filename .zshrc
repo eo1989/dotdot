@@ -6,19 +6,19 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 #------------------------------- Homebrew ---------------------------------#
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:/usr/share:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:$PATH"
 
 
 #------------------------------ extra paths -------------------------------#
 export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
-export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$HOME/Library/Python/3.8/bin:$PATH"
+export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
 
 
 #-------------------- Find OpenJDK ahead of sys java ----------------------# 
 export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:$PATH"
 export PATH="/usr/local/opt/openjdk/bin:$PATH"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
-export CPPFLAGS="-I/usr/local/opt/openjdk/include"
+# export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
@@ -48,7 +48,7 @@ export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$HOME/Library
 export LANG="en_US.UTF-8"
 export LS_COLORS="$(vivid generate snazzy)"
 
-# export BAT_THEME="OneHalfDark"
+export BAT_THEME="Sublime Snazzy"
 export CHEAT_USE_FZF="true"
 export GTAGSLABEL="pygments" 
 # export $ZSH_THEME="dracula"
@@ -83,12 +83,10 @@ export FZF_DEFAULT_OPTS="
  
 FD_OPTIONS="--color auto --follow --hidden --exclude '.git' --exclude 'node_modules'"
 export FZF_DEFAULT_COMMAND="fd $FD_OPTIONS"
-# export FZF_PREVIEW_OPTS="bat --style=full --wrap=auto --color=always {} || cat {} || tree -C {}"
+
 export FZF_CTR_T_COMMAND="$FZF_DEFAULT_COMMAND"
-# export FZF_CTRL_T_OPTS="fd "$FD_OPTIONS" --preview-window=right:60% --preview-window=noborder --preview='${FZF_PREVIEW_OPTS} 2> /dev/null'"
 
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
-# export FZF_ALT_C_OPTS="fd -t d $FD_OPTIONS"
 
 
 #---------------------------- OMZ -----------------------------------#
@@ -107,11 +105,9 @@ ZSH_CUSTOM="$HOME/.oh-my-zsh/custom/plugins/"
 
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(git pyenv pylint fd fzf jump tig colored-man-pages
-    colorize jump cargo httpie stack extract
-    command-not-found rust golang ripgrep
-    poetry virtualenv tmux tmuxinator compleat cp mosh 
-    copydir copyfile copybuffer lein dash fzf-tab
-    )
+    \colorize jump cargo httpie stack extract brew cask command-not-found
+    \rust golang ripgrep poetry virtualenv tmux tmuxinator cp mosh copydir
+    \copyfile copybuffer lein dash fzf-tab rustup)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -132,7 +128,7 @@ alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HO
 alias -g j="jump"
 alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
 
-alias -g lsa="exa --all -T -F --long --icons --git"
+alias -g lsa="exa --all -T -F --icons --git"
 alias -g help="tldr"
 
 alias -g ping="prettyping --nolegend"
@@ -160,11 +156,6 @@ if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv virtualenv-init -)"
 fi
 
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # Temp - See how it works out
 GITSTATUS_LOG_LEVEL=DEBUG
 
@@ -183,7 +174,6 @@ autoload -Uz bashcompinit && bashcompinit -u
 
 kitty + complete setup zsh | source /dev/stdin
 
-source ~/.bash_completion.d/compleat_setup
 source /usr/local/share/zsh-completions
 source /Users/eo/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -205,7 +195,7 @@ fif() {
     rg --files-with-matches --no-messages "$1" | fzf
 $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }
-source ~/.fzf.zsh 
+# source ~/.fzf.zsh 
 
 
 #--------------------------- Haskell/GHC -------------------------------#
@@ -217,7 +207,7 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 
 #----------------------------- fuck! -----------------------------------#
-eval $(thefuck --alias)
+eval "$(thefuck --alias)" #$(thefuck --alias)
 
 #------------------------ Zoxide! (trial) ------------------------------#
 eval "$(zoxide init zsh)"
@@ -227,9 +217,12 @@ eval "$(gh completion -s zsh)"
 
 #------------------------- fzf-tab-completion --------------------------#
 # source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
-# # bindkey '^I' fzf_completion
+# bindkey '^I' fzf_completion
 
 # zstyle ':completion:*' fzf-search-display true
 
 # # trial for file preview w/ ls using bat?
 # zstyle ':completion::*:ls::*' fzf-completion-opts --preview='bat {1}'
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

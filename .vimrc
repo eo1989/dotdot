@@ -1,6 +1,6 @@
-" Vimrc as of 06/21/20
-filetype plugin indent on
+syntax enable
 syntax on
+filetype indent plugin on
 
 let g:mapleader = "\<Space>"
 
@@ -11,20 +11,17 @@ set termguicolors
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vista,CHADTree setlocal signcolumn=no
 
-set completeopt=menuone,noinsert,noselect
-set wildmenu
-" set wildmode=list:longest,full
-set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-set omnifunc=v:lua.vim.lsp.omnifunc
+set autoread
 set mouse=a
-set guifont=Fira\ Code:h14:cANSI
+set guifont=Fira\ Code:h16
 set nowrap
 set shell=/usr/local/bin/zsh
 set cmdheight=2
 set laststatus=2
+set hls is ai si incsearch
 set switchbuf=useopen 	    " reveal already opened files from
 		                	" the quick fix window instead of opening new buffers
-set updatetime=500 	    " Speed up updatetime so gitgutter & friends are quicker
+set updatetime=400 	    " Speed up updatetime so gitgutter & friends are quicker
 set novisualbell 
 set noerrorbells
 set showmatch
@@ -33,6 +30,9 @@ set hidden		" hide buffers instead of closing them, this means
 			    " means that the current buffer can be put to background
 			    " w/o being written; & that marks & undo hist are
 			    " preserved
+set encoding=utf8
+set ttyfast
+set lazyredraw
 set rnu nu
 set tabstop=4
 set shiftwidth=4
@@ -50,24 +50,29 @@ set noswapfile
 set nowritebackup
 set backspace=indent,eol,start
 set colorcolumn=80
-set shortmess+=c
 set signcolumn=yes
+set list
 set listchars=tab:->\ ,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 set showtabline=2
+set textwidth=0
+set wrapmargin=0
+set showtabline=2
+
 " set clipboard=unnamedplus 
 
 " au BufEnter * set fo-=c fo-=r fo-=o
 
+" function! Cond(cond,...)
+"	letopts
 
 call plug#begin('~/.vim/plugged')
-Plug 'terryma/vim-multiple-cursors'
 
-Plug 'fatih/vim-go', { 'for': 'Golang', 'do': ':GoInstallBinaries' } 
+Plug 'terryma/vim-multiple-cursors'
 
 Plug 'wsdjeg/vim-scriptease' " What am I using this for?
 Plug 'mhinz/vim-grepper', {'on': 'GrepperRg'}
 Plug 'mhinz/vim-startify'
-Plug 'tpope/vim-surround'
+Plug 'tpope/vim-surround' | Plug 'machakann/vim-sandwich'
 Plug 'airblade/vim-gitgutter' ", {'on': ['GitGutterSignsToggle']}
     let g:gitgutter_signs = 1
     let g:gitgutter_map_keys = 0
@@ -94,30 +99,35 @@ Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'ryanoasis/vim-devicons'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'} 
-Plug 'kien/tabman.vim', {'on': 'TMToggle'}
+" Plug 'kien/tabman.vim', {'on': 'TMToggle'}
 Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
     nmap <F8> :TagbarToggle<CR>
-Plug 'liuchengxu/vista.vim' | Plug 'liuchengxu/vim-clap', {'do': ':Clap install-binary',
-            \ 'on': 'Vista' }
+Plug 'liuchengxu/vista.vim', {'on': 'Vista'} | Plug 'liuchengxu/vim-clap', {'do': ':Clap install-binary'}
 
 " Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+" Plug 'hardcoreplayers/spaceline.vim'
+Plug 'kyazdani42/nvim-web-devicons' " , {'do': ":lua require'nvim-web-devicons'.setup()"}
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes' 
-Plug 'rizzatti/dash.vim', { 'on': 'Dash' }
+Plug 'rizzatti/dash.vim', { 'on': 'DashSearch' }
 
-" Colorschemes             
-Plug 'liuchengxu/space-vim-theme', {'as': 'space-vim-theme'}
-Plug 'connorholyday/vim-snazzy', {'as': 'snazzy'}
-Plug 'dracula/vim', {'as': 'dracula'}
-Plug 'joshdick/onedark.vim', {'as': 'onedark'}
-Plug 'patstockwell/vim-monokai-tasty', {'as': 'monokai_tasty'}
-Plug 'drewtempelmeyer/palenight.vim'
-Plug 'rakr/vim-one', {'as': 'one'}
-Plug 'challenger-deep-theme/vim', {'as': 'challenge'}
-Plug 'KeitaNakamura/neodark.vim', {'as': 'neodark'}
+" Colorschemes
+Plug 'liuchengxu/space-vim-theme', {'as': 'Space-Vim-Theme'}
+Plug 'connorholyday/vim-snazzy', {'as': 'Snazzy'}
+Plug 'dracula/vim', {'as': 'Dracula'}
+Plug 'joshdick/onedark.vim', {'as': 'OneDark'}
+Plug 'patstockwell/vim-monokai-tasty', {'as': 'MonokaiTasty'}
+Plug 'drewtempelmeyer/palenight.vim', {'as': 'Palenight'}
+Plug 'kyazdani42/nvim-palenight.lua', {'as': 'PalenightNvim'}
+Plug 'rakr/vim-one', {'as': 'One'}
+Plug 'challenger-deep-theme/vim', {'as': 'Challenge'}
+Plug 'KeitaNakamura/neodark.vim', {'as': 'NeoDark'}
+Plug 'ajmwagar/vim-deus', {'as': 'Deus'}
+Plug 'sonph/onehalf', {'rtp': 'vim', 'as': 'OneHalf'}
+Plug 'tyrannicaltoucan/vim-quantum', {'as': 'Quantum'}
+Plug 'Th3Whit3Wolf/space-nvim-theme' ", {'as': 'SpaceNvim'}
 
-
-" let g:polyglot_disabled = ['python', 'rust']             
-" Plug 'sheerun/vim-polyglot' ", {'for': ['Golang', 'Haskell', 'Scala']}                          
+" let g:polyglot_disabled = ['python', 'rust']
+Plug 'sheerun/vim-polyglot' ", {'for': ['Golang', 'Haskell', 'Scala']}
 
 Plug 't9md/vim-choosewin'
 Plug 'itchyny/vim-parenmatch'
@@ -129,10 +139,11 @@ Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile',
 
 Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 
                                     \'do': ':UpdateRemotePlugins'}
+
 Plug 'google/vim-searchindex' | Plug 'romainl/vim-cool'
 " Plug 'skywind3000/asynctasks.vim'
 " Plug 'skywind3000/asyncrun.vim'
-Plug 'neomake/neomake' ", {'on': :Make'}
+Plug 'neomake/neomake' ", {'on': ':Make'}
 Plug 'pedsm/sprint'
 Plug 'masukomi/rainbow_parentheses.vim'
 Plug 'haya14busa/is.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
@@ -143,28 +154,42 @@ Plug 'seletskiy/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'jpalardy/vim-slime'
     let g:slime_target = "tmux"
 
+
+
+" Plug 'wellle/context.vim', {'on': ':ContextActivate'}
+  " let g:context_enabled = 0
+
 Plug 'voldikss/vim-floaterm'
 
-Plug 'vim-utils/vim-man'
+Plug 'psliwka/vim-smoothie', {'as': 'smoooth'}
+
+Plug 'vim-utils/vim-man', {'as': 'Maan'}
 Plug 'nvim-treesitter/nvim-treesitter'
-    Plug 'nvim-treesitter/nvim-treesitter-refactor'
-    Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-    Plug 'nvim-treesitter/playground'
+" Plug 'nvim-treesitter/nvim-treesitter-refactor'
+" Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+" Plug 'nvim-treesitter/playground'
 
 
 Plug 'nvim-lua/completion-nvim'
-    Plug 'neovim/nvim-lspconfig'
-    Plug 'nvim-lua/lsp-status.nvim'
-    Plug 'nvim-treesitter/completion-treesitter'
-    Plug 'aca/completion-tabnine', {'do': './install.sh'}
-    Plug 'tjdevries/nlua.nvim'
-    Plug 'tjdevries/lsp_extensions.nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/lsp-status.nvim'
+" Plug 'nvim-treesitter/completion-treesitter'
+Plug 'aca/completion-tabnine', {'do': './install.sh'}
+" Plug 'tjdevries/nlua.nvim'
+Plug 'tjdevries/lsp_extensions.nvim'
+Plug 'steelsojka/completion-buffers'
 
 " telescope req's
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/telescope.nvim'
-    Plug 'nvim-lua/popup.nvim'
-    Plug 'nvim-lua/plenary.nvim'
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Clojure
+
+Plug 'kevinhwang91/rnvimr'
+" Plug 'wfxr/minimap.vim'
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Clojure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Plug 'kovisoft/paredit', {'for': 'Clojure'}
     let g:paredit_smartjump = 1
 Plug 'tpope/vim-fireplace', {'for': 'Clojure'}
@@ -175,29 +200,45 @@ Plug 'guns/vim-clojure-static', {'for': 'Clojure'}
 Plug 'guns/vim-clojure-highlight', {'for': 'Clojure'}
 Plug 'guns/vim-slamhound', {'for': 'Clojure'}
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Haskell
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Go! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+" Plug 'zchee/nvim-go', {'for': 'Golang', 'do': 'make'}
+Plug 'fatih/vim-go', { 'for': 'Golang', 'do': ':GoInstallBinaries' }
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Haskell ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Plug 'neovimhaskell/haskell-vim', {'for': 'haskell'}
 Plug 'sbdchd/neoformat' ", {'for': ['haskell', 'python']}
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Julia
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Julia ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Plug 'JuliaEditorSupport/julia-vim'
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 " Plug 'psf/black', {'branch': 'stable' }
-" Plug 'microsoft/vscode-python', {'for': 'python'}
+
+Plug 'microsoft/vscode-python'
 " Plug 'numirias/semshi', {'for': 'python', 'do': ':UpdateRemotePlugins' }
 	" let g:semshi#filetypes = ['python']
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rust
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rust ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TS/JS
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TS/JS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
 Plug 'MaxMellon/vim-jsx-pretty', {'for': 'javascript'}
 Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-
 
 call plug#end()
 
@@ -206,20 +247,8 @@ if executable('rg')
     let g:rg_derive_root='true'
 endif
 
-function! MyOnBattery()
-	if has('macunix')
-		return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
-	elseif has ('unix')
-		return readfile('/sys/class/power_supply/AC/online') == ['0']
-	endif
-	return 0
-endfunction
 
-if MyOnBattery()
-	call neomake#configure#automake('w')
-else
-	call neomake#configure#automake('nw', 1000)
-endif
+
 
 
 " --- vim go (polyglot) settings.
@@ -243,6 +272,10 @@ let g:NERDCompactSexyComs = 1
 let g:NERDDefaultAlign = 'left'
 let g:NERDTrimrailingWhiteSpace = 1
 
+let g:minimap_highlight = 'Visual'
+
+lua require'nvim-web-devicons'.setup()
+"
 let g:webdevicons_enable = 1
 let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
@@ -253,107 +286,87 @@ let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 let g:DevIconsEnableFoldersOpenClose = 1
 
 
-" lsp_status.config {
-"     select_symbol = function(cursor_pos, symbol)
-"         if symbol.valueRange then
-"             local value_range = {
-"                 ["start"] = {
-"                     character = 0,
-"                     line = vim.fn.byte2line(symbol.valueRange[1])
-"                 },
-"                 ["end"] = {
-"                     character = 0,
-"                     line = vim.fn.byte2line(symbol.valueRange[2])
-"                 }
-"             }
-
-"             return require("lsp-status.util").in_range(cursor_pos, value_range)
-"         end
-"     end
-" }
-
-
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-	ensure_installed = "all",
-	highlight = {
-		enable = true,
-	},
-}
-EOF
-
 let g:completion_auto_change_source = 1
-let g:completion_enale_auto_paren = 1
+let g:completion_enable_auto_paren = 1
 let g:completion_enable_snippet = 'Ultisnips'
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 let g:completion_confirm_key = ""
-imap <expr> <cr>  pumvisible() ? complete_info()["selected"] != "-1" ?
-			\ "\<Plug>(completion_confirm_completion)"  :
+inoremap <expr> <TAB> pumvisible() ? complete_info()["selected"] != "-1" ? 
+            \ "\<Plug>(completion_confirm_completion)"  :
 			\ "\<c-e>\<CR>" : "\<CR>"
 
-let g:completion_chain_complete_list = {
-			\'default' : {
-			\	'default' : [
-			\		{'complete_items' : ['lsp', 'snippet']},
-			\		{'complete_items' : ['tabnine']},
-			\		{'complete_items' : ['path'], 'triggered_only': ['/']},
-			\		{'mode' : [ '<TAB>', 'cmd', 'file']}
-			\	],
-			\	'comment' : [],
-			\	'string' : []
-			\	},
-            \'vim' : [
-            \	{'complete_items': ['lsp', 'snippet']},
-            \	{'mode' : 'cmd'},
-            \   {'mode' : '<TAB>'}
-            \	],
-            \'c' : [
-            \	{'complete_items': ['ts', 'lsp', 'tabnine']},
-            \   {'mode' : '<TAB>'}
-            \	],
-            \'python' : [
-            \	{'complete_items': ['lsp', 'ts', 'snippet', 'tabnine']},
-            \   {'mode' : '<TAB>'}
-            \	],
-            \'lua' : [
-            \	{'complete_items': ['lsp', 'ts', 'tabnine', 'snippet']},
-            \   {'mode' : '<TAB>'}
-            \	],
-            \'golang' : [
-            \   {'complete_items': ['ts', 'lsp', 'snippet']},
-            \   {'mode' : '<TAB>'}
-            \   ],
-            \'rust' : [
-            \   {'complete_items': ['ts', 'lsp', 'snippet']},
-            \   {'mode' : '<TAB>'}
-            \   ],
-            \'haskell' : [
-            \   {'complete_items': ['lsp', 'snippet']},
-            \   {'mode' : '<TAB>'}
-            \   ],
-            \'bash' : [
-            \   {'complete_items': ['ts', 'lsp', 'snippets']}
-            \   ],
-            \}
-
-
-autocmd BufEnter,BufWinEnter * lua require'completion'.on_attach()
-
-
-lua << EOF
-local lsp_status = require('lsp-status')
-lsp_status.register_progress()
-local on_attach_vim = function(client)
-	require'completion'.on_attach(client)
-	require'diagnostic'.on_attach(client)
-end
-require'nvim_lsp'.pyls_ms.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.hls.setup{}
-require'nvim_lsp'.gopls.setup{}
-EOF
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 nmap <tab> <Plug>(completion_smart_tab)
 nmap <s-tab> <Plug>(completion_smart_s_tab)
+
+" let g:completion_chain_complete_list = {
+"             \'default' : {
+"             \	'default' : [
+"             \		{'complete_items' : ['lsp', 'snippet']},
+"             \		{'complete_items' : ['tabnine']},
+"             \		{'complete_items' : ['path'], 'triggered_only': ['/']},
+"             \		{'mode' : [ '<TAB>', 'cmd', 'file']}
+"             \	],
+"             \	{'comment' : []},
+"             \	{'string' : ['path', 'triggered_only' = ['/']]},
+"             \	},
+"             \'vim' : [
+"             \	{'complete_items': ['lsp', 'snippet', 'tabnine']},
+"             \	{'mode' : 'cmd'},
+"             \   {'mode' : '<TAB>'}
+"             \	],
+"             \'c' : [
+"             \	{'complete_items': ['lsp', 'tabnine']},
+"             \   {'mode' : '<TAB>'}
+"             \	],
+"             \'python' : [
+"             \	{'complete_items': ['lsp', 'snippet', 'tabnine']},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \	],
+"             \'lua' : [
+"             \	{'complete_items': ['lsp', 'tabnine', 'snippet']},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \	],
+"             \'golang' : [
+"             \   {'complete_items': ['lsp', 'snippet', 'tabnine']]},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \   ],
+"             \'rust' : [
+"             \   {'complete_items': ['lsp', 'snippets', 'tabnine']]},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \   ],
+"             \'haskell' : [
+"             \   {'complete_items': ['lsp', 'snippet', 'tabnine']]},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \   ],
+"             \'bash' : [
+"             \   {'complete_items': ['lsp', 'snippets', 'tabnine']},
+"             \   {'mode' : '<TAB>'},
+"             \   {'mode' : 'cmd'}
+"             \   ],
+"             \}
+
+
+" autocmd BufEnter,BufWinEnter * lua require'completion'.on_attach()
+autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.vim :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.py :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.go :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.hs :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.sh :lua require'lsp_extensions'.inlay_hints{}
+autocmd BufEnter,BufWinEnter,TabEnter *.lua :lua require'lsp_extensions'.inlay_hints{}
+" autocmd CursorHold,CursorHoldI *.rs :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }
+autocmd CursorHold,CursorHoldI *.py :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }
+
 " inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
@@ -364,74 +377,44 @@ lua require'nvim_lsp'.rust_analyzer.setup{ on_attach=require'completion'.on_atta
 lua require'nvim_lsp'.sumneko_lua.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.pyls_ms.setup{ on_attach=require'completion'.on_attach }
 lua require'nvim_lsp'.vimls.setup{ on_attach=require'completion'.on_attach }
-" lua require'nvim_lsp'.bls.setup{ on_attach=require'completion'.on_attach }
-"
-" lua << END
-" local lsp_status = require('lsp-status')
-" lsp_status.register_progress()
-
-" local nvim_lsp = require('nvim_lsp')
-
-" nvim_lsp.clangd.setup({
-"     callbacks = lsp_status.extensions.clangd.setup(),
-"     init_options = {
-"         clangdFileStatus = true
-"     },
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.pyls_ms.setup({
-"     callbacks = lsp_status.extensions.pyls_ms.setup(),
-"     settings = { python = { workspaceSymbols = { enabled = strue }}},
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.ghcide.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.rust_analyzer.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.hls.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.gopls.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.sumneko_lua.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.tsserver.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-
-" nvim_lsp.vimls.setup({
-"     on_attach = lsp_status.on_attach,
-"     capabilities = lsp_status.capabilities
-" })
-" END
+lua require'nvim_lsp'.bashls.setup{ on_attach=require'completion'.on_attach }
+lua require'nvim_lsp'.julials.setup{ on_attach=require'completion'.on_attach }
 
 " Statusline for lsp_status
 function! LspStatus() abort
-    if luaeval('#vim.lsp.buf_get_clients() > 0')
+    if luaeval('#vim.lsp.buf_get_clients() > 0')L
         return luaeval("require('lsp-status').status()")
     endif
 
     return ''
 endfunction
+
+set shortmess+=ac
+set completeopt=menuone,noinsert,noselect
+set omnifunc=v:lua.vim.lsp.omnifunc
+set wildmenu
+set wildmode=list:longest,full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__,node_modules,*.gem
+
+" LSP Statusline
+" function! LspStatus() abort
+"     let sl = ''
+"     if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+"         let sl .='%#MyStatuslineLSP#E:'
+"         let sl .='%#MyStatuslineLSPErrors#%{luaeval("vim.lsp.util.buf_diagnostics_count([[Error])")}'
+"         let sl .='%#MyStatuslineLSP# W:'
+"         let sl .='%#MyStatuslineLSPWarnings##%{luaeval("vim.lsp.util.buf_diagnostics_count([[Warning]])")}'
+"     else
+"         let sl .='%#MyStatuslineLSPErrors#off'
+"     endif
+"     return sl
+" endfunction
+" let &l:statusline = '%#MyStatuslineLSP#LSP '.LspStatus()
+
+sign define LspDiagnosticsErrorSign text=E texthl=LspDiagnosticsError linehl= numhl=
+sign define LspDiagnosticsWarningSign text=W texthl=LspDiagnosticsWarning linehl= numhl=
+sign define LspDiagnosticsInformationSign text=I texthl=LspDiagnosticsInformation linehl= numhl=
+sign define LspDiagnosticsHintSign text=H texthl=LspDiagnosticsHint linehl= numhl=
 
 
 
@@ -442,7 +425,7 @@ nnoremap <leader>grr :lua vim.lsp.buf.references()<CR>
 nnoremap <leader>grn :lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh :lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>gca :lua vim.lsp.buf.code_action()<CR>
-" nnoremap <leader>gwk :lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <leader>gwk :lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <leader>gty :lua vim.lsp.buf.type_definition()<CR>
 nnoremap <leader>gdc :lua vim.lsp.buf.document_symbol()<CR>
 
@@ -453,19 +436,15 @@ nnoremap <leader>pw :lua require('telescope.builtin').grep_string { search = vim
 " nnoremap <leader>bs /<C-R>=escape(expand("<cWORD>"), "/")<CR><CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For >")})<CR>
-" nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
+nnoremap <leader>pi <cmd>lua require'telescope.builtin'.lsp_references{}<CR>
+nnoremap <leader>pds :lua require'telescope.builtin'.lsp_document_symbols{}<CR>
+nnoremap <leader>pws :lua require'telescope.builtin'.lsp_workspace_symbols{}<CR>
 nnoremap <Leader>pf :Files<CR>
 " nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>rp :resize 100<CR>
-nnoremap <Leader>ee oif err != nil {<CR>log.Fatalf("%+v\n", err)<CR>}<CR><esc>kkI<esc
-
-
-
-lua<<EOF
-EOF
-
+nnoremap <Leader>ee oif err != nil {<CR>log.Fatalf("%+v\n", err)<CR>}<CR><esc>kkI<esc>
 
 
 let g:tabman_toggle = '<leader>mt'
@@ -475,11 +454,11 @@ let g:tabman_side = 'left'
 
 
 " tab navigation mappings
-map tt :tabnew
-map <M-Right> :tabn<CR>
-imap <M-Right><ESC> :tabn<CR>
-map <M-Left> :tabp<CR>
-imap <M-Left><ESC> :tabp<CR>
+" map tt :tabnew
+" map <M-Right> :tabn<CR>
+" imap <M-Right><ESC> :tabn<CR>
+" map <M-Left> :tabp<CR>
+" imap <M-Left><ESC> :tabp<CR>
 
 " Majutsushi tagbar
 let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
@@ -520,9 +499,9 @@ augroup END
 " let g:palenight_terminal_italics = 1
 
 " colorscheme dracula
-colorscheme snazzy 
 set background=dark
-" colorscheme space_vim_theme 
+colorscheme snazzy
+" colorscheme space_vim_theme
 " colorscheme onedark
 " monokai_tasty
 
@@ -537,7 +516,7 @@ noremap YY "+y<CR>
 vnoremap X "_d
 
 " greatest remap ever
-vnoremap <leader>p "_dP
+" vnoremap <leader>p "_dP
 
 "Buffer nav
 noremap <Leader>z :bp<CR>
@@ -546,7 +525,7 @@ noremap <Leader>x :bn<CR>
 noremap <Leader>c :bd<CR>
 
 " Clean hlsearch
-nnoremap <expr><Leader><Space><Space> :noh <CR>
+nnoremap <expr><Leader>/ :nohls<CR>
 
 let g:incsearch#auto_nohlsearch = 1
 " Splitting
@@ -579,7 +558,7 @@ highlight ColorColumn ctermbg=0 guibg=lightgrey
 nmap  -  <Plug>(choosewin)
 " show big letters
 let g:choosewin_overlay_enable = 1
-let g:Hexokinase_highlighters = ['virtual']
+let g:Hexokinase_highlighters = ['foregroundfull']
 
 " save as sudo
 ca w!! w !sudo tee "%"
@@ -623,6 +602,18 @@ augroup vimrc-remember-cursor-position
     autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
+
+if exists("*fugitive#statusline")
+     set statusline+=%{fugitive#statusline()}
+endif
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Spaceline ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" let g:spaceline_separate_style = 'slant-cons'
+" let g:spaceline_lsp_executive = 'nvim_lsp'
+" let g:spaceline_diff_tool = 'gitgutter'
+" let g:spaceline_branch_icon = '⭠'
+
+
 "~~~~~~~~~~~~~~~~~~~~~~ Search mappings temp ~~~~~~~~~~~~~~~~~~~~~~~~
 " nnoremap n nzzzv
 " nnoremap N Nzzzv
@@ -641,7 +632,7 @@ augroup END
 "     \   'coc-git',
 "     \   'coc-lists',
 "     \]
-    
+
 
 " inoremap <silent><expr> <TAB>
 "   \ pumvisible() ? coc#_select_confirm() :
@@ -850,9 +841,9 @@ augroup END
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~ Nvim Specific ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-
-let g:python3_host_prog = '/Users/eo/.pyenv/versions/py3nvim-perm/bin/python'
-
+if executable('pyenv')
+    let g:python3_host_prog = '~/.pyenv/versions/py3nvim-perm/bin/python'
+endif
 let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
 let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
 
@@ -899,9 +890,9 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_color_term = 6
 let g:indentLine_fileTypeExclude = ['startify', '', 'help',
                                     \ 'CHADTree']
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ vim-airline temp ~~~~~~~~~~~~~~~~~~~~~~~~
+" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ vim-airline temp ~~~~~~~~~~~~~~~~~~~~~~~~
 let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')   
+if !exists('g:airline_symbols')
     let g:airline_symbols = {}
     let g:airline_left_sep = ''
     let g:airline_left_alt_sep = ''
@@ -914,13 +905,10 @@ else
     let g:webdevicons_enable = 1
 endif
 
-if exists("*fugitive#statusline")
-     set statusline+=%{fugitive#statusline()}
-endif
 
-" onedark "base16_snazzy" "dracula" "kalisi"
+" " onedark "base16_snazzy" "dracula" "kalisi"
 
-let g:airline_theme = "onedark"
+let g:airline_theme = "base16_snazzy"
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#format = 2
 let g:airline#extensions#fugitiveline#enabled = 1
@@ -928,12 +916,12 @@ let g:airline#extensions#grepper#enabled = 1
 let g:airline#extensions#fzf#enabled = 1
 let g:airline#extensions#hunks#enabled = 1
 let g:airline#extensions#nvimlsp#enabled = 1
-let g:airline#extensions#nvimlsp#error_symbol = 'E:'
-let g:airline#extensions#nvimlsp#warning_symbol = 'W:'
+" let g:airline#extensions#nvimlsp#error_symbol = 'E:'
+" let g:airline#extensions#nvimlsp#warning_symbol = 'W:'
 let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline_section_z = "" " disable the line info
+let g:airline_section_z = " " " disable the line info
 let g:airline#extensions#vista#enabled = 0
 
 
@@ -944,11 +932,11 @@ let g:airline#extensions#keymap#enabled = 1
 let g:airline#extensions#quickfix#quickfix_text = 'QuickFix'
 let g:airline#extensions#quickfix#location_text = 'Location'
 
-let g:airline#extensions#coc#enabled = 0
-let g:airline#extensions#hunks#coc_git = 0
+" let g:airline#extensions#coc#enabled = 0
+" let g:airline#extensions#hunks#coc_git = 0
 let g:airline_skip_empty_sections = 1
 
-let g:airline#extensions#windowswap#enabled = 1
+" let g:airline#extensions#windowswap#enabled = 1
 
 let g:airline#extensions#tabline#current_first = 1
 let g:airline#extensions#tabline#show_tabs = 1
@@ -958,8 +946,8 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#show_close_button = 1
 let g:airline#extensions#tabline#close_symbol = 'X'
 
-let g:airline#extensions#whitespace#enabled = 0   
-let b:airline_whitespace_disabled = 1
+" let g:airline#extensions#whitespace#enabled = 0   
+" let b:airline_whitespace_disabled = 1
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
@@ -969,7 +957,7 @@ let g:vista_echo_cursor_strategy = ['both']
 let g:vista_ctags_cmd = {
     \ 'haskell': 'hasktags -x -o - -c',
     \ 'go': 'gotags',
-	\ 'python': 'ctags'
+	\ 'python': 'ctags',
     \}
 
 if exists('g:vista#renderer#icons') || exists('g:airline_powerline_fonts')
@@ -1046,28 +1034,7 @@ function! OpenFloatingWin()
     call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
     au BufWipeout <buffer> exe 'bw '.s:buf
 endfunction
-"" GFiles && RipGrep!
 
-" nnoremap <C-p> :GFiles<CR>
-" nnoremap <C-f> :Rg<CR>
-
-" Ex: :Rg myterm -g '*.md'
-" command! -bang -nargs=* Rg call fzf#vim#grep("rg --column 
-            " \--line-number --no-heading --color=always --smart-case " . 
-            " <q-args>, 1, <bang>0)
-
-"" Ag
-"let g:Ag_command = '/usr/local/bin/ag'
-"if executable('ag')
-"    let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
-"    "set grepprg=ag\ --nogroup\ --nocolor
-"endif
-
-"" Pt
-"let g:pt_command = '/usr/local/bin/pt' 
-"if executable('pt')
-"    let $FZF_DEFAULT_COMMAND = 'pt -i -f -h'
-"endif
 
 "~~~~~~~~~~~~~~~~~~~ Vim-Clap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:clap_provider_dotfiles = {
@@ -1081,10 +1048,10 @@ let g:clap_provider_commands = {
     \}
 "~~~~~~~~~~~~~~~~~~~~ UltiSnips ~~~~~~~~~~~~~~~~~~~~"
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<C-b>"
-let g:UltiSnipsEditSplit="vertical"
+" let g:UltiSnipsExpandTrigger="<tab>"
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<C-b>"
+" let g:UltiSnipsEditSplit="vertical"
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 " Haskell

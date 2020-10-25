@@ -58,8 +58,8 @@ export GTAGSLABEL="pygments"
 # export DRACULA_ARROW_ICON="|>" 
 # source ~/.oh-my-zsh/themes/dracula.zsh-theme
 
-#py3 nvim
-export PYTHON3_HOST_PROG="$HOME/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/python3.8"
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ py3 nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+export PYTHON3_HOST_PROG="~/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/python3.8"
 
 
 #---------------------------------- FZF --------------------------------#
@@ -226,3 +226,5 @@ eval "$(gh completion -s zsh)"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+alias -g hdi='howdoi --color'
+alias -g ggls="gls --color=auto -HLFS"

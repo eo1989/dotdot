@@ -10,47 +10,47 @@ export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:$PATH"
 
 
 #------------------------------ extra paths -------------------------------#
-export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
-export PATH="/Applications/kitty.app/Contents/MacOS:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
+# export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
+export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
 
-
-#-------------------- Find OpenJDK ahead of sys java ----------------------# 
+export PATH="${HOME}/.local/bin:$PATH"
+export PATH="${HOME}/.emacs.d/bin:$PATH"
 export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:$PATH"
 export PATH="/usr/local/opt/openjdk/bin:$PATH"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 # export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
+
+# Testing whether fontforge on PATH will work?
+# export PATH="/usr/local/Cellar/fontforge/20200314_2/bin/fontforge:$PATH"
 
 
 #Go
-export GOPATH="$HOME/go"
+export GOPATH="${HOME}/go"
 export GOROOT="$(brew --prefix golang)/libexec"
 export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
 
 # Rust
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="${HOME}/.cargo/bin:$PATH"
 
 
 # Pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+export PYENV_ROOT="${HOME}/.pyenv"
+export PATH="${PYENV_ROOT}/bin:$PATH"
 
 
+export LS_COLORS="$(vivid generate snazzy)"
+
+export BAT_THEME="Sublime Snazzy"
 export EXA_COLORS="uu=0:gu=0"
 # If you come from bash you might hve to change your $PATH.
 source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 
 
 
-export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$HOME/Library/Python/3.8/man/man1:$MANPATH"
+export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MANPATH"
 export LANG="en_US.UTF-8"
-export LS_COLORS="$(vivid generate snazzy)"
-
-export BAT_THEME="Sublime Snazzy"
-export CHEAT_USE_FZF="true"
-export GTAGSLABEL="pygments" 
 # export $ZSH_THEME="dracula"
 
 # export DRACULA_DISPLAY_TIME=0
@@ -59,8 +59,8 @@ export GTAGSLABEL="pygments"
 # source ~/.oh-my-zsh/themes/dracula.zsh-theme
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ py3 nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-export PYTHON3_HOST_PROG="~/.pyenv/versions/3.8.2/envs/py3nvim-perm/bin/python3.8"
 
+export PYTHON3_HOST_PROG="~/.pyenv/versions/py3nvim-perm/bin/python3"
 
 #---------------------------------- FZF --------------------------------#
 export FZF_BASE="/usr/local/opt/fzf"
@@ -70,7 +70,7 @@ export FZF_DEFAULT_OPTS="
     --height=40%
     --multi
     --preview-window=:hidden
-    --preview='([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200'
+    --preview='([[ -f {} ]] && (bat --style=numbers,changes --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200'
     --ansi
     --prompt='~ ' --pointer='▶' --marker='✓'
     --bind='?:toggle-preview' 
@@ -80,7 +80,7 @@ export FZF_DEFAULT_OPTS="
     --bind='ctrl-e:execute(echo {+} | xargs -o nvim)'
     --bind='ctrl-u:preview-page-up' 
     --bind 'ctrl-d:preview-page-down'"
- 
+
 FD_OPTIONS="--color auto --follow --hidden --exclude '.git' --exclude 'node_modules'"
 export FZF_DEFAULT_COMMAND="fd $FD_OPTIONS"
 
@@ -104,10 +104,10 @@ COMPLETION_WAITING_DOTS="true"
 ZSH_CUSTOM="$HOME/.oh-my-zsh/custom/plugins/"
 
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(git pyenv pylint fd fzf jump tig colored-man-pages
-    \colorize jump cargo httpie stack extract brew cask command-not-found
-    \rust golang ripgrep poetry virtualenv tmux tmuxinator cp mosh copydir
-    \copyfile copybuffer lein dash fzf-tab rustup)
+plugins=(git pyenv fd fzf jump tig colored-man-pages              \
+    colorize jump cargo httpie stack brew cask command-not-found  \
+    rust golang ripgrep poetry virtualenv tmux tmuxinator cp mosh \
+    lein gnu-utils rustup)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -123,13 +123,18 @@ export EDITOR="nvim"
 # alias -g config='git --git-dir=/Users/eo/.dotfiles/ --work-tree=/Users/eo'
 
 # alias -g preview="fzf --preview 'bat --color \"always\" {}'"
+
+# alias -g k="/Applications/kitty.app/Contents/MacOS/kitty --listen-on unix:/tmp/mykitty"
+
 alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 
 alias -g j="jump"
-alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
 
+alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
 alias -g lsa="exa --all -T -F --icons --git"
-alias -g help="tldr"
+alias -g lt="exa -T -L 2 -F --icons"
+
+alias -g halp="tldr"
 
 alias -g ping="prettyping --nolegend"
 
@@ -140,14 +145,17 @@ alias -g reload="exec $SHELL"
 
 alias -g bif="brew info"
 alias -g bish="brew install"
-alias -g BS="brew search"
+alias -g bs="brew search"
 
-alias -g diff="diff-so-fancy"
+alias -g diff="delta --line-numbers --side-by-side"
 
 alias -g yt="youtube-dl --external-downloader aria2c"
 
 alias -g ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias -g localip="ipconfig getifaddr en0"
+
+alias -g hdi='howdoi --color'
+alias -g ggls="gls --color=auto -HLFS"
 
 
 #------------------------------ Pyenv -----------------------------------#
@@ -161,7 +169,6 @@ GITSTATUS_LOG_LEVEL=DEBUG
 
 # if [[ ! -d ~/.oh-my-zsh/custom/plugins/autopair.zsh ]]; then
 #     git clone https://github.com/hlissner/zsh-autopair ~/.zsh-autopair
-# 
 
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
@@ -209,22 +216,42 @@ export PATH="$HOME/.poetry/bin:$PATH"
 #----------------------------- fuck! -----------------------------------#
 eval "$(thefuck --alias)" #$(thefuck --alias)
 
-#------------------------ Zoxide! (trial) ------------------------------#
+#------------------------ Zoxifde! (trial) ------------------------------#
 eval "$(zoxide init zsh)"
 
 #------------------------ gh completion (trial) ------------------------------#
 eval "$(gh completion -s zsh)"
 
-#------------------------- fzf-tab-completion --------------------------#
+# ----------------------------- fzf-tab ---------------------------------------#
+# zstyle ':fzf-tab:*' fzf-command fzf
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0 
+# lets test this git checkout completion snippet out first.
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# disable sort when completing options of any command
+zstyle ':completion:complete:*:options' sort true
+
+# use inpiut as query str when completing zlua
+
+
+# zstyle ':z4h:fzf-complete' fzf-bindings 'tab:repeat' 'ctrl-a:toggle-all'
+
+
+# ------------------------- fzf-tab-completion ------------------------- #
 # source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
 # bindkey '^I' fzf_completion
 
 # zstyle ':completion:*' fzf-search-display true
 
-# # trial for file preview w/ ls using bat?
-# zstyle ':completion::*:ls::*' fzf-completion-opts --preview='bat {1}'
+# trial for file preview w/ ls using bat?
+# zstyle ':completion::*:ls::*' fzf-completion-opts --preview='head {1}'
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-alias -g hdi='howdoi --color'
-alias -g ggls="gls --color=auto -HLFS"

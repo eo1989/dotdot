@@ -1,7 +1,7 @@
-" Fvim config & then goneovim -- mostly guifont stuff
+"VimR & Fvim config & then goneovim -- mostly guifont stuff
 
-" if exists('gui')
-" endif
+if exists('gui')
+endif
 
 if exists('g:fvim_loaded')
 	" good old "set guifont" compat

@@ -6,18 +6,18 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 #------------------------------- Homebrew ---------------------------------#
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/local:/usr/bin:/usr/sbin:$PATH"
-
+export PATH="/usr/bin:/bin:/usr/sbin:${PATH}"
+export PATH="/usr/local/bin:${PATH}"
 
 #------------------------------ extra paths -------------------------------#
-# export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:$PATH"
-export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
-export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:$PATH"
+# export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:${PATH}"
+export PATH="/Applications/kitty.app/Contents/MacOS:${PATH}"
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:${PATH}"
 
-export PATH="${HOME}/.local/bin:$PATH"
-export PATH="${HOME}/.emacs.d/bin:$PATH"
-export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:$PATH"
-export PATH="/usr/local/opt/openjdk/bin:$PATH"
+export PATH="${HOME}/.local/bin:${PATH}"
+export PATH="${HOME}/.emacs.d/bin:${PATH}"
+export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:${PATH}"
+export PATH="/usr/local/opt/openjdk/bin:${PATH}"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 # export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
@@ -29,22 +29,29 @@ export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 #Go
 export GOPATH="${HOME}/go"
 export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
+export PATH="${GOPATH}/bin:${GOROOT}/bin:${PATH}"
 
 # Rust
-export PATH="${HOME}/.cargo/bin:$PATH"
+export PATH="${HOME}/.cargo/bin:${PATH}"
 
 
 # Pyenv
 export PYENV_ROOT="${HOME}/.pyenv"
-export PATH="${PYENV_ROOT}/bin:$PATH"
+export PATH="${PYENV_ROOT}/bin:${PATH}"
+
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
 
 
 export LS_COLORS="$(vivid generate snazzy)"
 
-export BAT_THEME="Sublime Snazzy"
+# export BAT_THEME="Sublime Snazzy"
 export EXA_COLORS="uu=0:gu=0"
 # If you come from bash you might hve to change your $PATH.
+#
+# source p10k as the theme for zsh
 source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 
 
@@ -89,6 +96,23 @@ export FZF_CTR_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND -t d"
 
 
+fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
+
+autoload -Uz +X compinit && compinit -u
+# autoload -Uz bashcompinit && bashcompinit -u
+
+kitty + complete setup zsh | source /dev/stdin
+
+source /usr/local/share/zsh-completions
+# source /Users/eo/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+## zsh-history-substring-search key bindings
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
 #---------------------------- OMZ -----------------------------------#
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/eo/.oh-my-zsh"
@@ -104,10 +128,10 @@ COMPLETION_WAITING_DOTS="true"
 ZSH_CUSTOM="$HOME/.oh-my-zsh/custom/plugins/"
 
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(git pyenv fd fzf jump tig colored-man-pages              \
-    colorize jump cargo httpie stack brew cask command-not-found  \
-    rust golang ripgrep poetry virtualenv tmux tmuxinator cp mosh \
-    lein gnu-utils rustup)
+plugins=(git pyenv fd fzf jump tig colored-man-pages colorize
+    \jump cargo httpie stack brew cask command-not-found rust
+    \golang ripgrep poetry virtualenv tmux tmuxinator cp mosh
+    \lein gnu-utils rustup fzf-tab)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -157,12 +181,7 @@ alias -g localip="ipconfig getifaddr en0"
 alias -g hdi='howdoi --color'
 alias -g ggls="gls --color=auto -HLFS"
 
-
-#------------------------------ Pyenv -----------------------------------#
-if command -v pyenv 1>/dev/null 2>&1; then
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-fi
+# alias -g rm="trash"
 
 # Temp - See how it works out
 GITSTATUS_LOG_LEVEL=DEBUG
@@ -173,23 +192,6 @@ GITSTATUS_LOG_LEVEL=DEBUG
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
 
-
-fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
-
-autoload -Uz +X compinit && compinit -u
-autoload -Uz bashcompinit && bashcompinit -u
-
-kitty + complete setup zsh | source /dev/stdin
-
-source /usr/local/share/zsh-completions
-source /Users/eo/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-## zsh-history-substring-search key bindings
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
 
 #--------------------------------f(x)s-----------------------------------#
 # Find-in-file -> usage: 'fif <SEARCH_TERM>'
@@ -223,21 +225,26 @@ eval "$(zoxide init zsh)"
 eval "$(gh completion -s zsh)"
 
 # ----------------------------- fzf-tab ---------------------------------------#
-# zstyle ':fzf-tab:*' fzf-command fzf
+zstyle ':completion:*' fzf-search-display true
+# disable sort when completing options of any command
+zstyle ':completion:complete:*:options' sort true
+# lets test this git checkout completion snippet out first.
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0 
+
+zstyle ':fzf-tab:*' fzf-command fzf
 zstyle ':fzf-tab:complete:_zlua:*' query-string input
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0 
-# lets test this git checkout completion snippet out first.
-zstyle ":completion:*:git-checkout:*" sort false
 zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# disable sort when completing options of any command
-zstyle ':completion:complete:*:options' sort true
 
-# use inpiut as query str when completing zlua
+bindkey '^I' fzf_completion
+
 
 
 # zstyle ':z4h:fzf-complete' fzf-bindings 'tab:repeat' 'ctrl-a:toggle-all'
@@ -245,9 +252,6 @@ zstyle ':completion:complete:*:options' sort true
 
 # ------------------------- fzf-tab-completion ------------------------- #
 # source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
-# bindkey '^I' fzf_completion
-
-# zstyle ':completion:*' fzf-search-display true
 
 # trial for file preview w/ ls using bat?
 # zstyle ':completion::*:ls::*' fzf-completion-opts --preview='head {1}'
@@ -255,3 +259,7 @@ zstyle ':completion:complete:*:options' sort true
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+alias -g ranger="/usr/local/bin/ranger"
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"

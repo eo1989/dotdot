@@ -11,7 +11,7 @@ export PATH="/usr/local/bin:${PATH}"
 
 #------------------------------ extra paths -------------------------------#
 # export PATH="/usr/local/Cellar/global/6.6.4_1/libexec/bin:${PATH}"
-export PATH="/Applications/kitty.app/Contents/MacOS:${PATH}"
+export PATH="/Applications/kitty.app/Contents/MacOS/kitty:${PATH}"
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/findutils/libexec/gnubin:${PATH}"
 
 export PATH="${HOME}/.local/bin:${PATH}"
@@ -20,10 +20,9 @@ export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:${PATH}"
 export PATH="/usr/local/opt/openjdk/bin:${PATH}"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 # export CPPFLAGS="-I/usr/local/opt/openjdk/include"
-
-
-# Testing whether fontforge on PATH will work?
-# export PATH="/usr/local/Cellar/fontforge/20200314_2/bin/fontforge:$PATH"
+export PATH="/usr/local/opt/llvm/bin:${PATH}"
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"
 
 
 #Go
@@ -56,8 +55,10 @@ source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 
 
 
-export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MANPATH"
+export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:${MANPATH}"
 export LANG="en_US.UTF-8"
+export LC_COLLATE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
 # export $ZSH_THEME="dracula"
 
 # export DRACULA_DISPLAY_TIME=0
@@ -80,12 +81,12 @@ export FZF_DEFAULT_OPTS="
     --preview='([[ -f {} ]] && (bat --style=numbers,changes --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200'
     --ansi
     --prompt='~ ' --pointer='▶' --marker='✓'
-    --bind='?:toggle-preview' 
+    --bind='?:toggle-preview'
     --bind='ctrl-a:select-all'
     --bind='ctrl-y:execute-silent(echo {+} | pbcopy)'
     --bind='ctrl-v:execute(code {+})'
     --bind='ctrl-e:execute(echo {+} | xargs -o nvim)'
-    --bind='ctrl-u:preview-page-up' 
+    --bind='ctrl-u:preview-page-up'
     --bind 'ctrl-d:preview-page-down'"
 
 FD_OPTIONS="--color auto --follow --hidden --exclude '.git' --exclude 'node_modules'"
@@ -104,7 +105,7 @@ autoload -Uz +X compinit && compinit -u
 kitty + complete setup zsh | source /dev/stdin
 
 source /usr/local/share/zsh-completions
-# source /Users/eo/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
+source ${HOME}/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -158,6 +159,8 @@ alias -g ls="exa -T -L 1 -F --icons --group-directories-first"
 alias -g lsa="exa --all -T -F --icons --git"
 alias -g lt="exa -T -L 2 -F --icons"
 
+alias -g ranger="/usr/local/bin/ranger"
+
 alias -g halp="tldr"
 
 alias -g ping="prettyping --nolegend"
@@ -178,10 +181,10 @@ alias -g yt="youtube-dl --external-downloader aria2c"
 alias -g ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias -g localip="ipconfig getifaddr en0"
 
-alias -g hdi='howdoi --color'
+alias -g hdi='function hdi(){ howdoi $* -c -n 5; }; hdi'
 alias -g ggls="gls --color=auto -HLFS"
 
-# alias -g rm="trash"
+alias -g rm="trash"
 
 # Temp - See how it works out
 GITSTATUS_LOG_LEVEL=DEBUG
@@ -204,7 +207,31 @@ fif() {
     rg --files-with-matches --no-messages "$1" | fzf
 $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 }
-# source ~/.fzf.zsh 
+
+# quickly add & remove '.bak' to files
+bak() {
+    for file in "$@"; do
+        if [[ $file =~ "\.bak" ]]; then
+            mv -iv "$file" "$(basename ${file} .bak)"
+        else
+            mv -iv "$file" "${file}.bak"
+        fi
+    done
+}
+
+# quickly duplicate things
+dup() {
+    for file in "$@"; do
+        cp -f "$file" "${file}.dup"
+    done
+}
+
+# rename files // may not need this one as "rename" is a program via brew
+name() {
+    local newname="$1"
+    vared -c -p "rename to: " newname
+    command mv "$1" "$newname"
+}
 
 
 #--------------------------- Haskell/GHC -------------------------------#
@@ -229,21 +256,24 @@ zstyle ':completion:*' fzf-search-display true
 # disable sort when completing options of any command
 zstyle ':completion:complete:*:options' sort true
 # lets test this git checkout completion snippet out first.
-zstyle ":completion:*:git-checkout:*" sort false
+# zstyle ":completion:*:git-checkout:*" sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0 
 
-zstyle ':fzf-tab:*' fzf-command fzf
-zstyle ':fzf-tab:complete:_zlua:*' query-string input
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
-zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
-zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# zstyle ':fzf-tab:complete:_zlua:*' query-string input
+# zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+# zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+# zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+# zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+# zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview [[ $group == "[process ID]" ]] && ps --pid=$'word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+zstyle ':fzf-tab:*' fzf-command fzf
+zstyle ':fzf-tab:*' show-group full
 
-bindkey '^I' fzf_completion
 
 
 
@@ -254,12 +284,9 @@ bindkey '^I' fzf_completion
 # source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
 
 # trial for file preview w/ ls using bat?
-# zstyle ':completion::*:ls::*' fzf-completion-opts --preview='head {1}'
+# zstyle ':completion:*:ls:*' fzf-completion-opts --preview='head {1}'
 
+bindkey '^I' fzf_completion
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-alias -g ranger="/usr/local/bin/ranger"
-export PATH="/usr/local/opt/llvm/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/llvm/lib"
-export CPPFLAGS="-I/usr/local/opt/llvm/include"

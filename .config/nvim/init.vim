@@ -1,5 +1,5 @@
-syntax enable
-filetype indent plugin on
+" syntax enable
+" filetype indent plugin on
 
 " set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let g:mapleader = "\<Space>"
@@ -8,22 +8,29 @@ let g:mapleader = "\<Space>"
 " set nocompatible " incase vim is used from time to time
 
 
+
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber number
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber number
+augroup END
+
 autocmd FileType json syntax match Comment +\/\/.\+$+
-autocmd FileType vista,CHADTree,tagbar,undotree setlocal signcolumn=no
+autocmd FileType vista,CHADTree,tagbar,undotree setlocal signcolumn=no "norelativenumber=no nonumber=no
 
 " set autoread
 set mouse=a
-set encoding=utf-8
+" set encoding=utf-8
 set guifont=Fira\ Code:h16:cANSI
 set nowrap
 set shell=/usr/local/bin/zsh
 set cmdheight=2
-set showcmd
-set laststatus=2
-set hls is ai si
+" set showcmd
+" set laststatus=2
+" set hls is ai si
 set expandtab
 set ls=2
-set switchbuf=useopen 	    " reveal already opened files from
+set switchbuf=useopen,split 	    " reveal already opened files from
 		                	" the quick fix window instead of opening new buffers
 set updatetime=300 	    " Speed up updatetime so gitgutter & friends are quicker
 set timeoutlen=900
@@ -41,7 +48,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set fillchars+=vert:\┃
-set smarttab
+" set smarttab
 set smartcase
 set ignorecase
 set formatoptions+=1    " when wrapping paragraphs, dont end lines
@@ -52,7 +59,7 @@ set noswapfile
 set nowritebackup
 set backspace=indent,eol,start
 set colorcolumn=80
-set signcolumn=auto:2
+set signcolumn=auto:4
 set list
 " set listchars=tab:->\ ,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 set showtabline=2
@@ -75,31 +82,28 @@ let g:loaded_python_provider = 0
 " let g:loaded_python3_provider = 1
 " changing python.plugin to python, to see if semshi loads correctly - 11/01
 let g:polyglot_disabled = ['sensible', 'python']
-let g:semshi#filetypes = ['Python']
+" let g:semshi#filetypes = ['Python']
 let g:semshi#error_sign = v:false       " let lsp handle this
 
-" augroup pypy
-"   autocmd!
-"   autocmd Filetype Python setlocal :Semshi enable
-" augroup END
+augroup pypy
+  autocmd! Filetype Python setlocal <cmd>Semshi toggle
+augroup END
 
 set pyxversion=3
 
 
 
-" luafile $HOME/.config/nvim/plugins.lua
-
-augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber number
-  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber number
-augroup END
-
 
 
 call plug#begin('~/.vim/plugged')
 
-" Plug 'GCBallesteros/iron.nvim'
+Plug 'hkupty/nvimux'        " neovim as a tmux replacement
+
+Plug 'hkupty/iron.nvim'
+Plug 'kassio/neoterm'
+    au VimEnter,BufRead,BufNewFile *.jl set filetype=julia
+    " just in case Julia acts up when running neoterm REPL
+
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-line'
 Plug 'GCBallesteros/vim-textobj-hydrogen'
@@ -142,7 +146,7 @@ Plug 'jiangmiao/auto-pairs'
     let g:AutoPairsMapSpace = 0
     let g:AutoPairsFlyMode = 1
     let g:AutoPairsShortcutBackInsert = '<M-b>'
-
+    let g:AutoPairsMapCR=0
 
 Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
     let g:undotree_WindowLayout = 2
@@ -212,12 +216,13 @@ Plug 'neomake/neomake' ", {'on': ':Make'}
 
 Plug 'masukomi/rainbow_parentheses.vim'
     " testing masukomi/rainbowParentheses
-    augroup RainbowParentheses
-        au VimEnter,BufEnter * RainbowParenthesesToggle
-        au Syntax * RainbowParenthesesLoadRound
-        au Syntax * RainbowParenthesesLoadSquare
-        au Syntax * RainbowParenthesesLoadBraces
-    augroup END
+  augroup Rainbows
+    au!
+    au VimEnter,BufEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+  augroup END
 
 
 Plug 'easymotion/vim-easymotion'
@@ -240,7 +245,7 @@ Plug 'haya14busa/incsearch-easymotion.vim'
 
 Plug 'Yggdroot/indentLine'
 
-Plug 'hrsh7th/vim-vsnip'   | Plug 'hrsh7th/vim-vsnip-integ'
+" Plug 'hrsh7th/vim-vsnip'   | Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'seletskiy/ultisnips' | Plug 'honza/vim-snippets'
 
 
@@ -248,18 +253,18 @@ Plug 'psliwka/vim-smoothie', {'as': 'smoooth'}
 
 Plug 'vim-utils/vim-man', {'on': '<Plug>Mangrep'}
 
-Plug 'nvim-treesitter/nvim-treesitter'
+" Plug 'nvim-treesitter/nvim-treesitter'
 
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
+" Plug 'neovim/nvim-lspconfig'
+" Plug 'nvim-lua/completion-nvim'
 " Plug 'nvim-lua/lsp-status.nvim'
 " Plug 'nvim-treesitter/completion-treesitter'
-Plug 'tjdevries/nlua.nvim'
-Plug 'tjdevries/lsp_extensions.nvim'
+" Plug 'tjdevries/nlua.nvim'
+" Plug 'tjdevries/lsp_extensions.nvim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'tjdevries/coc-zsh'
-Plug 'rafcamlet/coc-nvim-lua'
+  Plug 'tjdevries/coc-zsh'
+  Plug 'rafcamlet/coc-nvim-lua'
 " Plug 'vn-ki/coc-clap', {'do': function('clap#helper#build_all'), 'on': 'Clap'}
 
 " telescope req's
@@ -269,8 +274,18 @@ Plug 'nvim-lua/telescope.nvim'
 
 " get these two to work with CoC and/or LF
 Plug 'kevinhwang91/rnvimr', {'on': 'RnvimrToggle'}
-Plug 'voldikss/vim-floaterm', {'on': 'FloatermToggle'}
-Plug 'voldkiss/fzf-floaterm'
+Plug 'voldikss/fzf-floaterm'
+Plug 'voldikss/vim-floaterm'
+    let g:floaterm_autoclose = 2
+    let g:floaterm_keymap_toggle = '<Leader>fo'
+    let g:floaterm_keymap_kill = '<Leader>fc'
+
+    nnoremap <silent><Leader>fo  :FloatermToggle<CR>
+    tnoremap <silent>       <F7> <C-\><C-n>:FloatermToggle<CR>
+
+    nnoremap <silent><Leader>fc  :FloatermKill<CR>
+    tnoremap <silent>       <F8> <C-\><C-n>:FloatermKill<CR>
+    " try w/ Coc & FZF
 
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
     nnoremap <leader>v <cmd>CHADopen --nofocus<CR>
@@ -280,11 +295,11 @@ Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
     " nnoremap <leader>vc <cmd>call setqflist([])<CR>
 
 Plug 'jpalardy/vim-slime'
-    let g:slime_target = "kitty"
+    let g:slime_target = "neovim"
 
-Plug 'knubie/vim-kitty-navigator'
-    let &titlestring='%t - nvim'
-    let g:kitty_navigator_listening_on_address = "unix:/tmp/mykitty"
+" Plug 'knubie/vim-kitty-navigator'
+"     let &titlestring='%t - nvim'
+"     let g:kitty_navigator_listening_on_address = "unix:/tmp/mykitty"
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Clojure ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -314,12 +329,12 @@ Plug 'sbdchd/neoformat' ", {'for': ['haskell', 'python']}
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Julia ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plug 'JuliaEditorSupport/julia-vim'
+Plug 'JuliaEditorSupport/julia-vim', {'for': 'Julia'}
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Python ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plug 'microsoft/vscode-python', {'for': 'Python'}
+" Plug 'microsoft/vscode-python', {'for': 'Python'}
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'sheerun/vim-polyglot' ", {'for': ['Golang', 'Haskell', 'Scala']}
 
@@ -342,18 +357,20 @@ call plug#end()
 
 " lua require('lsp')
 " lua require('tree')
-
+" luafile $HOME/.config/nvim/lua/tree.lua
+" luafile $HOME/.config/nvim/lua/repl.lua
+" lets see if repl.lua will finally fkn work!
 
 
 " Dont bother telling me about whitespace bruh
-silent! call airline#extensions#whitespace#disable()
 let g:airline#extensions#whitespace#enabled = 0
+silent! call airline#extensions#whitespace#disable()
 tnoremap <Esc> <C-\><C-n>
 
 
 if executable('rg')
     let g:rg_derive_root='true'
-    set grepprg=rg\ --vimgrep\ --pretty\ --smart-case\ --no-heading
+    set grepprg=Rg\ --vimgrep\ --pretty\ --smart-case\ --no-heading\ --color\
 endif
 
 
@@ -438,7 +455,7 @@ let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
 let g:webdevicons_enable_startify = 1
 let g:webdevicons_enable_flagship_statusline = 1
-let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
+let g:WebDevIconsNerdTreeBeforeGlyphPadding = " "
 let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
 let g:DevIconsEnableFoldersOpenClose = 1
 
@@ -568,7 +585,7 @@ set shortmess+=Ic
 set completeopt=noinsert,menu,noselect
 " set omnifunc=v:lua.vim.lsp.omnifunc
 set wildignorecase
-set wildmenu
+" set wildmenu
 set wildmode=longest:full,full
 set wildignore+=*.o,*.obj,.git,*.rbc,*/node_modules,*.gem
 set wildignore+=*.pyc,__pycache__,*.egg-info,*.pytest_cache,*.mypy_cache
@@ -657,7 +674,7 @@ nmap <F9> :Vista!!<CR>
 colorscheme Snazzy
 " colorscheme onedark
 " colorscheme monokai_tasty
-set background=dark
+" set background=dark
 " colorscheme OneDark
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ vim-airline temp ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -757,7 +774,7 @@ cmap w!! w !sudo tee %
 
 
 
-autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout=40})
+" autocmd TextYankPost * silent! lua vim.highlight.on_yank ({timeout=40})
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~autocmd rules~~~~~~~~~~~~~~~~~~~~"
@@ -774,9 +791,9 @@ autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout=40})
 " augroup END
 
 
-if exists("*fugitive#statusline")
-     set statusline+=%{fugitive#statusline()}
-endif
+" if exists("*fugitive#statusline")
+"      set statusline+=%{fugitive#statusline()}
+" endif
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Spaceline ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " let g:spaceline_separate_style = 'slant-cons'
@@ -802,7 +819,6 @@ let g:coc_glogal_extensions = [
     \   'coc-lists',
     \   'coc-action',
     \   'coc-snippets',
-    \   'coc-pyright',
     \   'coc-utils']
 
 
@@ -845,7 +861,7 @@ let g:coc_snippet_prev = '<c-k>'
 
 
 " lets see is <tab> works better below vs. <CR> in both inoremap and imap
-if exists('*complete_info')
+if !exists("*complete_info")
     inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 else
     imap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -875,13 +891,13 @@ nmap <silent> gr <Plug>(coc-references)
 
 
 " Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K <cmd>Call <SID>show_documentation()<CR>
 " lets try this
-nnoremap <silent> <leader>K :call CocAction('doHover')<CR>
+" nnoremap <silent> <leader>K :call CocAction('doHover')<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
+    execute 'h '.expand('<cWORD>')
   else
     call CocAction('doHover')
   endif
@@ -890,9 +906,12 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 au CursorHold * silent call CocActionAsync('highlight')
 " Symbol renaming.
-nmap <leader>ln <Plug>(coc-rename)
+nmap <leader>rn <Plug>(coc-rename)
 " python renaming
-au FileType python nnoremap <leader>rn :Semshi rename <CR>
+augroup PySemshi
+  autocmd! 
+  autocmd FileType Python nnoremap <Leader>rn :Semshi rename<CR>
+augroup END
 
 " Formatting selected code.
 xmap <leader>lf  <Plug>(coc-format-selected)
@@ -901,10 +920,10 @@ nmap <leader>lf  <Plug>(coc-format-selected)
 aug mygroup
   au!
   " Setup formatexpr specified filetype(s).
-  au FileType typescript,json,python,markdown,golang,viml,bash,zsh,lua,rust,haskell setl formatexpr=CocAction('formatSelected')
+  au FileType typescript,json,python,markdown,golang,vim,bash,zsh,lua,rust,haskell,clojure,cpp setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   au User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-aug end
+aug END
 
 
 " Applying codeAction to the selected region.
@@ -997,7 +1016,7 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 " nmap <leader>exf :CocCommand explorer --preset floating<CR>
 "}}}
 " List all presets
-nmap <leader>ep :CocList Presets<cr>
+" nmap <leader>ep :CocList Presets<cr>
 
 
 
@@ -1085,8 +1104,9 @@ let g:indentLine_concealcursor = 0
 let g:indientLine_faster = 1
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_color_term = 6
-let g:indentLine_fileTypeExclude = ['startify', 'coc-explorer', 'help',
-                                    \ 'vista', 'CHADTree', 'tagbar', 'undotree']
+let g:indentLine_fileTypeExclude = ['startify', 'coc', 'help',
+                                    \ 'terminal', 'floaterm', 'vista',
+                                    \ 'CHADTree', 'tagbar', 'undotree']
 
 "~~~~~~~~~~~~~~~~~~~~~~~~ vista.vim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
@@ -1115,17 +1135,17 @@ let g:vista_executive_for = {
     \ 'lua': 'coc-nvim-lua',
     \ 'go':  'coc-go',
     \ 'hs':  'coc',
-    \ 'sh':  'coc-zsh',
+    \ 'sh':  'coc-sh',
     \}
 
-function! NearestMethodOrFunction() abort
-	return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
+" function! NearestMethodOrFunction() abort
+"     return get(b:, 'vista_nearest_method_or_function', '')
+" endfunction
 
 
-if exists("*NearestMethodOrFunction")
-	set statusline+=%{NearestMethodOrFunction()}
-endif
+" if exists("*NearestMethodOrFunction")
+"     set statusline+=%{NearestMethodOrFunction()}
+" endif
 " to autmoatically show the nearetst fx in statusline automatically
 " need to add this:
 " autocmd VimEnter * call Vista#RunForNearestMethodOrFunction()
@@ -1136,10 +1156,10 @@ let g:vista_log_file = expand('~/vista.log')
 " Fzf.vim
 let $BAT_THEME = 'Sublime Snazzy'
 let g:fzf_layout = {'window': 'call OpenFloatingWin()'}
-let g:fzf_action = {
-    \   'ctrl-t': 'tab split',
-    \   'ctrl-x': 'split',
-    \   'ctrl-v': 'vsplit'}
+" let g:fzf_action = {
+    " \   'ctrl-t': 'tab split',
+    " \   'ctrl-x': 'split',
+    " \   'ctrl-v': 'vsplit'}
 
 command! -bang -nargs=* Rg
         \ call fzf#vim#grep(
@@ -1176,6 +1196,123 @@ function! OpenFloatingWin()
     au BufWipeout <buffer> exe 'bw '.s:buf
 endfunction
 
+" --------------------------------------------------------------------"
+" --------------------------------------------------------------------"
+function! CreateCenteredFloatingWindow(border)
+  let width = float2nr(&columns * 0.9)
+  let height = float2nr(&lines * 0.9)
+  let top = ((&lines - height) / 2) - 1
+  let left = (&columns - width) / 2
+  let opts = {'relative': 'editor',
+              \    'row':      top,
+              \    'col':     left,
+              \  'width':    width,
+              \ 'height':   height,
+              \  'style': 'minimal'
+              \}
+
+  let top = "╔" . repeat("═", width - 2) . "╗"
+  let mid = "║" . repeat(" ", width - 2) . "║"
+  let bot = "╚" . repeat("═", width - 2) . "╝"
+  let lines = [top] + repeat([mid], height - 2) + [bot]
+  let s:buf = nvim_create_buf(v:false, v:true)
+  if a:border == 0
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+  endif
+  let opts.row += 1
+  let opts.height -= 2
+  let opts.col += 2
+  let opts.width -= 4
+  call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+  set winhl=Normal:Floating
+  autocmd BufWipeout <buffer> call CleanupBuffer(s:buf)
+endfunction
+
+function! CleanupBuffer(buf)
+  if bufexists(a:buf)
+    silent execute 'bwipeout!' '.a:buf'
+  endif
+endfunction
+
+function! DeleteUnlistedBuffers()
+  for n in nvim_list_bufs()
+    if ! buflisted(n)
+      let name = bufname(n)
+      if name == '[Scratch]' ||
+            \ matchend(name, ":lazygit") ||
+            \ matchend(name, ":lf") ||
+            \ matchend(name, ":zsh") ||
+            \ matchend(name, ":gotop")
+              call CleanupBuffer(n)
+      endif
+    endif
+  endfor
+endfunction
+
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~ Check lf and lazygit ~~~~~~~~~~~~~~~~~~~~~~"
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~ swap w/ ranger & tig? ~~~~~~~~~~~~~~~~~~~~"
+
+function! ToggleBorderTerm(cmd)
+  if empty(bufname(a:cmd))
+    call CreateCenteredFloatingWindow(0)
+    startinsert
+    call termopen(a:cmd, {'on_exit': function('OnTermExit')})
+  else
+    call DeleteUnlistedBuffers()
+  endif
+endfunction
+
+function! ToggleNoBorderTerm(cmd)
+  if empty(bufname(a:cmd))
+    call CreateCenteredFloatingWindow(1)
+    startinsert
+    call termopen(a:cmd, {'on_exit': function('OnTermExit')})
+  else
+    call DeleteUnlistedBuffers()
+  endif
+endfunction
+
+" LazyGit
+nnoremap <silent> <leader>tg :call ToggleLazyGit()<CR>
+function! ToggleLazyGit()
+  call ToggleNoBorderTerm('lazygit')
+endfunction
+
+nnoremap <silent> <Leader>tt :call ToggleGotop()<CR>
+function! ToggleGotop()
+  call ToggleNoBorderTerm('gotop')
+endfunction
+
+nnoremap <silent> <leader>tf :call ToggleLf()<CR>
+nnoremap <silent> <leader>cf :call ToggleCurrentFile()<CR>
+
+function! ToggleCurrentFile()
+  call ToggleNoBorderTerm('cd '.expand('%:p:h').' && lf')
+endfunction
+
+function! ToggleLf()
+  call ToggleNoBorderTerm('lf')
+endfunction
+
+nnoremap <silent> <leader>ts :call ToggleZsh()<CR>
+function ToggleZsh()
+  call ToggleNoBorderTerm('zsh')
+endfunction
+
+nnoremap <silent> <Leader>td :call DeleteUnlistedBuffers()<CR>
+
+function! OnTermExit(job_id, code, event) dict
+  if a:code == 0
+    call DeleteUnlistedBuffers()
+  endif
+endfunction
+
+function! RefocusFloatingWin()
+  wincmd p
+  startinsert
+endfunction
 
 "~~~~~~~~~~~~~~~~~~~ Vim-Clap ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 let g:clap_provider_dotfiles = {
@@ -1187,6 +1324,7 @@ let g:clap_provider_commands = {
     \ 'source': ['Clap debug', 'UltiSnipsEdit'],
     \ 'sink': { selected -> execute(selected, '')},
     \}
+
 "~~~~~~~~~~~~~~~~~~~~ UltiSnips ~~~~~~~~~~~~~~~~~~~~"
 
 " let g:UltiSnipsExpandTrigger="<tab>"

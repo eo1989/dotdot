@@ -16,18 +16,23 @@ export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-getopt/bin
 
 export PATH="${HOME}/.local/bin:${PATH}"
 export PATH="${HOME}/.emacs.d/bin:${PATH}"
-export PATH="/usr/local/opt/emacs-plus@28/Emacs.app:${PATH}"
-export PATH="/usr/local/opt/openjdk/bin:${PATH}"
+export PATH="/usr/local/opt/emacs-plus@28/Emacs.app/Contents/MacOS/Emacs:${PATH}"
+
+# Java
+export PATH="/usr/local/opt/openjdk/bin/java:${PATH}"
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
-# export CPPFLAGS="-I/usr/local/opt/openjdk/include"
-export PATH="/usr/local/opt/llvm/bin:${PATH}"
-export LDFLAGS="-L/usr/local/opt/llvm/lib"
-export CPPFLAGS="-I/usr/local/opt/llvm/include"
+export CPPFLAGS="-I/usr/local/opt/openjdk/include"
+
+# LLVM -- Julia, & such
+# export PATH="/usr/local/opt/llvm/bin:${PATH}"
+# export LDFLAGS="-L/usr/local/opt/llvm/lib"
+# export CPPFLAGS="-I/usr/local/opt/llvm/include"
 
 
 #Go
 export GOPATH="${HOME}/go"
-export GOROOT="$(brew --prefix golang)/libexec"
+# export GOROOT="$(brew --prefix golang)/libexec"
+export GOROOT="/usr/local/opt/go/libexec"  # This may be faster?
 export PATH="${GOPATH}/bin:${GOROOT}/bin:${PATH}"
 
 # Rust
@@ -44,16 +49,13 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 
+export EXA_COLORS="uu=0:gu=0"
 export LS_COLORS="$(vivid generate snazzy)"
+export LSCOLORS="$(vivid generate snazzy)"
 
 # export BAT_THEME="Sublime Snazzy"
-export EXA_COLORS="uu=0:gu=0"
-# If you come from bash you might hve to change your $PATH.
-#
-# source p10k as the theme for zsh
+
 source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
-
-
 
 export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:${MANPATH}"
 export LANG="en_US.UTF-8"
@@ -87,7 +89,7 @@ export FZF_DEFAULT_OPTS="
     --bind='ctrl-v:execute(code {+})'
     --bind='ctrl-e:execute(echo {+} | xargs -o nvim)'
     --bind='ctrl-u:preview-page-up'
-    --bind 'ctrl-d:preview-page-down'"
+    --bind='ctrl-d:preview-page-down'"
 
 FD_OPTIONS="--color auto --follow --hidden --exclude '.git' --exclude 'node_modules'"
 export FZF_DEFAULT_COMMAND="fd $FD_OPTIONS"
@@ -105,7 +107,7 @@ autoload -Uz +X compinit && compinit -u
 kitty + complete setup zsh | source /dev/stdin
 
 source /usr/local/share/zsh-completions
-source ${HOME}/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
+# source ${HOME}/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -149,9 +151,11 @@ export EDITOR="nvim"
 
 # alias -g preview="fzf --preview 'bat --color \"always\" {}'"
 
-# alias -g k="/Applications/kitty.app/Contents/MacOS/kitty --listen-on unix:/tmp/mykitty"
+alias -g calibre="/Applications/calibre.app/Contents/MacOS/calibre &"
 
-alias -g dotfiles="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+alias -g k="/Applications/kitty.app/Contents/MacOS/kitty --listen-on unix:/tmp/mykitty"
+
+alias -g dotfiles="/usr/local/bin/git --git-dir=${HOME}/.dotfiles/ --work-tree=${HOME}"
 
 alias -g j="jump"
 
@@ -161,11 +165,11 @@ alias -g lt="exa -T -L 2 -F --icons"
 
 alias -g ranger="/usr/local/bin/ranger"
 
-alias -g halp="tldr"
+alias -g help="tldr"
 
 alias -g ping="prettyping --nolegend"
 
-alias -g Z='| fzf'
+# alias -g Z='| fzf'
 
 alias -g zshrc="nvim ~/.zshrc"
 alias -g reload="exec $SHELL"
@@ -185,12 +189,6 @@ alias -g hdi='function hdi(){ howdoi $* -c -n 5; }; hdi'
 alias -g ggls="gls --color=auto -HLFS"
 
 alias -g rm="trash"
-
-# Temp - See how it works out
-GITSTATUS_LOG_LEVEL=DEBUG
-
-# if [[ ! -d ~/.oh-my-zsh/custom/plugins/autopair.zsh ]]; then
-#     git clone https://github.com/hlissner/zsh-autopair ~/.zsh-autopair
 
 source ~/.zsh-autopair/autopair.zsh
 autopair-init
@@ -243,7 +241,7 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 
 #----------------------------- fuck! -----------------------------------#
-eval "$(thefuck --alias)" #$(thefuck --alias)
+eval "$(thefuck --alias)"
 
 #------------------------ Zoxifde! (trial) ------------------------------#
 eval "$(zoxide init zsh)"
@@ -254,26 +252,27 @@ eval "$(gh completion -s zsh)"
 # ----------------------------- fzf-tab ---------------------------------------#
 zstyle ':completion:*' fzf-search-display true
 # disable sort when completing options of any command
-zstyle ':completion:complete:*:options' sort true
+# zstyle ':completion:complete:*:options' sort true
 # lets test this git checkout completion snippet out first.
 # zstyle ":completion:*:git-checkout:*" sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0 
+zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
 
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # zstyle ':fzf-tab:complete:_zlua:*' query-string input
 # zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 # zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 # zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 # zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
-# zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview [[ $group == "[process ID]" ]] && ps --pid=$'word -o cmd --no-headers -w -w'
-zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
-zstyle ':fzf-tab:*' fzf-command fzf
-zstyle ':fzf-tab:*' show-group full
+# zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+# zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview [[ $group == "[process ID]" ]] && "ps --pid=$'word -o cmd --no-headers -w -w'"
+# zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+# zstyle ':fzf-tab:*' fzf-command fzf
+# zstyle ':fzf-tab:*' show-group full
 
+# zstyle ':completion::*:git::git,add,*' fzf-completion-opts --preview='git -c color.status=always status --short'
 
 
 
@@ -286,7 +285,7 @@ zstyle ':fzf-tab:*' show-group full
 # trial for file preview w/ ls using bat?
 # zstyle ':completion:*:ls:*' fzf-completion-opts --preview='head {1}'
 
-bindkey '^I' fzf_completion
+# bindkey '^I' fzf_completion
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

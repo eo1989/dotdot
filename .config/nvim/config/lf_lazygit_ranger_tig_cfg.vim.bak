@@ -1,0 +1,59 @@
+" function! ToggleBorderTerm(cmd)
+"   if empty(bufname(a:cmd))
+"     call CreateCenteredFloatingWindow(0)
+"     startinsert
+"     call termopen(a:cmd, {'on_exit': function('OnTermExit')})
+"   else
+"     call DeleteUnlistedBuffers()
+"   endif
+" endfunction
+
+" function! ToggleNoBorderTerm(cmd)
+"   if empty(bufname(a:cmd))
+"     call CreateCenteredFloatingWindow(1)
+"     startinsert
+"     call termopen(a:cmd, {'on_exit': function('OnTermExit')})
+"   else
+"     call DeleteUnlistedBuffers()
+"   endif
+" endfunction
+
+" " LazyGit
+" nnoremap <silent> <leader>tg :call ToggleLazyGit()<CR>
+" function! ToggleLazyGit()
+"   call ToggleNoBorderTerm('lazygit')
+" endfunction
+
+" nnoremap <silent> <Leader>tt :call ToggleGotop()<CR>
+" function! ToggleGotop()
+"   call ToggleNoBorderTerm('gotop')
+" endfunction
+
+" nnoremap <silent> <leader>tf :call ToggleLf()<CR>
+" nnoremap <silent> <leader>cf :call ToggleCurrentFile()<CR>
+
+" function! ToggleCurrentFile()
+"   call ToggleNoBorderTerm('cd '.expand('%:p:h').' && lf')
+" endfunction
+
+" function! ToggleLf()
+"   call ToggleNoBorderTerm('lf')
+" endfunction
+
+" nnoremap <silent> <leader>ts :call ToggleZsh()<CR>
+" function ToggleZsh()
+"   call ToggleNoBorderTerm('zsh')
+" endfunction
+
+" nnoremap <silent> <Leader>td :call DeleteUnlistedBuffers()<CR>
+
+" function! OnTermExit(job_id, code, event) dict
+"   if a:code == 0
+"     call DeleteUnlistedBuffers()
+"   endif
+" endfunction
+
+" function! RefocusFloatingWin()
+"   wincmd p
+"   startinsert
+" endfunction

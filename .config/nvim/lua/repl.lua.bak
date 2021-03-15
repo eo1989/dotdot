@@ -1,0 +1,40 @@
+local iron = require('iron')
+
+-- local vis = function(buffer_id, show_fn)
+--     -- Chk if window exists, is visible..
+-- end
+
+-- local open_repl = function(buffer)
+--     vim.api.nvim_open_win(buffer, ....)
+-- end
+
+iron.core.add_repl_definitions {
+    python = {
+        ipy = {
+            command = {"ipython3"}
+        }
+    },
+    clojure = {
+        lein_connect = {
+            command = {"lein", "repl", ":connect"}
+        }
+    },
+    haskell = {
+        ghci = {
+            command = "ghci"
+        }
+    },
+    julia = {
+        command = "julia"
+    }
+}
+
+iron.core.set_config {
+    preferred = {
+        python = "jupyter",
+        clojure = "lein",
+        haskell = "ghci",
+        julia = "julia"
+    }
+}
+

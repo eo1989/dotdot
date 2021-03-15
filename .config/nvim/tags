@@ -1,0 +1,371 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/62f0144/
+$FZF_PREVIEW_PREVIEW_BAT_THEME	init.vim	/^let $FZF_PREVIEW_PREVIEW_BAT_THEME = 'Sublime Snazzy'$/;"	v
+$NVIM_PYTHON_LOG_FILE	init.vim	/^let $NVIM_PYTHON_LOG_FILE="\/tmp\/nvim_log"$/;"	v
+$NVIM_PYTHON_LOG_LEVEL	init.vim	/^let $NVIM_PYTHON_LOG_LEVEL="DEBUG"$/;"	v
+-	init.vim	/^    nmap  -  <Plug>(choosewin)$/;"	m
+0	coc-settings.json	/^        "*.cabal",$/;"	s	array:languageserver.haskell.rootPatterns
+0	coc-settings.json	/^      "args": ["--lsp"],$/;"	s	array:languageserver.haskell.args
+0	coc-settings.json	/^      "filetypes": ["haskell", "hs", "lhaskell", "lhs"]$/;"	s	array:languageserver.haskell.filetypes
+0	coc-settings.json	/^    "${env:SPARK_HOME}\/python",$/;"	s	array:python.autoComplete.extraPaths
+0	coc-settings.json	/^    "--ignore=E501,E402,F481,F841,F401,E999,E251,E302,E305,E265,E201,YCM112,YCM201,YCM202,",$/;"	s	array:python.linting.flake8Args
+0	coc-settings.json	/^    "--rcfile",$/;"	s	array:python.linting.pylintArgs
+0	coc-settings.json	/^  "coc.preferences.rootPatterns": [".git", ".vscode"],$/;"	s	array:coc.preferences.rootPatterns
+0	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+1	coc-settings.json	/^        "stack.yaml",$/;"	s	array:languageserver.haskell.rootPatterns
+1	coc-settings.json	/^      "filetypes": ["haskell", "hs", "lhaskell", "lhs"]$/;"	s	array:languageserver.haskell.filetypes
+1	coc-settings.json	/^    "${env:SPARK_HOME}\/python\/pyspark"$/;"	s	array:python.autoComplete.extraPaths
+1	coc-settings.json	/^    "--config='~\/.flake8'"$/;"	s	array:python.linting.flake8Args
+1	coc-settings.json	/^    "~\/pylintrc",$/;"	s	array:python.linting.pylintArgs
+1	coc-settings.json	/^  "coc.preferences.rootPatterns": [".git", ".vscode"],$/;"	s	array:coc.preferences.rootPatterns
+1	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+10	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+11	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+12	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+13	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+14	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+15	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+2	coc-settings.json	/^        "cabal.project",$/;"	s	array:languageserver.haskell.rootPatterns
+2	coc-settings.json	/^      "filetypes": ["haskell", "hs", "lhaskell", "lhs"]$/;"	s	array:languageserver.haskell.filetypes
+2	coc-settings.json	/^    "--ignore=D205,D100,D102,D105,D106,D107,E501,C0326,C0303,C0325,C0102"$/;"	s	array:python.linting.pylintArgs
+2	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+3	coc-settings.json	/^        "package.yaml",$/;"	s	array:languageserver.haskell.rootPatterns
+3	coc-settings.json	/^      "filetypes": ["haskell", "hs", "lhaskell", "lhs"]$/;"	s	array:languageserver.haskell.filetypes
+3	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+4	coc-settings.json	/^        "hie.yaml"$/;"	s	array:languageserver.haskell.rootPatterns
+4	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+5	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+6	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+7	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+8	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+9	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	s	array:jedi.jediSettings.autoImportModules
+<	init.vim	/^xnoremap < <gv$/;"	m
+<C-h>	init.vim	/^nnoremap <C-h> <C-w>h$/;"	m
+<C-j>	init.vim	/^nnoremap <C-j> <C-w>j$/;"	m
+<C-k>	init.vim	/^nnoremap <C-k> <C-w>k$/;"	m
+<C-l>	init.vim	/^nnoremap <C-l> <C-w>l$/;"	m
+<C-s>	init.vim	/^nmap <silent> <C-s> <Plug>(coc-range-select)$/;"	m
+<C-s>	init.vim	/^xmap <silent> <C-s> <Plug>(coc-range-select)$/;"	m
+<Enter>	init.vim	/^    vmap <Enter> <Plug>(EasyAlign)$/;"	m
+<F6>	init.vim	/^nmap <F6> <cmd>CHADopen<CR>$/;"	m
+<F7>	init.vim	/^    nnoremap <F7> :UndotreeToggle<CR>$/;"	m
+<F8>	init.vim	/^    nmap <F8> :TagbarToggle<CR>$/;"	m
+<Leader>+	init.vim	/^nnoremap <Leader>+ :vertical resize +5<CR>$/;"	m
+<Leader>-	init.vim	/^nnoremap <Leader>- :vertical resize -5<CR>$/;"	m
+<Leader>/	init.vim	/^nnoremap <expr><Leader>\/ <cmd>nohls<CR>$/;"	m
+<Leader><CR>	init.vim	/^nnoremap <Leader><CR> :so ~\/.config\/nvim\/init.vim<CR>$/;"	m
+<Leader><Leader>	init.vim	/^     map <Leader><Leader> <Plug>(easymotion-prefix)$/;"	m
+<Leader>L	init.vim	/^     map <Leader>L        <Plug>(easymotion-bd-jk)$/;"	m
+<Leader>L	init.vim	/^    nmap <Leader>L        <Plug>(easymotion-overwin-line)$/;"	m
+<Leader>c	init.vim	/^noremap <Leader>c :bd<CR>$/;"	m
+<Leader>f	init.vim	/^     map <Leader>f        <Plug>(easymotion-bd-f)$/;"	m
+<Leader>f	init.vim	/^     map <Leader>f        <Plug>(easymotion-overwin-f)$/;"	m
+<Leader>fc	init.vim	/^    nnoremap <silent><Leader>fc  :FloatermKill<CR>$/;"	m
+<Leader>fo	init.vim	/^    nnoremap <silent><Leader>fo  :FloatermToggle<CR>$/;"	m
+<Leader>hs	init.vim	/^noremap <Leader>hs :<C-u>split<CR>$/;"	m
+<Leader>pf	init.vim	/^nnoremap <Leader>pf :Files<CR>$/;"	m
+<Leader>re	init.vim	/^map <Leader>re :so ~\/.config\/nvim\/init.vim<CR>$/;"	m
+<Leader>rp	init.vim	/^nnoremap <Leader>rp :resize 100<CR>$/;"	m
+<Leader>vs	init.vim	/^noremap <Leader>vs :<C-u>vsplit<CR>$/;"	m
+<Leader>w	init.vim	/^     map <Leader>w        <Plug>(easymotion-bd-w)$/;"	m
+<Leader>w	init.vim	/^    nmap <Leader>w        <Plug>(easymotion-overwin-w)$/;"	m
+<Leader>x	init.vim	/^noremap <Leader>x :bn<CR>$/;"	m
+<Leader>z	init.vim	/^noremap <Leader>z :bp<CR>$/;"	m
+<S-TAB>	init.vim	/^inoremap <expr><S-TAB> pumvisible() ? "\\<C-p>" : "\\<C-h>"$/;"	m
+<TAB>	init.vim	/^inoremap <silent><expr> <TAB>$/;"	m
+<c-space>	init.vim	/^inoremap <silent><expr> <c-space> coc#refresh()$/;"	m
+<leader>ac	init.vim	/^nmap <leader>ac  <Plug>(coc-codeaction)$/;"	m
+<leader>ap	init.vim	/^nmap <leader>ap  <Plug>(coc-codeaction-selected)$/;"	m
+<leader>ap	init.vim	/^xmap <leader>ap  <Plug>(coc-codeaction-selected)$/;"	m
+<leader>fM	init.vim	/^nnoremap <silent> <leader>fM :<C-u>FzfPreviewOldFiles<CR>$/;"	m
+<leader>fb	init.vim	/^nnoremap <silent> <leader>fb :<C-u>FzfPreviewBuffers<CR>$/;"	m
+<leader>fm	init.vim	/^nnoremap <silent> <leader>fm :<C-u>FzfPreviewProjectOldFiles<CR>$/;"	m
+<leader>fp	init.vim	/^nnoremap <silent> <leader>fp :<C-u>FzfPreviewProjectFiles<CR>$/;"	m
+<leader>lb	init.vim	/^nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>$/;"	m
+<leader>lc	init.vim	/^nnoremap <silent> <leader>lc  :<C-u>CocList commands<cr>$/;"	m
+<leader>ld	init.vim	/^nnoremap <silent> <leader>ld  :<C-u>CocList diagnostics<cr>$/;"	m
+<leader>le	init.vim	/^nnoremap <silent> <leader>le  :<C-u>CocList extensions<cr>$/;"	m
+<leader>lf	init.vim	/^nmap <leader>lf  <Plug>(coc-format-selected)$/;"	m
+<leader>lf	init.vim	/^xmap <leader>lf  <Plug>(coc-format-selected)$/;"	m
+<leader>lj	init.vim	/^nnoremap <silent> <leader>lj  :<C-u>CocNext<CR>$/;"	m
+<leader>lk	init.vim	/^nnoremap <silent> <leader>lk  :<C-u>CocPrev<CR>$/;"	m
+<leader>ll	init.vim	/^nnoremap <silent> <leader>ll :<C-u>CocList locationlist<CR>$/;"	m
+<leader>lm	init.vim	/^nnoremap <silent> <leader>lm :<C-u>CocList marketplace<CR>$/;"	m
+<leader>lo	init.vim	/^nnoremap <silent> <leader>lo  :<C-u>CocList outline<cr>$/;"	m
+<leader>lp	init.vim	/^nnoremap <silent> <leader>lp  :<C-u>CocListResume<CR>$/;"	m
+<leader>ls	init.vim	/^nnoremap <silent> <leader>ls  :<C-u>CocList -I symbols<cr>$/;"	m
+<leader>ly	init.vim	/^nnoremap <silent> <leader>ly  :<C-u>CocList -A --normal yank<cr>$/;"	m
+<leader>p	init.vim	/^vnoremap <leader>p "_dP$/;"	m
+<leader>pv	init.vim	/^nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>$/;"	m
+<leader>pw	init.vim	/^nnoremap <leader>pw :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cwo/;"	m
+<leader>qf	init.vim	/^nmap <leader>qf  <Plug>(coc-fix-current)$/;"	m
+<leader>rn	init.vim	/^nmap <leader>rn <Plug>(coc-rename)$/;"	m
+<leader>rw	init.vim	/^nnoremap <silent> <leader>rw :CocSearch <C-R><C-W><CR>$/;"	m
+<leader>sh	init.vim	/^nnoremap <silent> <leader>sh :terminal<CR>$/;"	m
+<leader>v	init.vim	/^    nnoremap <leader>v <cmd>CHADopen --nofocus<CR>$/;"	m
+>	init.vim	/^xnoremap > >gv$/;"	m
+Fold	init.vim	/^command! -nargs=? Fold :call CocAction('fold', <f-args>)$/;"	c
+Format	init.vim	/^command! -nargs=0 Format :call CocAction('format')$/;"	c
+GFiles	init.vim	/^command! -bang -nargs=? -complete=file GFiles$/;"	c
+J	init.vim	/^vnoremap J :m '>+1<CR>gv=gv$/;"	m
+JuliaDocPrompt	init.vim	/^augroup JuliaDocPrompt$/;"	a
+K	init.vim	/^nnoremap <silent> K <cmd>Call <SID>show_documentation()<CR>$/;"	m
+K	init.vim	/^vnoremap K :m '<-2<CR>gv=gv$/;"	m
+N	init.vim	/^nnoremap N Nzzzv$/;"	m
+OR	init.vim	/^command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')$/;"	c
+OpenFloatingWin	init.vim	/^function! OpenFloatingWin()$/;"	f
+PySemshi	init.vim	/^augroup PySemshi$/;"	a
+Rg	init.vim	/^command! -bang -nargs=* Rg$/;"	c
+Y	init.vim	/^noremap Y "+y$/;"	m
+[g	init.vim	/^nmap <silent> [g <Plug>(coc-diagnostic-prev)$/;"	m
+]g	init.vim	/^nmap <silent> ]g <Plug>(coc-diagnostic-next)$/;"	m
+]x	init.vim	/^    nmap ]x ctrih\/^# %%<CR><CR>$/;"	m
+ac	init.vim	/^omap ac <Plug>(coc-classobj-a)$/;"	m
+ac	init.vim	/^xmap ac <Plug>(coc-classobj-a)$/;"	m
+af	init.vim	/^omap af <Plug>(coc-funcobj-a)$/;"	m
+af	init.vim	/^xmap af <Plug>(coc-funcobj-a)$/;"	m
+args	coc-settings.json	/^      "args": ["--lsp"],$/;"	a	object:languageserver.haskell
+b:airline_whitespace_disabled	init.vim	/^let b:airline_whitespace_disabled = 1$/;"	v
+class	coc-settings.json	/^    "class":         "\\uf0e8",$/;"	s	object:suggest.completionItemKindLabels
+coc.preferences.colorSupport	coc-settings.json	/^  "coc.preferences.colorSupport": true,$/;"	b
+coc.preferences.enableFloatHighlight	coc-settings.json	/^  "coc.preferences.enableFloatHighlight": true,$/;"	b
+coc.preferences.extensionUpdateCheck	coc-settings.json	/^  "coc.preferences.extensionUpdateCheck": "daily",$/;"	s
+coc.preferences.formatOnType	coc-settings.json	/^  "coc.preferences.formatOnType": false,$/;"	b
+coc.preferences.hoverTarget	coc-settings.json	/^  "coc.preferences.hoverTarget": "preview",$/;"	s
+coc.preferences.jumpCommand	coc-settings.json	/^  "coc.preferences.jumpCommand": "split",$/;"	s
+coc.preferences.rootPatterns	coc-settings.json	/^  "coc.preferences.rootPatterns": [".git", ".vscode"],$/;"	a
+coc.source.file.ignoreHidden	coc-settings.json	/^  "coc.source.file.ignoreHidden": false,$/;"	b
+coc.source.nvim_lua.enable	coc-settings.json	/^  "coc.source.nvim_lua.enable": true,$/;"	b
+coc.source.ultisnips.enable	coc-settings.json	/^  "coc.source.ultisnips.enable": true,$/;"	b
+codeLens.enable	coc-settings.json	/^  "codeLens.enable": true,$/;"	b
+color	coc-settings.json	/^    "color":         "\\ue22b",$/;"	s	object:suggest.completionItemKindLabels
+command	coc-settings.json	/^      "command": "haskell-language-server-wrapper",$/;"	s	object:languageserver.haskell
+constant	coc-settings.json	/^    "constant":      "\\uf8fe",$/;"	s	object:suggest.completionItemKindLabels
+default	coc-settings.json	/^    "default":       "\\uf29c"$/;"	s	object:suggest.completionItemKindLabels
+default	coc-settings.json	/^    "default": true,$/;"	b	object:markdownlint.config
+diagnostic.enableHighlightLineNumber	coc-settings.json	/^  "diagnostic.enableHighlightLineNumber": true,$/;"	b
+diagnostic.messageTarget	coc-settings.json	/^  "diagnostic.messageTarget":"float",$/;"	s
+diagnostic.virtualText	coc-settings.json	/^  "diagnostic.virtualText": false,$/;"	b
+enum	coc-settings.json	/^    "enum":          "\\uf435",$/;"	s	object:suggest.completionItemKindLabels
+enumMember	coc-settings.json	/^    "enumMember":    "\\uf02b",$/;"	s	object:suggest.completionItemKindLabels
+event	coc-settings.json	/^    "event":         "\\ufacd",$/;"	s	object:suggest.completionItemKindLabels
+field	coc-settings.json	/^    "field":         "\\uf9be",$/;"	s	object:suggest.completionItemKindLabels
+file	coc-settings.json	/^    "file":          "\\uf723",$/;"	s	object:suggest.completionItemKindLabels
+filetypes	coc-settings.json	/^      "filetypes": ["haskell", "hs", "lhaskell", "lhs"]$/;"	a	object:languageserver.haskell
+folder	coc-settings.json	/^    "folder":        "\\uf114",$/;"	s	object:suggest.completionItemKindLabels
+function	coc-settings.json	/^    "function":      "\\u0192",$/;"	s	object:suggest.completionItemKindLabels
+g:AutoPairsFlyMode	init.vim	/^    let g:AutoPairsFlyMode = 1$/;"	v
+g:AutoPairsMapCR	init.vim	/^    let g:AutoPairsMapCR = 1$/;"	v
+g:AutoPairsMapSpace	init.vim	/^    let g:AutoPairsMapSpace = 0$/;"	v
+g:AutoPairsMultilineClose	init.vim	/^    let g:AutoPairsMultilineClose = 0$/;"	v
+g:AutoPairsShortcutBackInsert	init.vim	/^    let g:AutoPairsShortcutBackInsert = '<M-b>'$/;"	v
+g:DevIconsEnableFoldersOpenClose	init.vim	/^let g:DevIconsEnableFoldersOpenClose = 1$/;"	v
+g:EasyMotion_do_mapping	init.vim	/^    let g:EasyMotion_do_mapping = 0$/;"	v
+g:EasyMotion_smartcase	init.vim	/^    let g:EasyMotion_smartcase = 1$/;"	v
+g:Hexokinase_highlighters	init.vim	/^    let g:Hexokinase_highlighters = ['foregroundfull']$/;"	v
+g:NERDCompactSexyComs	init.vim	/^    let g:NERDCompactSexyComs = 0$/;"	v
+g:NERDCustomDelimiters	init.vim	/^    let g:NERDCustomDelimiters = { 'json': { 'left': '\/\/' } }$/;"	v
+g:NERDDefaultAlign	init.vim	/^    let g:NERDDefaultAlign = 'left'$/;"	v
+g:NERDSpaceDelims	init.vim	/^    let g:NERDSpaceDelims = 1$/;"	v
+g:NERDTrimrailingWhiteSpace	init.vim	/^    let g:NERDTrimrailingWhiteSpace = 1$/;"	v
+g:WebDevIconsNerdTreeBeforeGlyphPadding	init.vim	/^let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""$/;"	v
+g:WebDevIconsUnicodeDecorateFolderNodes	init.vim	/^let g:WebDevIconsUnicodeDecorateFolderNodes = v:true$/;"	v
+g:airline#extensions#branch#format	init.vim	/^let g:airline#extensions#branch#format = 1$/;"	v
+g:airline#extensions#coc#enabled	init.vim	/^let g:airline#extensions#coc#enabled = 1$/;"	v
+g:airline#extensions#fugitiveline#enabled	init.vim	/^let g:airline#extensions#fugitiveline#enabled = 1$/;"	v
+g:airline#extensions#fzf#enabled	init.vim	/^let g:airline#extensions#fzf#enabled = 1$/;"	v
+g:airline#extensions#grepper#enabled	init.vim	/^let g:airline#extensions#grepper#enabled = 1$/;"	v
+g:airline#extensions#hunks#coc_git	init.vim	/^let g:airline#extensions#hunks#coc_git = 0 "1$/;"	v
+g:airline#extensions#hunks#enabled	init.vim	/^let g:airline#extensions#hunks#enabled = 1$/;"	v
+g:airline#extensions#keymap#enabled	init.vim	/^let g:airline#extensions#keymap#enabled = 1 "1$/;"	v
+g:airline#extensions#neomake#enabled	init.vim	/^let g:airline#extensions#neomake#enabled = 1$/;"	v
+g:airline#extensions#nvimlsp#enabled	init.vim	/^let g:airline#extensions#nvimlsp#enabled = 1$/;"	v
+g:airline#extensions#quickfix#location_text	init.vim	/^let g:airline#extensions#quickfix#location_text = 'Location'$/;"	v
+g:airline#extensions#quickfix#quickfix_text	init.vim	/^let g:airline#extensions#quickfix#quickfix_text = 'QuickFix'$/;"	v
+g:airline#extensions#tabline#buffer_nr_show	init.vim	/^let g:airline#extensions#tabline#buffer_nr_show = 1 "1$/;"	v
+g:airline#extensions#tabline#close_symbol	init.vim	/^let g:airline#extensions#tabline#close_symbol = 'X'$/;"	v
+g:airline#extensions#tabline#current_first	init.vim	/^let g:airline#extensions#tabline#current_first = 1 "1$/;"	v
+g:airline#extensions#tabline#show_close_button	init.vim	/^let g:airline#extensions#tabline#show_close_button = 1 "1$/;"	v
+g:airline#extensions#tabline#show_tab_count	init.vim	/^let g:airline#extensions#tabline#show_tab_count = 2 "2$/;"	v
+g:airline#extensions#tabline#show_tab_type	init.vim	/^let g:airline#extensions#tabline#show_tab_type = 1 "1$/;"	v
+g:airline#extensions#tabline#show_tabs	init.vim	/^let g:airline#extensions#tabline#show_tabs = 1 "1$/;"	v
+g:airline#extensions#tagbar#enabled	init.vim	/^let g:airline#extensions#tagbar#enabled = 1$/;"	v
+g:airline#extensions#vista#enabled	init.vim	/^let g:airline#extensions#vista#enabled = 0$/;"	v
+g:airline#extensions#whitespace#enabled	init.vim	/^let g:airline#extensions#whitespace#enabled = 0$/;"	v
+g:airline_left_alt_sep	init.vim	/^    let g:airline_left_alt_sep = ''$/;"	v
+g:airline_left_sep	init.vim	/^    let g:airline_left_sep = ''$/;"	v
+g:airline_powerline_fonts	init.vim	/^let g:airline_powerline_fonts = 1$/;"	v
+g:airline_right_alt_sep	init.vim	/^    let g:airline_right_alt_sep = ''$/;"	v
+g:airline_right_sep	init.vim	/^    let g:airline_right_sep = ''$/;"	v
+g:airline_section_z	init.vim	/^let g:airline_section_z = "" " disable the line info$/;"	v
+g:airline_skip_empty_sections	init.vim	/^let g:airline_skip_empty_sections = 1$/;"	v
+g:airline_symbols	init.vim	/^    let g:airline_symbols = {}$/;"	v
+g:airline_symbols	init.vim	/^    let g:airline_symbols.branch = '⭠'$/;"	v
+g:airline_symbols	init.vim	/^    let g:airline_symbols.linenr = '⭡'$/;"	v
+g:airline_symbols	init.vim	/^    let g:airline_symbols.readonly = '⭤'$/;"	v
+g:airline_theme	init.vim	/^let g:airline_theme = 'base16_snazzy'$/;"	v
+g:choosewin_overlay_enable	init.vim	/^    let g:choosewin_overlay_enable = 1$/;"	v
+g:clap_provider_commands	init.vim	/^let g:clap_provider_commands = {$/;"	v
+g:clap_provider_dotfiles	init.vim	/^let g:clap_provider_dotfiles = {$/;"	v
+g:clojure_fuzzy_indent_patterns	init.vim	/^    let g:clojure_fuzzy_indent_patterns = ['^with', '^def', '^let']$/;"	v
+g:clojure_maxlines	init.vim	/^    let g:clojure_maxlines = 60$/;"	v
+g:coc_glogal_extensions	init.vim	/^let g:coc_glogal_extensions = [$/;"	v
+g:coc_snippet_next	init.vim	/^let g:coc_snippet_next = '<c-j>'$/;"	v
+g:coc_snippet_prev	init.vim	/^let g:coc_snippet_prev = '<c-k>'$/;"	v
+g:floaterm_autoclose	init.vim	/^    let g:floaterm_autoclose = 2$/;"	v
+g:floaterm_keymap_kill	init.vim	/^    let g:floaterm_keymap_kill = '<Leader>fc'$/;"	v
+g:floaterm_keymap_toggle	init.vim	/^    let g:floaterm_keymap_toggle = '<Leader>fo'$/;"	v
+g:fzf_layout	init.vim	/^let g:fzf_layout = {'window': 'call OpenFloatingWin()'}$/;"	v
+g:fzf_preview_directory_files_command	init.vim	/^let g:fzf_preview_directory_files_command = 'rg --files --pretty --hidden --follow --nomessage -/;"	v
+g:fzf_preview_grep_cmd	init.vim	/^let g:fzf_preview_grep_cmd = 'rg --line-number --no-heading --color=always --smart-case'$/;"	v
+g:fzf_preview_use_dev_icons	init.vim	/^let g:fzf_preview_use_dev_icons = 1$/;"	v
+g:gitgutter_eager	init.vim	/^    let g:gitgutter_eager = 1$/;"	v
+g:gitgutter_map_keys	init.vim	/^    let g:gitgutter_map_keys = 0$/;"	v
+g:gitgutter_realtime	init.vim	/^    let g:gitgutter_realtime = 1$/;"	v
+g:gitgutter_signs	init.vim	/^    let g:gitgutter_signs = 1$/;"	v
+g:haskell_conceal_wide	init.vim	/^let g:haskell_conceal_wide = 1$/;"	v
+g:haskell_multiline_strings	init.vim	/^let g:haskell_multiline_strings = 1$/;"	v
+g:indentLine_char_list	init.vim	/^let g:indentLine_char_list = ['|', '¦', '┆', '┊']$/;"	v
+g:indentLine_color_term	init.vim	/^let g:indentLine_color_term = 6$/;"	v
+g:indentLine_concealcursor	init.vim	/^let g:indentLine_concealcursor = 0$/;"	v
+g:indentLine_enabled	init.vim	/^let g:indentLine_enabled = 1$/;"	v
+g:indentLine_faster	init.vim	/^let g:indentLine_faster = 1$/;"	v
+g:indentLine_fileTypeExclude	init.vim	/^let g:indentLine_fileTypeExclude = ['startify', 'coc', 'help',$/;"	v
+g:julia_indent_align_brackets	init.vim	/^    let g:julia_indent_align_brackets = 1$/;"	v
+g:julia_indent_align_import	init.vim	/^    let g:julia_indent_align_import = 1$/;"	v
+g:jupytext_fmt	init.vim	/^    let g:jupytext_fmt = 'py'$/;"	v
+g:kitty_navigator_listening_on_address	init.vim	/^    let g:kitty_navigator_listening_on_address = "unix:\/tmp\/mykitty"$/;"	v
+g:mapleader	init.vim	/^let g:mapleader = "\\<Space>"$/;"	v
+g:nvcode_termcolors	init.vim	/^let g:nvcode_termcolors=256$/;"	v
+g:paredit_smartjump	init.vim	/^    let g:paredit_smartjump = 1$/;"	v
+g:polyglot_disabled	init.vim	/^let g:polyglot_disabled = ['sensible', 'ftdetect', 'autoindent']$/;"	v
+g:python3_host_prog	init.vim	/^    let g:python3_host_prog = '\/usr\/local\/bin\/python3'$/;"	v
+g:python3_host_prog	init.vim	/^    let g:python3_host_prog = '~\/.pyenv\/versions\/py3nvim-perm\/bin\/python'$/;"	v
+g:rainbow_active	init.vim	/^    let g:rainbow_active = 1$/;"	v
+g:rg_derive_root	init.vim	/^    let g:rg_derive_root='true'$/;"	v
+g:slime_target	init.vim	/^    let g:slime_target = "kitty"$/;"	v
+g:startify_bookmarks	init.vim	/^let g:startify_bookmarks = [$/;"	v
+g:startify_change_to_vcs_root	init.vim	/^let g:startify_change_to_vcs_root = 1$/;"	v
+g:startify_commands	init.vim	/^let g:startify_commands = [$/;"	v
+g:startify_custom_header	init.vim	/^let g:startify_custom_header = [$/;"	v
+g:startify_lists	init.vim	/^let g:startify_lists = [$/;"	v
+g:tagbar_autofocus	init.vim	/^    let g:tagbar_autofocus = 1$/;"	v
+g:tagbar_ctags_bin	init.vim	/^    let g:tagbar_ctags_bin = '\/usr\/local\/bin\/ctags'$/;"	v
+g:tagbar_type_julia	init.vim	/^let g:tagbar_type_julia = {$/;"	v
+g:undotree_WindowLayout	init.vim	/^    let g:undotree_WindowLayout = 2$/;"	v
+g:webdevicons_enable	init.vim	/^   let g:webdevicons_enable = 1 "1$/;"	v
+g:webdevicons_enable	init.vim	/^let g:webdevicons_enable = 1$/;"	v
+g:webdevicons_enable_airline_statusline	init.vim	/^let g:webdevicons_enable_airline_statusline = 1$/;"	v
+g:webdevicons_enable_airline_tabline	init.vim	/^let g:webdevicons_enable_airline_tabline = 1$/;"	v
+g:webdevicons_enable_flagship_statusline	init.vim	/^let g:webdevicons_enable_flagship_statusline = 1$/;"	v
+g:webdevicons_enable_startify	init.vim	/^let g:webdevicons_enable_startify = 1$/;"	v
+g:yats_host_keyword	init.vim	/^let g:yats_host_keyword = 1$/;"	v
+ga	init.vim	/^    nmap ga      <Plug>(EasyAlign)$/;"	m
+ga	init.vim	/^    xmap ga      <Plug>(EasyAlign)$/;"	m
+gd	init.vim	/^nmap <silent> gd <Plug>(coc-definition)$/;"	m
+gi	init.vim	/^nmap <silent> gi <Plug>(coc-implementation)$/;"	m
+go.enable	coc-settings.json	/^  "go.enable": true,$/;"	b
+gr	init.vim	/^nmap <silent> gr <Plug>(coc-references)$/;"	m
+gy	init.vim	/^nmap <silent> gy <Plug>(coc-type-definition)$/;"	m
+haskell	coc-settings.json	/^    "haskell": {$/;"	o	object:languageserver
+ic	init.vim	/^omap ic <Plug>(coc-classobj-i)$/;"	m
+ic	init.vim	/^xmap ic <Plug>(coc-classobj-i)$/;"	m
+if	init.vim	/^omap if <Plug>(coc-funcobj-i)$/;"	m
+if	init.vim	/^xmap if <Plug>(coc-funcobj-i)$/;"	m
+interface	coc-settings.json	/^    "interface":     "\\uf417",$/;"	s	object:suggest.completionItemKindLabels
+jedi.diagnostics.didChange	coc-settings.json	/^  "jedi.diagnostics.didChange": false,$/;"	b
+jedi.diagnostics.didOpen	coc-settings.json	/^  "jedi.diagnostics.didOpen": false,$/;"	b
+jedi.diagnostics.didSave	coc-settings.json	/^  "jedi.diagnostics.didSave": true,$/;"	b
+jedi.diagnostics.enable	coc-settings.json	/^  "jedi.diagnostics.enable": true,$/;"	b
+jedi.executable.command	coc-settings.json	/^  "jedi.executable.command": "jedi-language-server",$/;"	s
+jedi.jediSettings.autoImportModules	coc-settings.json	/^  "jedi.jediSettings.autoImportModules": ["scipy", "numpy", "matplotlib", "pandas", "sklearn", "/;"	a
+jedi.markupKindPreferred	coc-settings.json	/^  "jedi.markupKindPreferred": "markdown",$/;"	s
+jedi.startupMessage	coc-settings.json	/^  "jedi.startupMessage": true,$/;"	b
+json.enable	coc-settings.json	/^  "json.enable": true,$/;"	b
+json.format.enable	coc-settings.json	/^  "json.format.enable": true,$/;"	b
+json.schemaDownload.enable	coc-settings.json	/^  "json.schemaDownload.enable": true,$/;"	b
+julia.enabled	coc-settings.json	/^  "julia.enabled": true,$/;"	b
+julia.environmentPath	coc-settings.json	/^  "julia.environmentPath": "~\/.julia\/environments\/v1.5",$/;"	s
+julia.executablePath	coc-settings.json	/^  "julia.executablePath": "\/Applications\/Julia-1.5.app\/Contents\/Resources\/julia\/bin\/julia/;"	s
+julia.format.calls	coc-settings.json	/^  "julia.format.calls": true,$/;"	b
+julia.format.comments	coc-settings.json	/^  "julia.format.comments": true,$/;"	b
+julia.format.curly	coc-settings.json	/^  "julia.format.curly": true,$/;"	b
+julia.format.docs	coc-settings.json	/^  "julia.format.docs": true,$/;"	b
+julia.format.indent	coc-settings.json	/^  "julia.format.indent": 4,$/;"	n
+julia.format.indents	coc-settings.json	/^  "julia.format.indents": true,$/;"	b
+julia.format.iterOps	coc-settings.json	/^  "julia.format.iterOps": true,$/;"	b
+julia.format.kw	coc-settings.json	/^  "julia.format.kw": false,$/;"	b
+julia.format.ops	coc-settings.json	/^  "julia.format.ops": false,$/;"	b
+julia.format.tuples	coc-settings.json	/^  "julia.format.tuples": true,$/;"	b
+julia.lint.call	coc-settings.json	/^  "julia.lint.call": true,$/;"	b
+julia.lint.constif	coc-settings.json	/^  "julia.lint.constif": true,$/;"	b
+julia.lint.iter	coc-settings.json	/^  "julia.lint.iter": true,$/;"	b
+julia.lint.lazy	coc-settings.json	/^  "julia.lint.lazy": true,$/;"	b
+julia.lint.missingrefs	coc-settings.json	/^  "julia.lint.missingrefs": true,$/;"	b
+julia.lint.modname	coc-settings.json	/^  "julia.lint.modname": true,$/;"	b
+julia.lint.pirates	coc-settings.json	/^  "julia.lint.pirates": true,$/;"	b
+julia.lint.run	coc-settings.json	/^  "julia.lint.run": true,$/;"	b
+julia.lint.typeparam	coc-settings.json	/^  "julia.lint.typeparam": true,$/;"	b
+julia.trace.server	coc-settings.json	/^  "julia.trace.server": "messages",$/;"	s
+keyword	coc-settings.json	/^    "keyword":       "\\uf1de",$/;"	s	object:suggest.completionItemKindLabels
+languageserver	coc-settings.json	/^  "languageserver": {$/;"	o
+line-length	coc-settings.json	/^    "line-length": false$/;"	b	object:markdownlint.config
+lua.enable	coc-settings.json	/^  "lua.enable": true,$/;"	b
+markdownlint.config	coc-settings.json	/^  "markdownlint.config": {$/;"	o
+method	coc-settings.json	/^    "method":        "\\uf09a",$/;"	s	object:suggest.completionItemKindLabels
+module	coc-settings.json	/^    "module":        "\\uf40d",$/;"	s	object:suggest.completionItemKindLabels
+mygroup	init.vim	/^aug mygroup$/;"	a
+n	init.vim	/^nnoremap n nzzzv$/;"	m
+operator	coc-settings.json	/^    "operator":      "\\u03a8",$/;"	s	object:suggest.completionItemKindLabels
+prettier.eslintIntegration	coc-settings.json	/^  "prettier.eslintIntegration": true,$/;"	b
+prettier.printWidth	coc-settings.json	/^  "prettier.printWidth": 80,$/;"	n
+prettier.singleQuote	coc-settings.json	/^  "prettier.singleQuote": true,$/;"	b
+property	coc-settings.json	/^    "property":      "\\ue624",$/;"	s	object:suggest.completionItemKindLabels
+python.analysis.diagnosticEnabled	coc-settings.json	/^  "python.analysis.diagnosticEnabled": false,$/;"	b
+python.autoComplete.extraPaths	coc-settings.json	/^  "python.autoComplete.extraPaths": [$/;"	a
+python.autoUpdateLanguageServer	coc-settings.json	/^  "python.autoUpdateLanguageServer": false,$/;"	b
+python.formatting.provider	coc-settings.json	/^  "python.formatting.provider": "black",$/;"	s
+python.jediEnabled	coc-settings.json	/^  "python.jediEnabled": false,$/;"	b
+python.linting.enabled	coc-settings.json	/^  "python.linting.enabled": false,$/;"	b
+python.linting.flake8Args	coc-settings.json	/^  "python.linting.flake8Args": [$/;"	a
+python.linting.flake8Enabled	coc-settings.json	/^  "python.linting.flake8Enabled": false,$/;"	b
+python.linting.mypyEnabled	coc-settings.json	/^  "python.linting.mypyEnabled": false,$/;"	b
+python.linting.pylintArgs	coc-settings.json	/^  "python.linting.pylintArgs": [$/;"	a
+python.linting.pylintEnabled	coc-settings.json	/^  "python.linting.pylintEnabled": false,$/;"	b
+python.poetryPath	coc-settings.json	/^  "python.poetryPath": "poetry",$/;"	s
+reference	coc-settings.json	/^    "reference":     "\\ufa46",$/;"	s	object:suggest.completionItemKindLabels
+rootPatterns	coc-settings.json	/^      "rootPatterns": [$/;"	a	object:languageserver.haskell
+s	init.vim	/^    nmap s                <Plug>(easymotion-overwin-f2)$/;"	m
+s:check_back_space	init.vim	/^function! s:check_back_space() abort$/;"	f
+s:show_documentation	init.vim	/^function! s:show_documentation()$/;"	f
+sh.enable	coc-settings.json	/^  "sh.enable": true,$/;"	b
+sh.explainshellEndpoint	coc-settings.json	/^  "sh.explainshellEndpoint": "http:\/\/localhost:5000",$/;"	s
+sh.highlightParsingErrors	coc-settings.json	/^  "sh.highlightParsingErrors": true,$/;"	b
+signature.enable	coc-settings.json	/^  "signature.enable": true,$/;"	b
+signature.target	coc-settings.json	/^  "signature.target": "float",$/;"	s
+snippet	coc-settings.json	/^    "snippet":       "\\ue60b",$/;"	s	object:suggest.completionItemKindLabels
+struct	coc-settings.json	/^    "struct":        "\\ufb44",$/;"	s	object:suggest.completionItemKindLabels
+suggest.autoTrigger	coc-settings.json	/^  "suggest.autoTrigger": "always",$/;"	s
+suggest.completionItemKindLabels	coc-settings.json	/^  "suggest.completionItemKindLabels": {$/;"	o
+suggest.detailField	coc-settings.json	/^  "suggest.detailField": "preview",$/;"	s
+suggest.enablePreview	coc-settings.json	/^  "suggest.enablePreview": true,$/;"	b
+suggest.floatEnable	coc-settings.json	/^  "suggest.floatEnable": true,$/;"	b
+suggest.noselect	coc-settings.json	/^  "suggest.noselect": false,$/;"	b
+suggest.preferCompleteThanJumpPlaceholder	coc-settings.json	/^  "suggest.preferCompleteThanJumpPlaceholder": true,$/;"	b
+text	coc-settings.json	/^    "text":          "\\ue612",$/;"	s	object:suggest.completionItemKindLabels
+typeParameter	coc-settings.json	/^    "typeParameter": "\\uf728",$/;"	s	object:suggest.completionItemKindLabels
+unit	coc-settings.json	/^    "unit":          "\\uf475",$/;"	s	object:suggest.completionItemKindLabels
+value	coc-settings.json	/^    "value":         "\\uf89f",$/;"	s	object:suggest.completionItemKindLabels
+variable	coc-settings.json	/^    "variable":      "\\ue79b",$/;"	s	object:suggest.completionItemKindLabels
+vimlsp.debug	coc-settings.json	/^  "vimlsp.debug": true,$/;"	b
+vimlsp.diagnostic.enable	coc-settings.json	/^  "vimlsp.diagnostic.enable": true,$/;"	b
+vimlsp.suggest.fromRuntimepath	coc-settings.json	/^  "vimlsp.suggest.fromRuntimepath": true,$/;"	b
+vimlsp.suggest.fromVimruntime	coc-settings.json	/^  "vimlsp.suggest.fromVimruntime": true,$/;"	b
+x	init.vim	/^vnoremap x "_d$/;"	m

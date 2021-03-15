@@ -1,0 +1,187 @@
+local vim = vim
+local gl = require'galaxyline'
+local gls = gl.section
+gl.short_line_list = {'LuaTree','vista','dbui','chadtree','coc-explorer','tagbar','undotree'}
+
+-- based on snazzy
+local colors = {
+  bg = '#1a1b26',
+  yellow = '#f3f99d',
+  cyan = '#9aedfe',
+  -- darkblue = '#3e5380',
+  green = '#5af78e',
+  -- orange = '#FF8800',
+  magenta = '#ad8ee6',
+  grey = '#C0C0C0',
+  blue = '#57c7ff',
+  red = '#FF5c57',
+  white = '#FFFFFF',
+}
+
+local empty_buffer = function()
+  if vim.fn.empty(vim.fn.expand('%:t')) < 1 then
+    return true
+  end
+  return false
+end
+
+gls.left[1] = {
+  FirstElement = {
+    provider = function() return '  ' end,
+    highlight = {colors.grey,colors.yellow}
+  },
+}
+gls.left[2] = {
+  ViMode = {
+    provider = function()
+      local alias = {n = 'NORMAL ',i = 'INSERT ',c= 'COMMAND ',V= 'VISUAL', [''] = 'VISUAL '}
+      return alias[vim.fn.mode()]
+    end,l
+    separator = ' ',
+    separator_highlight = {colors.yellow,function()
+      if not empty_buffer() then
+        return colors.magenta
+      end
+      return colors.blue
+    end},
+    highlight = {colors.grey,colors.yellow,'bold'},
+  },
+}
+gls.left[3] ={
+  FileIcon = {
+    provider = 'FileIcon',
+    condition = empty_buffer,
+    highlight = {require('galaxyline.provider_fileinfo').get_file_icon_color,colors.blue},
+  },
+}
+gls.left[4] = {
+  FileName = {
+    provider = {'FileName','FileSize'},
+    condition = empty_buffer,
+    separator = ' ',
+    separator_highlight = {colors.magenta,colors.blue},
+    highlight = {colors.white,colors.blue}
+  }
+}
+gls.left[5] = {
+  GitIcon = {
+    provider = function() return '  ' end,
+    condition = empty_buffer,
+    highlight = {colors.grey,colors.magenta},
+  }
+}
+gls.left[6] = {
+  GitBranch = {
+    provider = 'GitBranch',
+    condition = empty_buffer,
+    highlight = {colors.grey,colors.magenta},
+  }
+}
+
+local checkwidth = function()
+  local squeeze_width  = vim.fn.winwidth(0) / 2
+  if squeeze_width > 40 then
+    return true
+  end
+  return false
+end
+
+gls.left[7] = {
+  DiffAdd = {
+    provider = 'DiffAdd',
+    condition = checkwidth,
+    icon = '⇡ ',
+    highlight = {colors.green,colors.magenta},
+  }
+}
+gls.left[8] = {
+  DiffModified = {
+    provider = 'DiffModified',
+    condition = checkwidth,
+    icon = ' ',
+    highlight = {colors.cyan,colors.magenta},
+  }
+}
+gls.left[9] = {
+  DiffRemove = {
+    provider = 'DiffRemove',
+    condition = checkwidth,
+    icon = '⇣ ',
+    highlight = {colors.red,colors.magenta},
+  }
+}
+gls.left[10] = {
+  LeftEnd = {
+    provider = function() return ' | ' end,
+    separator = ' ',
+    separator_highlight = {colors.magenta,colors.bg},
+    highlight = {colors.magenta,colors.green}
+  }
+}
+gls.left[11] = {
+  DiagnosticError = {
+    provider = 'DiagnosticError',
+    icon = '  ',
+    highlight = {colors.red,colors.bg}
+  }
+}
+gls.left[12] = {
+  Space = {
+    provider = function () return ' ' end
+  }
+}
+gls.left[13] = {
+  DiagnosticWarn = {
+    provider = 'DiagnosticWarn',
+    icon = '  ',
+    highlight = {colors.yellow,colors.bg},
+  }
+}
+gls.right[1]= {
+  FileFormat = {
+    provider = 'FileFormat',
+    separator = ' ',
+    separator_highlight = {colors.bg,colors.magenta},
+    highlight = {colors.grey,colors.magenta},
+  }
+}
+gls.right[2] = {
+  LineInfo = {
+    provider = 'LineColumn',
+    separator = ' | ',
+    separator_highlight = {colors.blue,colors.magenta},
+    highlight = {colors.grey,colors.magenta},
+  },
+}
+gls.right[3] = {
+  PerCent = {
+    provider = 'LinePercent',
+    separator = ' ',
+    separator_highlight = {colors.blue,colors.magenta},
+    highlight = {colors.white,colors.blue},
+  }
+}
+gls.right[4] = {
+  ScrollBar = {
+    provider = 'ScrollBar',
+    highlight = {colors.yellow,colors.magenta},
+  }
+}
+
+gls.short_line_left[1] = {
+  BufferType = {
+    provider = 'FileTypeName',
+    separator = ' ',
+    separator_highlight = {colors.magenta,colors.bg},
+    highlight = {colors.grey,colors.magenta}
+  }
+}
+
+gls.short_line_right[1] = {
+  BufferIcon = {
+    provider= 'BufferIcon',
+    separator = ' ',
+    separator_highlight = {colors.magenta,colors.bg},
+    highlight = {colors.grey,colors.magenta}
+  }
+}

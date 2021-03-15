@@ -1,0 +1,45 @@
+
+" let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+" let g:vista_default_executive = 'coc'
+" let g:vista_echo_cursor_strategy = ['both']
+
+" let g:vista_ctags_cmd = {
+"     \ 'haskell': 'hasktags -x -o - -c',
+"     \ 'go': 'gomodifytags',
+"     \ 'python': 'ctags',
+"     \}
+
+" if exists('g:vista#renderer#icons') || exists('g:airline_powerline_fonts')
+"     let g:vista#renderer#enable_icon = 1
+"         let g:vista#renderer#icons = {
+"         \ "function": "\uf794",
+"         \ "variable": "\uf71b",
+"         \}
+" endif
+
+" let g:vista_fzf_preview = ['right:60%:wrap']
+" let g:vista_executive_for = {
+"     \ 'cpp': 'coc-ccls',
+"     \ 'py':  'coc-jedi',
+"     \ 'rs':  'coc-rls',
+"     \ 'lua': 'coc-nvim-lua',
+"     \ 'go':  'coc-go',
+"     \ 'hs':  'coc',
+"     \ 'sh':  'coc-sh',
+"     \}
+
+" function! NearestMethodOrFunction() abort
+"     return get(b:, 'vista_nearest_method_or_function', '')
+" endfunction
+
+
+" if exists("*NearestMethodOrFunction")
+"     set statusline+=%{NearestMethodOrFunction()}
+" endif
+" to autmoatically show the nearetst fx in statusline automatically
+" need to add this:
+" autocmd VimEnter * call Vista#RunForNearestMethodOrFunction()
+
+" let g:vista_log_file = expand('~/vista.log')
+" }}}
+

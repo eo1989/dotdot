@@ -5,23 +5,28 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+export EXA_COLORS="uu=0:gu=0"
+export LS_COLORS="$(vivid generate snazzy)"
+export LSCOLORS="$(vivid generate snazzy)"
 #------------------------------- Homebrew ---------------------------------#
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+
 
 #------------------------------ extra paths -------------------------------#
 export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 export CPPFLAGS="-I/usr/local/opt/openjdk/include"
 
-# /usr/local/bin:
-#             \/usr/bin:
-#             \/bin:
-#             \/usr/sbin:
 
 # Pyenv & Poetry & Go & Cargo/Rust
 export PYENV_ROOT="${HOME}/.pyenv"
 
 export GOPATH="${HOME}/go"
-export GOROOT="/usr/local/opt/go/libexec"  # This may be faster?
+export GOROOT="/usr/local/opt/go/libexec"  # This is faster?
 
 export PATH="${PATH}:/usr/local/Cellar/emacs/27.1/bin/emacs:\
 /Applications/kitty.app/Contents/MacOS/kitty:\
@@ -32,18 +37,13 @@ ${PYENV_ROOT}/bin:\
 ${HOME}/.emacs.d/bin:\
 ${HOME}/.poetry/bin:\
 /usr/local/opt/findutils/libexec/gnubin:\
-/usr/local/opt/ssh-copy-id/bin:\
-"
+/usr/local/opt/ssh-copy-id/bin"
 
 # /usr/local/opt/emacs/bin/emacs: <-- No work!
 # LLVM -- Julia, & such
 # export PATH="/usr/local/opt/llvm/bin:${PATH}"
 # export LDFLAGS="-L/usr/local/opt/llvm/lib"
 # export CPPFLAGS="-I/usr/local/opt/llvm/include"
-
-
-
-# export PATH="${PATH}:${GOPATH}/bin:${GOROOT}/bin:${HOME}/.cargo/bin:${PYENV_ROOT}/bin"
 
 # using gnupg & ssh
 export GPG_TTY=$(tty)
@@ -54,30 +54,21 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 
-export EXA_COLORS="uu=0:gu=0"
-export LS_COLORS="$(vivid generate snazzy)"
-export LSCOLORS="$(vivid generate snazzy)"
 
-# export BAT_THEME="Sublime Snazzy"
-
-source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
+# This is left empty st brew python and env vars arent friends yet...?
+export BROWSER= 
 
 export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:${MANPATH}"
-export LANG="en_US.UTF-8"
-export LC_COLLATE="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-# export $ZSH_THEME="dracula"
+# export LANG="en_US.UTF-8"
+# export LC_COLLATE="en_US.UTF-8"
+# export LC_CTYPE="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
 
-# export DRACULA_DISPLAY_TIME=0
-# export DRACULA_DISPLAY_CONTEXT=1
-# export DRACULA_ARROW_ICON="|>" 
-# source ~/.oh-my-zsh/themes/dracula.zsh-theme
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ py3 nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ py3 nvim ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 export PYTHON3_HOST_PROG="~/.pyenv/versions/py3nvim-perm/bin/python"
 
-#---------------------------------- FZF --------------------------------#
+#------------------------------------ FZF -------------------------------------#
 export FZF_BASE="/usr/local/opt/fzf"
 export FZF_DEFAULT_OPTS="\
     --layout=reverse\
@@ -104,22 +95,10 @@ export FZF_CTR_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} -t d"
 
 
+export BAT_STYLE=full
+# export GIT_PAGER=delta
+
 fpath=(/usr/local/share/zsh-completions ~/.zfunc $fpath)
-
-
-source /usr/local/share/zsh-completions
-# source ${HOME}/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-## zsh-history-substring-search key bindings
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-#--------------------------- Haskell/GHC --------------------------------------#
-# GHC_PATH="stack path | grep compiler-bin | sed -e 's/compiler-bin: //'"
-# export PATH="${PATH}:${GHC_PATH}"
 
 #------------------------------ OMZ -------------------------------------------#
 # Path to your oh-my-zsh installation.
@@ -136,14 +115,11 @@ COMPLETION_WAITING_DOTS="true"
 ZSH_CUSTOM="${HOME}/.oh-my-zsh/custom/plugins/"
 
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(git pyenv gnu-utils fd fzf jump tig colored-man-pages colorize
-    \jump cargo httpie brew cask command-not-found rust
-    \golang ripgrep poetry virtualenv tmux cp mosh
-    \lein rustup fzf-tab zsh-interactive-cd)
+plugins=(git gitfast tig colored-man-pages colorize
+    \cargo httpie brew history cask command-not-found rust
+    \golang ripgrep poetry tmux mosh rustup fzf-tab)
 
 source $ZSH/oh-my-zsh.sh
-
-
 
 #---------------------------- Everything Else ----------------------------#
 # User configuration
@@ -152,13 +128,9 @@ export EDITOR="/usr/local/bin/nvim"
 # alias -g saf="${BROWSER} &"
 #------------------------------- alias -----------------------------------#
 
-# alias -g config='git --git-dir=/Users/eo/.dotfiles/ --work-tree=/Users/eo'
-
-# alias -g preview="fzf --preview 'bat --color \"always\" {}'"
-
 alias -g calibre="/Applications/calibre.app/Contents/MacOS/calibre &"
 alias -g fire="/Applications/Firefox.app/Contents/MacOS/firefox &"
-alias -g k="/Applications/kitty.app/Contents/MacOS/kitty --listen-on 'unix:/tmp/mykitty'"
+alias -g k="/Applications/kitty.app/Contents/MacOS/kitty --listen-on unix:/tmp/mykitty"
 
 alias -g dotfiles="/usr/local/bin/git --git-dir=${HOME}/.dotfiles/ --work-tree=${HOME}"
 
@@ -179,24 +151,27 @@ alias -g bif="brew info"
 alias -g bish="brew install"
 alias -g bs="brew search"
 
-alias -g diff="delta --line-numbers --side-by-side"
+alias -g diff="delta --line-numbers --navgivate --side-by-side --syntax-theme='Dracula'"
 
 alias -g yt="youtube-dl --external-downloader aria2c"
 
 alias -g ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias -g localip="ipconfig getifaddr en0"
 
-alias -g hdi='function hdi(){ howdoi $* -c -n 5; }; hdi'
+# alias -g hdi='function hdi(){ howdoi $* -c -n 5; }; hdi'
 alias -g ggls="gls --color=auto -HLFS"
 alias -g ln="gln"
 alias -g xargs="gxargs"
 alias -g rm="trash"
 
-source ~/.zsh-autopair/autopair.zsh
-autopair-init
+alias -g curl='/usr/local/Cellar/curl/7.75.0/bin/curl'
+alias -g cht='cht.sh'
+
+source "${HOME}/.zsh-autopair/autopair.zsh" && autopair-init
+# autopair-init
 
 
-#--------------------------------f(x)s-----------------------------------#
+#-----------------------------------f(x)s--------------------------------------#
 # Find-in-file -> usage: 'fif <SEARCH_TERM>'
 fif() {
     if [ ! "$#" -gt 0 ]; then
@@ -211,8 +186,8 @@ $FZF_PREVIEW_WINDOW="--preview 'rg --ignore-case --pretty --context 10 '$1' {}'"
 # quickly add & remove '.bak' to files
 bak() {
     for file in "$@"; do
-        if [[ $file =~ "\.bak" ]]; then
-            mv -iv "$file" "$(basename ${file} .bak)"
+        if [[ $file =~ \.bak ]]; then
+            mv -iv "$file" "$(basename "${file}" .bak)"
         else
             mv -iv "$file" "${file}.bak"
         fi
@@ -232,6 +207,23 @@ name() {
     vared -c -p "rename to: " newname
     command mv "$1" "$newname"
 }
+# spotlight() { mdfind "kMDItemDisplayName == \"$@\" wc"; }
+hdi(){ howdoi "$*" -c -n 5; }
+
+#rga-fzf interactivity
+rga-fzf() {
+    RG_PREFIX="rga --files-with-matches"
+    local file
+    file="$(
+        FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
+            fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
+                --phony -q "$1" \
+                --bind "change:reload:$RG_PREFIX {q}" \
+                --preview-window="70%:wrap"
+    )" &&
+    echo "opening $file" &&
+    xdg-open "$file"
+}
 
 
 #----------------------------- fuck! ------------------------------------------#
@@ -247,38 +239,37 @@ eval "$(gh completion -s zsh)"
 autoload -U +X bashcompinit && bashcompinit
 eval "$(stack --bash-completion-script stack)"
 
-# ----------------------------- fzf-tab ---------------------------------------#
-zmodload -i zsh/complist
+# ----------------------------- fzf-tab ---------------------------------------#{{{
 
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# zstyle ':fzf-tab:*' show-group brief
+zstyle ':fzf-tab:*' show-group brief
 
-zstyle ':fzf-tab:*' show-group full
+# zstyle ':fzf-tab:*' show-group full
 zstyle ':fzf-tab:complete:*' fzf-bindings \
-        'ctrl-v:execute-silent({_FTB_INIT_}code "$realpath")' \
-        'ctrl-e:execute-silent({_FTB_INIT_}kwrite "$realpath")'
+        "ctrl-v:execute-silent({_FTB_INIT_}code \"$realpath\")" \
+        "ctrl-e:execute-silent({_FTB_INIT_}kwrite \"$realpath\")"
 
 zstyle ':completion:*' fzf-search-display true
 zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=auto $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview "exa -1 --color=auto $realpath"
 zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
 zstyle ':completion:*:ls:*' fzf-completion-opts --preview='head {1}'
 
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+  "[[ $group == \"[process ID]\" ]] && ps --pid=$word -o cmd --no-headers -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
 # {{{ some fzf-tab-completion/zsh-completion opts
 # disable sort when completing options of any command
 # zstyle ':completion:complete:*:options' sort true
 # lets test this git checkout completion snippet out first.
 # zstyle ":completion:*:git-checkout:*" sort false
-# zstyle ':fzf-tab:complete:_zlua:*' query-string input
-# zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
-# zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
-# zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+zstyle ':fzf-tab:complete:_zlua:*' query-string input
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview "ps --pid=${word} -o cmd --no-headers -w -w"
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 # zstyle ":fzf-tab:*" fzf-flags '--color=bg+:23'
 # zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 # zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview [[ $group == "[process ID]" ]] && "ps --pid=$'word -o cmd --no-headers -w -w'"
@@ -289,28 +280,45 @@ zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=do
 # }}}
 
 # autoload menucomplete && menucomplete
-
-
-# ------------------------- fzf-tab-completion ------------------------- #
-# source /Users/eo/Dev/RandomRepos/fzf-tab-completion/zsh/fzf-zsh-completion.sh
-
-# trial for file preview w/ ls using bat?
-
-# bindkey '^I' fzf_completion
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source ~/do-ls
-
-autoload -Uz compinit && compinit
-# autoload -Uz bashcompinit && bashcompinit -u
+# }}}
 
 kitty + complete setup zsh | source /dev/stdin
-
-# This is left empty st brew python and env vars arent friends yet...?
-export BROWSER= 
-
-alias -g curl='/usr/local/Cellar/curl/7.75.0/bin/curl'
-alias -g cht='cht.sh'
-export LC_ALL=en_US.UTF-8
 test -e /Users/eo/.iterm2_shell_integration.zsh && source /Users/eo/.iterm2_shell_integration.zsh || true
+
+[ -f ~/.fzf.zsh ] && source "${HOME}/.fzf.zsh"
+source "${HOME}/do-ls"
+
+# source ${HOME}/Dev/RandomRepos/fzf-tab/fzf-tab.plugin.zsh
+
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# zstyle ':autocomplete:*' add-space executables \
+#     aliases functions builtins \
+#     reserved-words commands
+# zstyle ':completion:*:'  group-order \
+#     expansions history-words options \
+#     alias functions builtins reserved-words \
+#     executables local-directories directories suffix-aliases
+
+
+zstyle ':autocomplete:*' default-context ''
+zstyle ':autocomplete:*' min-delay 0.25
+zstyle ':autocomplete:*' min-input 1
+# zstyle ':autocomplete:tab:*' insert-unambiguous yes
+zstyle ':autocomplete:tab:*' widget-style menu-select
+zstyle ':autocomplete:tab:*' fzf-completion yes
+# source "${HOME}/Dev/RandomRepos/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+
+source /usr/local/share/zsh-completions
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+## zsh-history-substring-search key bindings
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
+source "${HOME}/.config/broot/launcher/bash/br"
+EMAIL_UNAME="EOrlowski6@gmail.com"
+PWORD="adidas1989"
+export PY_BARCHART_UNAME=$EMAIL_UNAME
+export PY_BARCHART_PWORD=$PWORD

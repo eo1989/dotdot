@@ -30,14 +30,14 @@ atreplinit() do repl
         @eval using Revise
         @async Revise.wait_steal_repl_backend()
     catch e
-        @warn("unable to load Revise", e)
+        @warn "Error initializing Revise" exception=(e, catch_backtrace())
     end
     try
         @eval begin
             using OhMyREPL
             # haky fix for []] issues
             @async (sleep(1); OhMyREPL.Prompt.insert_keybindings())
-            @async OhMyREPL.input_prompt!(string(VERSION) * ">", :green)
+        @async OhMyREPL.input_prompt!(string(VERSION) * ">", :green)
             import OhMyREPL: Passes.SyntaxHighlighter; const SH = SyntaxHighlighter
             OhMyREPL.Passes.SyntaxHighlighter.add!("Dracula", begin
                 cs = SH.ColorScheme()
@@ -58,6 +58,6 @@ atreplinit() do repl
             colorscheme!("Dracula")
         end
     catch e
-        @warn("unable to load OhMyREPL", e)
+        @warn("can't load OhMyREPL ;(", e)
     end
 end

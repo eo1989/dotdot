@@ -1,0 +1,9 @@
+{
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "pyright.disableLanguageServices": false,
+  "python.venvPath": "/Users/eo/Library/Caches/pypoetry/virtualenvs:/Users/eo/.local/pipx/venvs:/Users/eo/.pyenv/versions/3.9.0/envs:/Users/eo/.pyenv/versions/3.8.9/envs/"
+}

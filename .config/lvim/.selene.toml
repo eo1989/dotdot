@@ -1,0 +1,9 @@
+std="vim"
+[vim]
+any = true
+
+[lvim]
+any = true
+
+[require]
+any = true

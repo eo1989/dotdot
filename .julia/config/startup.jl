@@ -23,22 +23,24 @@
 #      repl.interface = REPL.setup_interface(repl; extra_repl_keymap = mykeys)
 #  end
 
-#  using Dates
-#  input_prompt() = "julia-" * string(Dates.now()) * >
+#= using Dates =#
+#= input_prompt() = "julia-" * string(Dates.now()) * > =#
+#= const PLOTS_DEFAULTS = Dict( =#
+#=     :theme => :cividis, =#
+#=     :fontfamily => "MesloLGLDZNerdFontComplete" =#
+#= ) =#
+
+using Revise
+    @async Revise.wait_steal_repl_backend()
+
 atreplinit() do repl
-    try
-        @eval using Revise
-        @async Revise.wait_steal_repl_backend()
-    catch e
-        @warn "Error initializing Revise" exception=(e, catch_backtrace())
-    end
     try
         @eval begin
             using OhMyREPL
             # haky fix for []] issues
             @async (sleep(1); OhMyREPL.Prompt.insert_keybindings())
+      import OhMyREPL: Passes.SyntaxHighlighter; const SH = SyntaxHighlighter
         @async OhMyREPL.input_prompt!(string(VERSION) * ">", :green)
-            import OhMyREPL: Passes.SyntaxHighlighter; const SH = SyntaxHighlighter
             OhMyREPL.Passes.SyntaxHighlighter.add!("Dracula", begin
                 cs = SH.ColorScheme()
                 SH.symbol!(cs, OhMyREPL.Crayon(foreground = (255, 184, 108)))
@@ -58,6 +60,6 @@ atreplinit() do repl
             colorscheme!("Dracula")
         end
     catch e
-        @warn("can't load OhMyREPL ;(", e)
+        @warn("can't load OhMyREPL", e)
     end
 end

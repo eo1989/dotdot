@@ -1,19 +1,16 @@
+local manager = require "lvim.lsp.manager"
+manager.setup "pylsp"
+
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup { { exe = "black", filetypes = { "python" } } }
 -- lvim.lang.python.formatters = {
 --   {
 --     exe = "black",
---     args = {"--fast - "},
 --   },
 -- }
-lvim.lang.python.formatters = {
-  {
-    exe = "yapf",
-    args = {},
-  },
-}
 
-lvim.lang.python.linters = {
-  {
-    exe = "flake8",
-    args = {},
-  },
-}
+-- lvim.lang.python.linters = {
+--   {
+--     exe = "flake8",
+--   },
+-- }

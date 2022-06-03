@@ -1,0 +1,201 @@
+---@diagnostic disable: undefined-global, unused-local
+return function()
+  local cmp = require('cmp')
+  local h = require('as.highlights')
+
+  local fn = vim.fn
+  local api = vim.api
+  local fmt = vim.fmt
+
+  local t = as.replace_termcodes
+  local border = as.style.current.border
+  local lsp_hls = as.style.lsp.kind_highlights
+
+  local faded = h.alter_color(h.get_hl('Pmenu', 'bg'), 30)
+  local kind_hls = {
+    CmpItemAbbr = { foreground = 'fg', background = 'NONE', italic = false, bold = false },
+    CmpItemMenu = { foreground = faded, italic = false, bold = false },
+    CmpItemAbbrMatch = { foreground = { from = 'Keyword' } },
+    CmpItemAbbrDeprecated = { strikethrough = true, inherit = 'Comment' },
+    CmpItemAbbrMatchFuzzy = { italic = true, foreground = { from = 'Keyword' }, }
+  }
+
+  for key, _ in pairs(lsp_hls) do
+    kind_hls['CmpItemKind' .. key] = { foreground = { fromo= lsp_hls[key] }}
+  end
+
+  h.plugin('Cmp', kind_hls)
+  -- vim.tbl_extend('force', {
+  --   CmpBorderedWindow_Normal = { link = 'NormalFloat' },
+  --   CmpItemAbbr = { foreground = 'fg', background = 'NONE', italic = false, bold = false },
+  --   CmpItemMenu = { inherit = 'NonText', italic = false, bold = false },
+  --   CmpItemAbbrMatch = { foreground = keyword_fg },
+  --   CmpItemAbbrDeprecated = { strikethrough = true, inherit = 'Comment' },
+  --   CmpItemAbbrMatchFuzzy = { italic = true, foreground = keyword_fg },
+  -- },
+
+  local function tab(fallback)
+    local ok, luasnip = as.safe_require('luasnip', { silent = true })
+    if cmp.visible() then
+      cmp.select_next_item()
+    elseif ok and luasnip.expand_or_locally_jumpable() then
+      luasnip.expand_or_jump()
+    else
+      fallback()
+    end
+  end
+
+  local function shift_tab(fallback)
+    local ok, luasnip = as.safe_require('luasnip', { silent = true })
+    if cmp.visible() then
+      cmp.select_prev_item()
+    elseif ok and luasnip.jumpable(-1) then
+      luasnip.jump(-1)
+    else
+      fallback()
+    end
+  end
+
+  local cmp_window = {
+    border = border,
+    winhighlight = table.concat({
+      'Normal:NormalFloat',
+      'FloatBorder:FloatBorder',
+      'CursorLine:Visual',
+      'Search:None',
+    }, ','),
+  }
+
+  cmp.setup({
+    preselect = cmp.PreselectMode.None,
+    window = {
+      documentation = cmp.config.window.bordered(cmp_window),
+      completion = cmp.config.window.bordered(cmp_window),
+    },
+    snippet = {
+      expand = function(args)
+        require('luasnip').lsp_expand(args.body)
+      end,
+    },
+    mapping = {
+      ['<Tab>'] = cmp.mapping(tab, { 'i', 'c' }),
+      ['<S-Tab>'] = cmp.mapping(shift_tab, { 'i', 'c' }),
+      -- ['<C-q>'] = cmp.mapping({
+      --   i = cmp.mapping.abort(),
+      --   c = cmp.mapping.close(),
+      -- }),
+      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+      ['<C-space>'] = cmp.mapping.complete(),
+      ['<CR>'] = cmp.mapping.confirm({
+        -- behavior = cmp.ConfirmBehavior.Replace,
+        select = false, -- if nothing is selected don complete
+      }),
+    },
+    formatting = {
+      deprecated = true,
+      fields = { 'abbr', 'kind', 'menu' },
+      format = function(entry, vim_item)
+        vim_item.kind = fmt('%s %s', vim_item.kind, as.style.lsp.codicons[vim_item.kind], vim_item.kind)
+        -- vim_item.kind = as.style.lsp.kinds[vim_item.kind]
+        -- local name = entry.source.name
+        -- local completion = entry.completion_item.data
+        -- FIXME: automate this using a regex to normalise names
+        local menu = ({
+          nvim_lsp = '[lsp]',
+          nvim_lua = '[lua]',
+          emoji = '[E]',
+          path = '[Path]',
+          neorg = '[N]',
+          orgmode = '[Org]',
+          cmp_tabnine = '[T9]',
+          luasnip = '[SN]',
+          dictionary = '[D]',
+          buffer = '[B]',
+          spell = '[SP]',
+          cmdline = '[Cmd]',
+          cmdline_history = '[Hist]',
+          rg = '[Rg]',
+          cmp_git = '[Git]',
+          -- })[name]
+        })[entry.source.name]
+
+        if name == 'cmp_tabnine' then
+          if completion and completion.detail then
+            menu = completion.detail .. ' ' .. menu
+          end
+          vim_item.kind = ''
+        end
+        vim_item.menu = menu
+        return vim_item
+      end,
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp', dup = 0 },
+      { name = 'luasnip', dup = 0 },
+      { name = 'cmp_tabnine', dup = 0 },
+      { name = 'nvim_lua', dup = 0 },
+      { name = 'path', dup = 0 },
+    }, {
+      { name = 'latex_symbols', dup = 0 },
+      {
+        name = 'buffer',
+        options = {
+          get_bufnrs = function()
+            local bufs = {}
+            for _, win in ipairs(api.nvim_list_wins()) do
+              bufs[api.nvim_win_get_buf(win)] = true
+            end
+            return vim.tbl_keys(bufs)
+          end,
+        },
+        dup = 0,
+      },
+      -- { name = 'spell' },
+    }),
+  })
+
+  cmp.setup.filetype('norg', {
+    sources = cmp.config.sources({
+      { name = 'neorg' },
+    }, {
+      { name = 'buffer' },
+      { name = 'cmp_tabnine' },
+    }),
+  })
+
+  -- cmp.setup.filetype('NeogitCommitMessage', {
+  --   sources = cmp.config.sources({
+  --     { name = 'cmp_git' },
+  --   }, {
+  --     { name = 'buffer' },
+  --   }),
+  -- })
+  cmp.setup.cmdline(":", {
+    sources = cmp.config.sources({
+      { name = "cmdline_history" },
+      { name = "path", max_item_count = 6 },
+    }, {
+      { name = "cmdline", max_item_count = 10, keyword_pattern = [=[[^[:blank:]\!]*]=] },
+    }),
+  })
+
+  local search_sources = {
+    view = {
+      entries = { name = 'custom', direction = 'bottom_up' },
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp_document_symbol' },
+    }, {
+      { name = 'buffer' },
+    }),
+  }
+
+  cmp.setup.cmdline('/', search_sources)
+  cmp.setup.cmdline('?', search_sources)
+  -- cmp.setup.cmdline(':', {
+  --   sources = cmp.config.sources {
+  --     { name = 'cmdline', keyword_pattern = [=[[^[:blank:]\!]*]=] },
+  --   },
+  -- })
+end

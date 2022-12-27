@@ -1,25 +1,69 @@
 local fn = vim.fn
 local api = vim.api
 local fmt = string.format
+local l = vim.log.levels
 
-----------------------------------------------------------------------------------------------------
--- Global namespace
-----------------------------------------------------------------------------------------------------
-
-_G.as = {
-  -- some vim mappings require a mixture of commandline commands and function calls
-  -- this table is place to store lua functions to be called in those mappings
-  mappings = {},
-}
 ----------------------------------------------------------------------------------------------------
 -- Utils
 ----------------------------------------------------------------------------------------------------
+
+
+
+--- Convert a list or map of items into a value by iterating all it's fields and transforming
+--- them with a callback
+---@generic T : table
+---@param callback fun(T, T, key: string | number): T
+---@param list T[]
+---@param accum T?
+---@return T
+function as.fold(callback, list, accum)
+  accum = accum or {}
+  for k, v in pairs(list) do
+    accum = callback(accum, v, k)
+    assert(accum ~= nil, 'The accumulator must be returned on each iteration')
+  end
+  return accum
+end
+
+---@generic T : table
+---@param callback fun(item: T, key: string | number, list: T[]): T
+---@param list T[]
+---@return T[]
+function as.map(callback, list)
+  return as.fold(function(accum, v, k)
+    accum[#accum + 1] = callback(v, k, accum)
+    return accum
+  end, list, {})
+end
+
+---@generic T : table
+---@param callback fun(T, key: string | number): T
+---@param list T[]
+function as.foreach(callback, list)
+  for k, v in pairs(list) do
+    callback(v, k)
+  end
+end
+
+--- Check if the target matches  any item in the list.
+---@param target string
+---@param list string[]
+---@return boolean
+function as.any(target, list)
+  for _, item in ipairs(list) do
+    if target:match(item) then
+      return true
+    end
+  end
+  return false
+end
+
 ---Find an item in a list
 ---@generic T
----@param haystack T[]
 ---@param matcher fun(arg: T):boolean
+---@param haystack T[]
 ---@return T
-function as.find(haystack, matcher)
+function as.find(matcher, haystack)
   local found
   for _, needle in ipairs(haystack) do
     if matcher(needle) then
@@ -30,20 +74,30 @@ function as.find(haystack, matcher)
   return found
 end
 
-local installed
+as.list_installed_plugins = (function()
+  local plugins
+  return function()
+    if plugins then
+      return plugins
+    end
+    local data_dir = fn.stdpath('data')
+    local start = fn.expand(data_dir .. '/site/pack/packer/start/*', true, true)
+    local opt = fn.expand(data_dir .. '/site/pack/packer/opt/*', true, true)
+    plugins = vim.list_extend(start, opt)
+    return plugins
+  end
+end)()
+
 ---Check if a plugin is on the system not whether or not it is loaded
 ---@param plugin_name string
 ---@return boolean
 function as.plugin_installed(plugin_name)
-  if not installed then
-    local dirs = fn.expand(fn.stdpath('data') .. '/site/pack/packer/start/*', true, true)
-    local opt = fn.expand(fn.stdpath('data') .. '/site/pack/packer/opt/*', true, true)
-    vim.list_extend(dirs, opt)
-    installed = vim.tbl_map(function(path)
-      return fn.fnamemodify(path, ':t')
-    end, dirs)
+  for _, path in ipairs(as.list_installed_plugins()) do
+    if vim.endswith(path, plugin_name) then
+      return true
+    end
   end
-  return vim.tbl_contains(installed, plugin_name)
+  return false
 end
 
 ---NOTE: this plugin returns the currently loaded state of a plugin given
@@ -63,22 +117,51 @@ function as.is_vim_list_open()
     local buf = api.nvim_win_get_buf(win)
     local location_list = fn.getloclist(0, { filewinid = 0 })
     local is_loc_list = location_list.filewinid > 0
-    if vim.bo[buf].filetype == 'qf' or is_loc_list then
-      return true
-    end
+    if vim.bo[buf].filetype == 'qf' or is_loc_list then return true end
   end
   return false
 end
 
+---------------------------------------------------------------------------------
+-- Toggle list
+---------------------------------------------------------------------------------
+--- Utility function to toggle the location or the quickfix list
+---@param list_type '"quickfix"' | '"location"'
+---@return string?
+local function toggle_list(list_type)
+  local is_location_target = list_type == 'location'
+  local cmd = is_location_target and { 'lclose', 'lopen' } or { 'cclose', 'copen' }
+  local is_open = as.is_vim_list_open()
+  if is_open then return vim.cmd[cmd[1]]() end
+  local list = is_location_target and fn.getloclist(0) or fn.getqflist()
+  if vim.tbl_isempty(list) then
+    local msg_prefix = (is_location_target and 'Location' or 'QuickFix')
+    return vim.notify(msg_prefix .. ' List is Empty.', vim.log.levels.WARN)
+  end
+
+  local winnr = fn.winnr()
+  vim.cmd[cmd[2]]()
+  if fn.winnr() ~= winnr then vim.cmd.wincmd('p') end
+end
+
+function as.toggle_qf_list()
+  toggle_list('quickfix')
+end
+function as.toggle_loc_list()
+  toggle_list('location')
+end
+
+---@param str string
+---@param max_len integer
+---@return string
 function as.truncate(str, max_len)
   assert(str and max_len, 'string and max_len must be provided')
-  return api.nvim_strwidth(str) > max_len and str:sub(1, max_len) .. as.style.icons.misc.ellipsis
-      or str
+  return api.nvim_strwidth(str) > max_len and str:sub(1, max_len) .. as.style.icons.misc.ellipsis or str
 end
 
 ---Determine if a value of any type is empty
 ---@param item any
----@return boolean
+---@return boolean?
 function as.empty(item)
   if not item then
     return true
@@ -86,27 +169,79 @@ function as.empty(item)
   local item_type = type(item)
   if item_type == 'string' then
     return item == ''
-  elseif item_type == 'table' then
+  end
+  if item_type == 'number' then
+    return item <= 0
+  end
+  if item_type == 'table' then
     return vim.tbl_isempty(item)
   end
+  return item ~= nil
 end
 
----Require a module using [pcall] and report any errors
+---Require a module using `pcall` and report any errors
 ---@param module string
 ---@param opts table?
 ---@return boolean, any
-function as.safe_require(module, opts)
+function as.require(module, opts)
   opts = opts or { silent = false }
   local ok, result = pcall(require, module)
   if not ok and not opts.silent then
-    vim.notify(result, vim.log.levels.ERROR, { title = fmt('Error requiring: %s', module) })
+    if opts.message then
+      result = opts.message .. '\n' .. result
+    end
+    vim.notify(result, l.ERROR, { title = fmt('Error requiring: %s', module) })
   end
   return ok, result
 end
 
+--- Call the given function and use `vim.notify` to notify of any errors
+--- this function is a wrapper around `xpcall` which allows having a single
+--- error handler for all errors
+---@param msg string
+---@param func function
+---@vararg any
+---@return boolean, any
+---@overload fun(fun: function, ...): boolean, any
+function as.wrap_err(msg, func, ...)
+  local args = { ... }
+  if type(msg) == 'function' then
+    -- @diagnostic: disable-next-line
+    args, func, msg = { func, unpack(args) }, msg, nil ---@diagnostic disable-line
+  end
+  return xpcall(func, function(err)
+    msg = msg and fmt('%s:\n%s', msg, err) or err
+    vim.schedule(function()
+      vim.notify(msg, l.ERROR, { title = 'ERROR' })
+    end)
+  end, unpack(args))
+end
+
+---@alias Plug table<(string | number), string>
+
+--- A convenience wrapper that calls the ftplugin config for a plugin if it exists
+--- and warns me if the plugin is not installed
+--- TODO: find out if it's possible to annotate the plugin as a module
+---@param name string | Plug
+---@param callback fun(module: table)
+function as.ftplugin_conf(name, callback)
+  local plugin_name = type(name) == 'table' and name.plugin or nil
+  if plugin_name and not as.plugin_loaded(plugin_name) then
+    return
+  end
+
+  local module = type(name) == 'table' and name[1] or name
+  local info = debug.getinfo(1, 'S')
+  local ok, plugin = as.require(module, { message = fmt('In file: %s', info.source) })
+
+  if ok then
+    callback(plugin)
+  end
+end
+
 ---Reload lua modules
 ---@param path string
----@param recursive string
+---@param recursive boolean
 function as.invalidate(path, recursive)
   if recursive then
     for key, value in pairs(package.loaded) do
@@ -121,40 +256,59 @@ function as.invalidate(path, recursive)
   end
 end
 
---- Usage:
---- 1. Call `local stop = utils.profile('my-log')` at the top of the file
---- 2. At the bottom of the file call `stop()`
---- 3. Restart neovim, the newly created log file should open
-function as.profile(filename)
-  local base = '/tmp/config/profile/'
-  fn.mkdir(base, 'p')
-  local success, profile = pcall(require, 'plenary.profile.lua_profiler')
-  if not success then
-    vim.api.nvim_echo({ 'Plenary is not installed.', 'Title' }, true, {})
-  end
-  profile.start()
-  return function()
-    profile.stop()
-    local logfile = base .. filename .. '.log'
-    profile.report(logfile)
-    vim.defer_fn(function()
-      vim.cmd('tabedit ' .. logfile)
-    end, 1000)
-  end
-end
-
 ----------------------------------------------------------------------------------------------------
 -- API Wrappers
 ----------------------------------------------------------------------------------------------------
 -- Thin wrappers over API functions to make their usage easier/terser
 
+---Check that the current nvim version is greater than or equal to the given version
+---@param major number
+---@param minor number
+---@param _ number patch
+---@return unknown
+function as.version(major, minor, _)
+  assert(major and minor, 'major and minor must be provided')
+  local v = vim.version()
+  return major >= v.major and minor >= v.minor
+end
+
 P = vim.pretty_print
 
+--- Validate the keys passed to as.augroup are valid
+---@param name string
+---@param cmd Autocommand
+local function validate_autocmd(name, cmd)
+  local keys = { 'event', 'buffer', 'pattern', 'desc', 'command', 'group', 'once', 'nested' }
+  local incorrect = as.fold(function(accum, _, key)
+    if not vim.tbl_contains(keys, key) then
+      table.insert(accum, key)
+    end
+    return accum
+  end, cmd, {})
+  if #incorrect == 0 then
+    return
+  end
+  vim.schedule(function()
+    vim.notify('Incorrect keys: ' .. table.concat(incorrect, ', '), 'error', {
+      title = fmt('Autocmd: %s', name),
+    })
+  end)
+end
+
+---@class AutocmdArgs
+---@field id number
+---@field event string
+---@field group string?
+---@field buf number
+---@field file string
+---@field match string | number
+---@field data any
+
 ---@class Autocommand
----@field description string
----@field event  string[] list of autocommand events
----@field pattern string[] list of autocommand patterns
----@field command string | function
+---@field desc string
+---@field event  string | string[] list of autocommand events
+---@field pattern string | string[] list of autocommand patterns
+---@field command string | fun(args: AutocmdArgs): boolean?
 ---@field nested  boolean
 ---@field once    boolean
 ---@field buffer  number
@@ -165,13 +319,16 @@ P = vim.pretty_print
 ---@param commands Autocommand[]
 ---@return number
 function as.augroup(name, commands)
+  assert(name ~= 'User', 'The name of an augroup CANNOT be User')
+  assert(#commands > 0, fmt('You must specify at least one autocommand for %s', name))
   local id = api.nvim_create_augroup(name, { clear = true })
   for _, autocmd in ipairs(commands) do
+    validate_autocmd(name, autocmd)
     local is_callback = type(autocmd.command) == 'function'
     api.nvim_create_autocmd(autocmd.event, {
       group = name,
       pattern = autocmd.pattern,
-      desc = autocmd.description,
+      desc = autocmd.desc,
       callback = is_callback and autocmd.command or nil,
       command = not is_callback and autocmd.command or nil,
       once = autocmd.once,
@@ -194,17 +351,6 @@ end
 function as.command(name, rhs, opts)
   opts = opts or {}
   api.nvim_create_user_command(name, rhs, opts)
-end
-
----Source a lua or vimscript file
----@param path string path relative to the nvim directory
----@param prefix boolean?
-function as.source(path, prefix)
-  if not prefix then
-    vim.cmd(fmt('source %s', path))
-  else
-    vim.cmd(fmt('source %s/%s', vim.g.vim_dir, path))
-  end
 end
 
 ---Check if a cmd is executable

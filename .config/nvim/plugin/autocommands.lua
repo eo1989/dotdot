@@ -1,14 +1,9 @@
 local fn = vim.fn
 local api = vim.api
 local fmt = string.format
-local contains = vim.tbl_contains
 local map = vim.keymap.set
 
-vim.cmd [[
-  augroup vimrc -- Ensure all autocommands are cleared
-  autocmd!
-  augroup END
-]]
+if not as then return end
 
 ----------------------------------------------------------------------------------------------------
 -- HLSEARCH
@@ -29,47 +24,43 @@ https://github.com/neovim/neovim/issues/5581
 map({ 'n', 'v', 'o', 'i', 'c' }, '<Plug>(StopHL)', 'execute("nohlsearch")[-1]', { expr = true })
 
 local function stop_hl()
-  if vim.v.hlsearch == 0 or api.nvim_get_mode().mode ~= 'n' then
-    return
-  end
-  api.nvim_feedkeys(as.replace_termcodes '<Plug>(StopHL)', 'm', false)
+  if vim.v.hlsearch == 0 or api.nvim_get_mode().mode ~= 'n' then return end
+  api.nvim_feedkeys(as.replace_termcodes('<Plug>(StopHL)'), 'm', false)
 end
 
 local function hl_search()
   local col = api.nvim_win_get_cursor(0)[2]
   local curr_line = api.nvim_get_current_line()
-  local ok, match = pcall(fn.matchstrpos, curr_line, fn.getreg '/', 0)
-  if not ok then
-    return vim.notify(match, 'error', { title = 'HL SEARCH' })
-  end
+  local ok, match = pcall(fn.matchstrpos, curr_line, fn.getreg('/'), 0)
+  if not ok then return end
   local _, p_start, p_end = unpack(match)
   -- if the cursor is in a search result, leave highlighting on
-  if col < p_start or col > p_end then
-    stop_hl()
-  end
+  if col < p_start or col > p_end then stop_hl() end
 end
 
 as.augroup('VimrcIncSearchHighlight', {
   {
     event = { 'CursorMoved' },
-    command = function()
-      hl_search()
-    end,
+    command = function() hl_search() end,
   },
   {
     event = { 'InsertEnter' },
-    command = function()
-      stop_hl()
-    end,
+    command = function() stop_hl() end,
   },
   {
     event = { 'OptionSet' },
     pattern = { 'hlsearch' },
     command = function()
-      vim.schedule(function()
-        vim.cmd 'redrawstatus'
-      end)
+      vim.schedule(function() vim.cmd.redrawstatus() end)
     end,
+  },
+  {
+    event = 'RecordingEnter',
+    command = function() vim.o.hlsearch = false end,
+  },
+  {
+    event = 'RecordingLeave',
+    command = function() vim.o.hlsearch = true end,
   },
 })
 
@@ -85,14 +76,21 @@ local smart_close_filetypes = {
   'log',
   'tsplayground',
   'qf',
+  'startuptime',
+  'lspinfo',
+  'neotest-summary',
+  'toggleterm',
+  'vim',
+  'OverseerList',
+  'OverseerForm',
+  'floggraph',
+  'query'
 }
 
-local smart_close_buftypes = {}
+local smart_close_buftypes = {} -- Don't include no file buffers as diff buffers are nofile
 
 local function smart_close()
-  if fn.winnr '$' ~= 1 then
-    api.nvim_win_close(0, true)
-  end
+  if fn.winnr('$') ~= 1 then api.nvim_win_close(0, true) end
 end
 
 as.augroup('SmartClose', {
@@ -110,13 +108,11 @@ as.augroup('SmartClose', {
       local is_unmapped = fn.hasmapto('q', 'n') == 0
 
       local is_eligible = is_unmapped
-          or vim.wo.previewwindow
-          or contains(smart_close_buftypes, vim.bo.filetype)
-          or contains(smart_close_filetypes, vim.bo.filetype)
+        or vim.wo.previewwindow
+        or vim.tbl_contains(smart_close_buftypes, vim.bo.buftype)
+        or vim.tbl_contains(smart_close_filetypes, vim.bo.filetype)
 
-      if is_eligible then
-        as.nnoremap('q', smart_close, { buffer = 0, nowait = true })
-      end
+      if is_eligible then as.nnoremap('q', smart_close, { buffer = 0, nowait = true }) end
     end,
   },
   {
@@ -124,7 +120,7 @@ as.augroup('SmartClose', {
     event = { 'BufEnter' },
     pattern = '*',
     command = function()
-      if fn.winnr '$' == 1 and vim.bo.buftype == 'quickfix' then
+      if fn.winnr('$') == 1 and vim.bo.buftype == 'quickfix' then
         api.nvim_buf_delete(0, { force = true })
       end
     end,
@@ -135,9 +131,7 @@ as.augroup('SmartClose', {
     pattern = '*',
     nested = true,
     command = function()
-      if vim.bo.filetype ~= 'qf' then
-        vim.cmd 'silent! lclose'
-      end
+      if vim.bo.filetype ~= 'qf' then vim.cmd.lclose({ mods = { silent = true } }) end
     end,
   },
 })
@@ -147,9 +141,7 @@ as.augroup('ExternalCommands', {
     -- Open images in an image viewer (probably Preview)
     event = { 'BufEnter' },
     pattern = { '*.png', '*.jpg', '*.gif' },
-    command = function()
-      vim.cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%')))
-    end,
+    command = function() vim.cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%'))) end,
   },
 })
 
@@ -158,23 +150,30 @@ as.augroup('CheckOutsideTime', {
     -- automatically check for changed files outside vim
     event = { 'WinEnter', 'BufWinEnter', 'BufWinLeave', 'BufRead', 'BufEnter', 'FocusGained' },
     pattern = '*',
-    command = 'silent! checktime',
+    command = 'silent! :checktime',
   },
 })
 
--- See :h skeleton
-as.augroup('Templates', {
+as.augroup('CloseScratchPreview', {
   {
-    event = { 'BufNewFile' },
-    pattern = { '*.sh' },
-    command = '0r $DOTFILES/.config/nvim/templates/skeleton.sh',
-  },
-  {
-    event = { 'BufNewFile' },
-    pattern = { '*.lua' },
-    command = '0r $DOTFILES/.config/nvim/templates/skeleton.lua',
-  },
+    desc = 'Close the popup-menu automatically',
+    event = { "CursorMovedI", "InsertLeave" },
+    pattern = '*',
+    command = "if pumvisible() == 0 && !&pvw && getcmdwintype() == ''|pclose|endif"
+  }
 })
+
+--[[
+-- local aug = vim.api.nvim_get_option_value('vimrc', {})
+
+-- vim.api.nvim_create_autocmd({ "CursorMovedI", "InsertLeave" }, {
+--   desc = "Close the popup-menu automatically",
+--   pattern = "*",
+--   command = "if pumvisible() == 0 && !&pvw && getcmdwintype() == ''|pclose|endif",
+--   group = a,
+-- })
+--]]
+
 
 --- automatically clear commandline messages after a few seconds delay
 --- source: http://unix.stackexchange.com/a/613645
@@ -185,13 +184,9 @@ local function clear_commandline()
   --- deferred each time
   local timer
   return function()
-    if timer then
-      timer:stop()
-    end
+    if timer then timer:stop() end
     timer = vim.defer_fn(function()
-      if fn.mode() == 'n' then
-        vim.cmd [[echon '']]
-      end
+      if fn.mode() == 'n' then vim.cmd.echon("''") end
     end, 10000)
   end
 end
@@ -209,16 +204,12 @@ if vim.env.TMUX ~= nil then
     {
       event = { 'BufEnter' },
       pattern = '*',
-      command = function()
-        vim.o.titlestring = require('as.external').title_string()
-      end,
+      command = function() vim.o.titlestring = require('as.external').title_string() end,
     },
     {
       event = { 'VimLeavePre' },
       pattern = '*',
-      command = function()
-        require('as.external').tmux.set_statusline(true)
-      end,
+      command = function() require('as.external').tmux.set_statusline(true) end,
     },
     {
       event = { 'ColorScheme', 'FocusGained' },
@@ -227,9 +218,7 @@ if vim.env.TMUX ~= nil then
         -- NOTE: there is a race condition here as the colors
         -- for kitty to re-use need to be set AFTER the rest of the colorscheme
         -- overrides
-        vim.defer_fn(function()
-          require('as.external').tmux.set_statusline()
-        end, 1)
+        vim.defer_fn(function() require('as.external').tmux.set_statusline() end, 1)
       end,
     },
   })
@@ -241,72 +230,59 @@ as.augroup('TextYankHighlight', {
     event = { 'TextYankPost' },
     pattern = '*',
     command = function()
-      vim.highlight.on_yank {
+      vim.highlight.on_yank({
         timeout = 500,
         on_visual = false,
-        higroup = 'Visual',
-      }
+        higroup = 'Search',
+      })
     end,
   },
 })
 
 local column_exclude = { 'gitcommit' }
-local column_clear = {
+local column_block_list = {
+  'NeogitCommitSelectView',
+  'DiffviewFileHistory',
+  'log',
+  'norg',
   'startify',
   'vimwiki',
   'vim-plug',
+  'alpha',
+  'dap-repl',
   'help',
   'fugitive',
   'mail',
   'org',
   'orgagenda',
   'NeogitStatus',
-  'norg',
+  'neorg',
 }
 
---- Set or unset the color column depending on the filetype of the buffer and its eligibility
----@param leaving boolean indicates if the function was called on window leave
-local function check_color_column(leaving)
-  if contains(column_exclude, vim.bo.filetype) then
-    return
-  end
-
-  local not_eligible = not vim.bo.modifiable
-      or vim.wo.previewwindow
-      or vim.bo.buftype ~= ''
-      or not vim.bo.buflisted
-
-  local small_window = api.nvim_win_get_width(0) <= vim.bo.textwidth + 1
-  local is_last_win = #api.nvim_list_wins() == 1
-
-  if contains(column_clear, vim.bo.filetype)
-      or not_eligible
-      or (leaving and not is_last_win)
-      or small_window
-  then
-    vim.wo.colorcolumn = ''
-    return
-  end
-  if vim.wo.colorcolumn == '' then
-    vim.wo.colorcolumn = '+1'
+---Set or unset the color column depending on the filetype of the buffer and its eligibility
+local function check_color_column()
+  for _, win in ipairs(api.nvim_list_wins()) do
+    local buffer = vim.bo[api.nvim_win_get_buf(win)]
+    local window = vim.wo[win]
+    local is_current = win == api.nvim_get_current_win()
+    if as.empty(fn.win_gettype()) and not vim.tbl_contains(column_exclude, buffer.filetype) then
+      local too_small = api.nvim_win_get_width(win) <= buffer.textwidth + 1
+      -- TODO: This should do a pattern match against a string rather than direct comparison
+      local is_excluded = vim.tbl_contains(column_block_list, buffer.filetype)
+      if is_excluded or too_small then
+        window.colorcolumn = ''
+      elseif as.empty(window.colorcolumn) and is_current then
+        window.colorcolumn = '+1'
+      end
+    end
   end
 end
 
 as.augroup('CustomColorColumn', {
   {
     -- Update the cursor column to match current window size
-    event = { 'WinEnter', 'BufEnter', 'VimResized', 'FileType' },
-    pattern = '*',
-    command = function()
-      check_color_column()
-    end,
-  },
-  {
-    event = { 'WinLeave' },
-    pattern = { '*' },
-    command = function()
-      check_color_column(true)
-    end,
+    event = { 'BufEnter', 'WinNew', 'WinClosed', 'FileType', 'VimResized' },
+    command = check_color_column,
   },
 })
 as.augroup('UpdateVim', {
@@ -315,12 +291,20 @@ as.augroup('UpdateVim', {
     -- it correctly sources $MYVIMRC but all the other files that it
     -- requires will need to be resourced or reloaded themselves
     event = 'BufWritePost',
-    pattern = { '$DOTFILES/**/nvim/plugin/*.{lua,vim}', fn.expand '$MYVIMRC' },
+    pattern = { vim.g.vim_dir .. '/plugin/*.{lua,vim}', vim.env.MYVIMRC },
     nested = true,
-    command = function()
-      local ok, msg = pcall(vim.cmd, 'source $MYVIMRC | redraw | silent doautocmd ColorScheme')
-      msg = ok and 'sourced ' .. vim.fn.fnamemodify(vim.env.MYVIMRC, ':t') or msg
-      vim.notify(msg)
+    command = function(args)
+      local path = api.nvim_buf_get_name(args.buf)
+      vim.cmd.source(fn.expand('$MYVIMRC'))
+      vim.cmd.source(path)
+      vim.cmd.redraw()
+      --@eo TODO: Reloa TS highlight also
+      -- api.nvim_exec_autocmds('syntax ', {})
+      --@eo
+      api.nvim_exec_autocmds('ColorScheme', {})
+      api.nvim_exec_autocmds('User', { pattern = 'VimrcReloaded' })
+      local msg = fmt('sourced %s and %s', vim.fs.basename(path), vim.fs.basename(vim.env.MYVIMRC))
+      vim.notify(msg, 'info', { title = 'Sourcing init.lua' })
     end,
   },
   {
@@ -356,31 +340,42 @@ as.augroup('WindowBehaviours', {
     nested = true,
     command = 'lwindow',
   },
+  {
+    event = { 'BufWinEnter' },
+    command = function(args)
+      if vim.wo.diff then vim.diagnostic.disable(args.buf) end
+    end,
+  },
+  {
+    event = { 'BufWinLeave' },
+    command = function(args)
+      if vim.wo.diff then vim.diagnostic.enable(args.buf) end
+    end,
+  },
 })
 
-local function should_show_cursorline()
-  return vim.bo.buftype ~= 'terminal'
-      and not vim.wo.previewwindow
-      and vim.wo.winhighlight == ''
-      and vim.bo.filetype ~= ''
+local cursorline_exclude = { 'alpha', 'toggleterm' }
+
+---@param buf number
+---@return boolean
+local function should_show_cursorline(buf)
+  return vim.bo[buf].buftype ~= 'terminal'
+    and not vim.wo.previewwindow
+    and vim.wo.winhighlight == ''
+    and vim.bo[buf].filetype ~= ''
+    and not vim.tbl_contains(cursorline_exclude, vim.bo[buf].filetype)
 end
 
 as.augroup('Cursorline', {
   {
     event = { 'BufEnter' },
     pattern = { '*' },
-    command = function()
-      if should_show_cursorline() then
-        vim.wo.cursorline = true
-      end
-    end,
+    command = function(args) vim.wo.cursorline = should_show_cursorline(args.buf) end,
   },
   {
     event = { 'BufLeave' },
     pattern = { '*' },
-    command = function()
-      vim.wo.cursorline = false
-    end,
+    command = function() vim.wo.cursorline = false end,
   },
 })
 
@@ -389,14 +384,14 @@ local save_excluded = {
   'neo-tree-popup',
   'lua.luapad',
   'gitcommit',
-  'NeogitCommitMessage'
+  'NeogitCommitMessage',
 }
-
 local function can_save()
-  return as.empty(vim.bo.buftype)
-      and not as.empty(vim.bo.filetype)
-      and vim.bo.modifiable
-      and not vim.tbl_contains(save_excluded, vim.bo.filetype)
+  return as.empty(fn.win_gettype())
+    and as.empty(vim.bo.buftype)
+    and not as.empty(vim.bo.filetype)
+    and vim.bo.modifiable
+    and not vim.tbl_contains(save_excluded, vim.bo.filetype)
 end
 
 as.augroup('Utilities', {
@@ -406,22 +401,8 @@ as.augroup('Utilities', {
     pattern = { 'file:///*' },
     nested = true,
     command = function(args)
-      vim.cmd(fmt('bd!|edit %s', vim.uri_to_fname(args.file)))
-    end,
-  },
-  {
-    -- When editing a file, always jump to the last known cursor position.
-    -- Don't do it for commit messages, when the position is invalid.
-    event = { 'BufReadPost' },
-    command = function()
-      if vim.bo.ft ~= 'gitcommit' and vim.fn.win_gettype() ~= 'popup' then
-        local last_place_mark = vim.api.nvim_buf_get_mark(0, '"')
-        local line_nr = last_place_mark[1]
-        local last_line = vim.api.nvim_buf_line_count(0)
-        if line_nr > 0 and line_nr <= last_line then
-          vim.api.nvim_win_set_cursor(0, last_place_mark)
-        end
-      end
+      vim.cmd.bdelete({ bang = true })
+      vim.cmd.edit(vim.uri_to_fname(args.file))
     end,
   },
   {
@@ -429,11 +410,24 @@ as.augroup('Utilities', {
     pattern = { 'gitcommit', 'gitrebase' },
     command = 'set bufhidden=delete',
   },
-  { -- TODO: should this be done in ftplugin files
-    event = { 'FileType' },
-    pattern = { 'lua', 'vim', 'dart', 'python', 'javascript', 'typescript', 'rust' },
-    command = 'setlocal spell',
-  },
+  -- {
+  --   event = { 'FileType' },
+  --   pattern = {
+  --     'lua',
+  --     'vim',
+  --     'dart',
+  --     'python',
+  --     'javascript',
+  --     'typescript',
+  --     'rust',
+  --     'org',
+  --     'NeogitCommitMessage',
+  --     'go',
+  --     'markdown',
+  --   },
+  --   -- NOTE: setting spell only works using opt_local otherwise it leaks into subsequent windows
+  --   command = function(args) vim.opt_local.spell = false end,
+  -- },
   {
     event = { 'BufWritePre', 'FileWritePre' },
     pattern = { '*' },
@@ -443,30 +437,25 @@ as.augroup('Utilities', {
     event = { 'BufLeave' },
     pattern = { '*' },
     command = function()
-      if can_save() then
-        vim.cmd 'silent! update'
-      end
+      if can_save() then vim.cmd.update({ mods = { silent = true } }) end
     end,
   },
-  {
-    event = { 'BufWritePost' },
-    pattern = { '*' },
-    nested = true,
-    command = function()
-      if as.empty(vim.bo.filetype) or fn.exists 'b:ftdetect' == 1 then
-        vim.cmd [[
-            unlet! b:ftdetect
-            filetype detect
-            echom 'Filetype set to ' . &ft
-          ]]
-      end
-    end,
-  },
-  {
-    event = { 'Syntax' },
-    pattern = { '*' },
-    command = "if 5000 < line('$') | syntax sync minlines=200 | endif",
-  },
+  -- {
+  --   event = { 'BufWritePost' },
+  --   pattern = { '*' },
+  --   nested = true,
+  --   command = function()
+  --     if as.empty(vim.bo.filetype) or fn.exists('b:ftdetect') == 1 then
+  --       vim.cmd([[
+  --           unlet! b:ftdetect
+  --           filetype detect
+  --           echom 'Filetype set to ' . &ft
+  --           ""@eo TODO
+  --           syntax enable
+  --         ]])
+  --     end
+  --   end,
+  -- },
 })
 
 as.augroup('TerminalAutocommands', {
@@ -475,9 +464,18 @@ as.augroup('TerminalAutocommands', {
     pattern = '*',
     command = function()
       --- automatically close a terminal if the job was successful
-      if not vim.v.event.status == 0 then
-        vim.cmd('bdelete! ' .. fn.expand '<abuf>')
-      end
+      if not vim.v.event.status == 0 then vim.cmd.bdelete({ fn.expand('<abuf>'), bang = true }) end
     end,
   },
 })
+
+--
+-- vim.api.nvim_create_autocmd({ "CursorHold" }, {
+--   callback = function()
+--     local status_ok, luasnip = pcall(require, "luasnip")
+--     if not status_ok then return end
+--     if luasnip.expand_or_jumpable() then
+--       vim.cmd [[silent! lua require("luasnip").unlink_current()]]
+--     end
+--   end,
+-- })

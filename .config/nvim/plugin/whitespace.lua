@@ -1,10 +1,13 @@
+if not as then
+  return
+end
 ----------------------------------------------------------------------------------
 --  Whitespace highlighting
 ----------------------------------------------------------------------------------
 --@source: https://vim.fandom.com/wiki/Highlight_unwanted_spaces (comment at the bottom)
 --@implementation: https://github.com/inkarkat/vim-ShowTrailingWhitespace
 
-local H = require 'as.highlights'
+-- local H = require('as.highlights')
 
 local fn = vim.fn
 
@@ -33,31 +36,31 @@ local function toggle_trailing(mode)
   end
 end
 
-H.set_hl('ExtraWhitespace', { foreground = 'red' })
+-- H.set('ExtraWhitespace', { foreground = 'red' })
 
 as.augroup('WhitespaceMatch', {
   {
     event = { 'ColorScheme' },
-    description = 'add extra whitespace highlight',
+    desc = 'Add extra whitespace highlight',
     pattern = { '*' },
     command = function()
-      H.set_hl('ExtraWhitespace', { foreground = 'red' })
+      -- H.set('ExtraWhitespace', { foreground = 'red' })
     end,
   },
   {
     event = { 'BufEnter', 'FileType', 'InsertLeave' },
-    description = 'show extra whitespace on insert leave, buf enter or filetype',
     pattern = { '*' },
+    desc = 'Show extra whitespace on insert leave, buf enter or filetype',
     command = function()
-      toggle_trailing 'n'
+      toggle_trailing('n')
     end,
   },
   {
     event = { 'InsertEnter' },
-    description = 'show extra whitespace on insert enter',
+    desc = 'Show extra whitespace on insert enter',
     pattern = { '*' },
     command = function()
-      toggle_trailing 'i'
+      toggle_trailing('i')
     end,
   },
 })

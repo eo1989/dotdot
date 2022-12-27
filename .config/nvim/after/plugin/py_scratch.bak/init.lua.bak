@@ -1,0 +1,7 @@
+local py_scratch = {}
+
+function py_scratch.complete(filetype)
+  return "lua\npython"
+end
+
+return py_scratch

@@ -1,49 +1,94 @@
 return function()
-  local parsers = require 'nvim-treesitter.parsers'
-  local rainbow_enabled = { 'dart' }
-  -- Flattening a nested list for readability only hopefully 1 day there will be a way to do this
-  -- that doesnt req the user to keep track of langs they use or might use.
-  -- local langs = vim.tbl_flatten {
-  --   { 'c', 'comment', 'make', 'query', 'toml', 'bash', 'regex' },
-  --   { 'ruby', 'go', 'gomod', 'markdown', 'help', 'vim', 'css', 'yaml' },
-  --   { 'lua', 'teal', 'typescript', 'tsx', 'javascript', 'jsdoc', 'json', 'jsonc' },
-  --   { 'dockerfile', 'kotlin', 'dart', 'graphql', 'html', 'ocaml', 'java' },
-  --   { 'python', 'julia', 'cpp', 'todotxt', 'rust', 'latex', 'http', 'swift', 'norg', 'org' },
-  -- }
+  -- This option, which currently doesn't work upstream, disables linking treesitter highlights
+  -- to the new capture highlights which color schemes and plugins depend on. By toggling it
+  -- I can see which highlights still need to be supported in upstream plugins.
+  -- NOTE: this is currently broken, do not set to true
+  vim.g.skip_ts_default_groups = false
 
-  require('nvim-treesitter.configs').setup {
-    -- ensure_installed = langs,
-    ensure_installed = 'all',
-    ignore_installed = { 'phpdoc' },
+  local parsers = require('nvim-treesitter.parsers')
+  local ft_to_parser = parsers.filetype_to_parsername -- ()
+  ft_to_parser['zsh'] = 'bash'
+
+  local parser_configs = parsers.get_parser_configs()
+
+  parser_configs['norg_table'] = {
+    install_info = {
+      url = 'https://github.com/nvim-neorg/tree-sitter-norg-table',
+      files = { 'src/parser.c' },
+      branch = 'main'
+    }
+  }
+
+
+  require('nvim-treesitter.configs').setup({
+    ensure_installed = {
+      'awk',
+      'diff',
+      'lua',
+      'go',
+      'julia',
+      'python',
+      'perl',
+      'bash',
+      'norg',
+      'norg_meta',
+      'norg_table',
+      'make',
+      'org',
+      'help',
+      'sql',
+      'rst',
+      'latex',
+      'comment',
+      'markdown',
+      'markdown_inline',
+      'scheme',
+      'yaml',
+      'toml',
+      'regex',
+      'todotxt',
+      'gitignore',
+      'git_rebase',
+      'gitattributes',
+      'embedded_template',
+    },
+    auto_install = true,
     highlight = {
       enable = true,
-      -- additional_vim_regex_highlighting = true,
+      use_languagetree = true,
+      additional_vim_regex_highlighting = { 'org' },
     },
     incremental_selection = {
       enable = true,
       keymaps = {
         -- mappings for incremental selection (visual mappings)
-        init_selection = '<M-v>', -- maps in normal mode to init the node/scope selection
-        node_incremental = '<M-n>', -- increment to the upper named parent
-        node_decremental = '<M-p>', -- decrement to the previous node
-        scope_incremental = 'M-f', -- increment to the upper scope (as defined in locals.scm)
+        init_selection = '<CR>', -- maps in normal mode to init the node/scope selection
+        node_incremental = '<CR>', -- increment to the upper named parent
+        node_decremental = '<M-CR>', -- decrement to the previous node
+        -- scope_incremental = '<TAB>', -- increment to the upper scope (as defined in locals.scm)
+        -- scope_decremental = '<S-TAB>', -- increment to the upper scope (as defined in locals.scm)
       },
     },
     indent = {
       enable = true,
-      disable = { 'python', 'yaml' },
+      disable = { 'yaml', 'python' },
     },
     textobjects = {
-      lookahead = true,
       select = {
         enable = true,
+        include_surrounding_whitespace = false,
         keymaps = {
-          ['af'] = '@function.outer',
-          ['if'] = '@function.inner',
-          ['ac'] = '@class.outer',
-          ['ic'] = '@class.inner',
-          ['aC'] = '@conditional.outer',
-          ['iC'] = '@conditional.inner',
+          ['af'] = { query = '@function.outer', desc = 'ts: all function' },
+          ['if'] = { query = '@function.inner', desc = 'ts: inner function' },
+
+          ['ac'] = { query = '@class.outer', desc = 'ts: all class' },
+          ['ic'] = { query = '@class.inner', desc = 'ts: inner class' },
+
+          -- ['aC'] = '@conditional.outer',
+          -- ['iC'] = '@conditional.inner',
+
+          ['am'] = { query = '@parameter.outer', desc = 'ts: all parameter' },
+          ['im'] = { query = '@parameter.inner', desc = 'ts: inner parameter '},
           -- FIXME: this is unusable
           -- https://github.com/nvim-treesitter/nvim-treesitter-textobjects/issues/133 is resolved
           -- ['ax'] = '@comment.outer',
@@ -53,62 +98,51 @@ return function()
         enable = true,
         swap_next = {
           ['[w'] = '@parameter.inner',
+          ['<localleader>sf'] = '@function.outer',
         },
         swap_previous = {
           [']w'] = '@parameter.inner',
+          ['<localleader>sF'] = '@function.outer',
         },
       },
       move = {
         enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
+        set_jumps = false, -- whether to set jumps in the jumplist
         goto_next_start = {
           [']m'] = '@function.outer',
-          [']]'] = '@class.outer',
+          [']M'] = '@class.outer',
         },
         goto_previous_start = {
           ['[m'] = '@function.outer',
-          ['[['] = '@class.outer',
-        },
-      },
-      lsp_interop = {
-        enable = true,
-        border = as.style.current.border,
-        peek_definition_code = {
-          ['<leader>df'] = '@function.outer',
-          ['<leader>dF'] = '@class.outer',
+          ['[M'] = '@class.outer',
         },
       },
     },
-    endwise = { enable = true, },
     rainbow = {
       enable = true,
-      extended_mode = true,
-      disable = vim.tbl_filter(function(p)
-        local disable = true
-        for _, lang in pairs(rainbow_enabled) do
-          if p == lang then
-            disable = false
-          end
-        end
-        return disable
-      end, parsers.available_parsers()),
       colors = {
-        'RoyalBlue3',
-        'DarkOrange3',
-        'SeaGreen3',
+        'RoyalBlue2',
+        'DarkOrange1',
+        'SeaGreen2',
         'Firebrick',
-        'DarkOrchid3',
-        -- 'Orchid',
-        -- 'Cornsilk',
-        -- 'DodgerBlue',
+        'DarkOrchid2',
       },
     },
     autopairs = { enable = true },
-    matchup = { enable = true },
+    endwise = { enable = true },
+    matchup = {
+      enable = true,
+      disable = { 'julia' },
+      disable_virtual_text = true,
+    },
+    playground = {
+      persist_queries = true,
+    },
     query_linter = {
       enable = true,
       use_virtual_text = false,
-      lint_events = { 'BufWrite', 'CursorHold' },
+      -- lint_events = { 'BufWrite', 'CursorHold' },
+      lint_events = { 'BufWrite' },
     },
-  }
+  })
 end

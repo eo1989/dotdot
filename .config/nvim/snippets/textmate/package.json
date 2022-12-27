@@ -20,6 +20,10 @@
         "path": "./lua.json"
       },
       {
+        "language": "lua",
+        "path": "./lua_eo.json"
+      },
+      {
         "language": "vim",
         "path": "./vim.json"
       },
@@ -54,6 +58,22 @@
       {
         "language": "json",
         "path": "./json.json"
+      },
+      {
+        "language": "julia",
+        "path": "./julia.json"
+      },
+      {
+        "language": "sql",
+        "path": "./sql.json"
+      },
+      {
+        "language": "sh",
+        "path": "./sh.json"
+      },
+      {
+        "language": "zsh",
+        "path": "./zsh.json"
       }
     ]
   }

@@ -10,6 +10,36 @@ end
 return {
   snippet(
     {
+      trig = 'cfg',
+      name = 'config key',
+      dscr = 'Packer config key',
+    },
+    fmt(
+      [[
+    , config = function()
+      require("{}").setup()
+    end
+    ]],
+      { i(1) }
+    )
+  ),
+  snippet(
+    {
+      trig = 'vs',
+      name = 'vim schedule',
+      dscr = 'Schedule a function on the vim event loop',
+    },
+    fmt(
+      [[
+        vim.schedule(function()
+          {}
+        end)
+      ]],
+      { i(1) }
+    )
+  ),
+  snippet(
+    {
       trig = 'req',
       name = 'require module',
       dscr = 'Require a module and set the import to the last word',
@@ -50,15 +80,11 @@ return {
     fmt([[use {{"{}"{}}}]], {
       d(1, function()
         -- Get the author and URL in the clipboard and auto populate the author and project
-        local default = snippet('', { i(1, 'author'), t '/', i(2, 'plugin') })
-        local clip = fn.getreg '*'
-        if not vim.startswith(clip, 'https://github.com/') then
-          return default
-        end
+        local default = snippet('', { i(1, 'author'), t('/'), i(2, 'plugin') })
+        local clip = fn.getreg('*')
+        if not vim.startswith(clip, 'https://github.com/') then return default end
         local parts = vim.split(clip, '/')
-        if #parts < 2 then
-          return default
-        end
+        if #parts < 2 then return default end
         local author, project = parts[#parts - 1], parts[#parts]
         return snippet('', { t(author .. '/' .. project) })
       end),
@@ -71,7 +97,7 @@ return {
           ]],
           { i(1, 'module') }
         ),
-        t '',
+        t(''),
       }),
     })
   ),

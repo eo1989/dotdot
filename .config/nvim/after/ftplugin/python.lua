@@ -1,151 +1,169 @@
--- vim: set filetype=lua foldenable foldmethod=marker foldlevel=3
---[[ NOTE: Found in /numirias/semshi/issues/109 for dynamic python3_host_prog setting:
- let g:python3_host_prog= substitute(system("which python3"), \n\+$', '', '')
---]]
+---@diagnostic disable: unused-local
+-- let g:python3_host_prog= substitute(system("which python3"), \n\+$', '', '')
+
 -- CRAG666/code_runner.nvim
--- sniprun
--- slime/kitty runner
--- magma
--- nvim-ipy
+-- Sniprun
+-- slime/kitty-runner
+-- Magma
+-- Nvim-ipy
 -- chrisamelia/dotfiles
-local opt  = vim.opt
+
+if not as then return end
+
+local fn = vim.fn
+local fmt = string.format
+local opt = vim.opt
 local optl = vim.opt_local
-local bo   = vim.bo
-local b    = vim.b
--- local cmd  = vim.cmd
--- local fn   = vim.fn
+local bo = vim.bo
 
-vim.g["python3_host_prog"] = "~/.local/pipx/venvs/jupyterlab/bin/python3"
+-- vim.b.formatting_disabled = { 'pyright', 'pylsp', 'jedi-language-server', 'pylance'}
+
+local nnoremap = as.nnoremap
+local vnoremap = as.vnoremap
+local vmap = as.vmap
+-- vim.g["python3_host_prog"] = "~/.local/pipx/venvs/jupyterlab/bin/python3"
+-- vim.cmd([[ let g:python3_host_prog=substitute(system("which python3"), \n\+$', '', '') ]])
 
 
-local py3 = vim.g["python3_host_prog"]
+local py3 = vim.g['python3_host_prog']
 vim.b.magma_kernel = py3
--- vim.b.magma_kernel = vim.fn.expand("~/.local/pipx/venvs/jupyterlab/bin/python3")
 
--- vim.b.magma_kernel = vim.fn.stdpath("~/.pyenv/versions/3.9.0/envs/pynvim/bin/python3")
+vim.keymap.set({"n", "v"}, "<F2>", [[:TermExec cmd="!!"<CR>]])
+vim.keymap.set({"n", "v"}, "<F3>", [[:TermExec cmd="poetry run pytest"<CR>]])
+-- local opts = {expr = true, silent = true, nowait = true }
+-- map({ 'n', 'x' }, '<localleader>rp', '<Plug>SnipRun()', opts)
 
--- opt.path:append "**"
-bo.expandtab = true
-optl.smarttab = true
-bo.shiftwidth = 4
-bo.tabstop = 4
-bo.softtabstop = 4
-bo.smartindent = true
-bo.autoindent = true
-
-vim.opt_local.path:append({ "src/" })
--- vim.opt_local.path:prepend({ "src/" })
-as.nnoremap('<localleader>vl', [[<Cmd>MagmaEvaluateLine<CR>]])
-as.xnoremap('<localleader>vv', [[<Cmd>MagmaEvaluateVisual<CR>]], { silent = true })
-
---- TODO: Need to finish the lsp settings for python using pylsp for hover, signature and pyright for autocomplete.
---- NOTE: Find the reddit thread where the guy showed you how to set up both lsps to do different things.
-
--- - XXX: Trying something a little different, its new until the next label: ("XXX")
-
-
--- local function filter_diagnostics(diagnostic)
---   if diagnostic.message == '"kwargs" is not accessed' then
---     return false
---   end
---   if diagnostic.message == '"args" is not accessed' then
---     return false
---   end
---   return true
--- end
-
--- local function custom_on_pub_diagnostics(a, params, client_id, c, config)
---   filter(params.diagnostics, filter_diagnostics)
---   vim.lsp.diagnostic.on_publish_diagnostics(a, params, client_id, c, config)
--- end
-
--- local pyright = require("lspconfig").pyright
--- pyright.setup {
---   settings = {
---     python = {
---       analysis = {
---         type_checking = "basic", -- off
---         auto_search_paths = true,
---         use_library_code_types = true,
---         -- typeCheckingMode = "basic",
---         -- useLibraryCodeTypes = true,
---         -- autoImportCompletions = true,
---         -- autoSearchPaths = true,
---         -- diagnosticSeverityOverrides = {
---         --   reportUndefinedVariable = "error",
---         --   reportMissingTypeStubs = "none",
---         --   reportIncompleteStub = "none",
---         --   reportInvalidStubStatement = "none"
---         -- },
---       },
---     },
---   },
--- }
----XXX: the return statement below is a part of this also.
--- local pylsp = lspinst
--- bo.magma_kernel = "pynvim"
-
---- TODO: need to create the whichkey mappings for python.
--- if not as then
---   return
--- end
+-- optl.magma_kernel = py3
+-- vim.g['python_highlight_all'] = true
+-- local dap = require('dap')
 
 
 
-
--- local ok, whichkey = as.safe_require('which-key')
--- if not ok then
---   return
--- end
-
--- whichkey.register {
---   ['<localleader>P'] = {
---     name = '+Python',
---     -- b = { '<Cmd>Magma', '!python %' },
---     f = {
---       name = '+fix/fill',
---       s = { '<Cmd>lua magma<CR>', 'fill struct' },
---       p = { '<Cmd>GoFixPlurals<CR>', 'fix plurals' },
---     },
---   },
---   ie = { '<Cmd>GoIfErr<CR>', 'if err' },
--- }
-
--- return {
---   root_dir = function()
---     return vim.fn.getcwd()
---   end,
---   handlers = {
---     ---@diagnostic disable-next-line: unused-vararg
+-- vim.cmd([[
+-- try
+--     python 'import site'
+-- catch
+--     finish
+-- endtry
 --
---     -- if you want to enable pylint diagnostics, turn on the comments below
---     -- ["textDocument/publishDiagnostics"] = function(...)
---     -- end
+-- python<<EOF
+-- import os
+-- import sys
+-- import vim
 --
---     -- if you want to disable pyright from diagnosing unused parameters, turn on the function below
---     ["textDocument/publishDiagnostics"] = vim.lsp.with(custom_on_pub_diagnostics, {})
---   },
---   settings = {
---     python = {
---       analysis = {
---         -- type_checking = "basic", -- off
---         -- auto_search_paths = true,
---         -- use_library_code_types = true,
---         typeCheckingMode = "basic",
---         useLibraryCodeTypes = true,
---         autoImportCompletions = true,
---         autoSearchPaths = true,
---         diagnosticSeverityOverrides = {
---           reportUndefinedVariable = "error",
---           reportMissingTypeStubs = "none",
---           reportIncompleteStub = "none",
---           reportInvalidStubStatement = "none"
---         }
---       }
---     }
---   }
--- }
+-- virtualenv = os.environ.get("VIRTUAL_ENV")
+-- if virtualenv is not None:
+--     sys.path.insert(0, virtualenv)
+--     activate_this = os.path.join(virtualenv, 'bin/activate_this.py')
+--     execfile(activate_this, dict(__file__=activate_this))
+-- EOF
+-- ]])
 
+-- vnoremap('<localleader>mv', [[<Cmd>MagmaEvaluateVisual<CR>]], { silent = true })
+-- vnoremap('<localleader>S', [[<Cmd>ToggleTermSendVisualSelection<CR>]])
+
+-- vmap('<localleader>mr', [[<Cmd><C-u>MagmaEvaluateVisual<CR>]])
+-- vmap('<localleader>ml', [[<Cmd>MagmaEvaluateLine<CR>]])
+-- nnoremap('<localleader>mc', [[<Cmd>MagmaReevaluateCells<CR>]])
+-- nnoremap('<localleader>mo', [[<Cmd>MagmaShowOutput<CR>]])
+-- nnoremap('<localleader>mi', [[<Cmd>MagmaInit<CR>]])
+-- nnoremap('<localleader>mu', [[<Cmd>MagmaDeinit<CR>]])
+-- nnoremap('<localleader>md', [[<Cmd>MagmaDelete<CR>]])
+
+-- nnoremap('<localeader>rp', [[<Cmd>TermExec cmd="python %:t"<CR>]])
+
+-- nnoremap('<localleader>ts', [[<Cmd>ToggleTermSendCurrentLine<CR>]])
+
+-- nnoremap('<localeader>r', [[<Cmd><>SnipRun<CR>]])
+-- nnoremap('<localeader>rv', [[<Cmd>SnipLive<CR>]])
+
+-- nnoremap('<F5>', ':let b:caret = winsaveview()<CR>:%SnipRun<CR>:call winrestview(b:caret)<CR>')
+
+local wk = require("which-key")
+wk.register({
+  ['<localleader>'] = {
+    k = {
+      name = 'pyterm',
+      k = {{ [[ ToggleTermSendVisualSelection<CR>]] }, mode = {'x', 'v'}},
+    },
+    r = {
+      name = 'Runner',
+        -- s = {{ [[ lua require('sniprun').run('v')<CR> ]], "Run visual Snippets" }, mode = {"v", "x"}},
+        s = {{ [[function() require('sniprun').run('v')<CR> end]], "Run visual Snippets"}, mode = {"v", "x"}},
+        p = {{ ":<Plug>SnipRunOperator<CR>", 'nRun Snippets'}, mode = 'n'}, -- this might break,
+      },
+     m = {
+        name = 'Magma/Jupyter',
+        c = {{'<Cmd>MagmaReevaluateCells<CR>', 'Reevaluate Cells' }, mode = 'n'},
+        l = {{'<Cmd>MagmaEvaluateLine<CR>', 'Evaluate Line' }, mode = 'n'},
+        v = {{'<Cmd>MagmaEvaluateVisual<CR>', 'Evaluate Visual'}, mode = 'x'},
+        d = {{'<Cmd>MagmaDelete<CR>', 'Delete' }, mode = 'n'},
+        o = {{'<Cmd>MagmaShowOutput<CR>', 'Show Output' }, mode = 'n'},
+      },
+    },
+  })
+
+-- as.ftplugin_conf('which-key', function(wk)
+--   wk.register({
+--     {
+--       name = 'Magma',
+--       c = { '<Cmd>MagmaReevaluateCells<CR>', 'Reevaluate Cells' },
+--       l = { '<Cmd>MagmaEvaluateLine<CR>', 'Evaluate Line' },
+--       v = { '<Cmd>MagmaEvaluateVisual<CR>', 'Evaluate Visual' },
+--       d = { '<Cmd>MagmaDelete<CR>', 'Delete' },
+--       o = { '<Cmd>MagmaShowOutput<CR>', 'Show Output' },
+--       i = { '<Cmd>MagmaInit<CR>', 'Init' },
+--       u = { '<Cmd>MagmaDeinit<CR>', 'Deinit' },
+--     },
+--     ['<localleader>r'] = {
+--       name = 'CodeRun',
+--       -- p = { '<Cmd>TermExec cmd="python %:t"<CR>', 'Python run' },
+--       r = { "<Cmd>TermExec cmd='python %:t'<CR>", 'python repl run' },
+--       s = { ":'<,'>Sniprun % <CR>', 'SnipVisualSelection Python" },
+--     },
+--   })
+-- end)
+
+as.ftplugin_conf('nvim-surround', function(surround)
+  local get_input = function(prompt)
+    local ok, input = pcall(vim.fn.input, prompt)
+    if not ok then
+      return
+    end
+    return input
+  end
+  surround.buffer_setup({
+    surrounds = {
+      l = { add = { 'def ():', 'return ' } },
+      F = {
+        add = function()
+          return {
+            { fmt('def %s(): ', get_input('Enter a function name: ')) },
+            { 'return ' },
+          }
+        end,
+      },
+      i = {
+        add = function()
+          return {
+            { fmt('if %s', get_input('Enter a condition') ":") },
+            { " else:\n%s"}
+          }
+        end,
+      },
+    },
+  })
+end)
+
+-- v = { '<Cmd>Sniplive<CR>', "SnipLive toggle" },
+-- ie = { '<Cmd>SnipRun<CR>', 'if err' },
+
+--NOTE: add this somewhere else
+-- To turn one line into title caps, make every first letter of a word
+-- uppercase:
+-- 	:s/\v<(.)(\w*)/\u\1\L\2/g
+
+--- {{{
 -- python << EOF
 -- import os
 -- import sys
@@ -157,3 +175,53 @@ as.xnoremap('<localleader>vv', [[<Cmd>MagmaEvaluateVisual<CR>]], { silent = true
 --     activate_this = os.path.join(virtualenv, 'bin/activate.py')
 --     execfile(activate_this, dict(__file__=activate_this))
 -- EOF
+
+-- vim.api.nvim_exec([[
+-- vim.cmd [[
+-- " function! GetKernelFromPoetry()
+-- "   let l:kernel = tolower(system('basename $(poetry shell)'))
+-- "   " Remove ctrl chars (most importantly newline
+-- "   " echo substitute(l:kernel, '[[:cntrl:\]\]', '', 'g')
+-- "   return substitute(l:kernel, '[[:cntrl:\]\]', '', 'g')
+-- " endfunction
+--
+-- function! StartConsolePoetry(console)
+--   let l:flags = '--kernel ' . GetKernelFromPoetry()
+--   let l:command=a:console . ' ' . l:flags
+--   call jobstart(l:command)
+-- endfunction
+--
+-- function! AddFilepathToSyspath()
+--   let l:filepath = expand('%:p:h')
+--   call IPyRun('import sys; sys.path.append("' . l:filepath . '")')
+--   echo 'Added ' . l:filepath . ' to pythons sys.path'
+-- endfunction
+--
+-- function! GetPoetryVenv()
+--   let l:poetry_config = findfile('pyproject.toml', getcwd().';')
+--   let l:root_path = fnamemodify(l:poetry_config, ':p:h')
+--   if !empty(l:poetry_config)
+--     let l:virtualenv_path = system('cd '.l:root_path.' && poetry env list --full-path')
+--     return l:virtualenv_path
+--   endif
+-- endfunction
+--
+-- funtion! GetPythonVenv()
+--   let l:venv_path = GetPoetryVenv()
+--   if empty(l:venv_path)
+--     return v:null
+--   else
+--     return l:venv_path
+--   endif
+-- endfunction
+--
+-- " Starts Qt console and connect to an existing ipykernel
+-- command! -nargs=0 RunQtConsole call jobstart("jupyter qtconsole --existing")
+-- " Starts Poetry kernel
+-- command! -nargs=0 RunPoetryKernel terminal /bin/bash -i -c 'poetry run python -m ipykernel'
+-- " Connects nvim-ipy to the existing ipykernel (non-/interactive)
+-- command! -nargs=0 ConnectConsole terminal /bin/bash -i -c 'jupyter console --existing'
+-- command! -nargs=0 AddFilepathToSyspath call AddFilepathToSyspath()
+-- ]]
+--- }}}
+-- vim:ft=lua:fdm=marker:foldlevel=3:

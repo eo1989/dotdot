@@ -1,38 +1,51 @@
-if as.plugin_loaded('which-key.nvim') then
-  local wk = require('which-key')
-  wk.register({
-    g = {
-      name = '+todos',
-      t = {
-        name = '+status',
-        u = 'task undone',
-        p = 'task pending',
-        d = 'task done',
-        h = 'task on_hold',
-        c = 'task cancelled',
-        r = 'task recurring',
-        i = 'task important',
-      },
-    },
-    ['<localleader>t'] = {
-      name = '+gtd',
-      c = 'capture',
-      v = 'views',
-      e = 'edit',
-    },
-  })
+if not as then
+  return
 end
 
-if as.plugin_loaded('nvim-cmp') then
-  local cmp = require('cmp')
+-- as.ftplugin_conf('which-key', function(wk)
+--   wk.register({
+--     g = {
+--       name = '+todos',
+--       t = {
+--         name = '+status',
+--         u = 'task undone',
+--         p = 'task pending',
+--         d = 'task done',
+--         h = 'task on_hold',
+--         c = 'task cancelled',
+--         r = 'task recurring',
+--         i = 'task important',
+--       },
+--     },
+--     ['<localleader>t'] = { name = '+gtd', c = 'capture', v = 'views', e = 'edit' },
+--   })
+-- end)
+
+as.ftplugin_conf({ 'cmp', plugin = 'nvim-cmp' }, function(cmp)
   cmp.setup.filetype('norg', {
     sources = cmp.config.sources({
       { name = 'neorg' },
-      { name = 'dictionary' },
+      { name = 'latex_symbols' },
+      { name = 'greek' },
       { name = 'spell' },
-      { name = 'emoji' },
     }, {
       { name = 'buffer' },
+      { name = 'path' },
     }),
   })
-end
+end)
+
+as.ftplugin_conf('nvim-surround', function(surround)
+  surround.buffer_setup({
+    surrounds = {
+      l = {
+        add = function()
+          return {
+            { '[' },
+            { ']{' .. vim.fn.getreg('*') .. '}' },
+          }
+        end,
+      },
+    },
+  })
+end)

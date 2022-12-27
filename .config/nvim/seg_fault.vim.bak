@@ -1,0 +1,7 @@
+func Foo()
+  eval 1
+endfunc
+
+breakadd expr abs(0)
+call Foo()
+

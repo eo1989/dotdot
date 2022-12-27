@@ -1,7 +1,9 @@
 return function()
+  local fn = vim.fn
   as.nnoremap('<localleader>oc', '<Cmd>Neorg gtd capture<CR>')
   as.nnoremap('<localleader>ov', '<Cmd>Neorg gtd views<CR>')
-  require('neorg').setup {
+
+  require('neorg').setup({
     configure_parsers = true,
     load = {
       ['core.defaults'] = {},
@@ -13,6 +15,7 @@ return function()
           hook = function(keybinds)
             keybinds.unmap('norg', 'n', '<C-s>')
             keybinds.map_event('norg', 'n', '<C-x>', 'core.integrations.telescope.find_linkable')
+            keybinds.map_event('norg', 'n', '<C-x>', 'core.looking-glass.magnify-code-block<CR>', { buffer = true })
           end,
         },
       },
@@ -21,20 +24,33 @@ return function()
           engine = 'nvim-cmp',
         },
       },
-      ['core.norg.concealer'] = {},
+      ['core.norg.concealer'] = {
+        config = {
+          icon_preset = 'diamond',
+        },
+      },
+      ['core.norg.journal'] = {},
+      ['core.export'] = {},
+      ['core.export.markdown'] = {
+        config = {
+          extensions = 'all',
+        }
+      },
       ['core.norg.dirman'] = {
         config = {
           workspaces = {
-            notes = vim.fn.expand '$SYNC_DIR/neorg/main/',
-            tasks = vim.fn.expand '$SYNC_DIR/neorg/tasks/',
+            notes = fn.expand('$SYNC_DIR/neorg/notes/'),
+            tasks = fn.expand('$SYNC_DIR/neorg/tasks/'),
+            work = fn.expand('$SYNC_DIR/neorg/work/'),
+            dotfiles = fn.expand('$DOTFILES/neorg/'),
           },
         },
       },
       ['core.gtd.base'] = {
         config = {
-          workspace = 'tasks',
+          workspace = 'notes',
         },
       },
     },
-  }
+  })
 end

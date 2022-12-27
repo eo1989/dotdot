@@ -1,6 +1,9 @@
 -----------------------------------------------------------------------------//
 -- Fold Text
 -----------------------------------------------------------------------------//
+-- CREDIT: https://coderwall.com/p/usd_cw/a-pretty-vim-foldtext-function
+
+if not as or not as.ui.foldtext.enable then return end
 local fn = vim.fn
 local api = vim.api
 
@@ -39,6 +42,13 @@ local function is_import(item)
   return contains(item, '^import')
 end
 
+---@eo -> julia is_using
+---@param item string
+---@return boolean
+-- local function is_using(item)
+--   return contains(item, '^using')
+-- end
+
 --[[
   Naive regex to match closing delimiters (undoubtedly there are edge cases)
   if the fold text doesn't include delimiter characters just append an
@@ -69,6 +79,8 @@ end
   i.e.
   import {…} from 'apple'
 --]]
+
+---[[ this is the original function by akinsho, I added the if/elseif modified function below to test in julia files]]
 local function get_fold_start(start_text, end_text, foldsymbol)
   if is_import(start_text) and not contains_delimiter(end_text) then
     --- This regex matches anything after an import followed by a space
@@ -79,8 +91,18 @@ local function get_fold_start(start_text, end_text, foldsymbol)
   return format_section(start_text) .. foldsymbol
 end
 
+---[[ HACK: added 'or is_using(start_text)' to fx s.t. folding would work in julia files. <- @eo ]]
+-- local function get_fold_start(start_text, end_text, foldsymbol)
+--   if is_import(start_text) and not contains_delimiter(end_text) then
+--     return fn.substitute(start_text, [[^import .\+]], 'import ' .. foldsymbol, '')
+--   elseif is_using(start_text) and not contains_delimiter(end_text) then
+--     return fn.substitute(start_text, [[^using .\+]], 'using ' .. foldsymbol, '')
+--   end
+-- end
+
 local function get_fold_end(item)
   if not contains_delimiter(item) or is_import(item) then
+  -- if not contains_delimiter(item) or is_import(item) or is_using(item) then
     return ''
   end
   return format_section(item)
@@ -108,4 +130,4 @@ function as.folds()
   return fold_start .. string.rep(' ', api.nvim_win_get_width(0) - text_length - 7) .. fold_end
 end
 
--- CREDIT: https://coderwall.com/p/usd_cw/a-pretty-vim-foldtext-function
+vim.o.foldtext = 'v:lua.as.folds()'

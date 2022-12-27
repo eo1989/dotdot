@@ -1,19 +1,31 @@
 if not vim.filetype then return end
 
-vim.g.do_filetype_lua = 1
+vim.g.filetype_lua = true
 
-vim.filetype.add {
-  extension = {
-    lock = 'yaml',
-  },
+vim.filetype.add({
+  -- extension = {
+  --   png = 'image',
+  --   jpg = 'image',
+  --   jpeg = 'image',
+  --   tf = 'terraform',
+  --   tsx = 'typescriptreact',
+  --   ts = 'typescript',
+  -- },
   filename = {
+    -- ['NEOGIT_COMMIT_EDITMSG'] = 'NeogitCommitMessage',
+    ['go.mod'] = 'gomod',
+    -- ['.psqlrc'] = 'conf', -- TODO: find a better filetype
     ['.gitignore'] = 'conf',
     ['launch.json'] = 'jsonc',
     Podfile = 'ruby',
     Brewfile = 'ruby',
   },
   pattern = {
-    ['*.gradle'] = 'groovy',
-    ['*.env.*'] = 'env',
+    -- ['.*%.ipynb'] = 'python',
+    ['.*%.conf'] = 'conf',
+    ['.*%.theme'] = 'conf',
+    ['.*%.gradle'] = 'groovy',
+    ['.*%.env%..*'] = 'sh',
+    -- ['.*%.env.*'] = 'sh',
   },
-}
+})

@@ -13,6 +13,7 @@ CONTRACT_SIZE = 100
 # Make sure to run this file in the lua/as or /as/plugins directories.
 # Whichechever folder has the 'data' in it.
 
+
 def run(ticker):
     spot_price, option_data = scrape_data(ticker)
     comp_tot_gex(spot_price, option_data)
@@ -59,11 +60,9 @@ def fix_option_data(data):
 
 
 def comp_tot_gex(spot, data):
-    data["GEX"] = spot * data.gamma * \
-        data.open_interest * CONTRACT_SIZE * spot * 0.01
+    data["GEX"] = spot * data.gamma * data.open_interest * CONTRACT_SIZE * spot * 0.01
 
-    data["GEX"] = data.apply(
-        lambda x: -x.GEX if x.type == "P" else x.GEX, axis=1)
+    data["GEX"] = data.apply(lambda x: -x.GEX if x.type == "P" else x.GEX, axis=1)
     print(f"Total notional GEX: ${round(data.GEX.sum() / 10**9, 4)} Bn")
 
 
@@ -132,8 +131,7 @@ def print_gex_surface(spot, data):
         data["GEX"],
         cmap="seismic_r",
     )
-    ax.yaxis.set_major_formatter(
-        dates.AutoDateFormatter(ax.xaxis.get_major_locator()))
+    ax.yaxis.set_major_formatter(dates.AutoDateFormatter(ax.xaxis.get_major_locator()))
     ax.set_ylabel("Expiration date", fontweight="heavy")
     ax.set_xlabel("Strike Price", fontweight="heavy")
     ax.set_zlabel("Gamma (M$ / %)", fontweight="heavy")

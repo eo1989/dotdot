@@ -1,10 +1,25 @@
 -- local M = {}
 
 -- M.config = function()
+
 return function()
   local status_ok, see = pcall(require, 'overseer') --as.require('overseer')
   if not status_ok then return end
   local STATUS = require('overseer.constants').STATUS
+
+  local function run_file(cmd)
+    vim.cmd("update")
+    local task = see.new_task({
+      cmd = cmd,
+      components = { "unique", "default" },
+    })
+    task:start()
+    local bufnr = task:get_bufnr()
+    if bufnr then
+      vim.cmd("botright split")
+      vim.api.nvim_win_set_buf(0, bufnr)
+    end
+  end
 
   see.setup({
     log = {

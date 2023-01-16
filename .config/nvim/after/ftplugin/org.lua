@@ -4,9 +4,10 @@ as.ftplugin_conf('cmp', function(cmp)
   cmp.setup.filetype('org', {
     sources = cmp.config.sources({
       { name = 'orgmode' },
-      { name = 'greek' },
       { name = 'latex_symbols' },
-      { name = 'spell' },
+      { name = 'luasnip' },
+      -- { name = 'cmp_greek' },
+      -- { name = 'spell' },
       -- { name = 'emoji' },
     }, {
       { name = 'buffer' },

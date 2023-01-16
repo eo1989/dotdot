@@ -97,8 +97,11 @@ function M.kitty.clear_colors()
 
   local colors = M.kitty.get_colors()
   local str = colors_to_string({
+    ---@diagnostic disable-next-line: need-check-nil
     active_tab_background = colors.active_tab_background,
+    ---@diagnostic disable-next-line: need-check-nil
     inactive_tab_background = colors.inactive_tab_background,
+    ---@diagnostic disable-next-line: need-check-nil
     tab_bar_background = colors.tab_bar_background,
   })
   -- this is intentionally synchronous so it has time to execute fully

@@ -4,11 +4,9 @@
 -----------------------------------------------------------------------------//
 local fn, fmt, env = vim.fn, string.format, vim.env
 
--- local semantic = vim.F.npcall(require, 'nvim-semantic-tokens')
--- local semantic = as.require('nvim-semantic-tokens')
--- local lspconfig = require('lspconfig')
+vim.lsp.set_log_level('debug')
 
---FUCK: NOT WORKING
+-- FUCK: NOT WORKING
 -- local pylance = function()
 --   return require("as.pylance_")
 -- end
@@ -84,12 +82,13 @@ local servers = {
     settings = {},
   },
   vimls = true,
-  marksman = false,
+  marksman = true,
   -- FIXME: Still cant get pylance to work for some reason!
   -- pylance = pylance,
   -- pylance = function()
   --   return require("as.pylance_.").config
   -- end,
+  -- pyright = false, -- temp
   pyright = {
     handlers = {
       ['textDocument/publishDiagnostics'] = function(...) end
@@ -97,10 +96,11 @@ local servers = {
     settings = {
       python = {
         -- pythonPath = py_path(client.config.root_dir),
+        -- pythonPath = require(""),
         analysis = {
-          typeCheckingMode = 'basic',
+          typeCheckingMode = 'off',
           autoSearchPaths = true,
-          indexing = false,
+          indexing = true,
           diagnosticMode = 'openFilesOnly', --'workspace'
           useLibraryCodeForTypes = true,
           completeFunctionParens = true,
@@ -123,9 +123,67 @@ local servers = {
       },
     },
   },
-  pylsp = false,
+  pylsp = true,
+  -- pylsp = function()
+  --   return {
+  --     settings = {
+  --       -- configurationSources = { 'flake8' },
+  --       -- configurationSources = {nil},
+  --       plugins = {
+  --         -- stylua: ignore start
+  --         flake8          = { enabled = false },
+  --         autopep8        = { enabled = false },
+  --         mccabe          = { enabled = false },
+  --         preload         = { enabled = false },
+  --         pycodestyle     = { enabled = false },
+  --         pydocstyle      = { enabled = false },
+  --         pyflakes        = { enabled = false },
+  --         pylint          = { enabled = false },
+  --         yapf            = { enabled = false },
+  --         rope_completion = { enabled = false },
+  --       --stylua: ignore end
+  --         jedi_completion = {
+  --           enabled = true,
+  --           include_params = true,
+  --           include_class_objects = true,
+  --           include_function_objects = true,
+  --           -- fuzzy = true,
+  --           eager = true,
+  --           -- resolve_at_most = 2,
+  --           -- cache_for = { 'numpy', 'pandas', 'scipy', 'matplotlib' },
+  --           cache_for = { 'numpy,pandas,scipy,matplotlib' },
+  --         },
+  --         jedi_definition = {
+  --           enabled = true,
+  --           follow_imports = true,
+  --           follow_builtin_imports = true,
+  --           follow_builtin_definitions = true,
+  --         },
+  --       -- stylua: ignore start
+  --         jedi_hover          = { enabled = true },
+  --         jedi_references     = { enabled = true },
+  --         jedi_signature_help = { enabled = true },
+  --       -- stylua: ignore end
+  --         jedi_symbols = {
+  --           enabled = true,
+  --           all_scopes = false, -- True lists the names of all scopes instead of only the module namespace
+  --           include_import_symbols = true, -- True includes symbols from other libraries
+  --         },
+  --         jedi = {
+  --           -- environment = 'jedi',
+  --           -- diagnostics = { enabled = false },
+  --           -- env_vars = {},
+  --           -- auto_import_modules = { 'numpy', 'matplotlib', 'pandas', 'scipy' },
+  --           auto_import_modules = { 'numpy,matplotlib,pandas,scipy' },
+  --           -- extra_paths = { '/home/alex/.local/lib/python3.9/site-packages' }, -- add vim.fn. python-type-stub path here.
+  --         },
+  --       },
+  --     },
+  --   }
+  -- end,
+  ruff_lsp = false,
   bufls = false,
-  prosemd_lsp = true,
+  prosemd_lsp = false,
   --- https://github.com/golang/tools/blob/master/gopls/doc/settings.md
   gopls = {
     settings = {
@@ -197,25 +255,24 @@ local servers = {
   end,
   --- @see https://gist.github.com/folke/fe5d28423ea5380929c3f7ce674c41d8
   sumneko_lua = function()
+    local library = {}
     local path = vim.split(package.path, ';')
     table.insert(path, 'lua/?.lua')
     table.insert(path, 'lua/?/init.lua')
 
-    local plugins = ('%s/site/pack/packer'):format(fn.stdpath('data'))
-    local emmy = ('%s/start/emmylua-nvim'):format(plugins)
-    local plenary = ('%s/start/plenary.nvim'):format(plugins)
-    local packer = ('%s/opt/packer.nvim'):format(plugins)
-    -- local neotest = ('%s/opt/neotest'):format(plugins)
-    -- local neodev = require('neodev').setup({
-    --   library = {
-    --     enabled = true,
-    --     runtime = true,
-    --     types = true,
-    --     plugins = true,
-    --   }
-    -- })
+    local function add(lib)
+      for _, p in pairs(fn.expand(lib, false, true)) do
+        p = vim.loop.fs_realpath(p)
+        library[p] = true
+      end
+    end
+
+    add('$VIMRUNTIME')
+    add('~/.config/nvim')
+    add('~/.local/share/nvim/lazy/*')
 
     return {
+      single_file_support = true,
       settings = {
         Lua = {
           runtime = {
@@ -230,50 +287,50 @@ local servers = {
             paramType = true,
             paramName = true,
             arrayIndex = 'Disable',
-            setType = false
+            setType = true
           },
-          -- type = {
-          --   castNumberToInteger = true,
-          -- },
-          -- IntelliSense = {
-          --   traceLocalSet = true,
-          -- },
-          format = { enable = false },
-          diagnostics = {
+          format = {
+            enable = false,
+            defaultConfig = {
+              indent_style = "space",
+              indent_size = "2",
+              continuation_indent_size = "2",
+            },
+          },
+          diagnostics = { unusedLocalExclude = { "_*" } },
             globals = {
               'vim',
               'as',
               'P',
-              'describe',
-              'it',
-              'before_each',
-              'after_each',
-              'packer_plugins',
+            },
+            disable = {
+              "lowercase-global",
             },
           },
           completion = {
             keywordSnippet = 'Disable',
-            callSnippet = 'Replace',
-            displayContext = 4,
-            showWord = "Disable",
+            callSnippet = 'Replace', -- 'Both', 'Disable', 'Replace',
           },
           workspace = {
-            library = {
-              fn.expand('$VIMRUNTIME/lua'),
-              fn.expand('$VIMRUNTIME/lua/vim/lsp'),
-              emmy,
-              packer,
-              plenary
-            },
+            library = library,
+            -- {
+            --   [fn.expand('$VIMRUNTIME/lua')] = true,
+            --   [fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+            --   [fn.stdpath("config") .. "/lua"] = true,
+            --   emmy,
+            --   plenary,
+            --   neotest
+            -- },
             checkThirdParty = false,
+            maxPreload = 3000,
+            preloadFileSize = 50000,
           },
           telemetry = {
             enable = false,
           },
         },
-      },
-    }
-  end,
+      }
+  end
 }
 
 ---Get the configuration for a specific language server
@@ -294,7 +351,8 @@ return function(name)
   }
   config.capabilities.textDocument.foldingRange = { dynamicRegistration = false, lineFoldingOnly = true }
 
-  local ok, cmp_nvim_lsp = as.require('cmp_nvim_lsp')
+  -- local ok, cmp_nvim_lsp = as.require('cmp_nvim_lsp')
+  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
   if ok then cmp_nvim_lsp.default_capabilities(config.capabilities) end
   return config
 end

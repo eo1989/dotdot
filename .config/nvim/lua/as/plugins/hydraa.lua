@@ -8,6 +8,16 @@ return function()
     type = 'window',
   }
 
+  -- local sniprun = require('sniprun')
+  -- Hydra({
+  --   name = 'SnipRun',
+  --   mode = { 'n', 'v' },
+  --   body = "<localleader>f",
+  --   heads = {
+  --     { {"l", } },
+  --   },
+  -- })
+
   Hydra({
     name = 'Folds',
     mode = 'n',

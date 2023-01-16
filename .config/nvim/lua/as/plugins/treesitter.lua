@@ -11,18 +11,22 @@ return function()
 
   local parser_configs = parsers.get_parser_configs()
 
-  parser_configs['norg_table'] = {
-    install_info = {
-      url = 'https://github.com/nvim-neorg/tree-sitter-norg-table',
-      files = { 'src/parser.c' },
-      branch = 'main'
-    }
-  }
+  -- parser_configs['norg_table'] = {
+  --   install_info = {
+  --     url = 'https://github.com/nvim-neorg/tree-sitter-norg-table',
+  --     files = { 'src/parser.c' },
+  --     branch = 'main'
+  --   }
+  -- }
 
 
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
       'awk',
+			'cpp',
+			'json',
+			'http',
+			'query',
       'diff',
       'lua',
       'go',
@@ -31,26 +35,19 @@ return function()
       'perl',
       'bash',
       'norg',
-      'norg_meta',
-      'norg_table',
       'make',
       'org',
       'help',
       'sql',
       'rst',
       'latex',
-      'comment',
       'markdown',
       'markdown_inline',
       'scheme',
       'yaml',
       'toml',
       'regex',
-      'todotxt',
-      'gitignore',
-      'git_rebase',
-      'gitattributes',
-      'embedded_template',
+			'gitignore',
     },
     auto_install = true,
     highlight = {
@@ -107,7 +104,7 @@ return function()
       },
       move = {
         enable = true,
-        set_jumps = false, -- whether to set jumps in the jumplist
+        set_jumps = true, -- whether to set jumps in the jumplist
         goto_next_start = {
           [']m'] = '@function.outer',
           [']M'] = '@class.outer',
@@ -140,9 +137,8 @@ return function()
     },
     query_linter = {
       enable = true,
-      use_virtual_text = false,
-      -- lint_events = { 'BufWrite', 'CursorHold' },
-      lint_events = { 'BufWrite' },
+      use_virtual_text = true,
+      lint_events = { 'BufWrite', 'CursorHold' },
     },
   })
 end

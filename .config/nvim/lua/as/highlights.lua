@@ -50,7 +50,7 @@ local function alter(attr, percent)
 end
 
 ---@source https://stackoverflow.com/q/5560248
----@see: https://stackoverflow.com/a/37797380
+---see: https://stackoverflow.com/a/37797380
 ---@param color string A hex color
 ---@param percent integer a negative number darkens and a positive one brightens
 ---@return string
@@ -296,8 +296,8 @@ local function general_overrides()
     -----------------------------------------------------------------------------//
     -- Diff
     -----------------------------------------------------------------------------//
-    { DiffAdd = { background = '#26332c', foreground = 'NONE', underline = false } },
-    { DiffDelete = { background = '#572E33', foreground = '#5c6370', underline = false } },
+    { DiffAdd = { background = '#26332C', foreground = 'NONE', underline = false } },
+    { DiffDelete = { background = '#572E33', foreground = '#5C6370', underline = false } },
     { DiffChange = { background = '#273842', foreground = 'NONE', underline = false } },
     { DiffText = { background = '#314753', foreground = 'NONE' } },
     { diffAdded = { link = 'DiffAdd' } },
@@ -327,11 +327,23 @@ local function general_overrides()
     -----------------------------------------------------------------------------//
     -- Treesitter
     -----------------------------------------------------------------------------//
-    { ['@keyword.return'] = { italic = true, foreground = { from = 'Keyword' } } },
     { ['@parameter'] = { italic = true, bold = true, foreground = 'NONE' } },
-    -- { ['@parameter'] = { italic = true, bold = true, foreground = P.bright_blue } },
+    -- { TSProperty = { italic = true, bold = false, foreground = 'NONE' } },
+    { ['@keyword.return'] = { italic = true, foreground = { from = 'Keyword' } } },
+    -- { TSProperty = { italic = true, bold = false, foreground = P.pale_red } },
+    -- { TSStorageClass = { italic = true, bold = false, foreground = P.pale_red } },
+    -- { TSParameter = { italic = true, bold = true, foreground = P.bright_blue } },
+    -- { TSVariable = { foreground = P.bright_blue, bold = true } },
     -- { TSError = { foreground = 'fg', background = 'bg' } },
-    { ['@error'] = { foreground = 'NONE', background = 'NONE', undercurl = true, sp = 'DarkRed' } },
+    -- { TSField = { inherit = 'Keyword', italic = true, bold = true } },
+    -- { TSConstructor = { inherit = 'Type', italic = true, bold = false } },
+    -- { Variable = { foreground =  P.bright_blue, bold = true } },
+    -- { TSFunction = { inherit = 'Type', italic = true, bold = true } },
+    -- { TSMethod = { inherit = 'Type', italic = true, bold = true } },
+    { ['@field'] = { inherit = 'Keyword', italic = true, bold = true } },
+    -- { ['@function.call.lua'] = { inherit = 'Type', italic = true, bold = true } },
+    -- { ['@function'] = { inherit = 'Type', italic = true, bold = true } },
+    -- { ['@error'] = { foreground = 'NONE', background = 'NONE', undercurl = true, sp = 'DarkRed' } },
     -----------------------------------------------------------------------------//
     -- LSP
     -----------------------------------------------------------------------------//
@@ -467,13 +479,27 @@ local function colorscheme_overrides()
   local overrides = {
     ['vscode'] = {
     -- ['doom-one'] = {
-      { ['@namespace'] = { foreground = P.blue } },
-      -- { TSNamespace = { foreground = P.blue } },
+      { ['@keyword.return'] = { italic = true, foreground = { from = 'Keyword' } } },
+      { TSProperty = { italic = true, bold = false, foreground = P.pale_red } },
+      { TSStorageClass = { italic = true, bold = false, foreground = P.pale_red } },
+      { TSParameter = { italic = true, bold = true, foreground = P.bright_blue } },
+      { TSError = { foreground = 'fg', background = 'bg' } },
+      -- { TSField = { inherit = 'Keyword', italic = true, bold = true } },
+      { TSField = { italic = true, bold = true, foreground = { from = 'Keyword' }, background = 'NONE', undercurl = false } },
+      { TSConstructor = { inherit = 'Type', italic = true, bold = false } },
+      { TSVariable = { foreground = P.bright_blue, bold = true } },
+      { Variable = { foreground =  P.bright_blue, bold = true } },
+      { TSFunction = { inherit = 'Type', italic = true, bold = true } },
+      { TSMethod = { inherit = 'Type', italic = true, bold = true } },
+      { TSNamespace = { foreground = P.blue } },
+      -- { ['@namespace'] = { foreground = P.blue } },
       -- { ['@variable'] = { foreground = { from = 'Normal' }, bold = true } }, --, alter = 10
       -- { ['@variable'] = { foreground = { from = '@namespace' } } },
-      { ['@variable'] = { foreground =  P.bright_blue, bold = true } },
+      -- { ['@variable'] = { foreground =  P.bright_blue, bold = true } },
       -- { TSVariable = { foreground = P.bright_blue, bold = true } },
-      { CursorLineNr = { foreground = { from = 'Keyword' }, bold = true } },
+      -- { CursorLineNr = { foreground = { from = 'Keyword' }, bold = true } },
+      -- { CursorLineNr = { foreground = { from = '@variable' }, bold = true } },
+      { CursorLineNr = { foreground = { from = '@field' }, bold = true } },
       -- { CursorLineNr = { foreground = P.light_blue, bold = true } },
       { LineNr = { background = 'NONE' } },
       { NeoTreeIndentMarker = { link = 'Comment' } },
@@ -489,6 +515,8 @@ local function colorscheme_overrides()
       { ['@constructor.lua'] = { inherit = 'SpecialKey', italic = true, bold = true } },
 -------------------------------------------------------------------------------------------
       { ['@constructor.python'] = { inherit = 'Type', italic = true, bold = true } },
+      -- { ['@variable'] = { foreground =  P.bright_blue, bold = true } },
+      -- { ['@function.call.lua'] = { inherit = 'Type', italic = true, bold = true } },
       { ['@function'] = { inherit = 'Type', italic = true, bold = true } },
       -- { ['@function.python'] = { inherit = 'Type', italic = true, bold = true } },
       -- { ['@field.python'] = { inherit = 'SpecialKey', italic = true, bold = true } },
@@ -498,9 +526,9 @@ local function colorscheme_overrides()
       { PanelBackground = { link = 'Normal' } },
       { PanelWinSeparator = { inherit = 'PanelBackground', fg = { from = 'WinSeparator' } } },
       { PanelHeading = { bg = 'bg', bold = true, fg = { from = 'Normal', alter = -30 } } },
-      { PanelDarkBackground = { background = { from = 'Normal', alter = -25 } } },
+      { PanelDarkBackground = { background = { from = 'Normal', alter = -5 } } },
       { PanelDarkHeading = { inherit = 'PanelDarkBackground', bold = true } },
-      { Headline = { background = { from = 'Normal', alter = 20 } } },
+      { Headline = { background = { from = 'Normal', alter = 10 } } },
     },
     ['horizon'] = {
       -----------------------------------------------------------------------------------------------
@@ -570,7 +598,8 @@ as.augroup('UserHighlights', {
 -----------------------------------------------------------------------------//
 -- Color Scheme {{{1
 -----------------------------------------------------------------------------//
--- as.wrap_err('theme failed to load because', vim.cmd.colorscheme, 'vscode')
+
+as.wrap_err('theme failed to load because', vim.cmd.colorscheme, 'vscode')
 -- as.wrap_err('theme failed to load because', vim.cmd.colorscheme, 'onedark')
 -- as.wrap_err('theme failed to load because', vim.cmd.colorscheme, 'doom-one')
 -- as.wrap_err('theme failed to load because', vim.cmd.colorscheme, 'horizon')

@@ -3,20 +3,20 @@ return function()
   local fmt = string.format
 
   local orgmode = require('orgmode')
-  local highlights = require('as.highlights')
+  -- local highlights = require('as.highlights')
 
-  highlights.plugin('org', {
-    { OrgDone = { fg = 'Green', bold = true } },
-    { OrgAgendaScheduled = { fg = 'Teal' } },
-  })
+  -- highlights.plugin('org', {
+  --   { OrgDone = { fg = 'Green', bold = true } },
+  --   { OrgAgendaScheduled = { fg = 'Teal' } },
+  -- })
 
-  local function sync(path) return fmt('%s/%s', fn.expand('$SYNC_DIR'), path) end
+  -- local function sync(path) return fmt('%s/%s', fn.expand('$SYNC_DIR'), path) end
 
   orgmode.setup_ts_grammar()
 
   orgmode.setup({
-    org_agenda_files = { sync('org/**/*') },
-    org_default_notes_file = sync('org/refile.org'),
+    -- org_agenda_files = { sync('org/**/*') },
+    org_default_notes_file = '~/org/notes.org',
     org_todo_keywords = {
       'TODO(t)',
       'WAITING',
@@ -35,15 +35,15 @@ return function()
     org_agenda_templates = {
       t = { description = 'Task', template = '* TODO %?\n %u' },
       l = { description = 'Link', template = '* %?\n%a' },
-      n = {
-        description = 'Note',
-        template = '* %?\n',
-        target = sync('org/notes.org'),
+      f = {
+        description = 'File notes',
+        template = '* %?\n %u\n %a',
+        target = '~/org/notes.org',
       },
       p = {
         description = 'Project Todo',
         template = '* TODO %? \nSCHEDULED: %t',
-        target = sync('org/projects.org'),
+        target = '~/org/projects.org',
       },
     },
     mappings = {

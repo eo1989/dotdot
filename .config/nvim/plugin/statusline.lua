@@ -171,6 +171,10 @@ function as.ui.statusline()
 
   -- HYDRA
   local hydra_active, hydra = utils.hydra()
+
+  ---@eo
+  -- SWENV
+  -- local swenv = utils.swenv()
   -----------------------------------------------------------------------------//
   -- Left section
   -----------------------------------------------------------------------------//
@@ -210,6 +214,8 @@ function as.ui.statusline()
       suffix = string.rep(' ', 5),
       priority = 5,
     }),
+
+    -- component_if(swenv, vim.bo['filetype'] == 'python', 'StCustomInfo'),
 
     -- Start of the right side layout
     separator(),
@@ -306,18 +312,18 @@ function as.ui.statusline()
 
     component(line_count, 'StComment', {
       before = '',
-      prefix =  '/', --'╱',
+      prefix =  '╱', --'╱'  '/',
       padding = { prefix = false, suffix = true },
       prefix_color = 'StComment',
       priority = 7,
     }),
 
     -- column
-    -- component(col, 'StTitle', {
-    --   prefix = 'Col:',
-    --   prefix_color = 'StMetadataPrefix',
-    --   priority = 7,
-    -- }),
+    component(col, 'StTitle', {
+      prefix = 'Col:',
+      prefix_color = 'StMetadataPrefix',
+      priority = 7,
+    }),
     -- (Unexpected) Indentation
     component_if(ctx.shiftwidth, ctx.shiftwidth > 2 or not ctx.expandtab, 'StTitle', {
       prefix = ctx.expandtab and icons.misc.indent or icons.misc.tab,

@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-set-field
 if not as then return end
 
 local lsp = vim.lsp
@@ -441,7 +442,7 @@ the most severe diagnostic is shown per line
 local ns = api.nvim_create_namespace('severe-diagnostics')
 
 --- Restricts nvim's diagnostic signs to only the single most severe one per line
---- @see `:help vim.diagnostic`
+---see  ":help vim.diagnostic"
 local function max_diagnostic(callback)
   return function(_, bufnr, _, opts)
     -- Get all diagnostics from the whole buffer rather than just the

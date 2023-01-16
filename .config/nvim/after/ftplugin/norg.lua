@@ -26,7 +26,7 @@ as.ftplugin_conf({ 'cmp', plugin = 'nvim-cmp' }, function(cmp)
     sources = cmp.config.sources({
       { name = 'neorg' },
       { name = 'latex_symbols' },
-      { name = 'greek' },
+      -- { name = 'greek' },
       { name = 'spell' },
     }, {
       { name = 'buffer' },

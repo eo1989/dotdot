@@ -11,15 +11,19 @@ function M.setup()
   as.nnoremap('<localleader>gu', function()
     linker().get_buf_range_url('n')
   end, 'gitlinker: copy line to clipboard')
+
   as.vnoremap('<localleader>gu', function()
     linker().get_buf_range_url('v')
   end, 'gitlinker: copy line to clipboard')
+
   as.nnoremap('<localleader>go', function()
     linker().get_repo_url(browser_open())
   end, 'gitlinker: open in browser')
+
   as.nnoremap('<localleader>go', function()
     linker().get_buf_range_url('n', browser_open())
   end, 'gitlinker: open current line in browser')
+
   as.vnoremap('<localleader>go', function()
     linker().get_buf_range_url('v', browser_open())
   end, 'gitlinker: open current selection in browser')

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-doc-param
 -----------------------------------------------------------------------------//
 -- Fold Text
 -----------------------------------------------------------------------------//
@@ -42,7 +43,7 @@ local function is_import(item)
   return contains(item, '^import')
 end
 
----@eo -> julia is_using
+---@eo -- -> julia is_using
 ---@param item string
 ---@return boolean
 -- local function is_using(item)

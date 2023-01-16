@@ -1,18 +1,18 @@
 return function()
   local api = vim.api
 
-  -- require('as.highlights').plugin('notify', {
-  --   { NotifyERRORBorder = { bg = { from = 'NormalFloat' } } },
-  --   { NotifyWARNBorder = { bg = { from = 'NormalFloat' } } },
-  --   { NotifyINFOBorder = { bg = { from = 'NormalFloat' } } },
-  --   { NotifyDEBUGBorder = { bg = { from = 'NormalFloat' } } },
-  --   { NotifyTRACEBorder = { bg = { from = 'NormalFloat' } } },
-  --   { NotifyERRORBody = { link = 'NormalFloat' } },
-  --   { NotifyWARNBody = { link = 'NormalFloat' } },
-  --   { NotifyINFOBody = { link = 'NormalFloat' } },
-  --   { NotifyDEBUGBody = { link = 'NormalFloat' } },
-  --   { NotifyTRACEBody = { link = 'NormalFloat' } },
-  -- })
+  require('as.highlights').plugin('notify', {
+    { NotifyERRORBorder = { bg = { from = 'NormalFloat' } } },
+    { NotifyWARNBorder = { bg = { from = 'NormalFloat' } } },
+    { NotifyINFOBorder = { bg = { from = 'NormalFloat' } } },
+    { NotifyDEBUGBorder = { bg = { from = 'NormalFloat' } } },
+    { NotifyTRACEBorder = { bg = { from = 'NormalFloat' } } },
+    { NotifyERRORBody = { link = 'NormalFloat' } },
+    { NotifyWARNBody = { link = 'NormalFloat' } },
+    { NotifyINFOBody = { link = 'NormalFloat' } },
+    { NotifyDEBUGBody = { link = 'NormalFloat' } },
+    { NotifyTRACEBody = { link = 'NormalFloat' } },
+  })
 
   local notify = require('notify')
 
@@ -20,12 +20,12 @@ return function()
     timeout = 2000,
     stages = 'fade_in_slide_out',
     top_down = false,
-    background_colour = 'NormalFloat',
+    -- background_colour = 'NormalFloat',
     -- background_colour = '#000000',
     max_width = function()
       return math.floor(vim.o.columns * 0.4)
     end,
-    -- min_width = function() return math.floor(vim.o.columns * 0.4) end,
+    min_width = function() return math.floor(vim.o.columns * 0.4) end,
     max_height = function()
       return math.floor(vim.o.lines * 0.6)
     end,

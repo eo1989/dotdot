@@ -1,14 +1,17 @@
 local o, g, opt, fn = vim.o, vim.g, vim.opt, vim.fn
 
-vim.cmd([[
-" colorscheme doom-one
-colorscheme vscode
-]])
 -- opt.isfname:append('@-@')
 -- opt.lazyredraw = true
 
--- load fileytype
+-- g['python_highlight_all'] = 1
+-- g['transparency'] = true
+g['python_recommended_style'] = 0
+-- g['python_host_skip_check'] = 1
 
+-- if vim.fn.has('nvim-0.9.0') == 1 then
+--   vim.opt.splitkeep = 'screen'
+--   vim.o.shortmess = 'AafilnxtToOFWIcC'
+-- end
 
 g.vimsyn_embed = 'lPr'
 
@@ -34,10 +37,10 @@ opt.shortmess = {
 -----------------------------------------------------------------------------//
 -- Timings {{{1
 -----------------------------------------------------------------------------//
-o.updatetime = 50
+o.updatetime = 100
 o.timeout = true
-o.timeoutlen = 400
-o.ttimeoutlen = 15
+o.timeoutlen = 500
+o.ttimeoutlen = 20
 -----------------------------------------------------------------------------//
 -- Window splitting and buffers {{{1
 -----------------------------------------------------------------------------//
@@ -60,16 +63,15 @@ opt.fillchars = {
 -- Diff {{{1
 -----------------------------------------------------------------------------//
 -- Use in vertical diff mode, blank lines to keep sides aligned, Ignore whitespace changes
--- opt.diffopt = opt.diffopt
---   + {
---     'vertical',
---     'iwhite',
---     'hiddenoff',
---     'foldcolumn:0',
---     'context:4',
---     'algorithm:histogram',
---     'indent-heuristic',
---   }
+opt.diffopt = opt.diffopt + {
+    'vertical',
+    'iwhite',
+    'hiddenoff',
+    'foldcolumn:0',
+    'context:4',
+    'algorithm:histogram',
+    'indent-heuristic',
+  }
 -----------------------------------------------------------------------------//
 -- Format Options {{{1
 -----------------------------------------------------------------------------//
@@ -92,31 +94,28 @@ opt.formatoptions = {
 -- Folds {{{1
 -----------------------------------------------------------------------------//
 o.foldlevelstart = 3
-if not as.plugin_installed('nvim-ufo') then
-  o.foldexpr = 'nvim_treesitter#foldexpr()'
-  o.foldmethod = 'expr'
-end
+-- o.foldexpr = 'nvim_treesitter#foldexpr()'
+-- o.foldmethod = 'expr'
 -----------------------------------------------------------------------------//
 -- Grepprg {{{1
 -----------------------------------------------------------------------------//
 -- Use faster grep alternatives if possible
-if as.executable('rg') then
+if vim.fn.executable('rg') then
   vim.o.grepprg = [[rg --glob "!.git" --no-heading --vimgrep --follow $*]]
   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 -- elseif as.executable('ag') then
 --   vim.o.grepprg = [[ag --nogroup --nocolor --vimgrep]]
 --   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
-  elseif as.executable('fd') then
-    vim.o.grepprg = [[fd -tf -td -E '.git' -E 'node_modules' -E '.venv' -L $*]]    -- -L == --follow
-    opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
+  -- elseif as.executable('fd') then
+  --   vim.o.grepprg = [[fd -tf -td -E '.git' -E 'node_modules' -E '.venv' -L $*]]    -- -L == --follow
+  --   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 end
 -----------------------------------------------------------------------------//
 -- Wild and file globbing stuff in command mode {{{1
 -----------------------------------------------------------------------------//
 -- o.completeopt = { "menu", "menuone", "noselect", "preview" }
 o.wildcharm = ('\t'):byte()
-o.wildmode = 'longest:full,full' -- Shows a menu bar as opposed to an enormous list
--- o.wildmode = 'longest:full' -- Shows a menu bar as opposed to an enormous list
+o.wildmode = 'longest:full' -- Shows a menu bar as opposed to an enormous list
 o.wildignorecase = true -- Ignore case when completing file names and directories
 -- Binary
 opt.wildignore = {
@@ -157,15 +156,15 @@ o.synmaxcol = 1024 -- don't syntax highlight long lines
 -- o.signcolumn = 'auto:2-5'
 o.signcolumn = 'yes:2'
 o.ruler = false
-o.cmdheight = 2
-o.showbreak = [[↪]] -- Options include -> '…', '↳ ', '→','↪ '
+o.cmdheight = 1
+o.showbreak = [[↪]] -- Options include -> '…', '↳', '→','↪'
 -----------------------------------------------------------------------------//
 -- List chars {{{1
 -----------------------------------------------------------------------------//
 o.list = true -- invisible chars
 opt.listchars = {
   eol = nil,
-  tab = '  ', -- Alternatives: '▷▷',
+  tab = '  ', -- Alternatives: '▷ ▷',
   extends = '›', -- Alternatives: … »
   precedes = '‹', -- Alternatives: … «
   trail = '•', -- BULLET (U+2022, UTF-8: E2 80 A2)
@@ -188,15 +187,12 @@ o.confirm = false -- make vim prompt me to save before doing destructive things
 o.hlsearch = true
 o.autowriteall = false -- automatically :write before running commands and changing files
 opt.clipboard = { 'unnamedplus' }
-o.laststatus = 3
+opt.laststatus = 3
 o.termguicolors = true
 
--- --> help 
 o.guifont = 'FiraCode Nerd Font:h12,codicon,Delugia-Italic:h12'
 
--- bo.matchpairs = bo.matchpairs + bo.matchpairs:append({' <:> ,「:」,『:』,【:】,“:”,‘:’,《:》'})
--- o.matchpairs = o.matchpairs + o.matchpairs:append({' <:> ,「:」,『:』,【:】,“:”,‘:’,《:》'})
-opt.path = opt.path + {'.,**'}
+-- opt.path = opt.path + {'.,**'}
 -- o.mat = 2
 -----------------------------------------------------------------------------//
 -- Emoji {{{1
@@ -237,7 +233,6 @@ opt.sessionoptions = {
   'globals',
   'buffers',
   'curdir',
-  'help',
   'folds',
   'winpos',
   'tabpages',
@@ -285,11 +280,12 @@ opt.fileformats = { 'unix', 'mac', 'dos' }
 -----------------------------------------------------------------------------//
 -- Git editor
 -----------------------------------------------------------------------------//
--- if as.executable('nvr') then
---   vim.env.GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
---   vim.env.EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
--- end
+-- as.executable('nvr')
+if vim.fn.executable('nvr') then
+  vim.env.GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+  vim.env.EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+end
 
 -- vim.g.python3_host_prog = '~/.local/pipx/venvs/jupyterlab/bin/python3'
 -- vim.g.python3_host_prog = '~/.pyenv/versions/pynvim/bin/python3'
--- vim:foldmethod=marker
+-- vim:set ft=lua foldmethod=marker

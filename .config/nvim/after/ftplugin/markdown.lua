@@ -15,36 +15,29 @@ end
 -- as.onoremap('aa', [[:<c-u>execute "normal! ?^--\\+$\r:nohlsearch\rg_vk0"<cr>]], args)
 -- as.onoremap('ia', [[:<c-u>execute "normal! ?^--\\+$\r:nohlsearch\rkvg_"<cr>]], args)
 
-if as.plugin_loaded('markdown-preview.nvim') then
-  as.nmap('<localleader>mp', '<Plug>MarkdownPreviewToggle<CR>', args)
-end
+as.nmap('<localleader>mp', '<Plug>MarkdownPreviewToggle<CR>', args)
 
-if as.plugin_loaded('quarto-nvim') then
-  as.nmap('<localleader>qp', '<Plug>QuartoPreview<CR>', args)
-end
+as.nmap('<localleader>qp', '<Plug>QuartoPreview<CR>', args)
 
-if as.plugin_loaded('nvim-FeMaCo') then
-  as.nmap('<localleader>mf', '<Plug>FeMaco<CR>', { desc = 'edit code block' })
-end
+as.nmap('<localleader>mf', '<Plug>FeMaco<CR>', { desc = 'edit code block' })
 
 
 
--- as.ftplugin_conf('cmp', function(cmp)
---   cmp.setup.filetype('markdown', {
---     sources = cmp.config.sources({
---       { name = 'nvim_lsp' },
---       -- { name = 'dictionary' },
---       -- { name = 'spell' },
---       { name = 'cmp-greek' },
---       { name = 'buffer' },
---       { name = 'path' },
---     }, {
---       -- { name = 'pandoc_references' },
---       -- { name = 'pandoc' },
---       -- { name = 'emoji' },
---     }),
---   })
--- end)
+as.ftplugin_conf('cmp', function(cmp)
+  cmp.setup.filetype('markdown', {
+    sources = cmp.config.sources({
+      { name = 'buffer' },
+      { name = 'cmp_tabnine' },
+      { name = 'latex_symbols' },
+      { name = 'luasnip' },
+    }, {
+      { name = 'cmp_pandoc_references' },
+      { name = 'nvim_lsp' },
+      { name = 'path' },
+      { name = 'otter' },
+    }),
+  })
+end)
 
 as.ftplugin_conf('nvim-surround', function(surround)
   surround.buffer_setup({

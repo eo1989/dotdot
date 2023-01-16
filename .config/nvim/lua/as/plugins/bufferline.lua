@@ -78,8 +78,9 @@ return function()
           separator = true,
         },
         {
-          text = ' PACKER',
-          filetype = 'packer',
+          text = ' LAZY',
+          -- filetype = 'packer',
+          filetype = 'lazy',
           highlight = 'PanelHeading',
           separator = true,
         },
@@ -106,7 +107,7 @@ return function()
             icon = '',
             highlight = { fg = '#ECBE7B' },
             matcher = function(buf)
-              return vim.startswith(buf.path, fmt('%s/site/pack/packer', fn.stdpath('data')))
+              return vim.startswith(buf.path, fmt('%s/lazy', fn.stdpath('data')))
                 or vim.startswith(buf.path, fn.expand('$VIMRUNTIME'))
             end,
           },
@@ -143,7 +144,7 @@ return function()
             name = 'docs',
             icon = '',
             matcher = function(buf)
-              for _, ext in ipairs({ 'md', 'txt', 'org', 'norg', 'wiki' }) do
+              for _, ext in ipairs({ 'qmd', 'md', 'txt', 'org', 'norg', 'wiki' }) do
                 if ext == fn.fnamemodify(buf.path, ':e') then
                   return true
                 end
@@ -156,7 +157,7 @@ return function()
   })
 
   -- as.nnoremap('gD', '<Cmd>BufferLinePickClose<CR>', 'bufferline: delete buffer')
-  as.nnoremap('<m-x><M-g>', '<Cmd>BufferLinePick<CR>', 'bufferline: pick buffer')
+  as.nnoremap('<M-g>', '<Cmd>BufferLinePick<CR>', 'bufferline: pick buffer')
   as.nnoremap('[b', '<Cmd>BufferLineCycleNext<CR>', 'bufferline: next')
   as.nnoremap(']b', '<Cmd>BufferLineCyclePrev<CR>', 'bufferline: prev')
   -- as.nnoremap('[b', '<Cmd>BufferLineMoveNext<CR>', 'bufferline: move next')

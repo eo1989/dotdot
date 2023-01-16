@@ -18,6 +18,8 @@ local onoremap = as.onoremap
 local cnoremap = as.cnoremap
 local tnoremap = as.tnoremap
 
+vim.cmd([[map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>]])
+
 -----------------------------------------------------------------------------//
 -- Terminal {{{
 ------------------------------------------------------------------------------//

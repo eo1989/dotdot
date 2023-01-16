@@ -14,26 +14,26 @@ return function()
   -- })
 
   require('luasnip.config').setup({
-    history = true,
-    region_check_events = 'CursorMoved', --,CursorMovedI,CursorHold,CursorHoldI',
-    delete_check_events = 'TextChangedI', --,InsertLeave',
+    history = false,
+    -- region_check_events = 'CursorMoved', --,CursorMovedI,CursorHold,CursorHoldI',
+    -- delete_check_events = 'TextChangedI', --,InsertLeave',
     updateevents = 'TextChanged,TextChangedI', --TextChangedI',
     enable_autosnippets = true,
     store_selection_keys = '<Tab>',
     filetype_extend = { 'markdown', { 'python', 'julia' } },
     -- ft_func = require('luasnip.extras.filetype_functions').from_cursor,
-    ft_func = require('luasnip.extras.filetype_functions').from_pos_or_filetype,
+    -- ft_func = require('luasnip.extras.filetype_functions').from_pos_or_filetype,
     ext_opts = {
       [ls_types.choiceNode] = {
         active = {
-          hl_mode = 'combine',
-          virt_text = { { '𝞴', 'Operator' } }, -- '●' ' '
+          -- hl_mode = 'combine',
+          virt_text = { { ' 𝞴', 'NonTest' } }, -- '●' ' ' 'Operator'
         },
       },
       [ls_types.insertNode] = {
         active = {
-          hl_mode = 'combine',
-          virt_text = { { '🠛', 'Type' } },
+          -- hl_mode = 'combine',
+          virt_text = { { ' ↵', 'Operator' } },
         },
       },
     },
@@ -48,6 +48,7 @@ return function()
       l = extras.lambda,
       snippet = ls.snippet,
     },
+    -- local table = {
     -- parser_nested_assembler = function(_, snippet)
     --   local select = function(snip, no_move)
     --     snip.parent:enter_node(snip.indx)
@@ -99,11 +100,12 @@ return function()
     --
     --   return snippet
     -- end,
+    -- }
   })
 
   as.command('LuaSnipEdit', function() require('luasnip.loaders.from_lua').edit_snippet_files() end)
-  as.imap('<Esc>', [[<esc>:LuaSnipUnlinkCurrent<CR>]], { silent = true })
-  as.smap('<Esc>', [[<esc>:LuaSnipUnlinkCurrent<CR>]], { silent = true })
+  -- as.imap('<Esc>', [[<esc>:LuaSnipUnlinkCurrent<CR>]], { silent = true })
+  -- as.smap('<Esc>', [[<esc>:LuaSnipUnlinkCurrent<CR>]], { silent = true })
 
 
   -- require('as.plugins.snips.choice_popup')
@@ -114,7 +116,7 @@ return function()
   -- end, {})
   -- vim.keymap.del("i", "<c-u>")
   -- vim.keymap.set("i", "<c-u>", function() extras.select_choice() end, { unique = true })
-  vim.keymap.set({"i", "s"}, "<c-e>", function() extras.select_choice() end)
+  vim.keymap.set({"i", "s"}, "<A-e>", function() extras.select_choice() end)
 
   -- local map = vim.keymap.set
   vim.keymap.set({"i", "s"}, "<C-l>", function()

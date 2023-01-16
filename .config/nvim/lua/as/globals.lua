@@ -1,3 +1,4 @@
+---@diagnostic disable: cast-local-type
 local fn = vim.fn
 local api = vim.api
 local fmt = string.format
@@ -6,8 +7,6 @@ local l = vim.log.levels
 ----------------------------------------------------------------------------------------------------
 -- Utils
 ----------------------------------------------------------------------------------------------------
-
-
 
 --- Convert a list or map of items into a value by iterating all it's fields and transforming
 --- them with a callback
@@ -51,9 +50,7 @@ end
 ---@return boolean
 function as.any(target, list)
   for _, item in ipairs(list) do
-    if target:match(item) then
-      return true
-    end
+    if target:match(item) then return true end
   end
   return false
 end
@@ -74,28 +71,20 @@ function as.find(matcher, haystack)
   return found
 end
 
-as.list_installed_plugins = (function()
-  local plugins
-  return function()
-    if plugins then
-      return plugins
-    end
-    local data_dir = fn.stdpath('data')
-    local start = fn.expand(data_dir .. '/site/pack/packer/start/*', true, true)
-    local opt = fn.expand(data_dir .. '/site/pack/packer/opt/*', true, true)
-    plugins = vim.list_extend(start, opt)
-    return plugins
+function as.installed_plugins()
+  local ok, lazy = pcall(require, "lazy")
+  if not ok then
+    return 0
   end
-end)()
+  return lazy.stats().count
+end
 
 ---Check if a plugin is on the system not whether or not it is loaded
 ---@param plugin_name string
 ---@return boolean
 function as.plugin_installed(plugin_name)
   for _, path in ipairs(as.list_installed_plugins()) do
-    if vim.endswith(path, plugin_name) then
-      return true
-    end
+    if vim.endswith(path, plugin_name) then return true end
   end
   return false
 end
@@ -144,38 +133,27 @@ local function toggle_list(list_type)
   if fn.winnr() ~= winnr then vim.cmd.wincmd('p') end
 end
 
-function as.toggle_qf_list()
-  toggle_list('quickfix')
-end
-function as.toggle_loc_list()
-  toggle_list('location')
-end
+function as.toggle_qf_list() toggle_list('quickfix') end
+function as.toggle_loc_list() toggle_list('location') end
 
 ---@param str string
 ---@param max_len integer
 ---@return string
 function as.truncate(str, max_len)
   assert(str and max_len, 'string and max_len must be provided')
-  return api.nvim_strwidth(str) > max_len and str:sub(1, max_len) .. as.style.icons.misc.ellipsis or str
+  return api.nvim_strwidth(str) > max_len and str:sub(1, max_len) .. as.style.icons.misc.ellipsis
+    or str
 end
 
 ---Determine if a value of any type is empty
 ---@param item any
 ---@return boolean?
 function as.empty(item)
-  if not item then
-    return true
-  end
+  if not item then return true end
   local item_type = type(item)
-  if item_type == 'string' then
-    return item == ''
-  end
-  if item_type == 'number' then
-    return item <= 0
-  end
-  if item_type == 'table' then
-    return vim.tbl_isempty(item)
-  end
+  if item_type == 'string' then return item == '' end
+  if item_type == 'number' then return item <= 0 end
+  if item_type == 'table' then return vim.tbl_isempty(item) end
   return item ~= nil
 end
 
@@ -187,9 +165,7 @@ function as.require(module, opts)
   opts = opts or { silent = false }
   local ok, result = pcall(require, module)
   if not ok and not opts.silent then
-    if opts.message then
-      result = opts.message .. '\n' .. result
-    end
+    if opts.message then result = opts.message .. '\n' .. result end
     vim.notify(result, l.ERROR, { title = fmt('Error requiring: %s', module) })
   end
   return ok, result
@@ -206,14 +182,11 @@ end
 function as.wrap_err(msg, func, ...)
   local args = { ... }
   if type(msg) == 'function' then
-    -- @diagnostic: disable-next-line
-    args, func, msg = { func, unpack(args) }, msg, nil ---@diagnostic disable-line
+    args, func, msg = { func, unpack(args) }, msg, nil
   end
   return xpcall(func, function(err)
     msg = msg and fmt('%s:\n%s', msg, err) or err
-    vim.schedule(function()
-      vim.notify(msg, l.ERROR, { title = 'ERROR' })
-    end)
+    vim.schedule(function() vim.notify(msg, l.ERROR, { title = 'ERROR' }) end)
   end, unpack(args))
 end
 
@@ -226,17 +199,13 @@ end
 ---@param callback fun(module: table)
 function as.ftplugin_conf(name, callback)
   local plugin_name = type(name) == 'table' and name.plugin or nil
-  if plugin_name and not as.plugin_loaded(plugin_name) then
-    return
-  end
+  if plugin_name and not as.plugin_loaded(plugin_name) then return end
 
   local module = type(name) == 'table' and name[1] or name
   local info = debug.getinfo(1, 'S')
   local ok, plugin = as.require(module, { message = fmt('In file: %s', info.source) })
 
-  if ok then
-    callback(plugin)
-  end
+  if ok then callback(plugin) end
 end
 
 ---Reload lua modules
@@ -280,19 +249,17 @@ P = vim.pretty_print
 local function validate_autocmd(name, cmd)
   local keys = { 'event', 'buffer', 'pattern', 'desc', 'command', 'group', 'once', 'nested' }
   local incorrect = as.fold(function(accum, _, key)
-    if not vim.tbl_contains(keys, key) then
-      table.insert(accum, key)
-    end
+    if not vim.tbl_contains(keys, key) then table.insert(accum, key) end
     return accum
   end, cmd, {})
-  if #incorrect == 0 then
-    return
-  end
-  vim.schedule(function()
-    vim.notify('Incorrect keys: ' .. table.concat(incorrect, ', '), 'error', {
-      title = fmt('Autocmd: %s', name),
-    })
-  end)
+  if #incorrect == 0 then return end
+  vim.schedule(
+    function()
+      vim.notify('Incorrect keys: ' .. table.concat(incorrect, ', '), 'error', {
+        title = fmt('Autocmd: %s', name),
+      })
+    end
+  )
 end
 
 ---@class AutocmdArgs
@@ -306,7 +273,7 @@ end
 
 ---@class Autocommand
 ---@field desc string
----@field event  string | string[] list of autocommand events
+---@field event  string  | string[] list of autocommand events
 ---@field pattern string | string[] list of autocommand patterns
 ---@field command string | fun(args: AutocmdArgs): boolean?
 ---@field nested  boolean
@@ -356,23 +323,17 @@ end
 ---Check if a cmd is executable
 ---@param e string
 ---@return boolean
-function as.executable(e)
-  return fn.executable(e) > 0
-end
+function as.executable(e) return fn.executable(e) > 0 end
 
 ---A terser proxy for `nvim_replace_termcodes`
 ---@param str string
 ---@return string
-function as.replace_termcodes(str)
-  return api.nvim_replace_termcodes(str, true, true, true)
-end
+function as.replace_termcodes(str) return api.nvim_replace_termcodes(str, true, true, true) end
 
 ---check if a certain feature/version/commit exists in nvim
 ---@param feature string
 ---@return boolean
-function as.has(feature)
-  return vim.fn.has(feature) > 0
-end
+function as.has(feature) return vim.fn.has(feature) > 0 end
 
 ----------------------------------------------------------------------------------------------------
 -- Mappings

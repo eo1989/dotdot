@@ -39,6 +39,12 @@ local function get_neotree_name(fname, _)
   return fmt('Neo Tree(%s)', parts[2])
 end
 
+local function get_swenv_venv(name, _)
+  local parts = vim.split(name, ' ')
+  local venv = require("swenv.api").get_current_venv()
+  if venv then return fmt('venv:(%s)', parts[2]) else return end
+end
+
 local plain = {
   filetypes = {
     'help',
@@ -81,15 +87,15 @@ local exceptions = {
     ['Trouble'] = ' ',
     ['NeogitStatus'] = ' ', -- '',
     ['Norg'] = 'ﴬ' ,
-    ['Help'] = '', --'',
+    ['Help'] = '', --' ',
     ['Undotree'] = 'פּ' ,
     ['NvimTree'] = 'פּ' ,
     ['Neo-Tree'] = 'פּ' ,
     ['ToggleTerm'] = ' ',
     ['Minimap'] = '',
-    ['Octo'] = ' ',
-    ['Dap-Repl'] = ' ',
-    ['Python'] = ' ',
+    ['Octo'] = '',
+    ['Dap-Repl'] = '',
+    ['Python'] = '',
     ['Julia'] = ''
   },
   names = {
@@ -102,13 +108,14 @@ local exceptions = {
     ['NeogitStatus'] = 'Neogit Status',
     ['Trouble'] = 'Lsp Trouble',
     ['gitcommit'] = 'Git commit',
-    ['help'] = 'help', --'',
+    ['help'] = 'help', --' ',
     ['undotree'] = 'UndoTree',
     ['octo'] = 'Octo',
     ['NvimTree'] = 'Nvim Tree',
     ['dap-repl'] = 'Debugger REPL',
     ['neo-tree'] = get_neotree_name,
     ['toggleterm'] = get_toggleterm_name,
+    ['swenv'] = get_swenv_venv,
     ['DiffviewFiles'] = 'Diff View',
   },
 }
@@ -392,6 +399,21 @@ function M.hydra()
   }
   return hydra.is_active(), data
 end
+
+-- local function get_swenv_venv(name, _)
+--   local parts = vim.split(name, ' ')
+--   local venv = require("swenv.api").get_current_venv()
+--   if venv then return fmt('venv:(%s)', parts[2]) else return end
+-- end
+
+-- function M.swenv()
+--   local ok, swenv = pcall(require, 'swenv.api')
+--   if not ok then return end
+--   local data = {
+--       name = swenv.get_current_venv(),
+--     }
+--   return fmt('venv:(%s)', data.name)
+-- end
 
 -----------------------------------------------------------------------------//
 -- Last search count

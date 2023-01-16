@@ -57,13 +57,11 @@ function M.config()
       require('neotest-python')({
         dap = { justMyCode = false },
         runner = "pytest",
-        -- python = ""
+        -- python = "~/.local/pipx/venvs/jupyterlab/bin/python3",
+        python = function(x)
+          require('swenv.api').get_current_venv(x)
+        end
       }),
-      -- require('neotest-go')({
-      --   experimental = {
-      --     test_table = true,
-      --   },
-      -- }),
     },
   })
 end

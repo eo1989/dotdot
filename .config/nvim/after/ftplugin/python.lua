@@ -1,4 +1,4 @@
----@diagnostic disable: unused-local
+---@diagnostic disable: unused-local, duplicate-index
 -- let g:python3_host_prog= substitute(system("which python3"), \n\+$', '', '')
 
 -- CRAG666/code_runner.nvim
@@ -16,26 +16,21 @@ local opt = vim.opt
 local optl = vim.opt_local
 local bo = vim.bo
 
--- vim.b.formatting_disabled = { 'pyright', 'pylsp', 'jedi-language-server', 'pylance'}
-
-local nnoremap = as.nnoremap
-local vnoremap = as.vnoremap
-local vmap = as.vmap
--- vim.g["python3_host_prog"] = "~/.local/pipx/venvs/jupyterlab/bin/python3"
--- vim.cmd([[ let g:python3_host_prog=substitute(system("which python3"), \n\+$', '', '') ]])
 
 
-local py3 = vim.g['python3_host_prog']
-vim.b.magma_kernel = py3
+-- local py3 = vim.g['python3_host_prog']
+local function py()
+  return vim.g['python3_host_prog']
+end
 
-vim.keymap.set({"n", "v"}, "<F2>", [[:TermExec cmd="!!"<CR>]])
-vim.keymap.set({"n", "v"}, "<F3>", [[:TermExec cmd="poetry run pytest"<CR>]])
+vim.b.magma_kernel = py()
+
+-- vim.keymap.set({"n", "v"}, "<F2>", [[:TermExec cmd="python3"<CR>]])
+-- vim.keymap.set({"n", "v"}, "<F3>", [[:TermExec cmd="poetry run pytest"<CR>]])
+
 -- local opts = {expr = true, silent = true, nowait = true }
 -- map({ 'n', 'x' }, '<localleader>rp', '<Plug>SnipRun()', opts)
 
--- optl.magma_kernel = py3
--- vim.g['python_highlight_all'] = true
--- local dap = require('dap')
 
 
 
@@ -82,47 +77,24 @@ vim.keymap.set({"n", "v"}, "<F3>", [[:TermExec cmd="poetry run pytest"<CR>]])
 local wk = require("which-key")
 wk.register({
   ['<localleader>'] = {
-    k = {
-      name = 'pyterm',
-      k = {{ [[ ToggleTermSendVisualSelection<CR>]] }, mode = {'x', 'v'}},
-    },
-    r = {
-      name = 'Runner',
-        -- s = {{ [[ lua require('sniprun').run('v')<CR> ]], "Run visual Snippets" }, mode = {"v", "x"}},
-        s = {{ [[function() require('sniprun').run('v')<CR> end]], "Run visual Snippets"}, mode = {"v", "x"}},
-        p = {{ ":<Plug>SnipRunOperator<CR>", 'nRun Snippets'}, mode = 'n'}, -- this might break,
-      },
+    -- k = {
+    --   name = 'pyterm',
+    --   k = {{ [[<Cmd>ToggleTermSendVisualSelection<CR>]] }, mode = {'x', 'v'}},
+    -- },
      m = {
         name = 'Magma/Jupyter',
-        c = {{'<Cmd>MagmaReevaluateCells<CR>', 'Reevaluate Cells' }, mode = 'n'},
-        l = {{'<Cmd>MagmaEvaluateLine<CR>', 'Evaluate Line' }, mode = 'n'},
-        v = {{'<Cmd>MagmaEvaluateVisual<CR>', 'Evaluate Visual'}, mode = 'x'},
-        d = {{'<Cmd>MagmaDelete<CR>', 'Delete' }, mode = 'n'},
-        o = {{'<Cmd>MagmaShowOutput<CR>', 'Show Output' }, mode = 'n'},
+        v = {{ vim.api.nvim_exec('MagmaEvaluateOperator', true) }, mode = 'n'},
+        l = {{ [[<Cmd>MagmaEvaluateLine<CR>]], 'Evaluate Line' }, mode = 'n'},
+        v = {{ [[<Cmd><C-u>MagmaEvaluateVisual<CR>]], 'Evaluate Visual'}, mode = 'x'},
+        c = {{ [[<Cmd>MagmaReevaluateCells<CR>]], 'Reevaluate Cells' }, mode = 'n'},
+        d = {{ [[<Cmd>MagmaDelete<CR>]], 'Delete' }, mode = 'n'},
+        o = {{ [[<Cmd>MagmaShowOutput<CR>]], 'Show Output' }, mode = 'n'},
+        q = {{ [[<Cmd>noautocmd MagmaEnterOutput<CR>]], 'Show Output' }, mode = 'n'},
+        i = {{ [[<Cmd>MagmaInit<CR>]], 'Choose interpreter' }, mode = 'n'},
       },
     },
   })
 
--- as.ftplugin_conf('which-key', function(wk)
---   wk.register({
---     {
---       name = 'Magma',
---       c = { '<Cmd>MagmaReevaluateCells<CR>', 'Reevaluate Cells' },
---       l = { '<Cmd>MagmaEvaluateLine<CR>', 'Evaluate Line' },
---       v = { '<Cmd>MagmaEvaluateVisual<CR>', 'Evaluate Visual' },
---       d = { '<Cmd>MagmaDelete<CR>', 'Delete' },
---       o = { '<Cmd>MagmaShowOutput<CR>', 'Show Output' },
---       i = { '<Cmd>MagmaInit<CR>', 'Init' },
---       u = { '<Cmd>MagmaDeinit<CR>', 'Deinit' },
---     },
---     ['<localleader>r'] = {
---       name = 'CodeRun',
---       -- p = { '<Cmd>TermExec cmd="python %:t"<CR>', 'Python run' },
---       r = { "<Cmd>TermExec cmd='python %:t'<CR>", 'python repl run' },
---       s = { ":'<,'>Sniprun % <CR>', 'SnipVisualSelection Python" },
---     },
---   })
--- end)
 
 as.ftplugin_conf('nvim-surround', function(surround)
   local get_input = function(prompt)
@@ -135,6 +107,7 @@ as.ftplugin_conf('nvim-surround', function(surround)
   surround.buffer_setup({
     surrounds = {
       l = { add = { 'def ():', 'return ' } },
+      g = { add = { 'def ():', 'yield ' } },
       F = {
         add = function()
           return {
@@ -155,13 +128,6 @@ as.ftplugin_conf('nvim-surround', function(surround)
   })
 end)
 
--- v = { '<Cmd>Sniplive<CR>', "SnipLive toggle" },
--- ie = { '<Cmd>SnipRun<CR>', 'if err' },
-
---NOTE: add this somewhere else
--- To turn one line into title caps, make every first letter of a word
--- uppercase:
--- 	:s/\v<(.)(\w*)/\u\1\L\2/g
 
 --- {{{
 -- python << EOF
@@ -224,4 +190,8 @@ end)
 -- command! -nargs=0 AddFilepathToSyspath call AddFilepathToSyspath()
 -- ]]
 --- }}}
+vim.bo.expandtab = true
+vim.bo.shiftwidth = 4
+vim.bo.tabstop = 4
+vim.bo.softtabstop = 4
 -- vim:ft=lua:fdm=marker:foldlevel=3:

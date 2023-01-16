@@ -1,51 +1,51 @@
 return function()
   local icons = as.style.icons
-  -- local highlights = require('as.highlights')
+  local highlights = require('as.highlights')
 
-  -- highlights.plugin('NeoTree', {
-  --   theme = {
-  --     ['*'] = {
-  --       { NeoTreeDirectoryIcon = { fg = '#C09553' } },
-  --       { NeoTreeNormal = { link = 'PanelBackground' } },
-  --       { NeoTreeNormalNC = { link = 'PanelBackground' } },
-  --       { NeoTreeRootName = { underline = true } },
-  --       { NeoTreeCursorLine = { link = 'Visual' } },
-  --       { NeoTreeStatusLine = { link = 'PanelSt' } },
-  --       { NeoTreeTabActive = { bg = { from = 'PanelBackground' }, bold = true } },
-  --       {
-  --         NeoTreeTabInactive = {
-  --           bg = { from = 'PanelDarkBackground', alter = 15 },
-  --           fg = { from = 'Comment' },
-  --         },
-  --       },
-  --       {
-  --         NeoTreeTabSeparatorInactive = {
-  --           inherit = 'NeoTreeTabInactive',
-  --           fg = { from = 'PanelDarkBackground', attr = 'bg' },
-  --         },
-  --       },
-  --       {
-  --         NeoTreeTabSeparatorActive = {
-  --           inherit = 'PanelBackground',
-  --           fg = { from = 'Comment' },
-  --         },
-  --       },
-  --     },
-  --     horizon = {
-  --       { NeoTreeDirectoryIcon = { fg = '#C09553' } },
-  --       { NeoTreeWinSeparator = { link = 'WinSeparator' } },
-  --       { NeoTreeTabInactive = { bg = { from = 'PanelBackground' }, fg = { from = 'Comment' } } },
-  --       { NeoTreeTabActive = { link = 'VisibleTab' } },
-  --       { NeoTreeTabSeparatorActive = { link = 'VisibleTab' } },
-  --       {
-  --         NeoTreeTabSeparatorInactive = {
-  --           inherit = 'NeoTreeTabInactive',
-  --           fg = { from = 'PanelBackground', attr = 'bg' },
-  --         },
-  --       },
-  --     },
-  --   },
-  -- })
+  highlights.plugin('NeoTree', {
+    theme = {
+      ['*'] = {
+        { NeoTreeDirectoryIcon = { fg = '#C09553' } },
+        { NeoTreeNormal = { link = 'PanelBackground' } },
+        { NeoTreeNormalNC = { link = 'PanelBackground' } },
+        { NeoTreeRootName = { underline = true } },
+        { NeoTreeCursorLine = { link = 'Visual' } },
+        { NeoTreeStatusLine = { link = 'PanelSt' } },
+        { NeoTreeTabActive = { bg = { from = 'PanelBackground' }, bold = true } },
+        {
+          NeoTreeTabInactive = {
+            bg = { from = 'PanelDarkBackground', alter = 15 },
+            fg = { from = 'Comment' },
+          },
+        },
+        {
+          NeoTreeTabSeparatorInactive = {
+            inherit = 'NeoTreeTabInactive',
+            fg = { from = 'PanelDarkBackground', attr = 'bg' },
+          },
+        },
+        {
+          NeoTreeTabSeparatorActive = {
+            inherit = 'PanelBackground',
+            fg = { from = 'Comment' },
+          },
+        },
+      },
+      horizon = {
+        { NeoTreeDirectoryIcon = { fg = '#C09553' } },
+        { NeoTreeWinSeparator = { link = 'WinSeparator' } },
+        { NeoTreeTabInactive = { bg = { from = 'PanelBackground' }, fg = { from = 'Comment' } } },
+        { NeoTreeTabActive = { link = 'VisibleTab' } },
+        { NeoTreeTabSeparatorActive = { link = 'VisibleTab' } },
+        {
+          NeoTreeTabSeparatorInactive = {
+            inherit = 'NeoTreeTabInactive',
+            fg = { from = 'PanelBackground', attr = 'bg' },
+          },
+        },
+      },
+    },
+  })
 
   vim.g.neo_tree_remove_legacy_commands = 1
 
@@ -64,20 +64,20 @@ return function()
     },
     enable_git_status = true,
     git_status_async = true,
-    -- event_handlers = {
-    --   {
-    --     event = 'neo_tree_buffer_enter',
-    --     handler = function()
-    --       highlights.set('Cursor', { blend = 100 })
-    --     end,
-    --   },
-    --   {
-    --     event = 'neo_tree_buffer_leave',
-    --     handler = function()
-    --       highlights.set('Cursor', { blend = 0 })
-    --     end,
-    --   },
-    -- },
+    event_handlers = {
+      {
+        event = 'neo_tree_buffer_enter',
+        handler = function()
+          highlights.set('Cursor', { blend = 100 })
+        end,
+      },
+      {
+        event = 'neo_tree_buffer_leave',
+        handler = function()
+          highlights.set('Cursor', { blend = 0 })
+        end,
+      },
+    },
     filesystem = {
       hijack_netrw_behavior = 'open_current',
       use_libuv_file_watcher = true,
@@ -108,14 +108,14 @@ return function()
       icon = {
         folder_empty = '',
       },
-      -- diagnostics = {
-      --   highlights = {
-      --     hint = 'DiagnosticHint',
-      --     info = 'DiagnosticInfo',
-      --     warn = 'DiagnosticWarn',
-      --     error = 'DiagnosticError',
-      --   },
-      -- },
+      diagnostics = {
+        highlights = {
+          hint = 'DiagnosticHint',
+          info = 'DiagnosticInfo',
+          warn = 'DiagnosticWarn',
+          error = 'DiagnosticError',
+        },
+      },
       modified = {
         symbol = icons.misc.circle .. ' ',
       },

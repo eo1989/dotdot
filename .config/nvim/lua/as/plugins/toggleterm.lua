@@ -11,7 +11,7 @@ return function()
     insert_mappings = false,
     start_in_insert = true,
     -- winbar = { enabled = as.ui.winbar.enable },
-    winbar = { enabled = true },
+    winbar = { enabled = false },
     highlights = {
       FloatBorder = { link = 'FloatBorder' },
       NormalFloat = { link = 'NormalFloat' },
@@ -38,13 +38,6 @@ return function()
 
   local Terminal = require('toggleterm.terminal').Terminal
 
-  -- local py = Terminal:new({
-  --     cmd = 'python3 -u '.. exp('%:t'),
-  --     dir = '$PWD',
-  --     hidden = false,
-  --     direction = 'horizontal',
-  --   })
-
   local lazygit = Terminal:new({
     cmd = 'lazygit',
     dir = 'git_dir',
@@ -52,6 +45,10 @@ return function()
     direction = 'float',
     on_open = float_handler,
   })
+
+  as.nnoremap('<leader>lg', function()
+    lazygit:toggle()
+  end, 'toggleterm: toggle lazygit')
 
   local btop = Terminal:new({
     cmd = 'btop',
@@ -63,6 +60,26 @@ return function()
       NormalFloat = { guibg = 'Black' },
     },
   })
+
+  as.command('Btop', function()
+    btop:toggle()
+  end)
+
+  local ipython = Terminal:new({
+    cmd = 'ptipython',
+    direction = 'horizontal',
+    hidden = false
+  })
+
+  as.command('IPython', function()
+    ipython:toggle()
+  end)
+
+  -- as.command('Ipython', function()
+  --   return _toggle_ipython()
+  -- end)
+end
+
 
   -- local gh_dash = Terminal:new({
   --   cmd = 'gh dash',
@@ -86,12 +103,3 @@ return function()
   -- as.nnoremap('<leader>ld', function()
   --   gh_dash:toggle()
   -- end, 'toggleterm: toggle github dashboard')
-
-  as.command('Btop', function()
-    btop:toggle()
-  end)
-
-  as.nnoremap('<leader>lg', function()
-    lazygit:toggle()
-  end, 'toggleterm: toggle lazygit')
-end

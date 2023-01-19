@@ -1,4 +1,4 @@
----@diagnostic disable: unused-function
+---@diagnostic disable: unused-function, lowercase-global, need-check-nil
 -----------------------------------------------------------------------------//
 -- Language servers
 -----------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ local servers = {
   },
   bashls = {
     bashIde ={
-      -- explainshellEndpoint = 'localhost',
+      explainshellEndpoint = 'localhost',
       globpattern =  { "**/*@(.sh|.inc|.bash|.command|.zsh|make)" },
     },
     filetypes = {
@@ -88,99 +88,99 @@ local servers = {
   -- pylance = function()
   --   return require("as.pylance_.").config
   -- end,
-  -- pyright = false, -- temp
-  pyright = {
-    handlers = {
-      ['textDocument/publishDiagnostics'] = function(...) end
-    },
-    settings = {
-      python = {
-        -- pythonPath = py_path(client.config.root_dir),
-        -- pythonPath = require(""),
-        analysis = {
-          typeCheckingMode = 'off',
-          autoSearchPaths = true,
-          indexing = true,
-          diagnosticMode = 'openFilesOnly', --'workspace'
-          useLibraryCodeForTypes = true,
-          completeFunctionParens = true,
-          inlayHints = {
-            variableTypes = false,
-            functionReturnTypes = true,
-          },
-          stubPath = table.concat({
-            vim.fn.stdpath "data",
-            "site",
-            "pack",
-            "packer",
-            "opt",
-            "python-type-stubs",
-          }),
-        },
-      },
-      pyright = {
-        disableDiagnostics = true,
-      },
-    },
-  },
-  pylsp = true,
-  -- pylsp = function()
-  --   return {
-  --     settings = {
-  --       -- configurationSources = { 'flake8' },
-  --       -- configurationSources = {nil},
-  --       plugins = {
-  --         -- stylua: ignore start
-  --         flake8          = { enabled = false },
-  --         autopep8        = { enabled = false },
-  --         mccabe          = { enabled = false },
-  --         preload         = { enabled = false },
-  --         pycodestyle     = { enabled = false },
-  --         pydocstyle      = { enabled = false },
-  --         pyflakes        = { enabled = false },
-  --         pylint          = { enabled = false },
-  --         yapf            = { enabled = false },
-  --         rope_completion = { enabled = false },
-  --       --stylua: ignore end
-  --         jedi_completion = {
-  --           enabled = true,
-  --           include_params = true,
-  --           include_class_objects = true,
-  --           include_function_objects = true,
-  --           -- fuzzy = true,
-  --           eager = true,
-  --           -- resolve_at_most = 2,
-  --           -- cache_for = { 'numpy', 'pandas', 'scipy', 'matplotlib' },
-  --           cache_for = { 'numpy,pandas,scipy,matplotlib' },
+  pyright = false, -- temp
+  -- pyright = {
+  --   handlers = {
+  --     ['textDocument/publishDiagnostics'] = function(...) end
+  --   },
+  --   settings = {
+  --     python = {
+  --       -- pythonPath = py_path(client.config.root_dir),
+  --       -- pythonPath = require(""),
+  --       analysis = {
+  --         typeCheckingMode = 'off',
+  --         autoSearchPaths = true,
+  --         indexing = true,
+  --         diagnosticMode = 'openFilesOnly', --'workspace'
+  --         useLibraryCodeForTypes = true,
+  --         completeFunctionParens = true,
+  --         inlayHints = {
+  --           variableTypes = false,
+  --           functionReturnTypes = true,
   --         },
-  --         jedi_definition = {
-  --           enabled = true,
-  --           follow_imports = true,
-  --           follow_builtin_imports = true,
-  --           follow_builtin_definitions = true,
-  --         },
-  --       -- stylua: ignore start
-  --         jedi_hover          = { enabled = true },
-  --         jedi_references     = { enabled = true },
-  --         jedi_signature_help = { enabled = true },
-  --       -- stylua: ignore end
-  --         jedi_symbols = {
-  --           enabled = true,
-  --           all_scopes = false, -- True lists the names of all scopes instead of only the module namespace
-  --           include_import_symbols = true, -- True includes symbols from other libraries
-  --         },
-  --         jedi = {
-  --           -- environment = 'jedi',
-  --           -- diagnostics = { enabled = false },
-  --           -- env_vars = {},
-  --           -- auto_import_modules = { 'numpy', 'matplotlib', 'pandas', 'scipy' },
-  --           auto_import_modules = { 'numpy,matplotlib,pandas,scipy' },
-  --           -- extra_paths = { '/home/alex/.local/lib/python3.9/site-packages' }, -- add vim.fn. python-type-stub path here.
-  --         },
+  --         stubPath = table.concat({
+  --           vim.fn.stdpath "data",
+  --           "site",
+  --           "pack",
+  --           "packer",
+  --           "opt",
+  --           "python-type-stubs",
+  --         }),
   --       },
   --     },
-  --   }
-  -- end,
+  --     pyright = {
+  --       disableDiagnostics = true,
+  --     },
+  --   },
+  -- },
+  -- pylsp = false,
+  pylsp = {
+      settings = {
+          pylsp = {
+          -- configurationSources = { 'flake8' },
+          -- configurationSources = {nil},
+            plugins = {
+              -- stylua: ignore start
+              flake8          = { enabled = false },
+              autopep8        = { enabled = false },
+              mccabe          = { enabled = false },
+              preload         = { enabled = false },
+              pycodestyle     = { enabled = false },
+              pydocstyle      = { enabled = false },
+              pyflakes        = { enabled = false },
+              pylint          = { enabled = false },
+              yapf            = { enabled = false },
+              rope_completion = { enabled = false },
+            --stylua: ignore end
+              -- jedi_completion = {
+              --   enabled = true,
+              --   include_params = true,
+              --   include_class_objects = true,
+              --   include_function_objects = true,
+              --   -- fuzzy = true,
+              --   eager = true,
+              --   -- resolve_at_most = 2,
+              --   -- cache_for = { 'numpy', 'pandas', 'scipy', 'matplotlib' },
+              --   cache_for = { 'numpy,pandas,scipy,matplotlib' },
+              -- },
+              -- jedi_definition = {
+              --   enabled = true,
+              --   follow_imports = true,
+              --   follow_builtin_imports = true,
+              --   follow_builtin_definitions = true,
+              -- },
+            -- stylua: ignore start
+              jedi_hover          = { enabled = true },
+              jedi_references     = { enabled = true },
+              jedi_signature_help = { enabled = true },
+            -- stylua: ignore end
+              -- jedi_symbols = {
+              --   enabled = true,
+              --   all_scopes = false, -- True lists the names of all scopes instead of only the module namespace
+              --   include_import_symbols = true, -- True includes symbols from other libraries
+              -- },
+              -- jedi = {
+              --   environment = 'jedi',
+              --   diagnostics = { enabled = false },
+              --   env_vars = {},
+              --   auto_import_modules = { 'numpy', 'matplotlib', 'pandas', 'scipy' },
+              --   auto_import_modules = { 'numpy,matplotlib,pandas,scipy' },
+              --   extra_paths = { '/home/alex/.local/lib/python3.9/site-packages' }, -- add vim.fn. python-type-stub path here.
+              -- },
+            },
+          },
+        },
+      },
   ruff_lsp = false,
   bufls = false,
   prosemd_lsp = false,
@@ -255,11 +255,11 @@ local servers = {
   end,
   --- @see https://gist.github.com/folke/fe5d28423ea5380929c3f7ce674c41d8
   sumneko_lua = function()
-    local library = {}
     local path = vim.split(package.path, ';')
     table.insert(path, 'lua/?.lua')
     table.insert(path, 'lua/?/init.lua')
 
+    local library = {}
     local function add(lib)
       for _, p in pairs(fn.expand(lib, false, true)) do
         p = vim.loop.fs_realpath(p)
@@ -267,37 +267,26 @@ local servers = {
       end
     end
 
-    add('$VIMRUNTIME')
-    add('~/.config/nvim')
-    add('~/.local/share/nvim/lazy/*')
+    add('$VIMRUNTIME/lua')
+    -- theHamsta .files
+    add('$VIMRUNTIME/lua/vim/lsp')
+    add(require('nvim-treesitter.utils').get_package_path() .. "/lua")
+    --
+    add('~/.config/nvim/lua')
+    add('~/.local/share/nvim/lazy')
 
     return {
       single_file_support = true,
       settings = {
         Lua = {
+          awakened = { cat = true }, -- from theHamsta/dotfiles/blob/master/.config/nvim/lua/init.lua
           runtime = {
             path = path,
             version = 'LuaJIT',
           },
-          hover = {
-            expandAlias = false,
-          },
-          hint = {
-            enable = true,
-            paramType = true,
-            paramName = true,
-            arrayIndex = 'Disable',
-            setType = true
-          },
-          format = {
-            enable = false,
-            defaultConfig = {
-              indent_style = "space",
-              indent_size = "2",
-              continuation_indent_size = "2",
-            },
-          },
-          diagnostics = { unusedLocalExclude = { "_*" } },
+          hint = { enable = true },
+          format = { enable = false },
+          -- diagnostics = { unusedLocalExclude = { "_*" } },
             globals = {
               'vim',
               'as',
@@ -309,7 +298,7 @@ local servers = {
           },
           completion = {
             keywordSnippet = 'Disable',
-            callSnippet = 'Replace', -- 'Both', 'Disable', 'Replace',
+            callSnippet = 'Both', -- 'Both', 'Disable', 'Replace',
           },
           workspace = {
             library = library,
@@ -322,12 +311,9 @@ local servers = {
             --   neotest
             -- },
             checkThirdParty = false,
-            maxPreload = 3000,
-            preloadFileSize = 50000,
+            -- maxPreload = 3000, preloadFileSize = 50000,
           },
-          telemetry = {
-            enable = false,
-          },
+          telemetry = { enable = false },
         },
       }
   end

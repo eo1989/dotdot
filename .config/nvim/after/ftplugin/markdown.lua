@@ -26,15 +26,16 @@ as.nmap('<localleader>mf', '<Plug>FeMaco<CR>', { desc = 'edit code block' })
 as.ftplugin_conf('cmp', function(cmp)
   cmp.setup.filetype('markdown', {
     sources = cmp.config.sources({
-      { name = 'buffer' },
-      { name = 'cmp_tabnine' },
-      { name = 'latex_symbols' },
       { name = 'luasnip' },
-    }, {
-      { name = 'cmp_pandoc_references' },
+      { name = 'cmp_tabnine' },
+      { name = 'copilot' },
+      { name = 'latex_symbols' },
       { name = 'nvim_lsp' },
-      { name = 'path' },
+    }, {
       { name = 'otter' },
+      { name = 'cmp_pandoc_references' },
+      { name = 'path' },
+      { name = 'buffer' },
     }),
   })
 end)

@@ -1,28 +1,28 @@
 local optl = vim.opt_local
+local bo = vim.bo
 vim.wo.spell = false
 -- optl.commentstring = '#%s '
 optl.foldmethod = "syntax"
 -- optl.foldexpr = "nvim_treesitter#foldexpr()"
 
-optl.shiftwidth = 4
-optl.tabstop = 4
-optl.smartindent = true
-optl.expandtab = true
-optl.softtabstop = 4
-optl.expandtab = true
-optl.textwidth = 80
+bo.shiftwidth = 4
+bo.tabstop = 4
+bo.softtabstop = 4
+bo.textwidth = 80
+bo.expandtab = true
+bo.smartindent = true
 optl.indentkeys = optl.indentkeys - { '0#' }
 optl.indentkeys = optl.indentkeys - { '<:>' }
 -- optl.path = optl.path + { 'src/,**' }
 -- vim.opt.path:append({ 'src/,$PWD/**' })
 
 vim.g['python_highlight_all'] = 1
-vim.g['python_recommended_style'] = 0
+-- vim.g['python_recommended_style'] = 0
 
-vim.cmd([[
-  iabbrev improt import
-  iabbrev teh the
-]])
+-- vim.cmd([[
+--   iabbrev improt import
+--   iabbrev teh the
+-- ]])
 
 -- local wk = require("which-key")
 -- with leader

@@ -141,8 +141,10 @@ as.augroup('ExternalCommands', {
     -- Open images in an image viewer (probably Preview)
     event = { 'BufEnter' },
     pattern = { '*.png', '*.jpg', '*.gif' },
-    command = function() vim.cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%'))) end,
-  },
+    command = function()
+      vim.cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%')))
+    end
+  }
 })
 
 as.augroup('CheckOutsideTime', {
@@ -286,27 +288,27 @@ as.augroup('CustomColorColumn', {
   },
 })
 as.augroup('UpdateVim', {
-  {
-    -- TODO: not clear what effect this has in the post vimscript world
-    -- it correctly sources $MYVIMRC but all the other files that it
-    -- requires will need to be resourced or reloaded themselves
-    event = 'BufWritePost',
-    pattern = { vim.g.vim_dir .. '/plugin/*.{lua,vim}', vim.env.MYVIMRC },
-    nested = true,
-    command = function(args)
-      local path = api.nvim_buf_get_name(args.buf)
-      vim.cmd.source(fn.expand('$MYVIMRC'))
-      vim.cmd.source(path)
-      vim.cmd.redraw()
-      --@eo TODO: Reloa TS highlight also
-      -- api.nvim_exec_autocmds('syntax ', {})
-      --@eo
-      api.nvim_exec_autocmds('ColorScheme', {})
-      api.nvim_exec_autocmds('User', { pattern = 'VimrcReloaded' })
-      local msg = fmt('sourced %s and %s', vim.fs.basename(path), vim.fs.basename(vim.env.MYVIMRC))
-      vim.notify(msg, 'info', { title = 'Sourcing init.lua' })
-    end,
-  },
+  -- {
+  --   -- TODO: not clear what effect this has in the post vimscript world
+  --   -- it correctly sources $MYVIMRC but all the other files that it
+  --   -- requires will need to be resourced or reloaded themselves
+  --   event = 'BufWritePost',
+  --   pattern = { vim.g.vim_dir .. '/plugin/*.{lua,vim}', vim.env.MYVIMRC },
+  --   nested = true,
+  --   command = function(args)
+  --     local path = api.nvim_buf_get_name(args.buf)
+  --     vim.cmd.source(fn.expand('$MYVIMRC'))
+  --     vim.cmd.source(path)
+  --     vim.cmd.redraw()
+  --     --@eo TODO: Reloa TS highlight also
+  --     -- api.nvim_exec_autocmds('syntax ', {})
+  --     --@eo
+  --     api.nvim_exec_autocmds('ColorScheme', {})
+  --     api.nvim_exec_autocmds('User', { pattern = 'VimrcReloaded' })
+  --     local msg = fmt('sourced %s and %s', vim.fs.basename(path), vim.fs.basename(vim.env.MYVIMRC))
+  --     vim.notify(msg, 'info', { title = 'Sourcing init.lua' })
+  --   end,
+  -- },
   {
     event = { 'FocusLost' },
     pattern = { '*' },
@@ -426,7 +428,7 @@ as.augroup('Utilities', {
   --     'markdown',
   --   },
   --   -- NOTE: setting spell only works using opt_local otherwise it leaks into subsequent windows
-  --   command = function(args) vim.opt_local.spell = false end,
+  --   command = function() vim.opt_local.spell = false end,
   -- },
   {
     event = { 'BufWritePre', 'FileWritePre' },
@@ -440,22 +442,20 @@ as.augroup('Utilities', {
       if can_save() then vim.cmd.update({ mods = { silent = true } }) end
     end,
   },
-  -- {
-  --   event = { 'BufWritePost' },
-  --   pattern = { '*' },
-  --   nested = true,
-  --   command = function()
-  --     if as.empty(vim.bo.filetype) or fn.exists('b:ftdetect') == 1 then
-  --       vim.cmd([[
-  --           unlet! b:ftdetect
-  --           filetype detect
-  --           echom 'Filetype set to ' . &ft
-  --           ""@eo TODO
-  --           syntax enable
-  --         ]])
-  --     end
-  --   end,
-  -- },
+  {
+    event = { 'BufWritePost' },
+    pattern = { '*' },
+    nested = true,
+    command = function()
+      if as.empty(vim.bo.filetype) or fn.exists('b:ftdetect') == 1 then
+        vim.cmd([[
+            unlet! b:ftdetect
+            filetype detect
+            echom 'Filetype set to ' . &ft
+          ]])
+      end
+    end,
+  },
 })
 
 as.augroup('TerminalAutocommands', {

@@ -3,14 +3,15 @@ if not vim.filetype then return end
 vim.g.filetype_lua = true
 
 vim.filetype.add({
-  -- extension = {
+  extension = {
+    qmd = 'markdown'
   --   png = 'image',
   --   jpg = 'image',
   --   jpeg = 'image',
   --   tf = 'terraform',
   --   tsx = 'typescriptreact',
   --   ts = 'typescript',
-  -- },
+  },
   filename = {
     -- ['NEOGIT_COMMIT_EDITMSG'] = 'NeogitCommitMessage',
     ['go.mod'] = 'gomod',
@@ -22,10 +23,11 @@ vim.filetype.add({
   },
   pattern = {
     -- ['.*%.ipynb'] = 'python',
+    ['.*%.qmd'] = 'markdown',
     ['.*%.conf'] = 'conf',
     ['.*%.theme'] = 'conf',
     ['.*%.gradle'] = 'groovy',
     ['.*%.env%..*'] = 'sh',
-    ['.*%.*rc'] = 'sh',
+    -- ['.*%.*rc'] = 'sh',
   },
 })

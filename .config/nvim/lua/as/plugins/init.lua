@@ -30,72 +30,80 @@ require('lazy').setup(
 		-----------------------------------------------------------------------------//
 		-- THE LIBRARY
 		{ 'nvim-lua/plenary.nvim' },
-    { "zbirenbaum/copilot-cmp", dependencies = { "zbirenbaum/copilot.lua" }, config = true },
+    -- { "zbirenbaum/copilot-cmp", dependencies = { "zbirenbaum/copilot.lua" }, config = true },
     {
       'zbirenbaum/copilot.lua',
-      event = { 'InsertEnter' },
+      -- event = { 'InsertEnter' },
       dependencies = { 'neovim/nvim-lspconfig' },
       -- init = function() vim.g.copilot_no_tab_map = true end,
       config = function()
         require('copilot').setup({
-        panel = {
-          enabled = true,
-          auto_refresh = false,
-          keymap = {
-            jump_prev = "[[",
-            jump_next = "]]",
-            accept = "<CR>",
-            refresh = "gr",
-            open = "<M-CR>"  -- left alt! change kitty for right alt
+          panel = {
+            enabled = true,
+            auto_refresh = false,
+            keymap = {
+              jump_prev = "[[",
+              jump_next = "]]",
+              accept = "<CR>",
+              refresh = "gr",
+              open = "<M-CR>"  -- left alt! change kitty for right alt
+            },
           },
-        },
-        suggestion = {
-          enabled = true,
-          auto_trigger = false,
-          debounce = 75,
-          keymap = {
-            accept = "<M-l>",
-            accept_word = false,
-            accept_line = false,
-            next = "<M-]>",
-            prev = "<M-[>",
-            dismiss = "<C-]>",
-          },
-        }
-      })
+          suggestion = {
+            enabled = true,
+            auto_trigger = false,
+            debounce = 75,
+            keymap = {
+              accept = "<M-l>",
+              accept_word = false,
+              accept_line = false,
+              next = "<M-]>",
+              prev = "<M-[>",
+              dismiss = "<C-]>",
+            },
+          }
+        })
       end
     },
 		{
   		'nvim-telescope/telescope.nvim',
   		config = conf('telescope').config,
       dependencies = {
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        config = function() require('telescope').load_extension('fzf') end,
-      },
-      {
-        'nvim-telescope/telescope-smart-history.nvim',
-        dependencies = { 'kkharji/sqlite.lua' },
-        config = function() require('telescope').load_extension('smart_history') end,
-      },
-      {
-        'nvim-telescope/telescope-frecency.nvim',
-        dependencies = { 'kkharji/sqlite.lua' },
-        config = function() require('telescope').load_extension('frecency') end,
-      },
-      {
-        'benfowler/telescope-luasnip.nvim',
-        config = function() require('telescope').load_extension('luasnip') end,
-      },
-      {
-        'zane-/howdoi.nvim',
-        config = function() require('telescope').load_extension('howdoi') end,
-      },
-      {
-        'nvim-telescope/telescope-live-grep-args.nvim',
-        config = function() require('telescope').load_extension('live_grep_args') end,
-      },
+        {
+          "nvim-telescope/telescope-file-browser.nvim",
+          config = function() require('telescope').load_extension('file_browser') end,
+        },
+        {
+          "debugloop/telescope-undo.nvim",
+          config = function() require('telescope').load_extension('undo') end,
+        },
+        {
+          'nvim-telescope/telescope-fzf-native.nvim',
+          build = 'make',
+          config = function() require('telescope').load_extension('fzf') end,
+        },
+        {
+          'nvim-telescope/telescope-smart-history.nvim',
+          dependencies = { 'kkharji/sqlite.lua' },
+          config = function() require('telescope').load_extension('smart_history') end,
+        },
+        {
+          'nvim-telescope/telescope-frecency.nvim',
+          dependencies = { 'kkharji/sqlite.lua' },
+          config = function() require('telescope').load_extension('frecency') end,
+        },
+        {
+          'benfowler/telescope-luasnip.nvim',
+          config = function() require('telescope').load_extension('luasnip') end,
+        },
+        {
+          'zane-/howdoi.nvim',
+          config = function() require('telescope').load_extension('howdoi') end,
+        },
+        {
+          'nvim-telescope/telescope-live-grep-args.nvim',
+          config = function() require('telescope').load_extension('live_grep_args') end,
+        },
       },
     },
 		{ 'kyazdani42/nvim-web-devicons' },
@@ -123,7 +131,7 @@ require('lazy').setup(
     },
 		-- }}}
 		-----------------------------------------------------------------------------//
-		-- LSP,Completion & Debugger {{{1
+		-- LSP,Completion & Debugger {{{
 		-----------------------------------------------------------------------------//
 		{
       {
@@ -151,7 +159,6 @@ require('lazy').setup(
           'williamboman/mason.nvim',
           'jose-elias-alvarez/null-ls.nvim',
         },
-        -- after = 'mason.nvim',
         config = function()
           require('mason-null-ls').setup({
             automatic_installation = true,
@@ -167,12 +174,40 @@ require('lazy').setup(
           { LspInfoBorder = { link = 'FloatBorder' } },
         })
         require('lspconfig.ui.windows').default_options.border = as.style.current.border
-        require('lspconfig').pyright.setup(require('as.servers')('pyright'))
-        -- require('lspconfig').pylsp.setup(require('as.servers')('pylsp'))
+        -- require('lspconfig').pyright.setup(require('as.servers')('pyright'))
+        require('lspconfig').pylsp.setup(require('as.servers')('pylsp'))
+      end,
+    },
+    {
+      'lewis6991/hover.nvim',
+       config = function()
+        require("hover").setup {
+            init = function()
+                -- Require providers
+                require("hover.providers.lsp")
+                -- require('hover.providers.gh')
+                -- require('hover.providers.gh_user')
+                -- require('hover.providers.jira')
+                require('hover.providers.man')
+                require('hover.providers.dictionary')
+            end,
+            preview_opts = {
+                border = nil
+            },
+            -- Whether the contents of a currently open hover window should be moved
+            -- to a :h preview-window when pressing the hover keymap.
+            preview_window = true,
+            title = true
+        }
+
+        -- Setup keymaps
+        vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
+        vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
       end,
     },
 		{
 			'DNLHC/glance.nvim',
+      enabled = false,
       lazy = true,
 			config = true,
 		},
@@ -270,16 +305,11 @@ require('lazy').setup(
           auto_close_after = 15, -- close after 15 seconds
           hint_enable = false,
           handler_opts = { border = as.style.current.border },
-          toggle_key = "<M-'>",
+          toggle_key = "<M-,>",
           select_signature_key = '<M-n>',
         })
       end,
     },
-    --   {
-    --   "nvim-lualine/lualine.nvim",
-    --   config = conf('lualine'),
-    --   wants = "nvim-web-devicons",
-    -- },
 		{
       'hrsh7th/nvim-cmp',
       event = { 'InsertEnter' },
@@ -326,7 +356,7 @@ require('lazy').setup(
     },
 		-- }}}
 		-----------------------------------------------------------------------------//
-		-- Testing and Debugging {{{1
+		-- Testing and Debugging {{{
 		-----------------------------------------------------------------------------//
 		{
        'nvim-neotest/neotest',
@@ -355,12 +385,13 @@ require('lazy').setup(
         {
          'mfussenegger/nvim-dap-python',
           ft = 'python',
+          -- config = function() require('dap-python').setupzr
         },
       },
     },
 		--}}}
 		-----------------------------------------------------------------------------//
-		-- UI {{{1
+		-- UI {{{
 		-----------------------------------------------------------------------------//
 		{
       'lukas-reineke/virt-column.nvim',
@@ -389,9 +420,9 @@ require('lazy').setup(
       config = conf('ufoo'),
     },
 		-- }}}
-		--------------------------------------------------------------------------------
-		-- Utilities {{{1
-		--------------------------------------------------------------------------------
+		---------------------------------------------------------------------------
+		-- Utilities {{{
+		---------------------------------------------------------------------------
 		{ 'ii14/emmylua-nvim' },
 		{
       'chaoren/vim-wordmotion',
@@ -449,9 +480,6 @@ require('lazy').setup(
         }
       },
       config = true,
-      -- config = function()
-      --   require('fold-cycle').setup()
-      -- end,
     },
 		{
       'mfussenegger/nvim-treehopper',
@@ -543,7 +571,7 @@ require('lazy').setup(
     },
 		-- }}}
 		--------------------------------------------------------------------------------
-		-- Knowledge and task management {{{1
+		-- Knowledge and task management {{{
 		--------------------------------------------------------------------------------
 		{
       'nvim-neorg/neorg',
@@ -558,13 +586,13 @@ require('lazy').setup(
 		{ 'nvim-orgmode/orgmode', config = conf('orgmode') },
 		{
       'lukas-reineke/headlines.nvim',
-      ft = { 'org', 'norg', 'markdown', 'yaml', 'quarto' },
+      ft = { 'org', 'norg', 'text', 'markdown', 'yaml', 'quarto' },
       -- init = conf('headlines').setup,
       config = conf('headlines').config,
     },
 		-- }}}
 		--------------------------------------------------------------------------------
-		-- Profiling & Startup {{{1
+		-- Profiling & Startup {{{
 		--------------------------------------------------------------------------------
 		{
       'dstein64/vim-startuptime',
@@ -577,7 +605,7 @@ require('lazy').setup(
     },
 		-- }}}
 		--------------------------------------------------------------------------------
-		-- TPOPE {{{1
+		-- TPOPE {{{
 		--------------------------------------------------------------------------------
 		{
       'kristijanhusak/vim-dadbod-ui',
@@ -603,7 +631,7 @@ require('lazy').setup(
 		{ 'tpope/vim-apathy' },
 		-- }}}
 		-----------------------------------------------------------------------------//
-		-- Filetype Plugins {{{1
+		-- Filetype Plugins {{{
 		-----------------------------------------------------------------------------//
 		---@eo {{{
 		{
@@ -611,7 +639,7 @@ require('lazy').setup(
       config = function()
         vim.g['latex_to_unicode_auto'] = 0
         vim.g['latex_to_unicode_tab'] = 0
-        vim.g['latex_to_unicode_file_types'] = { "julia", "python", "rust", "nim" }
+        vim.g['latex_to_unicode_file_types'] = { "julia", "python", "rust", "nim", "markdown", "quarto", "org", "norg" }
         vim.g['julia_indent_align_brackets'] = true
         vim.g['julia_indent_align_funcargs'] = true
         vim.g['julia_indent_align_import'] = true
@@ -724,37 +752,28 @@ require('lazy').setup(
     },
 		{
       'michaelb/sniprun',
-      pin = true,
+      -- pin = true,
       build = './install.sh 1',
       init = conf('snipran'),
       config = function()
-        vim.keymap.set({'v', 'x', 'o'}, '<localleader>r', '<Plug>(SnipRun)')
-        vim.keymap.set('n', '<leader>,', '<Plug>(SnipRunOperator)')
-        vim.keymap.set('n', '<leader>,,', '<Plug>(SnipRun)')
+        -- vim.keymap.set({'v', 'x', 'o'}, '<localleader>r', '<Plug>(SnipRun)', { nowait = true })
+        -- vim.keymap.set('n', '<localleader>,', '<Plug>(SnipRunOperator)', { nowait = true })
+        -- vim.keymap.set('n', '<localleader>,', '<Plug>(SnipRun)', { nowait = true })
         vim.keymap.set('n', '<F5>', ":let b:caret=winsaveview() <CR> | :%SnipRun <CR>| :call winrestview(b:caret) <CR>", {})
+        vim.keymap.set('n', '<F6>', [[:SnipReset<CR>]])
+        -- TODO: Probably need to use a functino here to make SnipInfo accept string input.
+        vim.keymap.set('n', '<F7>', [[:SnipInfo ]])
       end,
-      -- keys = {
-      --   {
-      --     -- "<localleader>r",
-      --     -- function()
-      --     --   return require('sniprun').run('n')
-      --     -- end,
-      --     -- expr = true,
-      --
-      --   },
-      --   {
-      --     "<localleader>rs",
-      --     function()
-      --       return require('sniprun').run('v')
-      --     end,
-      --     mode = 'v',
-      --   }
-      -- },
+      keys = {
+        { "<localleader>,", "<Plug>(SnipRun)", desc = "SnipRun", nowait = true },
+        { "<localleader>,", "<Plug>(SnipRunOperator)", nowait = true },
+        { "<localleader>r", "<Plug>(SnipRun)", mode = { "v", "x", "o" } },
+      },
     },
 		{
       'GCBallesteros/jupytext.vim',
       init = function()
-        vim.g['jupytext_fmt'] = 'py'
+        vim.g['jupytext_fmt'] = 'py' -- for now until qtconsole works
       end
     },
 		{ 'GCBallesteros/vim-textobj-hydrogen', dependencies = { 'kana/vim-textobj-user' } },
@@ -851,69 +870,52 @@ require('lazy').setup(
       lazy = false,
       build = ':TSUpdate',
       config = conf('treesitter'),
-    },
-    {
-      'nvim-treesitter/playground',
-      cmd = { 'TSHighlightCapturesUnderCursor', 'TSPlayground' },
-      config = function()
-        vim.keymap.set('n', '<S-M-x>', '<Cmd>TSHighlightCapturesUnderCursor<CR>')
-      end,
-    },
-    { 'mrjones2014/nvim-ts-rainbow' },
-    { 'nvim-treesitter/nvim-treesitter-textobjects' },
-    { 'rrethy/nvim-treesitter-endwise' },
-    {
-      'andymass/vim-matchup',
-      event = 'BufReadPost',
-      config = function()
-        vim.g['matchup_matchparen_offscreen'] = {
-          method = 'popup',
-          fullwidth = 1,
-          highlight = 'OffscreenMatchPopup',
-        }
-        vim.g['matchup_matchparen_deferred'] = 5
-        vim.g['matchup_motion_cursor_end'] = 1
-        vim.g['matchup_surround_enabled'] = 1
-        -- vim.g['matchup_matchparen_nomode'] = 'i'
-        vim.g['matchup_matchparen_deferred_show_delay'] = 100
-        vim.g['matchup_matchparen_deferred_hide_delay'] = 100
-      end,
-    },
-    {
-      'mizlan/iswap.nvim',
-      cmd = { 'ISwap', 'ISwapWith', 'ISwapNode' },
-      -- keys = {
-      --   { vim.keymap.set('n', '<localleader>iw', "<cmd>ISwapWith<CR>", { noremap = true }) },
-      --   { vim.keymap.set('n', '<localleader>ia', "<Cmd>ISwap<CR>",     { noremap = true }) },
-      --   { vim.keymap.set('n', '<localleader>in', "<Cmd>ISwapNode<CR>", { noremap = true }) }
-      -- },
-      config = function()
-        vim.keymap.set('n', '<localleader>iw', "<cmd>ISwapWith<CR>", {noremap = true})
-        vim.keymap.set('n', '<localleader>ia', "<Cmd>ISwap<CR>", {noremap = true})
-        vim.keymap.set('n', '<localleader>in', "<Cmd>ISwapNode<CR>", { noremap = true })
-        -- as.nnoremap('<leader>iw', '<Cmd>ISwapWith<CR>', 'ISwap: swap with')
-        -- as.nnoremap('<leader>ia', '<Cmd>ISwap<CR>', 'ISwap: swap any')
-      end,
-    },
-    {
-      'm-demare/hlargs.nvim',
-      config = function()
-        -- require('as.highlights').plugin('hlargs', {
-        --   theme = {
-        --     ['*'] = { { Hlargs = { italic = true, foreground = '#A5D6FF' } } },
-        --     ['horizon'] = { { Hlargs = { italic = true, foreground = { from = 'Normal' } } } },
-        --   },
-        -- })
-        require('hlargs').setup({
-          excluded_argnames = {
-            declarations = { 'use', 'use_rocks', '_' },
-            usages = {
-              go = { '_' },
-            -- lua = { 'self', 'use', 'use_rocks', '_' },
-            },
-          },
-        })
-      end,
+      dependencies = {
+        {
+          'nvim-treesitter/playground',
+          cmd = { 'TSHighlightCapturesUnderCursor', 'TSPlayground' },
+          config = function()
+            vim.keymap.set('n', '<S-M-x>', '<Cmd>TSHighlightCapturesUnderCursor<CR>')
+          end,
+        },
+        { 'mrjones2014/nvim-ts-rainbow' },
+        { 'nvim-treesitter/nvim-treesitter-textobjects' },
+        { 'rrethy/nvim-treesitter-endwise' },
+        {
+          'andymass/vim-matchup',
+          event = 'BufReadPost',
+          config = function()
+            vim.g['matchup_matchparen_deferred'] = 5
+            vim.g['matchup_matchparen_offscreen'] = {
+              method = 'popup',
+              fullwidth = 1,
+              highlight = 'OffscreenMatchPopup',
+            }
+            vim.g['matchup_motion_cursor_end'] = 1
+            vim.g['matchup_surround_enabled'] = 1
+            -- vim.g['matchup_matchparen_nomode'] = 'i'
+            vim.g['matchup_matchparen_deferred_show_delay'] = 100
+            vim.g['matchup_matchparen_deferred_hide_delay'] = 100
+          end,
+        },
+        {
+          'mizlan/iswap.nvim',
+          cmd = { 'ISwap', 'ISwapWith', 'ISwapNode' },
+          -- keys = {
+          --   { vim.keymap.set('n', '<localleader>iw', "<cmd>ISwapWith<CR>", { noremap = true }) },
+          --   { vim.keymap.set('n', '<localleader>ia', "<Cmd>ISwap<CR>",     { noremap = true }) },
+          --   { vim.keymap.set('n', '<localleader>in', "<Cmd>ISwapNode<CR>", { noremap = true }) }
+          -- },
+          config = function()
+            vim.keymap.set('n', '<leader>iw', "<cmd>ISwapWith<CR>", {noremap = true})
+            vim.keymap.set('n', '<leader>ia', "<Cmd>ISwap<CR>", {noremap = true})
+            vim.keymap.set('n', '<leader>in', "<Cmd>ISwapNode<CR>", { noremap = true })
+            -- as.nnoremap('<leader>iw', '<Cmd>ISwapWith<CR>', 'ISwap: swap with')
+            -- as.nnoremap('<leader>ia', '<Cmd>ISwap<CR>', 'ISwap: swap any')
+          end,
+        },
+        { 'm-demare/hlargs.nvim', config = true },
+      },
     },
     {
       'aarondiel/spread.nvim',
@@ -951,14 +953,14 @@ require('lazy').setup(
       'TimUntersberger/neogit',
       lazy = true,
       cmd = 'Neogit',
-      -- keys = { '<localleader>gs', '<localleader>gl', '<localleader>gp' },
+      keys = { '<localleader>gs', '<localleader>gl', '<localleader>gp' },
       dependencies = { 'nvim-lua/plenary.nvim' },
       config = conf('neogit'),
     },
 		{
       'sindrets/diffview.nvim',
       lazy = true,
-      -- cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
+      cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
       init = conf('dyffview').setup,
       config = conf('dyffview').config,
     },
@@ -1034,7 +1036,7 @@ require('lazy').setup(
 		--------------------------------------------------------------------------------
 		-- Themes  {{{1
 		--------------------------------------------------------------------------------
-		-- { 'LunarVim/horizon.nvim', lazy = false, priority = 1000 },
+		{ 'LunarVim/horizon.nvim' },
 		{
        'theHamsta/nvim-semantic-tokens',
         config = function()
@@ -1133,13 +1135,6 @@ require('lazy').setup(
 )
 
     -----------------------------------------------------
-    -- {{{ dead to me, the unloved
-		-- use({
-		--   'phaazon/hop.nvim',
-		--   -- event = 'BufRead',
-		--   keys = { { 'n', 'S' }, { 'n', 'f' }, { 'n', 'F' } },
-		--   config = conf('hop'),
-		-- }),
     -- use({
     --   'kristijanhusak/vim-dadbod-completion',
     --   -- after = { "nvim-cmp" },
@@ -1152,7 +1147,6 @@ require('lazy').setup(
     --     })
     --   end
     -- })
-    --  use({
     -- use({
     --   'luk400/vim-jukit',
     --   disable = true,
@@ -1172,4 +1166,4 @@ require('lazy').setup(
     --   end,
     -- })
 
--- vim: set ft=lua fdm=marker ts=2 sts=2 sw=2 nospell;
+-- vim:ft=lua fdls=3 ts=2 sts=2 sw=2 nospell;

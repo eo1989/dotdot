@@ -1,17 +1,19 @@
 if not as then return end
-
+-- plugin = 'nvim-cmp'},
 as.ftplugin_conf('cmp', function(cmp)
   cmp.setup.filetype('org', {
-    sources = cmp.config.sources({
-      { name = 'orgmode' },
-      { name = 'latex_symbols' },
-      { name = 'luasnip' },
-      -- { name = 'cmp_greek' },
-      -- { name = 'spell' },
-      -- { name = 'emoji' },
-    }, {
+      sources = cmp.config.sources({
+        {
+          { name = 'orgmode' },
+          { name = 'luasnip' },
+          { name = 'latex_symbols' },
+          -- { name = 'cmp_greek' },
+          -- { name = 'spell' },
+          -- { name = 'emoji' },
+        }, {
       { name = 'buffer' },
       { name = 'path' },
+      },
     }),
   })
 end)

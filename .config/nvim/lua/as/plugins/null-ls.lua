@@ -7,7 +7,7 @@ return function()
       -- null_ls.builtins.formatting.black, -- .with({ extra_args = { '--fast', '-' } }),
       null_ls.builtins.formatting.black, -- defaults are just fine
       null_ls.builtins.diagnostics.flake8.with({
-        method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
+        -- method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
         extra_args = { '--config', vim.fn.expand('~/.flake8') },
         runtime_condition = function()
           return vim.fn.executable('flake8')

@@ -17,7 +17,7 @@ return function()
     -- repl_disable = {},
     interpreter_options = {
       Python3_fifo = {
-        interpreter = vim.fs.normalize('~/.local/pipx/venvs/jupyterlab/bin/python'),
+        interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
         -- venv = { '~/.pyenv/versions/3.9.0/envs/pynvim', '~/.local/pipx/venvs' },
         venv = {
           '~/.local/pipx/venvs/jupyterlab',
@@ -26,11 +26,18 @@ return function()
           '~/.pyenv/versions/3.9.0/envs',
           '~/.pyenv/versions/3.9.7/envs'
         },
+        -- venv = vim.fn.expand(vim.tbl_values({
+        --   '~/.local/pipx/venvs/jupyterlab',
+        --   '~/.local/pipx/venvs',
+        --   '~/.pyenv/versions/3.10.9/envs',
+        --   '~/.pyenv/versions/3.9.0/envs',
+        --   '~/.pyenv/versions/3.9.7/envs'
+        -- })),
         error_truncate = 'auto',
       },
       Python3_jupyter = {
-        interpreter = vim.fs.normalize('~/.local/pipx/venvs/jupyterlab/bin/python'),
-        venv = { '~/.local/pipx/venvs/jupyterlab' },
+        interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
+        venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
         error_truncate = 'auto',
       },
       Julia_original = {
@@ -38,15 +45,14 @@ return function()
                        -- directory must contain a {Project,Manifest}.toml
         interpreter = "/usr/local/bin/julia",
       },
+      -- todo: make this from a function
      -- Julia_jupyter = {
      --   from the docs:
      --   jupyter-kernel --kernel=julia-1.8 --KernelManager.connection_file=$HOME/.cache/sniprun/julia_jupyter/kernel_sniprun.json
      --   interpreter = os.getenv('HOME') .. '/home/eo/.local/this'
      -- },
 
-      GFM_original = {
-        default_filetype = 'python'
-      },
+      GFM_original = { default_filetype = 'python' },
     },
     -- borders = as.style.current.border,
     display = {

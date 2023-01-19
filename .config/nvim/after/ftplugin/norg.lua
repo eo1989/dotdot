@@ -21,7 +21,7 @@ end
 --   })
 -- end)
 
-as.ftplugin_conf({ 'cmp', plugin = 'nvim-cmp' }, function(cmp)
+as.ftplugin_conf( 'cmp', function(cmp)
   cmp.setup.filetype('norg', {
     sources = cmp.config.sources({
       { name = 'neorg' },

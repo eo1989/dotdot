@@ -3,11 +3,6 @@ local o, g, opt, fn = vim.o, vim.g, vim.opt, vim.fn
 -- opt.isfname:append('@-@')
 -- opt.lazyredraw = true
 
--- g['python_highlight_all'] = 1
--- g['transparency'] = true
-g['python_recommended_style'] = 0
--- g['python_host_skip_check'] = 1
-
 -- if vim.fn.has('nvim-0.9.0') == 1 then
 --   vim.opt.splitkeep = 'screen'
 --   vim.o.shortmess = 'AafilnxtToOFWIcC'

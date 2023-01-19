@@ -170,8 +170,8 @@ return function()
     border = border,
     winhighlight = table.concat({
       'Normal:NormalFloat',
-      'FloatBorder:FloatBorder',
-      'CursorLine:CmpCursorLine',
+      'FloatBorder:FloatBG',
+      'CursorLine:Visual',
       'Search:None',
     }, ','),
   }
@@ -182,7 +182,7 @@ return function()
       throttle = 10,
     },
     view = { entries = { name = 'custom', selection_order = 'near_cursor' } },
-    experimental = { ghost_text = true },
+    experimental = { ghost_text = false },
     preselect = cmp.PreselectMode.None, -- or None
     window = {
       completion = {
@@ -269,24 +269,26 @@ return function()
       format = function(entry, vim_item)
         local kind = require('lspkind').cmp_format({
           mode = 'symbol_text',
+          -- mode = 'symbol',
           maxwidth = 50,
-          symbol_map = { Copilot = '[]' }
+          ellipsis_char = ellipsis,
+          symbol_map = { copilot = ' ' }
         })(entry, vim_item)
         local strings = vim.split(kind.kind, '%s', { trimempty = true })
         kind.kind = ' ' .. strings[1] .. ' '
-        kind.menu = '    (' .. strings[2] .. ')'
+        kind.menu = '  (' .. strings[2] .. ')'
         vim_item.dup = ({
           otter = 1,
           nvim_lsp = 1,
           nvim_lua = 1,
           path = 0,
-          cmp_tabnine = 1,
+          cmp_tabnine = 0,
           copilot = 0,
           luasnip = 1,
           cmdline = 0,
           cmdline_history = 0,
           rg = 0,
-          norg = 0,
+          neorg = 0,
           orgmode = 0,
           buffer = 1,
           cmp_zsh = 0,
@@ -316,7 +318,7 @@ return function()
           rg = '[Rg]',
           git = '[Git]',
           cmp_zsh = '[Zsh]',
-          cmp_pandoc_references = '[🐼 refs]',
+          cmp_pandoc_references = '[🐼 ref]',
           -- copilot = '[]',
           -- nvim_lsp_document_symbol = ['Doc'],
         })[entry.source.name]
@@ -326,30 +328,18 @@ return function()
     },
     sources = cmp.config.sources(
       {
-        { name = 'nvim_lsp', group_index = 2 },
+        { name = 'nvim_lsp' },
+        -- { name = 'nvim_lsp', group_index = 1 },
         -- { name = 'nvim_lsp', priority = 1, group_index = 1 },
-        { name = 'luasnip', group_index = 2 },
+        { name = 'luasnip' },
+        -- { name = 'luasnip', group_index = 1 },
         -- { name = 'luasnip', group_index = 1, priority = 1 },
         { name = 'path', group_index = 2 },
         -- { name = 'path', priority = 2, group_index = 1 },
-        -- { name = 'copilot', group_index = 2 },
+        { name = 'copilot', group_index = 2 },
         { name = 'cmp_tabnine', group_index = 2 },
         -- { name = 'cmp_tabnine', group_index = 1, priority = 2 },
       }, {
-        {
-          name = 'otter',
-          ft = { 'quarto' }
-        },
-        {
-          name = 'orgmode'
-        },
-        {
-          name = 'neorg'
-        },
-        {
-          name = 'latex_symbols',
-          ft = { 'julia', 'markdown', 'quarto' },
-        },
         {
           name = 'buffer',
           keyword_length = 2,
@@ -358,19 +348,6 @@ return function()
               return vim.api.nvim_list_bufs()
             end,
           },
-        },
-        {
-          name = 'pandoc_references',
-          ft = { 'quarto', 'markdown' },
-          priority = 2,
-          keyword_length = 3,
-          group_index = 2,
-        },
-        {
-          name = 'cmp_zsh',
-          ft = { 'zsh' },
-          group_index = 1,
-          max_item_count = 5,
         },
       }),
     })
@@ -398,43 +375,13 @@ return function()
     sources = { { name = 'dap' } },
   })
 
-  require('cmp').setup.filetype({ 'sql' }, {
+  require('cmp').setup.filetype({ 'sql', 'mysql', 'plsql' }, {
     sources = {
       { name = 'vim-dadbod-completion' },
-      { name = 'nvim_lsp' }
+      { name = 'nvim_lsp' },
+      { name = 'luasnip' },
     }
   })
 
-  -- may have to remove some of these ft's and put them in after/ftplugin
-  -- require('cmp').setup.filetype({ 'org', 'norg' }, {
-  --   sources = {
-  --     { name = 'neorg' },
-  --     { name = 'orgmode' },
-  --     -- { name = 'latex_symbols' },
-  --     -- { name = 'nvim_lsp' },
-  --   },
-  -- })
-
-  -- require('cmp').setup.filetype({'zsh'}, {
-  --   sources = {
-  --     { name = 'cmp_zsh' },
-  --     { name = 'nvim_lsp' },
-  --     {
-  --       { name = 'path' },
-  --       { name = 'buffer' },
-  --     },
-  --   },
-  -- })
-
-  -- require('cmp').setup.filetype({'julia', 'markdown', 'latex'}, {
-  --   sources = {
-  --     { name = 'latex_symbols', group_index = 1, max_item_count = 4 },
-  --     { name = 'luasnip' },
-  --     { name = 'nvim_lsp' },
-  --     { name = 'path' },
-  --     { name = 'buffer' },
-  --   },
-  -- })
-
 end
--- vim:set fdm=marker fdl=0
+-- vim:fdm=marker:fdl=1

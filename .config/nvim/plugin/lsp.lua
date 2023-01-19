@@ -1,4 +1,4 @@
----@diagnostic disable: duplicate-set-field
+---@diagnostic disable: duplicate-set-field, undefined-field
 if not as then return end
 
 local lsp = vim.lsp
@@ -28,7 +28,7 @@ local FEATURES = {
   CODELENS = { name = 'codelens', provider = 'codeLensProvider' },
   FORMATTING = { name = 'formatting', provider = 'documentFormattingProvider' },
   REFERENCES = { name = 'references', provider = 'documentHighlightProvider' },
-  SEMANTIC_TOKENS = { name = 'semantictokens', provider = 'semanticTokensProvider' },
+  -- SEMANTIC_TOKENS = { name = 'semantictokens', provider = 'semanticTokensProvider' },
 }
 
 ---@param bufnr integer
@@ -65,12 +65,13 @@ end
 
 local function formatting_filter(client)
   local exceptions = ({
-    sql = { 'sqls' },
+    sql = { 'null-ls' }, -- 'sqls'
     lua = { 'sumneko_lua' },
     proto = { 'null-ls' },
-    -- python = { 'pyright','pylance' },
-    -- python = { 'pylance' },
-    python = { 'pyright' },
+    -- python = { 'pyright','pylsp' }, -- curious if both can be printed and
+    -- used
+    python = { 'null-ls' },
+    -- python = { 'pylsp' },
   })[vim.bo.filetype]
 
   if not exceptions then return true end
@@ -86,6 +87,12 @@ local function format(opts)
     filter = formatting_filter,
   })
 end
+
+-- never request typescript-language-server for formatting EXAMPLE
+--[[ vim.lsp.buf.format {
+  filter = function(client) return client.name ~= 'tsserver' end
+} ]]
+
 
 --- Autocommands are created per buffer per feature, i.e. if buffer 8 attaches an LSP server
 --- then an augroup with the pattern `LspCommands_8_{FEATURE}` will be created. These augroups are
@@ -113,7 +120,7 @@ local function setup_autocommands(client, bufnr)
     [FEATURES.FORMATTING.name] = { clients = {}, group_id = nil },
     [FEATURES.DIAGNOSTICS.name] = { clients = {}, group_id = nil },
     [FEATURES.REFERENCES.name] = { clients = {}, group_id = nil },
-    [FEATURES.SEMANTIC_TOKENS.name] = { clients = {}, group_id = nil },
+    -- [FEATURES.SEMANTIC_TOKENS.name] = { clients = {}, group_id = nil },
   })
 
   local augroup = augroup_factory(bufnr, client, events)
@@ -238,7 +245,7 @@ local function setup_mappings(_, bufnr)
   vim.keymap.set({ 'n', 'x' }, '<leader>ca', lsp.buf.code_action, with_desc('lsp: code action'))
   as.nnoremap('<leader>rf', format, with_desc('lsp: format buffer'))
   as.nnoremap('gd', lsp.buf.definition, with_desc('lsp: definition'))
-  as.nnoremap('gy', lsp.buf.declaration, with_desc('lsp: definition'))
+  as.nnoremap('gy', lsp.buf.declaration, with_desc('lsp: declaration'))
   as.nnoremap('gr', lsp.buf.references, with_desc('lsp: references'))
   as.nnoremap('K', lsp.buf.hover, with_desc('lsp: hover'))
   as.nnoremap('g0', lsp.buf.document_symbol, with_desc('lsp: document symbol'))
@@ -268,23 +275,23 @@ local function setup_plugins(client, bufnr)
   local hints_ok, hints = pcall(require, 'lsp-inlayhints')
   if hints_ok then hints.on_attach(client, bufnr) end
 
-  local caps = client.server_capabilities
+  -- local caps = client.server_capabilities
   -- local semantics_mmk, semantics = pcall(require, 'nvim-semantic-tokens')
-  local semantics_mmk, semantics = pcall(require, 'as.plugins.semantictokens')
-  if semantics_mmk then
-    if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
-      local augroup = vim.api.nvim_create_augroup("SemanticTokens", {})
-      vim.api.nvim_create_autocmd("TextChanged", {
-        group = augroup,
-        buffer = bufnr,
-        callback = function()
-          vim.lsp.buf.semantic_tokens_full()
-        end,
-      })
-      -- fire it first time on load as well
-      vim.lsp.buf.semantic_tokens_full()
-    end
-  end
+  -- local semantics_mmk, semantics = pcall(require, 'as.plugins.semantictokens')
+  -- if semantics_mmk then
+  --   if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+  --     local augroup = vim.api.nvim_create_augroup("SemanticTokens", {})
+  --     vim.api.nvim_create_autocmd("TextChanged", {
+  --       group = augroup,
+  --       buffer = bufnr,
+  --       callback = function()
+  --         vim.lsp.buf.semantic_tokens_full()
+  --       end,
+  --     })
+  --     -- fire it first time on load as well
+  --     vim.lsp.buf.semantic_tokens_full()
+  --   end
+  -- end
 end
 
 -- Add buffer local mappings, autocommands etc for attaching servers
@@ -305,10 +312,10 @@ local client_overrides = {
   sqls = function(client, bufnr)
     require('sqls').on_attach(client, bufnr)
   end,
-  pylance = function(client, bufnr)
-  --  require('as.pylance_').on_attach(client, bufnr)
-   require('as.custom_py.pylance').on_attach(client, bufnr)
-  end
+  -- pylance = function(client, bufnr)
+  -- --  require('as.pylance_').on_attach(client, bufnr)
+  --  require('as.custom_py.pylance').on_attach(client, bufnr)
+  -- end
 }
 
 as.augroup('LspSetupCommands', {
@@ -324,17 +331,6 @@ as.augroup('LspSetupCommands', {
       if client_overrides[client.name] then
         client_overrides[client.name](client, bufnr)
       end
-      -- if client.server_capabilities.semanticTokensProvider and client.server_capabilities.semanticTokensProvider.full then
-      --   local augroup = vim.api.nvim_create_augroup("SemanticTokens", {})
-      --   vim.api.nvim_create_autocmd({ "TextChanged", "CursorHold", "InsertLeave"}, {
-      --     group = augroup,
-      --     buffer = 0,
-      --     callback = function()
-      --       vim.lsp.buf.semantic_tokens_full()
-      --     end,
-      --   })
-      --   vim.lsp.buf.semantic_tokens_full()
-      -- end
     end,
   },
   {
@@ -372,7 +368,10 @@ as.augroup('LspSetupCommands', {
 local command = as.command
 
 command('LspFormat', function()
-  format({ bufnr = 0, async = true })
+  -- Note: setting async = true means the method wont block, default is false.
+  -- 'Editing the buffer while formatting asynchronously can lead to unexpected
+  -- changes.'
+  format({ bufnr = 0, async = false })
 end)
 
 do
@@ -423,7 +422,7 @@ local function sign(opts)
     texthl = opts.highlight,
     numhl = opts.highlight .. 'Nr',
     culhl = opts.highlight .. 'CursorNr',
-    -- linehl = opts.highlight .. 'Line',
+    linehl = opts.highlight .. 'Line',
   })
 end
 
@@ -506,7 +505,7 @@ diagnostic.config({
     max_height = max_height,
     border = border,
     focusable = false,
-    source = 'always',
+    source = 'if_many', -- 'if_many', 'always'
     prefix = function(diag, i, _)
       local level = diagnostic.severity[diag.severity]
       local prefix = fmt('%d. %s ', i, icons[level:lower()])
@@ -531,22 +530,22 @@ diagnostic.config({
 -- end
 
 
-lsp.handlers['textDocument/hover'] = function(...)
-  local hover_handler = lsp.with(lsp.handlers.hover, {
-    border = border,
-    max_width = max_width,
-    max_height = max_height,
-    stylize_markdown = true,
-    syntax = "lsp_markdown"
-  })
-  vim.b.lsp_hover_buf, vim.b.lsp_hover_win = hover_handler(...)
-end
+-- lsp.handlers['textDocument/hover'] = function(...)
+--   local hover_handler = lsp.with(lsp.handlers.hover, {
+--     border = border,
+--     max_width = max_width,
+--     max_height = max_height,
+--     stylize_markdown = true,
+--     syntax = "lsp_markdown"
+--   })
+--   vim.b.lsp_hover_buf, vim.b.lsp_hover_win = hover_handler(...)
+-- end
 
--- lsp.handlers["textDocument/hover"] = lsp.with(lsp.handlers.hover, {
---   stylize_markdown = true,
---   syntax = "lsp_markdown",
---   border = "single",
--- })
+lsp.handlers["textDocument/hover"] = lsp.with(lsp.handlers.hover, {
+  stylize_markdown = true,
+  syntax = "lsp_markdown",
+  border = "single",
+})
 
 lsp.handlers['textDocument/signatureHelp'] = lsp.with(lsp.handlers.signature_help, {
   border = border,
@@ -559,7 +558,7 @@ lsp.handlers['window/showMessage'] = function(_, result, ctx)
   local lvl = ({ 'ERROR', 'WARN', 'INFO', 'DEBUG' })[result.type]
   vim.notify(result.message, lvl, {
     title = 'LSP | ' .. client.name,
-    timeout = 3000,
+    timeout = 2000,
     keep = function()
       return lvl == 'ERROR' or lvl == 'WARN'
     end,

@@ -5,12 +5,13 @@ return function()
   -- NOTE: this is currently broken, do not set to true
   vim.g.skip_ts_default_groups = false
 
-  local parsers = require('nvim-treesitter.parsers')
-  local ft_to_parser = parsers.filetype_to_parsername -- ()
-  ft_to_parser['zsh'] = 'bash'
+  require('nvim-treesitter.parsers').filetype_to_parsername['zsh'] = 'bash'
 
-  local parser_configs = parsers.get_parser_configs()
+  -- local parsers = require('nvim-treesitter.parsers')
+  -- local ft_to_parser = parsers.filetype_to_parsername -- ()
+  -- ft_to_parser['zsh'] = 'bash'
 
+  -- local parser_configs = parsers.get_parser_configs()
   -- parser_configs['norg_table'] = {
   --   install_info = {
   --     url = 'https://github.com/nvim-neorg/tree-sitter-norg-table',
@@ -19,14 +20,13 @@ return function()
   --   }
   -- }
 
-
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
       'awk',
-			'cpp',
-			'json',
-			'http',
-			'query',
+      'cpp',
+      'json',
+      'http',
+      'query',
       'diff',
       'lua',
       'go',
@@ -47,7 +47,7 @@ return function()
       'yaml',
       'toml',
       'regex',
-			'gitignore',
+      'gitignore',
     },
     auto_install = true,
     highlight = {
@@ -85,10 +85,11 @@ return function()
           -- ['iC'] = '@conditional.inner',
 
           ['am'] = { query = '@parameter.outer', desc = 'ts: all parameter' },
-          ['im'] = { query = '@parameter.inner', desc = 'ts: inner parameter '},
+          ['im'] = { query = '@parameter.inner', desc = 'ts: inner parameter'},
           -- FIXME: this is unusable
           -- https://github.com/nvim-treesitter/nvim-treesitter-textobjects/issues/133 is resolved
           -- ['ax'] = '@comment.outer',
+          ['as'] = { '@statement.outer', desc = 'ts: all statement' },
         },
       },
       swap = {
@@ -102,38 +103,55 @@ return function()
           ['<localleader>sF'] = '@function.outer',
         },
       },
-      move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-          [']m'] = '@function.outer',
-          [']M'] = '@class.outer',
-        },
-        goto_previous_start = {
-          ['[m'] = '@function.outer',
-          ['[M'] = '@class.outer',
-        },
-      },
+      -- move = {
+      --   enable = true,
+      --   set_jumps = true, -- whether to set jumps in the jumplist
+      --   goto_next_start = {
+      --     [']m'] = '@function.outer',
+      --     [']M'] = '@class.outer',
+      --   },
+      --   goto_previous_start = {
+      --     ['[m'] = '@function.outer',
+      --     ['[M'] = '@class.outer',
+      --   },
+      -- },
     },
     rainbow = {
       enable = true,
-      colors = {
-        'RoyalBlue2',
-        'DarkOrange1',
-        'SeaGreen2',
-        'Firebrick',
-        'DarkOrchid2',
-      },
+      extended_mode = true,
+      max_file_lines = nil,
+      -- colors = {
+      --   'RoyalBlue2',
+      --   'DarkOrange1',
+      --   'SeaGreen2',
+      --   'Firebrick',
+      --   'DarkOrchid2',
+      -- },
     },
     autopairs = { enable = true },
     endwise = { enable = true },
     matchup = {
       enable = true,
       disable = { 'julia' },
-      disable_virtual_text = true,
+      disable_virtual_text = false,
     },
     playground = {
+      enable = true,
+      disable = {},
       persist_queries = true,
+      updatetime = 25,
+      keybindings = {
+        toggle_query_editor = "o",
+        toggle_hl_groups = "i",
+        toggle_injected_languages = "t",
+        toggle_anonymous_nodes = "a",
+        toggle_language_display = "I",
+        focus_language = "f",
+        unfocus_language = "F",
+        update = "R",
+        goto_node = "<cr>",
+        show_help = "?",
+      },
     },
     query_linter = {
       enable = true,

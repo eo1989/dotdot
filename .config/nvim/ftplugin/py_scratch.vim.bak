@@ -1,6 +1,0 @@
-function ScratchCompletion(A, L, P)
-  return luaeval("require('py_scratch').complete(_A)", a:L)
-endfunction
-
-command -bang -nargs=1 -complete=custom,ScratchCompletion ScratchNew :lua require('py_scratch.buffer').create("<args>")
-command -bang -nargs=0 ScratchEval :lua require('py_scratch.buffer').eval()

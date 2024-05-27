@@ -1,0 +1,17 @@
+# [tool.poetry]
+# python = "^3.12"                          # "^3.12"
+# build = "poetry build"
+# files = ["pyproject.toml", "poetry.lock"]
+
+[tool.ruff]
+line-length = 80
+extend = "*.ipynb"
+target-version = 'py312'
+trailing-comma = true
+
+[tool.black]
+line-length = 80
+target-version = 'py312'
+
+[tool.mdformat]
+number = true

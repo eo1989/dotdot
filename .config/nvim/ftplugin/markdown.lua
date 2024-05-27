@@ -1,1 +1,5 @@
-vim.cmd [[setlocal conceallevel=2]] -- not sure if this will work with markdownpreview
+local ok, quarto = pcall(require, 'quarto')
+if ok then quarto.activate() end
+
+vim.keymap.set({ 'o', 'x' }, 'il', "<cmd>lua require('various-textobjs').mdlink('inner')<CR>", { buffer = true })
+vim.keymap.set({ 'o', 'x' }, 'al', "<cmd>lua require('various-textobjs').mdlink('outer')<CR>", { buffer = true })

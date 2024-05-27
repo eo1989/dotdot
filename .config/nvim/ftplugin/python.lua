@@ -1,52 +1,23 @@
-local optl = vim.opt_local
-local bo = vim.bo
-vim.wo.spell = false
--- optl.commentstring = '#%s '
-optl.foldmethod = "syntax"
--- optl.foldexpr = "nvim_treesitter#foldexpr()"
+vim.b.slime_cell_delimiter = '#\\s\\=%%'
+-- tabstop = 4,
+-- textwidth = 79,
+-- shiftwidth = 4,
+-- expandtab = true,
+-- smarttab = true,
+-- conceallevel = 2,
+-- colorcolumn = '+1',
+-- foldmethod = 'indent'
 
-bo.shiftwidth = 4
-bo.tabstop = 4
-bo.softtabstop = 4
-bo.textwidth = 80
-bo.expandtab = true
-bo.smartindent = true
-optl.indentkeys = optl.indentkeys - { '0#' }
-optl.indentkeys = optl.indentkeys - { '<:>' }
--- optl.path = optl.path + { 'src/,**' }
--- vim.opt.path:append({ 'src/,$PWD/**' })
+-- vim.bo.textwidth = 79
+-- vim.b.textwidth = 79
+-- vim.opt_local.ts = 4 -- 8?
+-- vim.opt_local.sw = 4
+-- vim.opt_local.sts = 4
+-- vim.opt_local.et = true
+-- vim.opt_local.ai = true
+-- vim.opt_local.sta = true
+-- vim.opt_local.cc = '+1'
+-- vim.opt_global.fdm = 'syntax' -- indent?
+-- vim.opt_local.fdm = 'indent' -- syntax?
 
-vim.g['python_highlight_all'] = 1
--- vim.g['python_recommended_style'] = 0
-
--- vim.cmd([[
---   iabbrev improt import
---   iabbrev teh the
--- ]])
-
--- local wk = require("which-key")
--- with leader
--- wk.register({
---   -- r = { "<Plug>(SniprRunOperator)", "Run snip operator" },
---   r = { "<Plug>SniprRunOperator", "Run snip operator" },
---   s = {
---     name = "Runner/Py", -- optional?
---     s = { "<Plug>SnipRun<CR>", "Run snippet" },
---   }
--- }, { prefix = "<localleader>", mode = 'n' })
-
--- wk.register({
---   s = {
---     name = "Runner/Py", -- optional?
---     v = { "<cmd>lua require('sniprun').run('v')<CR>", "Sniprun visual selection"} -- :'<,'>SnipRun
---     },
---   }, { prefix = '<localleader>', mode = 'v' }
--- )
-
--- vim.cmd([[
--- highlight rightMargin term=bold ctermfg=blue guifg=blue
--- match rightMargin /.\%>80v/
---
--- higlight col8 ctermbg=grey guibggrey
--- match col8 /\%<8v.\%>7v/
--- ]])
+-- vim.cmd([[call matchadd('TabLineSel', '\%80v', 79)]])

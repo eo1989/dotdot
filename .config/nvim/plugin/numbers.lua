@@ -1,124 +1,44 @@
-if not as then
-  return
-end
--- Inspiration
--- 1. vim-relativity
--- 2. numbers.vim - https://github.com/myusuf3/numbers.vim/blob/master/plugin/numbers.vim
+if not eo then return end
+local ui = eo.ui
 
-local api = vim.api
+--- inspiration
+--- vim-relativity
+--- numbers.nvim - https://github.com/myusuf3/numbers.vim/blob/master/plugin/numbers.vim
+
+local api, fn = vim.api, vim.fn
 local M = {}
 
-local number_filetype_exclusions = {
-  'netrw',
-  'undotree',
-  'log',
-  'man',
-  'dap-repl',
-  'markdown',
-  'vimwiki',
-  'vim-plug',
-  'gitcommit',
-  'toggleterm',
-  'fugitive',
-  'coc-explorer',
-  'coc-list',
-  'list',
-  'NvimTree',
-  'startify',
-  'help',
-  'orgagenda',
-  'org',
-  'himalaya',
-  'Trouble',
-  'NeogitCommitMessage',
-  'NeogitRebaseTodo',
-}
-
-local number_buftype_exclusions = {
-  'prompt',
-  'terminal',
-  'help',
-  'nofile',
-  'acwrite',
-  'quickfix',
-}
-
-local number_buftype_ignored = { 'quickfix' }
-
-local function is_floating_win()
-  return vim.fn.win_gettype() == 'popup'
-end
+local function is_floating_win() return fn.win_gettype() == 'popup' end
 
 local is_enabled = true
 
----Determines whether or not a window should be ignored by this plugin
+--- Determines whether or not a window should be ignored
 ---@return boolean
-local function is_ignored()
-  return vim.tbl_contains(number_buftype_ignored, vim.bo.buftype) or is_floating_win()
-end
+local function is_ignored() return is_floating_win() end
 
 -- block list certain plugins and buffer types
 local function is_blocked()
-  local win_type = vim.fn.win_gettype()
+  local win_type = fn.win_gettype()
+  if not api.nvim_buf_is_valid(0) and not api.nvim_buf_is_loaded(0) then return true end
+  if win_type == 'command' or vim.wo.diff or vim.wo.previewwindow then return true end
 
-  if not api.nvim_buf_is_valid(0) and not api.nvim_buf_is_loaded(0) then
-    return true
-  end
-
-  if vim.wo.diff then
-    return true
-  end
-
-  if win_type == 'command' then
-    return true
-  end
-
-  if vim.wo.previewwindow then
-    return true
-  end
-
-  for _, ft in ipairs(number_filetype_exclusions) do
-    if vim.bo.ft == ft or string.match(vim.bo.ft, ft) then
-      return true
-    end
-  end
-
-  if vim.tbl_contains(number_buftype_exclusions, vim.bo.buftype) then
-    return true
-  end
-  return false
+  local decs = ui.decorations.get { ft = vim.bo.ft, bt = vim.bo.bt, setting = 'number' }
+  return decs.ft == false or decs.bt == false
 end
 
 local function enable_relative_number()
-  if not is_enabled then
-    return
-  end
-  if is_ignored() then
-    return
-  end
-  if is_blocked() then
-    vim.wo.number = false
-    vim.wo.relativenumber = false
-  else
-    vim.wo.number = true
-    vim.wo.relativenumber = true
-  end
+  if not is_enabled then return end
+  if is_ignored() then return end
+  local enabled = not is_blocked()
+  vim.wo.number, vim.wo.relativenumber = enabled, enabled
 end
 
 local function disable_relative_number()
-  if is_ignored() then
-    return
-  end
-  if is_blocked() then
-    vim.wo.number = false
-    vim.wo.relativenumber = false
-  else
-    vim.wo.number = true
-    vim.wo.relativenumber = false
-  end
+  if is_ignored() then return end
+  vim.wo.number, vim.wo.relativenumber = not is_blocked(), false
 end
 
-as.command('ToggleRelativeNumber', function()
+eo.command('ToggleRelativeNumber', function()
   is_enabled = not is_enabled
   if is_enabled then
     enable_relative_number()
@@ -127,21 +47,12 @@ as.command('ToggleRelativeNumber', function()
   end
 end)
 
-as.augroup('ToggleRelativeLineNumbers', {
-  {
-    event = { 'BufEnter', 'FileType', 'FocusGained', 'InsertLeave' },
-    pattern = { '*' },
-    command = function()
-      enable_relative_number()
-    end,
-  },
-  {
-    event = { 'FocusLost', 'BufLeave', 'InsertEnter', 'TermOpen' },
-    pattern = { '*' },
-    command = function()
-      disable_relative_number()
-    end,
-  },
+eo.augroup('ToggleRelativeNumber', {
+  event = { 'BufEnter', 'FileType', 'FocusGained', 'InsertLeave' },
+  command = enable_relative_number,
+}, {
+  event = { 'FocusLost', 'BufLeave', 'InsertEnter', 'TermOpen' },
+  command = disable_relative_number,
 })
 
 return M

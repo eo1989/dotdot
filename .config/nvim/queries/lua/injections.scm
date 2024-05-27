@@ -1,11 +1,18 @@
-; extends
-(function_call
-  name: (dot_index_expression
-          field: ((identifier) (#match? "augroup")))
-  arguments: (arguments
-        (table_constructor
-          (field
-            value: (table_constructor
-                     (field
-                       name: (identifier) @ident (#match? @ident "command")
-                       value: (string) @vim (#offset! @vim 0 1 0 -1)))))))
+;; extends
+
+
+;; (function_call
+;;  (dot_index_expression
+;;    table: (identifier) @_table_name
+;;    field: (identifier) @_field_name)
+;;  arguments: (arguments
+;;    (_)
+;;    (string("string_content") @luap))
+;;  (#eq? @_table_name "string")
+;;  (#any-of? @_field_name "find" "gsub" "gmatch" "match"))
+
+;; ((method_index_expression
+;;     table: (identifier)
+;;     method: (identifier) @_method_name)(arguments
+;;     (string("string_content") @luap))
+;;   (#any-of? @_method_name "find" "gsub" "match" "gmatch"))

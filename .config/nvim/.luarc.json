@@ -1,25 +1,40 @@
 {
     "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-    "Lua.diagnostics.disable": [
-        "missing-parameter",
-        "return-type-mismatch",
-        "param-type-mismatch",
-        "unused-local",
-        "missing-return",
-        "undefined-doc-param",
-        "cast-local-type",
-        "no-unknown"
+    "runtime.version": "LuaJIT",
+    "diagnostics.globals": [
+      "quarto",
+      "pandoc",
+      "bit",
+      "io",
+      "string",
+      "print",
+      "require",
+      "table",
+      "eo",
+      "vim",
+      "P",
+      "describe",
+      "it",
+      "before_each",
+      "after_each",
+      "pending",
+      "hs",
+      "spoon",
+      "map"
     ],
-    "Lua.diagnostics.globals": [
-        "vim",
-        "P",
-        "describe",
-        "it",
-        "before_each",
-        "after_each",
-        "packer_plugins",
-        "path",
-        "x"
+    "diagnostics.disable": [
+      "missing-fields",
+      "undefined-doc-param",
+      "doc-field-no-class",
+      "missing-parameter",
+      "return-type-mismatch",
+      "param-type-mismatch",
+      "cast-local-type",
+      "inject-field",
+      "undefined-global",
+      "duplicate-set-field",
+      "assign-type-mismatch",
+      "undefined-field"
     ],
-    "Lua.workspace.checkThirdParty": false
+    "workspace.checkThirdParty": false
 }

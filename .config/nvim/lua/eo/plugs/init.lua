@@ -1,53 +1,71 @@
 local api, cmd, fn, fmt = vim.api, vim.cmd, vim.fn, string.format
-local border, highlight, icons = eo.ui.current.border, eo.highlight, eo.ui.icons
+-- local border, highlight, icons = eo.ui.current.border, eo.highlight, eo.ui.icons
 
 return {
-  { 'nvim-lua/plenary.nvim', priority = 1004, lazy = false },
-  { 'MunifTanjim/nui.nvim', lazy = false },
-  -- 'grapp-dev/nui-components.nvim',
+  -- {
+  --   '~/.config/nvim/lua/eo/plugs/weather',
+  --   dependencies = { 'nvim-lua/plenary.nvim' },
+  --   opts = {
+  --     weather_icons = require('weather.other_icons').nerd_font,
+  --   },
+  -- },
+  -- {
+  --   'mikesmithgh/kitty-scrollback.nvim',
+  --   enabled = false,
+  --   lazy = true,
+  --   cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth' },
+  --   event = { 'User KittyScrollbackLaunch' },
+  --   opts = {},
+  -- },
   {
-    'nvim-tree/nvim-web-devicons',
-    priority = 1004,
+    'nvim-lua/plenary.nvim',
+    version = '*',
     lazy = false,
-    dependencies = { 'DaikyXendo/nvim-material-icon' },
-    config = function()
-      require('nvim-web-devicons').setup {
-        override = require('nvim-material-icon').get_icons(),
-      }
-    end,
   },
+  { 'MunifTanjim/nui.nvim', event = 'VeryLazy' },
+  { 'grapp-dev/nui-components.nvim', event = 'VeryLazy' },
+  { 'kkharji/sqlite.lua', event = 'VeryLazy' },
+  { 'nvim-tree/nvim-web-devicons', lazy = false, opts = {} },
   { 'psliwka/vim-smoothie', lazy = false },
   {
     -- TODO: check Oliver-Leete for his julia autopairs configurations
     'windwp/nvim-autopairs',
-    event = 'InsertEnter',
+    event = { 'InsertEnter' },
     dependencies = { 'hrsh7th/nvim-cmp' },
     config = function()
+      local cmp = require('cmp')
       local autopairs = require('nvim-autopairs')
       local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      -- local handlers = require('nvim-autopairs.completion.handlers')
+      cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = { tex = '' } })
       autopairs.setup {
-        require('cmp').event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = { tex = '' } }),
         close_triple_quotes = true,
-        disable_filetype = { 'neo-tree-popup' },
+        disable_filetype = { 'neo-tree-popup', 'fzf' },
+        enable_check_bracket_line = true,
         check_ts = true,
-        fast_wrap = { map = '<c-e>' },
+        map_cr = true,
+        map_c_w = true,
+        fast_wrap = {
+          map = '<M-e>',
+          chars = { "{", "[", "(", '"', "'" },
+          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,%;] ]], "%s+", ""),
+          end_key = "l",
+          offset = -2,
+          keys = 'qwertyuiopzxcvbnmasdfghjkl',
+          check_comma = true,
+          hightlight = 'Search',
+          highlight_grey = 'Comment',
+        },
       }
     end,
   },
-  -- {
-  --   'glacambre/firenvim',
-  --   lazy = true,
-  --   build = function() vim.fn['firenvim#install'](0) end,
-  -- },
   {
     'famiu/bufdelete.nvim',
-    lazy = false,
     keys = { { '<leader>qq', '<Cmd>Bdelete<CR>', desc = 'buffer delete' } },
   },
   {
     'willothy/flatten.nvim',
-    lazy = false,
-    priority = 1002,
+    priority = 1005,
     config = {
       window = { open = 'alternate' },
       callbacks = {
@@ -62,10 +80,9 @@ return {
       },
     },
   },
-  { 'fladson/vim-kitty', ft = 'kitty' },
-  { 'neoclide/jsonc.vim', ft = { 'jsonc', 'json5', 'hjson' } },
-  -- { 'tpope/vim-git', event = 'VeryLazy' },
-  { 'mtdl9/vim-log-highlighting', ft = 'log' },
+  { 'fladson/vim-kitty', lazy = false },
+  { 'neoclide/jsonc.vim', ft = { 'jsonc', 'json' }, event = 'BufNewFile' },
+  { 'mtdl9/vim-log-highlighting', ft = 'log', event = 'BufNewFile' },
   {
     'mrjones2014/smart-splits.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
@@ -85,71 +102,92 @@ return {
   },
   { 'tpope/vim-repeat', event = 'VeryLazy' },
   { 'tpope/vim-scriptease', event = 'VeryLazy' },
-  -- { 'milisims/nvim-luaref', lazy = true },
+  { 'milisims/nvim-luaref', lazy = true },
   {
     url = 'https://gitlab.com/yorickpeterse/nvim-pqf',
+    -- enabled = true,
     event = 'VeryLazy',
-    config = function()
-      highlight.plugin('pqf', {
-        theme = {
-          ['*'] = { { qfPosition = { link = 'String' } } }, -- ToDo
-          ['horizon'] = { { qfPosition = { link = 'String' } } },
-        },
-      })
-      require('pqf').setup()
-    end,
+    opts = {},
   },
   {
     'kevinhwang91/nvim-bqf',
+    -- enabled = true,
     ft = 'qf',
-    config = function() highlight.plugin('bqf', { { BqfPreviewBorder = { fg = { from = 'Comment' } } } }) end,
+    opts = {
+      auto_enable = true,
+      preview = {
+        win_height = 12,
+        win_vheight = 16,
+        delay_syntax = 20,
+        border_chars = { '┃', '┃', '━', '━', '┏', '┓', '┗', '┛', '█' },
+      },
+      func_map = {
+        vsplit = '',
+        ptogglemode = 'z,',
+        stoggleup = '',
+      },
+      filter = {
+        fzf = {
+          action_for = { ['ctrl-s'] = 'split' },
+          extra_opts = { '--bind', 'ctrl-o:toggle-all', '--prompt', ' ' }, -- 󰄾 >
+        },
+      },
+    },
   },
-  -- {
-  --   'olexsmir/gopher.nvim',
-  --   ft = 'go',
-  --   dependencies = { 'nvim-lua/plenary.nvim', 'nvim-treesitter/nvim-treesitter' },
-  -- },
+  {
+    'stevearc/qf_helper.nvim',
+    opts = {},
+  },
   {
     'mbbill/undotree',
+    enabled = true,
     cmd = 'UndotreeToggle',
-    keys = { { '<leader>u', '<Cmd>UndotreeToggle<CR>', desc = 'undotree: toggle' } },
+    keys = { { '<localleader>u', '<Cmd>UndotreeToggle<CR>', desc = 'undotree: toggle' } },
     config = function()
       vim.g.undotree_TreeNodeShape = '◦' -- Alternative: '◉'
       vim.g.undotree_SetFocusWhenToggle = 1
     end,
   },
-  { 'treesit' },
-  { 'lsp' },
-  { 'ui' },
-  { 'tools' },
-  { 'completion' },
-  { 'colorschemes' },
-  { 'statusline' },
-  { 'components' },
-  { 'editing' },
-  { 'notes' },
-  { 'tests' },
-  { 'images' },
-  { 'git' },
-  { 'navigate' },
-  { 'picker' },
-  { 'db' },
-  { 'whichkey' },
-  { 'snippets' },
-  { 'terminal' },
-  { 'pythonsyall' },
-  { 'overseer' },
-  -- {
-  --   'folke/todo-comments.nvim',
-  --   enabled = false,
-  --   lazy = true,
-  --   -- event = 'VeryLazy',
-  --   dependencies = { 'nvim-treesitter/nvim-treesitter' },
-  --   config = function()
-  --     require('todo-comments').setup()
-  --     eo.command('TodoDots', ('TodoQuickFix cwd=%s keywords=TODO,FIXME'):format(vim.g.nvim_dir))
-  --   end,
-  -- },
-  { 'tweekmonster/helpful.vim', cmd = 'HelpfulVersion', ft = 'help' },
-  { 'rafcamlet/nvim-luapad', cmd = 'Luapad' },
+  {
+    'rafcamlet/nvim-luapad',
+    enabled = true,
+    cmd = 'Luapad',
+  },
+  {
+    'norcalli/nvim-colorizer.lua',
+    cmd = 'ColorizerToggle',
+    config = function()
+      require('colorizer').setup({ '*' }, {
+        RGB = true,
+        mode = 'foreground',
+      })
+    end,
+  },
+  {
+    'pteroctopus/faster.nvim',
+    lazy = false,
+    opts = {},
+  },
+  {
+    'danymat/neogen',
+    cmd = { 'Neogen' },
+    dependencies = 'nvim-treesitter/nvim-treesitter',
+    opts = {},
+  },
+  {
+    'chrishrb/gx.nvim',
+    enabled = true,
+    keys = { { 'gx', '<cmd>Browse<cr>', mode = { 'n', 'x' } } },
+    cmd = { 'Browse' },
+    init = function()
+      vim.g.netrw_nogx = 1
+    end,
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      handler_options = {
+        -- you can select between google, bing, duckduckgo, and ecosia
+        search_engine = 'google',
+      },
+    },
+  },
 }

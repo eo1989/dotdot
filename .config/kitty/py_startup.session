@@ -1,0 +1,16 @@
+layout split
+cd ~/Dev/pyProj
+new_tab py_startup
+title nvim
+launch zsh -c 'nvim'
+# launch zsh
+enabled_layouts fat:bias=50;full_size=1;mirrored=false
+
+# new tab
+new_tab other
+cd ~
+# enabled_layouts tall:bias=50;full_size=1
+layout vertical
+launch zsh
+# launch zsh
+# layout tall

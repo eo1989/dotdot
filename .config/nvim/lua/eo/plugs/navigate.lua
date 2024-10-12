@@ -1,6 +1,11 @@
+local ui = eo.ui
+local lsp = ui.lsp
+local icons = ui.icons
+
 return {
   {
     'nvim-neo-tree/neo-tree.nvim',
+    -- version = '*',
     branch = 'v3.x',
     cmd = 'Neotree',
     keys = {
@@ -31,7 +36,6 @@ return {
       open_files_do_not_replace_types = {
         'terminal',
         'toggleterm',
-        'Trouble',
         'trouble',
         'qf',
         'quickfix',
@@ -40,13 +44,14 @@ return {
         'dap-ui',
         'overseer',
         'neotest-output',
-        'fzflua',
         'FzfLua',
       },
       popup_border_style = 'NC',
       resize_timer_interval = 500, -- in ms, needed for containers to redraw right aligned and faded content
       source_selector = {
-        winbar = false,
+        winbar = true,
+        -- separator = { left = '◖ ', right = ' ◗' },
+        separator = { left = '◤ ', right = ' ◥' },
         separator_active = '',
         sources = {
           {
@@ -55,7 +60,7 @@ return {
           },
           {
             source = 'git_status',
-            display_name = '  Git ',
+            display_name = '  Git ',
           },
           {
             source = 'document_symbols',
@@ -91,7 +96,7 @@ return {
         },
       },
       default_component_configs = {
-        icon = { folder_empty = eo.ui.icons.documents.open_folder },
+        icon = { folder_empty = icons.documents.open_folder },
         name = { highlight_opened_files = true },
         indent = {
           with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
@@ -101,23 +106,23 @@ return {
         },
         document_symbols = {
           follow_cursor = true,
-          kinds = vim.iter(eo.ui.lsp.highlights):fold({}, function(acc, k, v)
+          kinds = vim.iter(lsp.highlights):fold({}, function(acc, k, v)
             acc[k] = { icon = v, hl = require('lspkind').symbol_map[k] }
             return acc
           end),
         },
-        modified = { symbol = eo.ui.icons.misc.circle .. ' ' },
+        modified = { symbol = icons.misc.circle .. ' ' },
         git_status = {
           symbols = {
-            added = eo.ui.icons.git.add,
-            deleted = eo.ui.icons.git.remove,
-            modified = eo.ui.icons.git.mod,
-            renamed = eo.ui.icons.git.rename,
-            untracked = eo.ui.icons.git.untracked,
-            ignored = eo.ui.icons.git.ignored,
-            unstaged = eo.ui.icons.git.unstaged,
-            staged = eo.ui.icons.git.staged,
-            conflict = eo.ui.icons.git.conflict,
+            added = icons.git.add,
+            deleted = icons.git.remove,
+            modified = icons.git.mod,
+            renamed = icons.git.rename,
+            untracked = icons.git.untracked,
+            ignored = icons.git.ignored,
+            unstaged = icons.git.unstaged,
+            staged = icons.git.staged,
+            conflict = icons.git.conflict,
           },
         },
         file_size = { require_width = 20 },
@@ -133,6 +138,8 @@ return {
           ['<c-v>'] = 'vsplit_with_window_picker',
           ['<esc>'] = 'revert_preview',
           ['P'] = { 'toggle_preview', config = { use_float = false, use_image_nvim = true } },
+          ['<C-d>'] = { 'scroll_preview', config = { direction = 10 } },
+          ['<C-u'] = { 'scroll_preview', config = { direction = -10 } },
         },
       },
       buffers = {
@@ -174,7 +181,7 @@ return {
       '3rd/image.nvim',
       {
         's1n7ax/nvim-window-picker',
-        version = false,
+        version = '*',
         opts = {
           filter_rules = {
             include_current_win = false,
@@ -186,17 +193,6 @@ return {
           },
         },
       },
-      -- {
-      --   'ten3roberts/window-picker.nvim',
-      --   name = 'window-picker',
-      --   config = function()
-      --     local picker = require('window-picker')
-      --     picker.setup()
-      --     picker.pick_window = function()
-      --       return picker.select({ hl = 'WindowPicker', prompt = 'Pick window: ' }, function(winid) return winid end)
-      --     end
-      --   end,
-      -- },
     },
   },
 }

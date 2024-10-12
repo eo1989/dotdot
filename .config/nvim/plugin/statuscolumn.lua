@@ -1,3 +1,4 @@
+---@diagnostic disable: param-type-mismatch
 if not eo or not eo.ui.statuscolumn.enable then return end
 
 ---@alias ExtmarkSign {[1]: number, [2]: number, [3]: number, [4]: {sign_text: string, sign_hl_group: string}}

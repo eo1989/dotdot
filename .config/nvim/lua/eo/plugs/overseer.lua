@@ -1,6 +1,7 @@
 return {
   {
     'stevearc/overseer.nvim',
+    enabled = false,
     cmd = {
       'Grep',
       'Make',
@@ -11,15 +12,24 @@ return {
       'OverseerRunCmd',
       'OverseerToggle',
     },
-    keys = {
-      { '<localleader>oo', '<cmd>OverseerToggle<CR>', mode = 'n' },
-      { '<localleader>or', '<cmd>OverseerRun<CR>', mode = 'n' },
-      { '<localleader>oc', '<cmd>OverseerRunCmd<CR>', mode = 'n' },
-      { '<localleader>ol', '<cmd>OverseerLoadBundle<CR>', mode = 'n' },
-      { '<localleader>ob', '<cmd>OverseerToggle! bottom<CR>', mode = 'n' },
-      { '<localleader>od', '<cmd>OverseerQuickAction<CR>', mode = 'n' },
-      { '<localleader>os', '<cmd>OverseerTaskAction<CR>', mode = 'n' },
-    },
+    -- keys = {
+    --   -- stylua: ignore start
+    --   -- { '<localleader>oo', '<cmd>OverseerToggle<CR>',         mode = 'n', { desc = 'Toggle Overseer'       } },
+    --   -- { '<localleader>or', '<cmd>OverseerRun<CR>',            mode = 'n', { desc = 'Overseer Run'          } },
+    --   -- { '<localleader>oc', '<cmd>OverseerRunCmd<CR>',         mode = 'n', { desc = 'Overseer Run cmd'      } },
+    --   -- { '<localleader>ol', '<cmd>OverseerLoadBundle<CR>',     mode = 'n', { desc = 'Overseer Load Bundle'  } },
+    --   -- { '<localleader>ob', '<cmd>OverseerToggle! bottom<CR>', mode = 'n', { desc = 'Toggle Overseer (btm)' } },
+    --   -- { '<localleader>od', '<cmd>OverseerQuickAction<CR>',    mode = 'n', { desc = 'Overseer QuickAction'  } },
+    --   -- { '<localleader>os', '<cmd>OverseerTaskAction<CR>',     mode = 'n', { desc = 'Overseer Task Action'  } },
+    --   { '<localleader>oo', '<cmd>OverseerToggle<CR>',         mode = 'n' },
+    --   { '<localleader>or', '<cmd>OverseerRun<CR>',            mode = 'n' },
+    --   { '<localleader>oc', '<cmd>OverseerRunCmd<CR>',         mode = 'n' },
+    --   { '<localleader>ol', '<cmd>OverseerLoadBundle<CR>',     mode = 'n' },
+    --   { '<localleader>ob', '<cmd>OverseerToggle! bottom<CR>', mode = 'n' },
+    --   { '<localleader>od', '<cmd>OverseerQuickAction<CR>',    mode = 'n' },
+    --   { '<localleader>os', '<cmd>OverseerTaskAction<CR>',     mode = 'n' },
+    --   -- stylua: ignore end
+    -- },
     opts = {
       templates = { builtin = true },
       strategy = { 'jobstart' },
@@ -66,6 +76,20 @@ return {
         cb()
       end
       vim.api.nvim_create_user_command('OverseerDebugParser', 'lua require("overseer").debug_parser()', {})
+      vim.api.nvim_create_user_command('OverseerTestOutput', function(param)
+        vim.cmd.tabnew()
+        vim.bo.bufhidden = 'wipe'
+        local TaskView = require('overseer.task_view')
+        TaskView.new(0, {
+          select = function(self, tasks)
+            for _, task in ipairs(tasks) do
+              if task.metadata.neotest_group_id then return task end
+            end
+            self:dispose()
+          end,
+        })
+      end, {})
+
       vim.api.nvim_create_user_command('Grep', function(params)
         local args = vim.fn.expandcmd(params.args)
         -- Insert args at the '$*' in the grepprg
@@ -87,7 +111,7 @@ return {
               items_only = true,
             },
             -- We don't care to keep this around as long as most tasks
-            { 'on_complete_dispose', timeout = 30 },
+            { 'on_complete_dispose', timeout = 30, require_view = {} },
             'default',
           },
         }
@@ -112,6 +136,19 @@ return {
         nargs = '*',
         bang = true,
       })
+
+      local wk = require('which-key')
+      wk.register {
+        ['<localleader>o'] = {
+          name = '+Overseer',
+          r = { '<cmd>OverseerRun<CR>', 'Run' },
+          c = { '<cmd>OverseerRunCmd<CR>', 'Run cmd' },
+          l = { '<cmd>OverseerLoadBundle<CR>', 'Load Bundle' },
+          b = { '<cmd>OverseerToggle! bottom<CR>', 'Toggle (btm)' },
+          d = { '<cmd>OverseerQuickAction<CR>', 'QuickAction' },
+          s = { '<cmd>OverseerTaskAction<CR>', 'Task Action' },
+        },
+      }
     end,
   },
 }

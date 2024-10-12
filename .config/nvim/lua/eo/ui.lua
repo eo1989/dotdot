@@ -3,23 +3,23 @@
 ----------------------------------------------------------------------------------------------------
 
 eo.ui.palette = {
-  green = '#98c379',
+  green = '#98C379',
   dark_green = '#10B981',
   blue = '#82AAFE',
-  dark_blue = '#4e88ff',
-  bright_blue = '#51afef',
+  dark_blue = '#4E88FF',
+  bright_blue = '#51AFEF',
   teal = '#15AABF',
-  pale_pink = '#b490c0',
-  magenta = '#c678dd',
+  pale_pink = '#B490C0',
+  magenta = '#C678DD',
   pale_red = '#E06C75',
-  light_red = '#c43e1f',
-  dark_red = '#be5046',
+  light_red = '#C43E1F',
+  dark_red = '#BE5046',
   dark_orange = '#FF922B',
   bright_yellow = '#FAB005',
-  light_yellow = '#e5c07b',
+  light_yellow = '#E5C07B',
   whitesmoke = '#9E9E9E',
   light_gray = '#626262',
-  comment_grey = '#5c6370',
+  comment_grey = '#5C6370',
   grey = '#3E4556',
 }
 
@@ -47,8 +47,8 @@ eo.ui.icons = {
   },
   lsp = {
     error = '✗', --' ', -- '✗'
-    warn = ' ', -- 
-    info = '󰋼 ', --  ℹ 󰙎 
+    warn = ' ', -- 
+    info = ' ', -- ℹ 󰙎  󰋼
     hint = '󰌶', --  ⚑
   },
   git = {
@@ -75,17 +75,21 @@ eo.ui.icons = {
   },
   misc = {
     -- 
+    passed = '󰄴 ', -- 
+    running = '󰴲 ',
+    failed = '💥', -- 
+    unknown = '❓', -- 
     plus = '',
     ellipsis = '…',
     up = '⇡',
     down = '⇣',
-    line = 'ℓ', -- 'ℓ'
+    line = 'ℓ', -- 'ℓ '
     indent = 'Ξ',
     tab = '⇥ ',
     bug = ' ', --  '󰠭'
     question = '？', -- '⁇', ' ', '❓','❔', ' ', '？', ' '
     clock = ' ', -- ' '
-    lock = '',
+    lock = ' ', -- 
     shaded_lock = ' ',
     circle = ' ',
     project = ' ',

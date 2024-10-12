@@ -1,7 +1,6 @@
-
 local options = {
   tabstop = 8,
-  textwidth = 120,
+  textwidth = 100,
   shiftwidth = 2,
   softtabstop = 2,
   autoindent = true,
@@ -10,7 +9,7 @@ local options = {
   -- foldmethod = "expr", -- indent? syntax?
 }
 local window_local_only = {
-  colorcolumn = '+1'
+  colorcolumn = '+1',
 }
 -- smarttab = true,
 

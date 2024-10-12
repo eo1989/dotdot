@@ -1,108 +1,41 @@
 --[[
   The should_disable logic and subsequent settings are applied after reviewing stevearc/dotfiles
   specifically: github.com/stevearc/dotfiles/blob/master/nvim/lua/plugins/treesitter.lua
-]]
-
-local map = _G.map or vim.keymap.set
-
--- local function should_disable(lang, bufnr)
---   local size = vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr or 0))
---   -- size will be -2 if it doesnt fit into a number
---   local disable_max_size = 2000000  -- 2MB
---   if size > disable_max_size or size == -2 then
---     return true
---   end
---   if lang == 'zig' then
---     return true
---   end
---   return false
--- end
+--]]
 
 return {
   {
     'nvim-treesitter/nvim-treesitter',
+    -- priority = 100,
     lazy = false,
-    -- event = { 'BufReadPost', 'BufNewFile', 'VeryLazy' },
-    -- version = false,
     build = ':TSUpdate',
-    -- cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
-    -- keys = {
-    --   { '<C-space>', desc = 'increment selection' },
-    --   { '<bs>', desc = 'Decrement selectino', mode = 'x' },
-    -- },
-    -- init = function(plugin)
-    --   -- From Lazyvim: Add nvim-treesitter queries to the rtp and it's custom query predicates early
-    --   -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
-    --   -- no longer trigger the **nvim-treeitter** module to be loaded in time.
-    --   -- Luckily, the only thins that those plugins need are the custom queries, which we make available during startup.
-    --   require('lazy.core.loader').add_to_rtp(plugin)
-    --   require('nvim-treesitter.query_predicates')
-    -- end,
-    dependencies = {
-      { 'nvim-treesitter/nvim-treesitter-textobjects' },
-      -- { 'JoosepAlviste/nvim-ts-context-commentstring' },
-      { 'RRethy/nvim-treesitter-endwise' },
-      -- { 'nvim-treesitter/playground', cmd = 'TSPlaygroundToggle' },
-      {
-        'andymass/vim-matchup',
-        -- event = { 'BufReadPost', 'BufNewFile' },
-        event = 'VeryLazy',
-        init = function()
-          vim.opt.matchpairs = { '(:)', '{:}', '[:]' }
-          vim.g['matchup_surround_enabled'] = 1
-          vim.g['matchup_matchparen_deferred'] = 2
-          vim.g['matchup_matchparen_nomode'] = 'i'
-          -- dont recognize anything in comments
-          vim.g['matchup_delim_noskips'] = 2
-          vim.g['matchup_motion_cursor_end'] = 1
-          vim.g['matchup_matchparen_deferred_show_delay'] = 400
-          vim.g['matchup_matchparen_deferred_hide_delay'] = 400
-          -- vim.g.matchup_matchparen_hi_surround_always = 1
-          vim.g['matchup_matchparen_offscreen'] = {
-            method = 'popup',
-            -- scrolloff = true,
-            -- fullwidth = 0,
-            -- highlight = 'OffscreenPopup',
-          }
-          vim.g['matchup_matchpref'] = { html = { nolists = 1 } }
-        end,
-      },
-    },
     opts = {
       sync_install = true,
-      auto_install = false,
+      auto_install = true,
       ensure_installed = {
-        'julia',
-        'python',
+        'query',
+        'vim',
+        'vimdoc',
         'lua',
         'luap',
         'luadoc',
+        'markdown',
+        'markdown_inline',
+        'python',
+        'pymanifest',
+        'julia',
         'bash',
-        'c',
-        'cpp',
-        'rst',
-        'go',
         'mermaid',
-        'rust',
         'html',
         'json',
         'jsonc',
-        'json5',
-        'hjson',
-        'markdown',
-        'markdown_inline',
         'requirements',
         'diff',
-        'query',
         'regex',
         'latex', -- requires Mason install tree-sitter-cli??
-        'vim',
-        'vimdoc',
         'yaml',
         'toml',
         'sql',
-        'http',
-        'scheme',
         'ini',
         'todotxt',
         'gitcommit',
@@ -110,84 +43,59 @@ return {
         'gitignore',
         'git_config',
         'gitattributes',
-        'typst',
       },
-      highlight = { enable = true, additional_vim_regex_highlighting = { 'typst' } },
-      indent = {
+      highlight = {
         enable = true,
-        disable = { 'yaml', 'python', 'lua' },
-        -- disable = function(lang, bufnr)
-        --   if lang == "lua" or lang == "python" then
+        -- disable = { 'help', 'txt' },
+        additional_vim_regex_highlighting = false,
+        -- disable = function(_long, buf)
+        --   local max_size = 10000 * 1024 -- 10mb
+        --   local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+        --   if ok and stats and stats.size > max_size then
+        --     vim.notify('Treesitter highlight disabled')
         --     return true
-        --   else
-        --     return should_disable(lang, bufnr)
         --   end
         -- end,
       },
+      indent = {
+        enable = true,
+        disable = { 'yaml', 'python', 'markdown' },
+      },
       incremental_selection = {
-        enable = false,
-        disable = { 'help' },
+        enable = true,
+        disable = { 'help', 'txt' },
         keymaps = {
-          -- trial keymaps from lkhphuc/dotfiles
-          -- trial keymaps from LazyVim/LazyVim <<=
-          init_selection = '<C-Space>',
+          init_selection = '<CR>',
           node_incremental = '<CR>',
           node_decremental = '<BS>',
-          scope_incremental = false,
         },
       },
       textobjects = {
-        -- lookbehind = true,
         select = {
           enable = true,
           lookahead = true,
           keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ['aa'] = { query = '@parameter.outer', desc = 'ts: outer param' },
-            ['ia'] = { query = '@parameter.inner', desc = 'ts: inner param' },
-            ['af'] = { query = '@function.outer', desc = 'ts: all function' },
+            -- stylua: ignore start
+            ['af'] = { query = '@function.outer', desc = 'ts: all function'   },
             ['if'] = { query = '@function.inner', desc = 'ts: inner function' },
-            ['ac'] = { query = '@class.outer', desc = 'ts: all class' },
-            ['ic'] = { query = '@class.inner', desc = 'ts: inner class' },
-            ['aC'] = { query = '@conditional.outer', desc = 'ts: all conditional' },
-            ['iC'] = { query = '@conditional.inner', desc = 'ts: inner conditional' },
-            -- ['aL'] = { query = '@assignment.lhs', desc = 'ts: assignment lhs' },
-            -- ['iR'] = { query = '@assignment.rhs', desc = 'ts: assignment rhs' },
-
-            -- for notebook/markdown code blocks
-            ['ib'] = { query = '@code_cell.inner', desc = 'ts: inner code_cell' },
-            ['ab'] = { query = '@code_cell.outer', desc = 'ts: outer code_cell' },
+            ['ib'] = { query = '@block.inner',    desc = 'ts: inner block'    },
+            -- stylua: ignore end
           },
+          include_surrounding_whitespace = true,
         },
         move = {
           enable = true,
           set_jumps = false, -- whether to set jumps in the jumplist
+          lookahead = true, -- automatically jump forward to textobj, similar to targets.vim
           goto_next_start = {
             [']m'] = { query = '@function.outer', desc = 'next function' },
-            [']M'] = { query = '@class.outer', desc = 'next class' },
-            [']b'] = { query = '@code_cell.inner', desc = 'next code block' },
+            [']b'] = { query = '@block.inner', desc = 'next code block' },
           },
           goto_previous_start = {
             ['[m'] = { query = '@function.outer', desc = 'previous function' },
-            ['[M'] = { query = '@class.outer', desc = 'previous class' },
-            ['[b'] = { query = '@code_cell.inner', desc = 'previous code block' },
+            ['[b'] = { query = '@block.inner', desc = 'previous code block' },
           },
         },
-        -- swap = {
-        --   enable = true,
-        --   swap_next = {
-        --     ['<leader>sal'] = '@parameter.inner',
-        --     -- ["<leader>sfl"] = "@function.outer",
-        --     ['<leader>sbl'] = '@code_cell.outer',
-        --     -- ["<leader>snl"] = "@number.outer",
-        --   },
-        --   swap_previous = {
-        --     ['<leader>sah'] = '@parameter.inner',
-        --     -- ["<leader>sfh"] = "@function.outer",
-        --     ['<leader>sbh'] = '@code_cell.outer',
-        --     -- ["<leader>snh"] = "@number.outer",
-        --   },
-        -- },
       },
       query_linter = {
         enable = true,
@@ -196,24 +104,96 @@ return {
       },
       matchup = {
         enable = true,
-        -- disable = { 'latex', 'markdown', 'norg', 'quarto', 'markdown_inline' },
-        -- disable = should_disable,
-        -- include_match_words = true,
-        -- disable_virtual_text = true,
+        enable_quotes = true,
+        -- disable = { 'latex', 'markdown', 'norg', 'quarto', 'julia', 'txt', 'help' },
+        disable = { 'txt', 'help' },
+        include_match_words = true,
+        disable_virtual_text = false,
       },
-      endwise = {
-        enable = true,
-        disable = { 'bash', 'sh', 'zsh' },
-      },
+      endwise = { enable = true },
+      playground = { persist_queries = true },
       autopairs = { enable = true },
-      rainbow = { enable = true },
+      rainbow = {
+        enable = true,
+        -- disable = { 'markdown', 'norg', 'quarto', 'julia', 'txt', 'help' },
+        disable = { 'markdown', 'txt', 'help' },
+      },
+    },
+    dependencies = {
+      { 'nvim-treesitter/nvim-treesitter-textobjects' },
+      { 'JoosepAlviste/nvim-ts-context-commentstring' },
+      { 'RRethy/nvim-treesitter-endwise' },
+      {
+        'andymass/vim-matchup',
+        enabled = true,
+        -- event = { 'CursorHold' },
+        -- cmd = { 'MatchupWhereAmI' },
+        -- init = function()
+        --   -- vim.o.matchpairs = '(:),{:},[:],<:>'
+        --   vim.g['matchup_surround_enabled'] = 1
+        --   -- vim.g['matchup_matchparen_deferred'] = 1
+        --   vim.g['matchup_matchparen_hi_surround_always'] = 1
+        --   vim.g['matchup_matchparen_deferred'] = 50
+        --   vim.g['matchup_matchparen_deferred_show_delay'] = 250
+        --   vim.g['matchup_matchparen_deferred_hide_delay'] = 1000
+        --   vim.g['matchup_matchparen_stopline'] = 200
+        --
+        --   local matchup_hl = vim.api.nvim_create_augroup('MatchupHighlight', {})
+        --   vim.api.nvim_clear_autocmds { group = matchup_hl }
+        --   vim.api.nvim_create_autocmd('BufEnter', {
+        --     group = matchup_hl,
+        --     desc = 'redefinition of treesitter highlight group',
+        --     callback = function()
+        --       vim.api.nvim_set_hl(0, 'MatchWord', { bold = true, reverse = false })
+        --       vim.api.nvim_set_hl(0, 'MatchParen', { bold = true, reverse = false })
+        --       vim.api.nvim_set_hl(0, 'MatchupVirtualText', { bold = true, reverse = false })
+        --     end,
+        --   })
+        -- end,
+        config = function(_, opts)
+          local ok, cmp = eo.pcall(require, 'cmp')
+          if ok then
+            cmp.event:on('menu_opened', function() vim.b['matchup_matchparen_enabled'] = false end)
+            cmp.event:on('menu_closed', function() vim.b['matchup_matchparen_enabled'] = true end)
+          end
+          -----------------------------------------------------------------------
+          -- local fsize = vim.fn.getfsize(vim.fn.expand('%:p:f'))
+          -- if fsize == nil or fsize < 0 then fsize = 1 end
+          local enabled = 1
+          -- if fsize > 500000 then enabled = 0 end
+          -- if vim.tbl_contains({ 'markdown', 'txt', 'help' }, vim.bo.filetype) then enabled = 0 end
+          vim.g['matchup_enabled'] = enabled
+          vim.g['matchup_surround_enabled'] = enabled
+          vim.g['matchup_transmute_enabled'] = 0
+          vim.g['matchup_matchparen_deferred'] = enabled
+          vim.g['matchup_matchparen_hi_surround_always'] = enabled
+          vim.g['matchup_matchparen_offscreen'] = { method = 'popup', scrolloff = 1 }
+          vim.g['matchup_matchparen_nomode'] = 'i'
+          vim.g['matchup_matchparen_pumvisible'] = enabled
+          -- dont recognize anything in comments
+          vim.g['matchup_delim_noskips'] = 2
+          vim.g['matchup_motion_cursor_end'] = enabled
+          vim.g['matchup_matchpref'] = { html = { nolists = 1 } }
+          -- vim.keymap.set('n', '<c-s-k>', ':<c-u>MatchupWhereAmI<cr>', { noremap = true })
+          -----------------------------------------------------------------------
+          require('match-up').setup(opts)
+        end,
+      },
     },
   },
   {
-    'HiPhish/rainbow-delimiters.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    'm-demare/hlargs.nvim',
     -- lazy = false,
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = { hl_priority = 1000 },
+    config = function(_, opts)
+      require('hlargs').setup(opts)
+    end,
+  },
+  {
+    'HiPhish/rainbow-delimiters.nvim',
     event = 'VeryLazy',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       local rb = require('rainbow-delimiters')
       vim.g.rainbow_delimiters = {
@@ -221,20 +201,22 @@ return {
           [''] = rb.strategy['global'],
         },
         query = {
-          [''] = 'rainbow-delimiters',
+          [''] = rb.strategy['local'],
         },
+        blacklist = { 'help', 'txt' },
       }
     end,
   },
   {
-    'ckolkey/ts-node-action',
+    'CKolkey/ts-node-action',
+    event = { 'CursorHold', 'FuncUndefined' },
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'tpope/vim-repeat' },
     opts = {},
     keys = {
       {
         'gA',
-        function() require('ts-node-action').node_action() end,
-        -- [[<cmd>lua require('ts-node-action').node_action()<cr>]],
+        -- function() require('ts-node-action').node_action() end,
+        [[<cmd>lua require('ts-node-action').node_action()<cr>]],
         desc = 'Node Action',
       },
     },
@@ -263,20 +245,19 @@ return {
   },
   {
     'Wansmer/sibling-swap.nvim',
-    -- event = 'VeryLazy',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     keys = {
       {
         '[w',
         -- function() require('sibling-swap').swap_with_left() end,
         [[:lua require('sibling-swap').swap_with_left()<CR>]],
-        desc = 'Swap with Left',
+        { desc = 'Swap with Left', silent = true },
       },
       {
         ']w',
         [[:lua require('sibling-swap').swap_with_right()<CR>]],
         -- [[<cmd>lua require('sibling-swap').swap_with_right()<CR>]],
-        desc = 'Swap with Right',
+        { desc = 'Swap with Right', silent = true },
       },
     },
     opts = {
@@ -286,49 +267,10 @@ return {
       dot_repeat = true,
       highlight_node_at_cursor = true,
       use_default_keymaps = false,
-      -- keymaps = {
-      --   ['[w'] = 'swap_with_left',
-      --   ['<M-,>'] = 'swap_with_left',
-      --   [']w'] = 'swap_with_right',
-      --   ['<M-.'] = 'swap_with_right',
-      -- },
-    },
-  },
-  {
-    'chrisgrieser/nvim-various-textobjs',
-    config = function()
-      require('various_textobjs').setup {
-        lookForwardLines = 8, -- default 5
-      }
-      map(
-        { 'o', 'x' },
-        'is',
-        ":lua require('various-textobjs').sub_word(true)<CR>",
-        { silent = true, desc = 'inner subword' }
-      )
-      map(
-        { 'o', 'x' },
-        'as',
-        ":lua require('various-textobjs').sub_word(false)<CR>",
-        { silent = true, desc = 'around subword' }
-      )
-    end,
-  },
-  {
-    'ziontee113/query-secretary',
-    event = 'VeryLazy',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    keys = {
-      {
-        '<leader>fQ',
-        function() require('query-secretary').query_window_initiate() end,
-        desc = 'Find TS Query',
-      },
     },
   },
   {
     'numToStr/Comment.nvim',
-    event = 'VeryLazy',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     keys = { 'gcc', { 'gc', mode = { 'x', 'n', 'o' } } },
     opts = function(_, opts)

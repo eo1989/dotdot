@@ -1,80 +1,86 @@
 local map = map or vim.keymap.set
+-- local misc = eo.ui.icons.misc
 return {
   {
     'nvim-neotest/neotest',
+    enabled = true,
+    version = '*',
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-neotest/neotest-python',
       'nvim-neotest/neotest-go',
-      { 'rcarriga/neotest-plenary', dependencies = { 'nvim-lua/plenary.nvim' } },
-      'stevearc/overseer.nvim',
+      'nvim-lua/plenary.nvim',
+      -- 'stevearc/overseer.nvim',
     },
-    keys = {
-      {
-        '<localleader>ta',
-        function()
-          for _, adaptor_id in ipairs(require('neotest').run.adaptors()) do
-            require('neotest').run.run { suite = true, adaptor = adaptor_id }
-          end
-        end,
-        mode = 'n',
-      },
-      {
-        '<localleader>tn',
-        function() require('neotest').run.run {} end,
-        -- ":lua require('neotest').run.run(vim.fn.expand('%'))<CR>",
-        mode = 'n',
-        desc = 'Run all tests in this file',
-      },
-      {
-        '<localleader>tp',
-        function() require('neotest').summary.toggle() end,
-        mode = 'n',
-        desc = 'Toggle the summary window',
-      },
-      {
-        '<localleader>to',
-        function() require('neotest').output.open { short = true } end,
-        mode = 'n',
-      },
-      {
-        '<localleader>tt',
-        function() require('neotest').run.run { vim.api.nvim_buf_get_name(0) } end,
-        mode = 'n',
-        desc = 'Run the nearest test',
-      },
-      {
-        '<localleader>tl',
-        function() require('neotest').run.run_last() end,
-        mode = 'n',
-      },
-      -- {
-      --   '<localleader>ts',
-      --   function() require('neotest').run.stop() end,
-      --   mode = 'n',
-      --   desc = 'Stop the test',
-      -- },
-      {
-        '<localleader>td',
-        function() require('neotest').run.run { strategy = 'dap' } end,
-        mode = 'n',
-        desc = 'Debug the nearest test function',
-      },
-    },
+    -- keys = {
+    --   {
+    --     '<localleader>ta',
+    --     function()
+    --       for _, adaptor_id in ipairs(require('neotest').run.adaptors()) do
+    --         require('neotest').run.run { suite = true, adaptor = adaptor_id }
+    --       end
+    --     end,
+    --     mode = 'n',
+    --   },
+    --   {
+    --     '<localleader>tn',
+    --     function() require('neotest').run.run {} end,
+    --     -- ":lua require('neotest').run.run(vim.fn.expand('%'))<CR>",
+    --     mode = 'n',
+    --     desc = 'Run all tests in this file',
+    --   },
+    --   {
+    --     '<localleader>tp',
+    --     function() require('neotest').summary.toggle() end,
+    --     mode = 'n',
+    --     desc = 'Toggle the summary window',
+    --   },
+    --   {
+    --     '<localleader>to',
+    --     function() require('neotest').output.open { short = true } end,
+    --     mode = 'n',
+    --   },
+    --   {
+    --     '<localleader>tt',
+    --     function() require('neotest').run.run { vim.api.nvim_buf_get_name(0) } end,
+    --     mode = 'n',
+    --     desc = 'Run the nearest test',
+    --   },
+    --   {
+    --     '<localleader>tl',
+    --     function() require('neotest').run.run_last() end,
+    --     mode = 'n',
+    --   },
+    --   -- {
+    --   --   '<localleader>ts',
+    --   --   function() require('neotest').run.stop() end,
+    --   --   mode = 'n',
+    --   --   desc = 'Stop the test',
+    --   -- },
+    --   {
+    --     '<localleader>td',
+    --     function() require('neotest').run.run { strategy = 'dap' } end,
+    --     mode = 'n',
+    --     desc = 'Debug the nearest test function',
+    --   },
+    -- },
     config = function()
       local neotest = require('neotest')
       local namespace = vim.api.nvim_create_namespace('neotest')
       vim.diagnostic.config({
         virtual_text = {
           format = function(diagnostic)
-            return diagnostic.message:gsub('\n', ' '):gsub('\t', ' '):gsub('%s+', ' '):gsub('^%s+', '')
+            local value = diagnostic.message:gsub('\n', ' '):gsub('\t', ' '):gsub('%s+', ' '):gsub('^%s+', '')
+            return value
           end,
         },
       }, namespace)
       neotest.setup {
         discovery = { enabled = false },
         diagnostic = { enabled = true },
-        floating = { border = eo.ui.current.border },
+        -- floating = {
+        --   border = eo.ui.current.border,
+        -- },
         quickfix = { enabled = false, open = true },
         output = {
           enabled = true,
@@ -87,7 +93,7 @@ return {
           overseer = require('neotest.consumers.overseer'),
         },
         adapters = {
-          require('neotest-plenary'),
+          -- require('neotest-plenary'),
           require('neotest-go'),
           require('neotest-python') {
             dap = { justMyCode = false },
@@ -114,10 +120,14 @@ return {
           },
         },
         icons = {
-          passed = ' ',
-          running = ' ',
-          failed = ' ',
-          unknown = ' ',
+          -- passed = misc.passed or '󰄴',
+          -- running = misc.running or '󰴲',
+          -- failed = misc.running or '',
+          -- unknown = misc.unkonwn or '❓',
+          passed = '󰄴 ',
+          running = '󰴲 ',
+          failed = ' ',
+          unknown = '❓',
           running_animated = vim.tbl_map(
             function(s) return s .. ' ' end,
             { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }

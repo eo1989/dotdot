@@ -1,8 +1,8 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 local fn, g, go, o, opt, uv, v = vim.fn, vim.g, vim.go, vim.o, vim.opt, vim.uv, vim.v
-local icons = eo.ui.icons
-local misc = icons.misc
+-- local icons = eo.ui.icons
+-- local misc = icons.misc
 
 -- vim.g.mapleader = ' '
 -- vim.g.maplocalleader = ','
@@ -11,6 +11,7 @@ local misc = icons.misc
 -- cmd([[ set path=.,,**,$PWD/**,~/.config/nvim/**]])
 
 -- HOW DID I NOT KNOW ABOUT THIS OPTION BEFORE?!
+vim.env.SHELL = '/usr/local/bin/zsh'
 o.shell = '/usr/local/bin/zsh'
 -- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
 opt.wrap = false
@@ -21,6 +22,10 @@ o.colorcolumn = '+1'
 
 -- o.wrapscan = true
 -- opt.matchpairs:append('<:>')
+opt.syntax = 'enable'
+opt.incsearch = true
+opt.smarttab = true
+g.vimsyn_embed = 'alpPrj'
 opt.path:append { '**' } --'**'
 o.synmaxcol = 300
 o.whichwrap = 'h,l'
@@ -46,8 +51,8 @@ opt.termguicolors = true
 o.emoji = false
 opt.guifont = {
   'FiraCodeNF-Ret',
-  'SymbolsNFM',
-  'VictorMonoNFP-MediumOblique:h10',
+  'Symbols Nerd Font',
+  'VictorMonoNF-MediumOblique:h10',
 }
 -- 'Symbols Nerd Font',
 -- 'Delugia Italic:h12',
@@ -59,8 +64,8 @@ opt.guicursor = {
   'a:blinkon0',
 }
 -- function eo.modified_icon() return vim.bo.modified and icons.ui.Circle or '' end
-function eo.modified_icon() return vim.bo.modified and misc.circle or '' end
-o.titlestring = '%{fnamemodify(getcwd(), ":t")}%( %{v:lua.eo.modified_icon()}%)'
+-- function eo.modified_icon() return vim.bo.modified and misc.circle or '' end
+-- o.titlestring = '%{fnamemodify(getcwd(), ":t")}%( %{v:lua.eo.modified_icon()}%)'
 ---@diagnostic disable-next-line: missing-parameter
 o.titleold = fn.fnamemodify(uv.os_getenv('SHELL'), ':t') or ''
 o.title = true
@@ -85,6 +90,8 @@ opt.sessionoptions = {
   'help',
   'tabpages',
   'terminal',
+  'localoptions',
+  'blank',
 }
 
 opt.viewoptions = { 'cursor', 'folds' }
@@ -117,18 +124,20 @@ opt.diffopt = vim.opt.diffopt
 opt.formatoptions = {
   ['1'] = true,
   ['2'] = true, -- Use indent from 2nd line of a paragraph
-  q = true, -- continue comments with gq"
-  c = true, -- Auto-wrap comments using textwidth
-  r = true, -- Continue comments when pressing Enter
-  n = true, -- Recognize numbered lists
+  q = true, --  continue comments with gq"
+  c = true, --  Auto-wrap comments using textwidth
+  r = false, -- Continue comments when pressing Enter
+  o = false, -- Continue comments using o or O with the correct comment leader
   t = false, -- autowrap lines using text width value
-  j = true, -- remove a comment leader when joining lines.
+  n = true, --  Recognize numbered lists
+  j = true, --  remove a comment leader when joining lines.
   -- Only break if the line was not longer than 'textwidth' when the insert
   -- started and only at a white character that has been entered during the
   -- current insert command.
   l = true,
   v = true,
 }
+-- opt.formatoptions:remove { 'r', 'o', 't' }
 
 -- NOTE: from akinsho dotfiles ... date: 10-14-2023
 -- unfortunately folding in (n)vim is a mess, if you set the fold level to start
@@ -171,7 +180,7 @@ o.conceallevel = 2
 o.concealcursor = 'niv'
 o.breakindentopt = 'sbr'
 o.linebreak = true -- lines wrap at words rather than random chars
-go.signcolumn = 'yes:2'
+o.signcolumn = 'yes:2'
 o.ruler = false
 -- o.cmdheight = 2
 -- oncomouse/dotfiles/blob/master/conf/vim/init.lua
@@ -204,7 +213,8 @@ opt.shortmess = {
   a = true, -- use abbreviations in messages eg. `[RO]` instead of `[readonly]`
 }
 o.wildcharm = ('\t'):byte()
-o.wildmode = 'longest:full,full:full'
+-- o.wildmode = 'longest:full,full:full'
+o.wildmode = 'longest,full:full'
 -- o.wildmode = 'longest:list,full'
 -- vim.o.wildmode = 'longest,list,full' -- stevearc dotfiles
 -- o.wildmode = 'longest,full'
@@ -241,13 +251,14 @@ opt.wildignore = {
   '.DS_Store',
   'tags.lock',
 }
-opt.wildoptions = { 'pum', 'fuzzy' }
+-- opt.wildoptions = { 'pum', 'fuzzy' }
+opt.wildoptions = { 'pum' }
 o.scrolloff = 3
 o.sidescrolloff = 6
 o.sidescroll = 1
 
 if eo and not eo.falsy(fn.executable('rg')) then
-  vim.o.grepprg = [[rg --glob "!{.git,venv,node_modules}" --no-heading --vimgrep --smart-case --follow $*]]
+  vim.o.grepprg = [[rg --glob "!{.git,.venv,node_modules}" --no-heading --vimgrep --smart-case --follow $*]]
   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 elseif eo and not eo.falsy(fn.executable('ag')) then
   vim.o.grepprg = [[ag --nogroup --nocolor --vimgrep]]

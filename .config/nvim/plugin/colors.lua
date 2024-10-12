@@ -147,7 +147,7 @@ end
 
 local function colorscheme_overrides()
   local overrides = {
-    ['horizon'] = {
+    ['*'] = {
       { Constant = { bold = true } },
       { NonText = { fg = { from = 'Comment' } } },
       { TabLineSel = { fg = { from = 'SpecialKey' } } },

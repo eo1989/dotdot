@@ -100,9 +100,7 @@ local function component(opts)
   if opts.cond ~= nil and falsy(opts.cond) then return end
 
   local item = opts[1]
-  if not vim.islist(item) then
-    error(fmt('component options are required but got %s instead', vim.inspect(item)))
-  end
+  if not vim.islist(item) then error(fmt('component options are required but got %s instead', vim.inspect(item))) end
 
   if not opts.priority then opts.priority = 10 end
   local before, after = opts.before or '', opts.after or padding

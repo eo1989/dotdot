@@ -1,65 +1,71 @@
 ---@diagnostic disable: missing-fields
--- if not eo then return end
--- local boarder = eo.ui.current.border
+if not eo then return end
+-- local border = eo.ui.current.border
 -----------------------------------------------------------------------------//
 -- Language servers
 -----------------------------------------------------------------------------//
-
-local function strsplit(s, delim)
-  local result = {}
-  for match in (s .. delim):gmatch('(.-)' .. delim) do
-    table.insert(result, match)
-  end
-  return result
-end
-
-local function quarto_path()
-  local f = assert(io.popen('quarto --paths', 'r'))
-  local s = assert(f:read('*a'))
-  f:close()
-  return strsplit(s, '\n')[2]
-end
-
-local lua_lib_files = vim.api.nvim_get_runtime_file('', true)
-local lua_plugin_paths, resource_path = {}, quarto_path()
--- local resource_path = quarto_path()
-if resource_path == nil then
-  vim.notify_once('quarto not found, lua library files not loaded')
-else
-  table.insert(lua_lib_files, resource_path .. '/lua-types')
-  table.insert(lua_plugin_paths, resource_path .. 'lua-plugin/plugin.lua')
-end
-
--- local on_attach = function(client, bufnr)
---   if client.name == 'ruff_lsp' then
---     -- disable hover in favor of Pyright|jedi
---     client.server_capabilities.hoverProvider = false
---   elseif (client.name == 'pyright') or (client.name == 'python-lsp-server') then
---     client.server_capabilities.hoverProvider = false
---     -- table.unpack { pyright = { disableOrganizeImports = true } }
---   else
---     client.server_capabilities.hoverProvider = true
+-- local function strsplit(s, delim)
+--   local result = {}
+--   for match in (s .. delim):gmatch('(.-)' .. delim) do
+--     table.insert(result, match)
 --   end
---   client.server_capabilities.documentFormattingProvider = false
---   client.server_capabilities.documentRangeFormattingProvider = false
+--   return result
 -- end
-local md_root_files = { '.marksman.toml', '_quarto.yaml', '_quarto.yml' }
+-- local function get_qmd_resource()
+--   local f = assert(io.popen('quarto --paths', 'r'))
+--   local s = assert(f:read('*a'))
+--   f:close()
+--   return strsplit(s, '\n')[2]
+-- end
+
+-- local resources = get_qmd_resource()
+-- local lua_libs = vim.api.nvim_get_runtime_file('', true) -- and vim.env.VIMRUNTIME .. '/lua' or vim.env.VIMRUNTIME
+
+-- table.insert(lua_libs, resources .. '/lua-types')
+-- table.insert(lua_libs, vim.fn.expand('$VIMRUNTIME/lua'))
+
+-- local runtime_path = vim.split(package.path, ';')
+-- table.insert(runtime_path, 'lua/?.lua')
+-- table.insert(runtime_path, 'lua/?/init.lua')
+-- table.insert(runtime_path, '?.lua')
+-- table.insert(runtime_path, '?/init.lua')
+
+-- local lua_plugs = {}
+
+-- if resources == nil then
+--   vim.notify_once('quarto not found, lua libs not loaded')
+-- else
+--   table.insert(runtime_path, resources .. '?/init.lua')
+--   table.insert(runtime_path, resources .. 'lua-plugin/plugin.lua')
+-- end
+
+-- local root_files = { '.marksman.toml', '_quarto.yml' }
+local util = require('lspconfig.util')
 
 local servers = {
   taplo = {
     init_options = {
       configurationSection = 'evenBetterToml',
-      cachePath= vim.NIL,
+      cachePath = vim.NIL,
     },
+    -- root_dir = util.root_pattern('.git', 'Cargo.toml', '~/.config/*'),
+    root_dir = function(fname)
+      return util.root_pattern('Cargo.toml')(fname) or util.find_git_ancestor(fname) or vim.uv.os_homedir()
+    end,
   },
-  vimls = {},
-  -- dotls = {},
-  -- sqlls = {},
   jsonls = {
+    on_new_config = function(new_conf)
+      -- if require('eo.has')('schemastore.nvim') then
+      if vim.has('schemastore.nvim') then
+        new_conf.settings.json.schemas = new_conf.settings.json.schemas or {}
+        vim.list_extend(new_conf.settings.json.schemas, require('schemastore').json.schemas {})
+      end
+    end,
     settings = {
       json = {
-        schemas = function() require('schemastore').json.schemas() end,
-        filetypes = { 'json', 'jsonc', 'json5' },
+        -- schemas = function() require('schemastore').json.schemas() end,
+        -- schemas = require('schemastore').json.schemas {},
+        filetypes = { 'json', 'jsonc' },
         validate = { enable = true },
         format = { enable = false },
       },
@@ -67,12 +73,13 @@ local servers = {
   },
   marksman = {
     filetypes = { 'markdown', 'quarto' },
-    -- root_dir = function(fname, ...)
-      -- local util = require('lspconfig.util')
-      -- require('lspconfig/util').root_pattern('.git', '_quarto.yml', '.marksman.toml')
-      -- return util.root_pattern('_quarto.yml', '.marksman.toml')(fname) or util.path.dirname(...)
-    -- end,
-    root_dir = vim.fs.dirname(vim.fs.find({ md_root_dirs }, { upward = true })[1]),
+    -- root_dir = vim.fs.dirname(vim.fs.find({ '.marksman.toml', '_quarto.yml', '.git' }, { upward = true })[1]),
+    -- root_dir = util.root_pattern(unpack(md_root_files)),
+    root_dir = function(fname)
+      return util.root_pattern('.marksman.toml', '_quarto.yml')(fname)
+        or util.find_git_ancestor(fname)
+        or vim.uv.os_homedir()
+    end,
   },
   bashls = {
     filetypes = {
@@ -81,34 +88,67 @@ local servers = {
       'zsh',
       'env',
     },
+    -- root_dir = util.root_pattern('.git', '.zshrc'),
+    root_dir = function(fname)
+      return util.root_pattern('.zshrc')(fname) or util.find_git_ancestor(fname) or vim.uv.os_homedir()
+    end,
   },
   julials = {
+    single_file_support = true,
     settings = {
       julia = {
         symbolCacheDownload = true,
         enableTelemetry = false,
+        completionmode = 'qualify',
+        lint = { missingrefs = 'none' },
+        inlayHints = {
+          static = {
+            enabled = false,
+            variableTypes = { enabled = true },
+          },
+        },
       },
     },
+    -- on_new_config = function(new_conf, _)
+    --   local julia
+    --   local julz = vim.fn.expand('~/.julia/environments/nvim-lspconfig/bin/julia')
+    --   local REVISE_LANGSERVER = false
+    --   if REVISE_LANGSERVER then
+    --     new_conf.cmd[5] = (new_conf.cmd[5]):gsub(
+    --       'using LanguageServer',
+    --       'using Revise; using LanguageServer; LanguageServer.USE_REVISE[] = true'
+    --     )
+    --   elseif util.path.is_file(julia) then
+    --     new_conf.cmd[1] = julia
+    --   end
+    -- end,
+    root_dir = function(fname)
+      return util.root_pattern('Project.toml')(fname)
+        or util.find_git_ancestor(fname)
+        or util.path.dirname(fname)
+        or vim.uv.os_homedir()
+    end,
+    on_attach = function(client, bufnr)
+      -- vim.bo[bufnr].formatexpr = ''
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
+    end,
   },
   basedpyright = {
-    on_attach = function(client)
-      client.server_capabilities.hoverProvider = false
-      client.server_capabilities.signatureHelpProvider = false
+    on_attach = function(client, bufnr)
+      client.server_capabilities.hoverProvider = true
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
     end,
     basedpyright = {
       settings = {
-        disableLanguageServices = true,
+        disableLanguageServices = false,
         disableOrganizeImports = true,
-        -- completeFunctionParens = true,
-        -- autoImportCompletions = false,
         basedpyright = {
           analysis = {
             useLibraryCodeForTypes = true,
             autoSearchPaths = true,
             typeCheckingMode = 'off', -- 'off' | 'basic' | 'standard' | 'strict' | 'all'
-            -- diagnosticMode = 'openFilesOnly',
             diagnosticMode = 'off',
             diagnosticSeverityOverrides = {
               reportUnusedVariable = 'none',
@@ -128,20 +168,22 @@ local servers = {
       },
     },
   },
-  ruff_lsp = {
-    on_attach = function(ruff)
-      ruff.server_capabilities.hoverProvider = false
-      ruff.server_capabilities.signatureHelpProvider = false
-      ruff.server_capabilities.documentFormattingProvider = true
-      ruff.server_capabilities.documentRangeFormattingProvider = true
+  ruff = {
+    on_attach = function(client, bufnr)
+      -- client.server_capabilities.hoverProvider = false
+      client.server_capabilities.signatureHelpProvider = true
+      client.server_capabilities.documentFormattingProvider = true
+      client.server_capabilities.documentRangeFormattingProvider = true
     end,
     -- handers = {
     --   -- ['textDocument/hover'] = function(...) end,
     --   ['textDocument/publishDiagnostics'] = function(...) end,
     -- },
-    -- on_attach = on_attach,
     init_options = {
       settings = {
+        -- configuration
+        loglevel = 'debug',
+        logFile = vim.fn.expand('~') .. '/.local/state/nvim/ruff.log',
         organizeImports = true,
         fixAll = true,
         codeAction = { fixViolation = { enable = true } },
@@ -155,13 +197,14 @@ local servers = {
     },
   },
   jedi_language_server = {
-    -- on_attach = on_attach,
-    on_attach = function(jedi)
-      jedi.server_capabilities.hoverProvider = true
-      jedi.server_capabilities.signatureHelpProvider = true
-      jedi.server_capabilities.documentFormattingProvider = false
-      jedi.server_capabilities.documentRangeFormattingProvider = false
+    on_attach = function(client, bufnr)
+      client.server_capabilities.hoverProvider = true
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
     end,
+    handlers = {
+      ['textDocument/publishDiagnostics'] = function() end,
+    },
     initializationOptions = {
       diagnostics = {
         enable = false,
@@ -178,48 +221,38 @@ local servers = {
   yamlls = {
     settings = {
       yaml = {
-        -- hover = true,
-        -- completion = true,
-        -- validate = true,
         format = { enable = false },
         schemaStore = {
-          -- must disable built-in schemaStore support if you want to use SchemaStore.nvim & its
-          -- advanced options like `ignore`
           enable = false,
-          -- avoid TypeError: Cannot read properties of undefined (reading 'length')
-          utl = '',
+          url = '',
         },
         schemas = require('schemastore').yaml.schemas {},
       },
     },
   },
   lua_ls = {
-    -- before_init = require('neodev.lsp').before_init,
-    -- on_attach = function(client)
-    --   client.server_capabilities.documentFormattingProvider = false
-    --   client.server_capabilities.documentRangeFormattingProvider = false
-    -- end,
     settings = {
       Lua = {
         runtime = {
           version = 'LuaJIT',
-          plugin = lua_plugin_paths,
+          -- plugin = lua_plugin_paths,
         },
         codeLens = { enable = true },
-        misc = { parameters = {} },
-        doc = { privateName = '^_' },
+        misc = {},
+        hover = { expandAlias = false },
+        type = { castNumberToInteger = false },
         hint = {
           enable = true,
-          -- await = true,
+          await = true,
           setType = false,
-          paramType = true,
+          -- paramType = true,
           paramName = 'Disable', -- 'Disable' | 'Literal'
-          semicolon = 'Disable',
+          -- semicolon = 'Disable',
           arrayIndex = 'Disable', -- show hints ('auto') only when table is >3 items, or tbl is mixed; 'Disable'
         },
         format = { enable = false },
         diagnostics = {
-          -- disable = { 'unused-local', 'trailing-space' },
+          disable = { 'unused-local', 'trailing-space' },
           globals = {
             'quarto',
             'pandoc',
@@ -243,23 +276,32 @@ local servers = {
         },
         completion = {
           autoRequire = false,
-          keywordSnippet = false,
-          workspaceWord = true, -- folke -> true
+          keywordSnippet = 'Disable',
+          workspaceWord = false, -- folke -> true
           callSnippet = 'Replace',
+          showWord = 'Disable',
         },
         workspace = {
-          maxPreload = 10000,
+          maxPreload = 100000,
+          preloadFileSize = 50000,
           checkThirdParty = false,
-          -- ignoreDir = { '.*', 'vim/plugged', 'config/nvim', 'nvim/lua' },
-          -- library = { lua_lib_files, function() return require('neodev.config').types() end },
-          -- library = { lua_lib_files, require('neodev.config').types() },
-          library = { lua_lib_files },
+          -- library = { lua_libs },
         },
         telemetry = { enable = false },
       },
     },
   },
 }
+
+-- overrides for lang server capabilities. these apply to all servers.
+local workspace_overrides = {
+  workspace = {
+    -- PERF: didChangeWatchedFiles is too slow
+    -- TODO: remove this when github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed
+    didChangeWatchedFiles = { dynamicRegistration = false },
+  },
+}
+
 -- return function(name)
 --@eo razak17/nvim
 
@@ -268,12 +310,45 @@ local servers = {
 ---@return table<string, any>?
 return function(name)
   local config = servers[name] or {}
-  if not config then return nil end
+  if not config then return end
+
   if type(config) == 'function' then config = config() end
+
   local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+
   if ok then config.capabilities = cmp_nvim_lsp.default_capabilities() end
-  config.capabilities = vim.tbl_deep_extend('keep', config.capabilities or {}, {
-    textDocument = { foldingRange = { dynamicRegistration = false, lineFoldingOnly = true } },
+
+  config.capabilities = vim.tbl_deep_extend('force', config.capabilities, workspace_overrides, {
+    experimental = {
+      hoverActions = true,
+      hoverRange = true,
+      serverStatusNotification = false,
+      codeActionGroup = true,
+      ssr = true,
+      commands = {
+        'editor.action.triggerParameterHints',
+      },
+    },
+    textDocument = {
+      completion = {
+        completionItem = {
+          contextSupport = true,
+          snippetSupport = true,
+          deprecatedSupport = true,
+          commitCharacterSupport = true,
+          resolveSupport = {
+            properties = {
+              'documentation',
+              'detail',
+              'additionalTextEdits',
+            },
+          },
+          labelDetailsSupport = true,
+          documentationFormat = { 'markdown', 'plaintext' },
+        },
+      },
+      foldingRange = { dynamicRegistration = false, lineFoldingOnly = true },
+    },
   })
   return config
 end

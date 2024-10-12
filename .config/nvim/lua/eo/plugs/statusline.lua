@@ -1,87 +1,143 @@
--- local components = require('eo.plugs.components')
+local catpuss = require('catppuccin.palettes')
+local function trunc(trunc_width, trunc_len, hide_width, ellipsis)
+  return function(str)
+    local win_width = vim.fn.winwidth(0)
+    if hide_width and win_width < hide_width then
+      return ''
+    elseif trunc_width and trunc_len and win_width < trunc_width and #str > trunc_len then
+      return str:sub(1, trunc_len) .. (ellipsis and '' or '…')
+    end
+    return str
+  end
+end
+
+local active_formatter = {
+  function()
+    local formatters = require('conform').list_formatters_for_buffer(0)
+    if formatters ~= nil then
+      return string:format('  %s', table.concat(formatters, ', '))
+    else
+      return ''
+    end
+  end,
+  color = { fg = eo.ui.palette.bright_blue },
+  fmt = trunc(120, 3, 90, true),
+}
+
 return {
   {
     'nvim-lualine/lualine.nvim',
+    -- version = '*',
+    lazy = false,
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       'meuter/lualine-so-fancy.nvim',
     },
-    lazy = false,
     opts = {
-      -- local components = require('eo.plugs.components')
       options = {
         icons_enabled = true,
-        theme = 'auto',
-        component_separators = { left = '', right = '' },
+        theme = 'auto', -- auto, tokyonight
+        -- component_separators = { left = '', right = '' },
+        component_separators = { left = '', right = '' },
         section_separators = { left = '', right = '' },
-        statusline = { 'alpha', '' },
-        refresh = { statusline = 100, winbar = 100 },
+        -- statusline = { 'alpha' },
+        -- refresh = { statusline = 5000, winbar = 5000 },
+        refresh = { statusline = 500, winbar = 500 },
         winbar = {
           'help',
           'alpha',
+          'fzflua',
         },
         always_divide_middle = true,
         globalstatus = true,
       },
       sections = {
         lualine_a = {
-          { 'fancy_mode', { width = 1 } },
+          {
+            'fancy_mode',
+            width = 1,
+            separator = { left = '' },
+            padding = { left = 0, right = 1 },
+          },
         },
         lualine_b = {
-          { 'fancy_branch' },
-          { 'fancy_diff' },
+          -- { 'filename', shorting_target = 25 },
+          {
+            'fancy_cwd',
+            separator = { right = '' },
+            colors = { fg = '#293248', bg = '#' },
+          },
+          {
+            'fancy_branch',
+            separator = { right = '' },
+            -- padding = { left = 0, right = 0 },
+          },
+          {
+            'fancy_diff',
+            symbols = { added = '+', modified = '~', removed = '-' },
+            colored = true,
+            padding = { left = 1, right = 0 },
+          },
         },
-        -- lualine_b = { components.git_repo, 'branch' },
         lualine_c = {
-          { 'fancy_filename' },
-          { 'fancy_cwd', { substitute_home = true } },
-          -- components.diff,
-          { 'fancy_diagnostics' },
-          -- components.noice_command,
-          -- components.noice_mode,
-          -- { require("NeoComposer.ui").status_recording },
-          -- components.separator,
-          -- components.lsp_client,
+          '%=',
+          {
+            'fancy_lsp_servers',
+            separator = { left = '', right = '' },
+            color = { fg = 'darkgrey', bg = '#414362', gui = 'italic,bold' },
+            padding = { left = 0, right = 0 },
+          },
         },
-        -- lualine_x = { components.spaces, 'encoding', 'fileformat', 'filetype', 'progress' },
-        -- lualine_x = { 'encoding', 'fileformat', 'filetype' },
         lualine_x = {
-          -- 'fileformat',
-          -- { 'filetype', icon_only = true, padding = { left = 1, right = 1 } },
-          { 'fancy_filetype', { icon_only = true, ts_icon = ' ' } },
-          { 'fancy_lsp_servers' },
+          {
+            'fancy_diagnostics',
+            symbols = { error = 'E:', warn = 'W:', info = 'I:', hint = 'H:' },
+            colored = true,
+            -- separator = { left = '' },
+          },
+          {
+            'fancy_filetype',
+            ts_icon = ' ',
+            padding = { left = 0, right = 0 },
+            -- separator = { right = '' },
+          },
         },
         lualine_y = {
-          -- { 'progress', separator = { left = '', right = '' }, padding = { left = 1, right = 0 } },
-          -- { 'location', separator = { left = '', right = '' }, padding = { left = 0, right = 1 } },
           { 'progress', padding = { left = 0, right = 0 } },
-          { 'fancy_location', padding = { left = 0, right = 1 } },
+          { 'fancy_location', separator = { left = '│' } },
           { 'fancy_searchcount' },
         },
         lualine_z = {
-          function() return ' ' .. os.date('%R') end,
+          -- { "require('weather.lualine').custom(default_f_formatter, require('weather.other_icons').nerd_font)"},
+          {
+            function() return ' ' .. os.date('%R') end,
+            separator = { left = '', right = '' },
+            padding = { left = 0, right = 0 },
+          },
         },
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = { 'filename' },
-        lualine_x = { 'location' },
-        lualine_y = {},
+        lualine_c = {},
+        lualine_x = {},
+        lualine_y = { 'fancy_location', 'fancy_searchcount' },
         lualine_z = {},
       },
       extensions = {
-        'ToggleTerm',
-        'Quickfix',
-        'Overseer',
-        'Neo-Tree',
+        'toggleterm',
+        'quickfix',
+        'overseer',
+        'neo-tree',
         'fzf',
-        'Lazy',
-        'Man',
-        'Trouble',
-        'Aerial',
-        'Symbols-Outline',
-        'Nvim-Dap-UI',
+        'oil',
+        'lazy',
+        'man',
+        'fugitive',
+        'trouble',
+        'mason',
+        'symbols-outline',
+        'nvim-dap-ui',
       },
     },
   },

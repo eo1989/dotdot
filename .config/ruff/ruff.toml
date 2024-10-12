@@ -1,0 +1,42 @@
+[lint]
+extend-include = ["*.ipynb"]
+exclude = [
+  ".git",
+  ".tox",
+  ".venv",
+  "venv",
+  "pytypes",
+  "node_modules",
+  "egg-info",
+  "env",
+  ".vim",
+  ".pytest_cache",
+  ".mypy_cache",
+  ".virtual_documents",
+  ".vscode",
+  ".ipynb_checkpoints",
+  "__pycache__",
+  "docs/source/conf.py",
+  "old",
+  "build",
+  "dist",
+  "*migrations*",
+]
+
+ignore = ["D203", "E4", "E5", "F40", "F82", "F84", "W2"]
+
+select = ["B", "C", "UP"]
+
+fixable = "ALL"
+unfixable = []
+
+[lint.mccabe]
+max-complexity = 10
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[format]
+# for black
+line-length = 80
+target-version = ["py312"]

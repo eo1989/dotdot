@@ -1,50 +1,14 @@
----@diagnostic disable: unused-function, undefined-doc-name, undefined-field, param-type-mismatch
+---@diagnostic disable: param-type-mismatch, undefined-doc-name, undefined-field
+--@diagnostic disable: unused-function, undefined-doc-name, undefined-field, param-type-mismatch
 if not eo then return end
 
+local augroup = eo.augroup
 local lsp, fn, api, fmt = vim.lsp, vim.fn, vim.api, string.format
--- local fs = vim.fs
 local diagnostic = vim.diagnostic
 local L, S = vim.lsp.log_levels, vim.diagnostic.severity
 local M = vim.lsp.protocol.Methods
 
--- local icons = require('config.icons')
-local icons = eo.ui.icons.lsp
-local border = eo.ui.current.border
-local augroup = eo.augroup
--- local border = 'rounded'
-
-if vim.env.DEVELOPING then vim.lsp.set_log_level(L.DEBUG) end
-
-----------------------------------------------------------------------------------------------------
---  LSP file Rename
-----------------------------------------------------------------------------------------------------
-
----@param data { old_name: string, new_name: string }
--- local function prepare_rename(data)
---   local bufnr = fn.bufnr(data.old_name)
---   for _, client in pairs(lsp.get_clients { bufnr = bufnr }) do
---     local rename_path = { 'server_capabilities', 'workspace', 'fileOperations', 'willRename' }
---     if not vim.tbl_get(client, rename_path) then
---       return vim.notify(fmt('%s does not LSP file rename', client.name), 'info', { title = 'LSP' })
---     end
---     local params = {
---       files = { { newUri = 'file://' .. data.new_name, oldUri = 'file://' .. data.old_name } },
---     }
---     ---@diagnostic disable-next-line: invisible
---     local resp = client.request_sync('workspace/willRenameFiles', params, 1000)
---     if resp then vim.lsp.util.apply_workspace_edit(resp.result, client.offset_encoding) end
---   end
--- end
-
--- local function rename_file()
---   vim.ui.input({ prompt = 'New name: ' }, function(name)
---     if not name then return end
---     local old_name = api.nvim_buf_get_name(0)
---     local new_name = fmt('%s/%s', fs.dirname(old_name), name)
---     prepare_rename { old_name = old_name, new_name = new_name }
---     lsp.util.rename(old_name, new_name)
---   end)
--- end
+local unpack = unpack or table.unpack
 
 ----------------------------------------------------------------------------------------------------
 --  Related Locations
@@ -71,20 +35,26 @@ local function show_related_locations(diag)
 end
 
 local handler = lsp.handlers[M.textDocument_publishDiagnostics]
+
 ---@diagnostic disable-next-line: duplicate-set-field
 lsp.handlers[M.textDocument_publishDiagnostics] = function(err, result, ctx, config)
   result.diagnostics = vim.tbl_map(show_related_locations, result.diagnostics)
   handler(err, result, ctx, config)
 end
 
--- lsp.handlers["window/logMessage"] = function(_, result)
+lsp.handlers['textDocument/hover'] = lsp.with(lsp.handlers.hover, { border = 'rounded' })
+lsp.handlers['textDocument/signatureHelp'] = lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
+
+-- lsp.handlers['window/logMessage'] = function(_, result)
 --   local msg = result.message
---   if type(msg) == "table" then
---     msg = vim.inspect(msg)
---   end
---   if type(msg) == "string" then
---     vim.notify(msg, "info", { title = "LSP" })
---   end
+--   if type(msg) == 'table' then msg = vim.inspect(msg) end
+--   if type(msg) == 'string' then vim.notify(msg, 'info', { title = 'LSP' }) end
+--   -- if msg.type == 3 then
+--   --   if msg:find('pythonPath') then vim.notify(msg) end
+--   -- end
+--   -- if result.type == 3 then
+--   --   if result.message:find('pythonPath') then vim.notify(result.message) end
+--   -- end
 -- end
 
 lsp.handlers['window/logMessage'] = function(_, content, _)
@@ -93,63 +63,89 @@ lsp.handlers['window/logMessage'] = function(_, content, _)
   end
 end
 
------------------------------------------------------------------------------//
--- Mappings
------------------------------------------------------------------------------//
+--[[ from stevearc/dotfiles/blob/master/config/nvim/lua/plugins/lsp.lua ]]
+-- lsp.handlers['window/showMessage'] = function(_err, result, context, _config)
+--   local client_id = context.client_id
+--   local msg_type = result.type
+--   local msg = result.message
+--   local client = lsp.get_client_by_id(client_id)
+--   local client_name = client and client.name or fmt('id=%d', client_id)
+--   if not client then
+--     vim.notify('LSP[' .. client_name .. ']: client has shut down after sending the message', vim.log.levels.ERROR)
+--   end
+--   if msg_type == lsp.protocol.MessageType.Error then
+--     vim.notify('LSP[' .. client_name .. ']: ' .. msg, vim.log.levels.ERROR)
+--   else
+--     local msg_type_name = lsp.protocol.MessageType[msg_type]
+--     local map = {
+--       Error = vim.log.levels.ERROR,
+--       Warning = vim.log.levels.WARN,
+--       Info = vim.log.levels.INFO,
+--       Log = vim.log.levels.DEBUG,
+--     }
+--     -- the entire point to override this handler is so that this uses vim.notify instead of api.nvim_out_write
+--     vim.notify(fmt('LSP[%s] %s\n', client_name, msg), map[msg_type_name])
+--   end
+--   return result
+-- end
 
 ---Setup mapping when an lsp attaches to a buffer
 ---@param client lsp.Client
 ---@param bufnr integer
 local function setup_mappings(client, bufnr)
-  -- local ts = { 'typescript', 'typescriptreact' }
-  --TODO: Figure out how to make specific keymaps for quarto-only buffers
-  -- local qmd = { 'quarto' }
   local mappings = {
-    { 'n', ']d', function() diagnostic.goto_prev { float = true } end, desc = 'go to prev diagnostic' },
-    { 'n', '[d', function() diagnostic.goto_next { float = true } end, desc = 'go to next diagnostic' },
+    { 'n', ']d', function() diagnostic.jump { count = -1, float = true } end, desc = 'go to prev diagnostic' },
+    { 'n', '[d', function() diagnostic.jump { count = 1, float = true } end, desc = 'go to next diagnostic' },
     { { 'n', 'x' }, '<leader>ca', lsp.buf.code_action, desc = 'code action', capability = M.textDocument_codeAction },
+    -- { 'n', '<leader>ca', lsp.buf.code_action, desc = 'code action', capability = M.textDocument_codeAction },
     -- {
-    --   { 'n', 'i' },
-    --   '<C-s>',
-    --   lsp.buf.signature_help,
-    --   desc = 'Signature Help',
-    --   capability = M.textDcoument_signatureHelp,
+    --   'v',
+    --   '<leader>ca',
+    --   "<cmd>'<,'>lua vim.lsp.buf.code_action()<CR>",
+    --   desc = 'code action',
+    --   capability = M.textDocument_codeAction,
     -- },
-    -- { 'n', '<leader>rf', lsp.buf.format, desc = 'format buffer', capability = M.textDocument_formatting, exclude = ts },
-    -- { 'n', 'gd', lsp.buf.definition, desc = 'definition', capability = M.textDocument_definition, exclude = ts },
-    { 'n', 'gd', lsp.buf.definition, desc = 'definition', capability = M.textDocument_definition },
-    { 'n', 'gr', lsp.buf.references, desc = 'references', capability = M.textDocument_references },
-    {
-      'n',
-      '<localleader>gI',
-      lsp.buf.incoming_calls,
-      desc = 'incoming calls',
-      capability = M.textDocument_prepareCallHierarchy,
-    },
-    {
-      'n',
-      '<localleader>gi',
-      lsp.buf.implementation,
-      desc = 'implementation',
-      capability = M.textDocument_implementation,
-    },
+    { 'n', 'gd', lsp.buf.definition, desc = 'def', capability = M.textDocument_definition },
+    { 'n', 'gD', lsp.buf.type_definition, desc = 'type def', capability = M.textDocument_typeDefinition },
+    { 'n', 'gr', lsp.buf.references, desc = 'ref', capability = M.textDocument_references },
+    { 'n', 'gI', lsp.buf.incoming_calls, desc = 'incoming calls', capability = M.textDocument_prepareCallHierarchy },
+    { 'n', 'gi', lsp.buf.implementation, desc = 'implementation', capability = M.textDocument_implementation },
     -- stylua: ignore start
-    { 'n', 'gD', lsp.buf.type_definition, desc = 'go to type definition', capability = M.textDocument_definition },
+    -- { 'n', '<leader>gd', lsp.buf.type_definition, desc = 'go to type definition', capability = M.textDocument_typedefinition },
     -- stylua: ignore end
     { 'n', '<leader>cl', lsp.codelens.run, desc = 'run code lens', capability = M.textDocument_codeLens },
     {
       'n',
       '<leader>ci',
       function()
-        local enabled = lsp.inlay_hint.is_enabled(0)
-        lsp.inlay_hint(true, not lsp.inlay_hint.is_enabled())
-        -- lsp.inlay_hint()
+        -- local enabled = lsp.inlay_hint.is_enabled(0)
+        -- lsp.inlay_hint.enable(0, not enabled)
+        lsp.inlay_hint.enable(not lsp.inlay_hint.is_enabled { nil })
       end,
       desc = 'inlay hints toggle',
       M.textDocument_inlayHint,
     },
-    { 'n', '<leader>rn', lsp.buf.rename, desc = 'rename', capability = M.textDocument_rename },
-    -- { 'n', '<leader>rm', rename_file, desc = 'rename file', capability = M.textDocument_rename },
+    -- { 'n', '<leader>ri', lsp.buf.rename, desc = 'rename', capability = M.textDocument_rename },
+    { 'n', 'grn', lsp.buf.rename, desc = 'rename', capability = M.textDocument_rename },
+    --[[ unsure if this will work, but worth a shot. May conflict with conform...]]
+    {
+      { 'x', 'v' },
+      '=',
+      function()
+        local start_row, _ = unpack(api.nvim_buf_get_mark(0, '<'))
+        local end_row, _ = unpack(api.nvim_buf_get_mark(0, '>'))
+        vim.lsp.buf.format {
+          range = {
+            ['start'] = { start_row, 0 },
+            ['end'] = { end_row, 0 },
+          },
+          async = true,
+        }
+      end,
+      desc = 'visual format',
+      -- silent = true,
+      capability = M.textDocument_rangeFormatting,
+    },
   }
 
   vim.iter(mappings):each(function(m)
@@ -162,42 +158,22 @@ local function setup_mappings(client, bufnr)
   end)
 end
 
------------------------------------------------------------------------------//
--- LSP SETUP/TEARDOWN
------------------------------------------------------------------------------//
-
----@alias ClientOverrides {on_attach: fun(client: lsp.Client, bufnr: number), semantic_tokens: fun(bufnr: number, client: lsp.Client, token: table)}
+---@alias ClientOverrides {on_attach: fun(client: vim.lsp.Client, bufnr: number), semantic_tokens: fun(bufnr: number, client: vim.lsp.Client, token: table)}
 
 --- A set of custom overrides for specific lsp clients
 --- This is a way of adding functionality for specific lsps
---- without putting all this logic in the general on_attach function
+--- without putting all this logic inthe general on_attach function
 ---@type {[string]: ClientOverrides}
 local client_overrides = {
-  -- tsserver = {
-  --   semantic_tokens = function(bufnr, client, token)
-  --     if token.type == 'variable' and token.modifiers['local'] and not token.modifiers.readonly then
-  --       lsp.semantic_tokens.highlight_token(token, bufnr, client.id, '@danger')
-  --     end
-  --   end,
-  -- },
+  tsserver = {
+    semantic_tokens = function(bufnr, client, token)
+      if token.type == 'variable' and token.modifiers['local'] and not token.modifiers.readonly then
+        lsp.semantic_tokens.highlight_token(token, bufnr, client.id, '@danger')
+      end
+    end,
+  },
 }
 
------------------------------------------------------------------------------//
--- Semantic Tokens
------------------------------------------------------------------------------//
-
----@param client lsp.Client
----@param bufnr number
-local function setup_semantic_tokens(client, bufnr)
-  local overrides = client_overrides[client.name]
-  if not overrides or not overrides.semantic_tokens then return end
-  augroup(fmt('LspSemanticTokens%s', client.name), {
-    event = 'LspTokenUpdate',
-    buffer = bufnr,
-    desc = fmt('Configure the semantic tokens for the %s', client.name),
-    command = function(args) overrides.semantic_tokens(args.buf, client, args.data.token) end,
-  })
-end
 -----------------------------------------------------------------------------//
 -- Autocommands
 -----------------------------------------------------------------------------//
@@ -215,7 +191,9 @@ local function setup_autocommands(client, buf)
     })
   end
 
-  -- if client.supports_method(M.textDocument_inlayHint, { bufnr = buf }) then vim.lsp.inlay_hint.enable(buf, true) end
+  if client.supports_method(M.textDocument_inlayHint, { bufnr = buf }) then
+    vim.lsp.inlay_hint.enable(true, { bufnr = buf })
+  end
 
   if client.supports_method(M.textDocument_documentHighlight) then
     augroup(('LspReferences%d'):format(buf), {
@@ -240,12 +218,12 @@ end
 local function on_attach(client, bufnr)
   setup_autocommands(client, bufnr)
   setup_mappings(client, bufnr)
-  setup_semantic_tokens(client, bufnr)
+  -- setup_semantic_tokens(client, bufnr)
 end
 
 augroup('LspSetupCommands', {
   event = 'LspAttach',
-  desc = 'setup the language server autocommands',
+  desc = 'setup the lsp autocommands',
   command = function(args)
     local client = lsp.get_client_by_id(args.data.client_id)
     if not client then return end
@@ -262,11 +240,6 @@ augroup('LspSetupCommands', {
     if #args.data.diagnostics == 0 then vim.cmd('silent! lclose') end
   end,
 })
------------------------------------------------------------------------------//
--- Commands
------------------------------------------------------------------------------//
-
-eo.command('LspFormat', function() lsp.buf.format { bufnr = 0, async = true } end)
 
 -----------------------------------------------------------------------------//
 -- Handler Overrides
@@ -298,9 +271,11 @@ diagnostic.handlers.signs = vim.tbl_extend('force', signs_handler, {
   show = max_diagnostic(signs_handler.show),
   hide = function(_, bufnr) signs_handler.hide(ns, bufnr) end,
 })
+
 -----------------------------------------------------------------------------//
 -- Diagnostic Configuration
 -----------------------------------------------------------------------------//
+
 local max_width = math.min(math.floor(vim.o.columns * 0.7), 100)
 local max_height = math.min(math.floor(vim.o.lines * 0.3), 30)
 
@@ -308,16 +283,17 @@ local max_height = math.min(math.floor(vim.o.lines * 0.3), 30)
 -- Signs
 -----------------------------------------------------------------------------//
 diagnostic.config {
+  severity_sort = true,
   underline = true,
   update_in_insert = false,
-  severity_sort = true,
+  jump = { float = true },
   signs = {
     severity = { min = S.WARN },
     text = {
-      [S.WARN] = icons.warn,
-      [S.INFO] = icons.info,
-      [S.HINT] = icons.hint,
-      [S.ERROR] = icons.error,
+      [S.WARN] = '❗', -- ❗
+      [S.INFO] = '󰙎', --    󰙎
+      [S.HINT] = '󰌶',
+      [S.ERROR] = '✗',
     },
     linehl = {
       [S.WARN] = 'DiagnosticSignWarnLine',
@@ -326,27 +302,34 @@ diagnostic.config {
       [S.ERROR] = 'DiagnosticSignErrorLine',
     },
   },
-  virtual_text = false and {
-    severity = { min = S.WARN },
-    spacing = 5,
-    prefix = function(d)
-      local level = diagnostic.severity[d.severity]
-      return icons[level:lower()]
-    end,
-  },
+  -- virtual_text = true and {
+  --   severity = { min = S.WARN },
+  --   spacing = 6,
+  --   prefix = function(d) local level = diagnostic.severity[d.severity] end,
+  -- },
   float = {
-    max_width = max_width,
-    max_height = max_height,
-    border = border,
-    title = { { '  ', 'DiagnosticFloatTitleIcon' }, { 'Problems  ', 'DiagnosticFloatTitle' } },
+    -- max_width = max_width,
+    -- max_height = max_height,
+    border = 'rounded',
+    -- title = { { '', 'DiagnosticFloatTitleIcon' }, { 'Problems ', 'DiagnosticFloatTitle' } },
     focusable = false,
-    header = '',
-    scope = 'cursor',
-    source = 'if_many',
-    prefix = function(diag)
-      local level = diagnostic.severity[diag.severity]
-      local prefix = fmt('%s ', icons[level:lower()])
-      return prefix, 'Diagnostic' .. level:gsub('^%l', string.upper)
-    end,
+    -- header = '',
+    -- scope = 'cursor',
+    -- source = 'if_many',
+    --[[ www.github.com/willothy/nvim-config/blob/main/lua/configs/lsp/lspconfig.lua ]]
+    source = true,
+    header = setmetatable({}, {
+      __index = function(_, k)
+        local arr = {
+          fmt(
+            'Diagnostics: %s %s',
+            require('nvim-web-devicons').get_icon_by_filetype(vim.bo.filetype),
+            vim.bo.filetype
+          ),
+          'Title',
+        }
+        return arr[k]
+      end,
+    }),
   },
 }

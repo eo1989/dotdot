@@ -76,7 +76,7 @@ end
 --- 1. https://stackoverflow.com/q/5560248
 --- 2. https://stackoverflow.com/a/37797380
 ---@param color string A hex color
----@param percent float a negative number darkens and a positive one brightens
+---@param percent number a negative number darkens and a positive one brightens
 ---@return string
 local function tint(color, percent)
   assert(color and percent, 'cannot alter a color without specifying a color and percentage')
@@ -91,13 +91,11 @@ local function tint(color, percent)
   return fmt('#%02x%02x%02x', blend(r), blend(g), blend(b))
 end
 
-local err_warn = vim.schedule_wrap(
-  function(group, attribute)
-    notify(fmt('failed to get highlight %s for attribute %s\n%s', group, attribute, debug.traceback()), 'ERROR', {
-      title = fmt('Highlight - get(%s)', group),
-    })
-  end
-)
+local err_warn = vim.schedule_wrap(function(group, attribute)
+  notify(fmt('failed to get highlight %s for attribute %s\n%s', group, attribute, debug.traceback()), 'ERROR', {
+    title = fmt('Highlight - get(%s)', group),
+  }) -- stylua: ignore
+end)
 
 --- Get the value a highlight group whilst handling errors, fallbacks as well as returning a gui value
 --- If no attribute is specified return the entire highlight table
@@ -213,7 +211,8 @@ local function plugin(name, opts)
     opts = add_theme_overrides(opts.theme)
     if not next(opts) then return end
   end
-  all(opts)
+  -- all(opts)
+  vim.schedule(function() all(opts) end)
   -- capitalise the name for autocommand convention sake
   augroup(fmt('%sHighlightOverrides', name:gsub('^%l', string.upper)), {
     event = 'ColorScheme',

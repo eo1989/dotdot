@@ -9,7 +9,7 @@ local function read_file(file, line_handler)
 end
 
 api.nvim_create_user_command('DotEnv', function()
-  local files = fs.find('.env', {
+  local files = fs.find({ '.env', '.envrc' }, {
     upward = true,
     stop = fn.fnamemodify(fn.getcwd(), ':p:h:h'),
     path = fn.expand('%:p:h'),
@@ -24,7 +24,7 @@ api.nvim_create_user_command('DotEnv', function()
       fn.setenv(name, value)
     end
   end)
-  local markdown = table.concat(vim.tbl_flatten { '', '```sh', lines, '```', '' }, '\n')
+  local markdown = table.concat(vim.iter({ '', '```sh', lines, '```', '' }):flatten(math.huge):totable(), '\n')
   vim.notify(fmt('Read **%s**\n', filename) .. markdown, 'info', {
     title = 'Nvim Env',
     on_open = function(win)

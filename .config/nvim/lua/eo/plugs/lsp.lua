@@ -1,102 +1,208 @@
-local borrder, icons = eo.ui.current.border, eo.ui.icons
-local highlight = eo.highlight
+local lsp, fn, api, fmt = vim.lsp, vim.fn, vim.api, string.format
+-- local highlight = eo.highlight
+
+local map = vim.keymap.set
+
 return {
   {
+    'jmbuhr/otter.nvim',
+    event = { 'LspAttach', 'VeryLazy' },
+    ft = { 'markdown', 'quarto' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {},
+  },
+  {
+    'b0o/schemastore.nvim',
+    event = { 'LspAttach', 'VeryLazy' },
+    ft = { 'json', 'yaml' },
+  },
+  {
+    'williamboman/mason.nvim',
+    cmd = 'Mason',
+    build = ':MasonUpdate',
+    opts = { ui = { border = 'rounded', height = 0.7 } },
+  },
+  {
     'williamboman/mason-lspconfig.nvim',
-    lazy = false,
-    event = { 'BufReadPre', 'BufNewFile', 'LspAttach' },
+    event = { 'BufReadPre', 'BufNewFile' },
     dependencies = {
-      -- 'mason.nvim',
-      -- 'hrsh7th/cmp-nvim-lsp',
-      {
-        'williamboman/mason.nvim',
-        lazy = false,
-        build = ':MasonUpdate',
-        cmd = 'Mason',
-        opts = { ui = { border = borrder, height = 0.7 } },
-      },
-      -- {
-      --   'SmiteshP/nvim-navic',
-      --   event = 'LspAttach',
-      --   opts = {},
-      -- },
-      {
-        'j-hui/fidget.nvim',
-        enabled = true,
-        -- branch = 'Legacy',
-        event = 'LspAttach',
-        opts = {
-          progress = {
-            ignore_done_already = true, -- ignore new tasks that are already complete
-            -- how many lsp messages to show at once
-            display = { render_limit = 3 },
-          },
-        },
-      },
+      { 'williamboman/mason.nvim' },
       {
         'neovim/nvim-lspconfig',
-        lazy = false,
+        -- event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-          'folke/neodev.nvim',
-          lazy = false,
-          opts = {},
+          {
+            'j-hui/fidget.nvim',
+            event = { 'LspAttach', 'VeryLazy' },
+            opts = {
+              progress = {
+                ignore_done_already = true, -- ignore new tasks that are already complete
+                -- how many lsp messages to show at once
+                display = {
+                  render_limit = 3,
+                  overrides = {
+                    lua_ls = { name = 'lua-ls' },
+                  },
+                },
+              },
+              notification = {
+                override_vim_notify = true,
+                view = { stack_upwards = false },
+                window = {
+                  y_padding = 1,
+                  winblend = 0, -- required by catppucin docs
+                  align = 'top',
+                  max_height = 10,
+                },
+              },
+            },
+          },
         },
         config = function()
-          highlight.plugin('lspconfig', { { LspInfoBorder = { link = 'FloatBorder' } } })
-          require('lspconfig.ui.windows').default_options.border = border
-          -- require('lspconfig').pyright.setup(require('eo.servers')('pyright'))
+          -- highlight.plugin('lspconfig', { { LspInfoBorder = { link = 'FloatBoarder' } } })
+          require('lspconfig.ui.windows').default_options.border = 'rounded'
         end,
       },
     },
-    --@eo from skimask9/astronvim_config/blob/main/plugins/mason.lua
-    -- maybe this is also why the wsl config is having an issue with inlay_hints??
-    -- inlay_hints = { enabled = true },
     opts = {
-      automatic_installation = true,
+      automatic_installation = false,
       handlers = {
         function(name)
           local config = require('eo.servers')(name)
-          -- local config = require('eo.servers')
           if config then require('lspconfig')[name].setup(config) end
         end,
       },
     },
   },
-  -- {
-  --   'DNLHC/glance.nvim',
-  --   event = 'LspAttach',
-  --   opts = {
-  --     preview_win_opts = { relativenumber = false },
-  --     theme = { enable = true, mode = 'auto' },
-  --   },
-  --   keys = {
-  --     { 'gD', '<Cmd>Glance definitions<CR>', desc = 'lsp: glance definitions' },
-  --     { 'gR', '<Cmd>Glance references<CR>', desc = 'lsp: glance references' },
-  --     { 'gY', '<Cmd>Glance type_definitions<CR>', desc = 'lsp: glance type definitions' },
-  --   },
-  -- },
-  { 'onsails/lspkind.nvim', event = 'LspAttach' },
-  { 'b0o/schemastore.nvim', event = 'LspAttach' },
+  {
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    dependencies = { 'Bilal2453/luvit-meta' },
+    opts = {
+      library = {
+        path = 'luvit-meta/library',
+        words = { 'vim%.uv' },
+      },
+    },
+  },
+  {
+    'Bilal2453/luvit-meta',
+    ft = 'lua',
+    lazy = true,
+  },
+  {
+    'dgagn/diagflow.nvim',
+    event = 'DiagnosticChanged',
+    opts = {
+      scope = 'line', -- 'cursor' | 'line'
+      show_sign = true,
+      placement = 'top',
+      update_event = {
+        'DiagnosticChanged',
+        'BufEnter',
+        'TextChanged',
+      },
+      render_event = {
+        'DiagnosticChanged',
+        'TextChanged',
+        'CursorMoved',
+        'CursorHold',
+        'BufEnter',
+      },
+    },
+  },
   { 'mrjones2014/lua-gf.nvim', ft = 'lua' },
-  -- {
-  --   'kosayoda/nvim-lightbulb',
-  --   enabled = false,
-  --   event = 'VeryLazy',
-  --   opts = {
-  --     autocmd = { enabled = true },
-  --     sign = { enabled = false },
-  --     float = { text = icons.misc.lightbulb, enabled = true, win_opts = { border = 'none' } },
-  --   },
-  -- },
+  { 'onsails/lspkind.nvim' },
   {
     'utilyre/barbecue.nvim',
-    enabled = true,
     event = 'LspAttach',
     dependencies = {
-      'neovim/nvim-lspconfig',
-      'SmiteshP/nvim-navic',
-      'nvim-tree/nvim-web-devicons',
+      { 'neovim/nvim-lspconfig' },
+      {
+        'SmiteshP/nvim-navic',
+        opts = { highlight = true },
+      },
+      { 'nvim-tree/nvim-web-devicons' },
     },
-    opts = {},
+    opts = function(_, opts)
+      local opts = {
+        theme = 'auto',
+        create_autocmd = false,
+        attach_navic = true,
+        show_dirname = false,
+        show_basename = true,
+      }
+      vim.g.updatetime = 200
+      vim.api.nvim_create_autocmd({
+        'WinResized',
+        'BufWinEnter',
+        'CursorHold',
+        'InsertLeave',
+      }, {
+        group = vim.api.nvim_create_augroup('Barbecue.updater', {}),
+        callback = function() require('barbecue.ui').update() end,
+      })
+      require('barbecue').setup {}
+    end,
+  },
+  {
+    'Wansmer/symbol-usage.nvim',
+    enabled = false,
+    event = 'LspAttach',
+    config = {
+      text_format = function(symbol)
+        local function h(name) return api.nvim_get_hl(0, { name = name }) end
+
+        api.nvim_set_hl(0, 'SymbolUsageRounding', { fg = h('CursorLine').bg, italic = true })
+        api.nvim_set_hl(0, 'SymbolUsageContent', { bg = h('CursorLine').bg, fg = h('Comment').fg, italic = true })
+        api.nvim_set_hl(0, 'SymbolUsageRef', { fg = h('Function').fg, bg = h('CursorLine').bg, italic = true })
+        api.nvim_set_hl(0, 'SymbolUsageDef', { fg = h('Type').fg, bg = h('CursorLine').bg, italic = true })
+        api.nvim_set_hl(0, 'SymbolUsageImpl', { fg = h('@keyword').fg, bg = h('CursorLine').bg, italic = true })
+
+        local stacked_funcs_content = symbol.stacked_count > 0 and ('+%S'):format(symbol.stacked_count) or ''
+
+        local res = {}
+        local ins = table.insert
+
+        local round_start = { '', 'SymbolUsageRounding' }
+        local round_end = { '', 'SymbolUsageRounding' }
+
+        if symbol.references then
+          local usage = symbol.references <= 1 and 'usage' or 'usages'
+          local num = symbol.references == 0 and 'no' or symbol.references
+          ins(res, round_start)
+          ins(res, { '󰌹 ', 'SymbolUsageRef' })
+          ins(res, { ('%s %s'):format(num, usage), 'SymbolUsageContent' })
+          ins(res, round_end)
+        end
+
+        if symbol.definition then
+          if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
+          ins(res, round_start)
+          ins(res, { '󰳽 ', 'SymbolUsageDef' })
+          ins(res, { symbol.definition .. ' defs', 'SymbolUsageContent' })
+          ins(res, round_end)
+        end
+
+        if symbol.implementation then
+          if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
+          ins(res, round_start)
+          ins(res, { '󰡱 ', 'SymbolUsageImpl' })
+          ins(res, { symbol.implementation .. ' impls', 'SymbolUsageContent' })
+          ins(res, round_end)
+        end
+
+        if stacked_funcs_content ~= '' then
+          if #res > 0 then ins(res, { ' ', 'NonText' }) end
+          ins(res, round_start)
+          ins(res, { ' ', 'SymbolUsageImpl' })
+          ins(res, { stacked_funcs_content, 'SymbolUsageContent' })
+          ins(res, round_end)
+        end
+
+        return res
+      end,
+      vt_position = 'textwidth', -- 'above' | 'textwidth' | 'signcolumn'
+    },
   },
 }

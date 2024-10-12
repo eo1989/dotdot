@@ -1,3 +1,6 @@
+[project]
+requires-python = ">=3.12"
+
 # [tool.poetry]
 # python = "^3.12"                          # "^3.12"
 # build = "poetry build"
@@ -5,13 +8,76 @@
 
 [tool.ruff]
 line-length = 80
-extend = "*.ipynb"
-target-version = 'py312'
-trailing-comma = true
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "venv",
+]
 
-[tool.black]
-line-length = 80
-target-version = 'py312'
+[tool.ruff.lint]
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+extend-select = ["UP"]
+ignore = [
+  "COM",
+  "ISC",
+  "I",
+  "NPY",
+  "INP",
+  "PIE",
+  "F4",
+  "E4",
+  "E5",
+  "E7",
+  "E9",
+  "W",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = false
+# trailing-comma = true
+
+# [tool.black]
+# line-length = 80
+# target-version = ['py312']
 
 [tool.mdformat]
 number = true
+
+[tool.basedpyright]
+# exclude = ["**/node_modules", "**/__pycache__", "**/rplugin"]
+# ignore = ["rplugin/**"]
+reportMissingImports = true
+reportMissingTypeStubs = false
+pythonVersion = "3.12"
+pythonPlatform = "Darwin"
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true

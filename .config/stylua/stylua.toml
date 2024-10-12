@@ -1,0 +1,22 @@
+column_width = 120
+line_endings = "Unix"
+indent_type = "Spaces"
+
+# If `indent_type` = 'Tabs' ∴ this option is used as a heuristic to determine column width only.
+indent_width = 2
+
+# 'AutoPreferSingle' | 'AutoPreferDouble' | 'ForceSingle' | 'ForceDouble' | 'AutoPrefer'
+quote_style = "AutoPreferSingle"
+
+# 'Always' | 'NoSingleString' | 'NoSingleTable' | 'None' | 'Input'
+call_parentheses = 'NoSingleString'
+
+# 'ConditionalOnly' | 'FunctionOnly' | 'Never' | 'Always'
+collapse_simple_statement = 'FunctionOnly'
+
+color = "Always"
+
+## Testing
+[sort_requires]
+enabled = true
+# call_parentheses = 'NoSingleString'

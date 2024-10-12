@@ -34,7 +34,7 @@ local function open_help(tag) pcall(vim.cmd.help, tag) end
 --- shows the lsp hover doc
 --- @param word string
 --- @param callback function
-local function keeword(word, callback)
+local function keyword(word, callback)
   local original_iskeyword = vim.bo.iskeyword
 
   vim.bo.iskeyword = vim.bo.iskeyword .. ',.'
@@ -56,13 +56,18 @@ local function keeword(word, callback)
   vim.lsp.buf.hover()
 end
 
--- stylua: ignore start
-map('n', 'K', keeword, { buffer = 0 })
+map('n', 'gK', keyword, { buffer = 0 })
 map('n', '<leader>so', function()
-  vim.cmd.luafile '%'
-  vim.notify('Sourced ' .. fn.expand '%')
+  vim.cmd.luafile('%')
+  vim.notify('Sourced ' .. fn.expand('%'))
 end)
--- stylua: ignore end
+-- local wk = register('which-key')
+-- wk.register({
+--   s = {
+--     name = 'source',
+--     o = { ':w<CR>:luafile %<CR>', 'Sourced lua file' },
+--   },
+-- }, { mode = 'n', prefix = '<leader>' })
 
 -- TODO: set this up as a auggroup so that you dont need to rely on akinsho's global fucntions.
 -- NOTE: Check out Murderballon or something for their lua "functools" lib
@@ -78,7 +83,7 @@ eo.ftplugin_conf {
         s = {
           add = { "['", "']" },
         },
-        f = { add = { 'function () ', ' end' } },
+        f = { add = { 'function() ', ' end' } },
         F = {
           add = function()
             return {

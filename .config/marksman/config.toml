@@ -1,0 +1,7 @@
+# https://github.com/artempyanykh/marksman/blob/main/Tests/default.marksman.toml
+
+[code_action]
+toc.enable = true
+
+[core]
+marksman.file_extensions = ["md", "markdown", "qmd"]

@@ -1,6 +1,6 @@
 # much of these new cmds were taken from rafi gh -> .com/rafi/.config
 # interpreter for shell commands (needs to be POSIX compatible)
-set shell zsh
+set shell /usr/local/bin/zsh
 
 # set '-eu' options for shell commands
 # These options are used to have safer shell commands. Option '-e' is used to
@@ -32,8 +32,10 @@ set dircounts true
 set info size
 set sortby natural
 set ratios '1:2:3'
-set previewer ~/.config/lf/lfpreview
+set sixel true
 set preview true
+# set previewer "/users/eo/.config/lf/lfpreview"
+set previewer "/users/eo/lf-preview"
 set drawbox true
 set promptfmt "
 \033[38;5;8m\033[48;5;236m %u@%h \033[38;5;236m\033[48;5;234m
@@ -47,11 +49,16 @@ map E &$OPENER $f
 map o $mimeopen --ask $f
 map O $mimeopen --ask-default $f
 
+# dedicated keys for file opener actions
+# map o &mimeopen $f
+# map O $mimeopen --ask $f
+
+
 # general utilities
 # ---
-map i $LESS='-iWQMXR~' bat --paging=always --theme=TwoDark "$f"
+map i $LESS='-iWQMXR~' bat --paging=always --theme="Sublime Snazzy" "$f"
 map I push A<c-a>
-map A rename
+map R rename
 map D trash
 map H cd ..
 map . set hidden!
@@ -59,13 +66,14 @@ map . set hidden!
 # create directory/file
 map ad push $mkdir<space>
 map af push $touch<space>
-map au !du -hsx * | sort -rh | less
-map ai !gstat $f || stat $f; echo ; du -sh $f ; echo ; file -I -b -p $f
+# map au !du -hsx * | sort -rh | less
+map au !dust -si * |  less
+map ai !gstat $f || stat $f; echo ; du -sh $f ; echo ; file --mime-type -b -p $f
 
 # Quickly locate a file with fzf and select it in lf
-map gf $lf -remote "send $id select $(fzf)"
+map gf $lf -remote "send $id select $(fzf-tmux --query="$1" --select-1 --exit-0 --preview="bat --paging=always --theme='Sublime Snazzy'")"
 
-# map <esc> unselect; clear
+map <esc> unselect; clear
 map zz push :z<space>
 
 map sn :{{ set sortby natural; set info size; set preview; }}
@@ -87,10 +95,6 @@ map = &bcompare $fx
 map x $$f
 map X !$f
 
-# dedicated keys for file opener actions
-map o &mimeopen $f
-map O $mimeopen --ask $f
-
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to
 # use either file extensions and/or mime types here. Below uses an editor for
@@ -98,7 +102,7 @@ map O $mimeopen --ask $f
 cmd open ${{
     case $(file --mime-type $f -b) in
         text/*) $EDITOR $fx;;
-        *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
+        *) for f in $fx; do setsid $OPENER $f >/dev/null 2>/dev/null & done;;
     esac
 }}
 
@@ -167,14 +171,14 @@ cmd z ${{
 	if hash zoxide 2>/dev/null; then
 		dest="$(zoxide query "$@")"
 	# See: https://github.com/skywind3000/z.lua
-	elif [ -f "$prefix/etc/profile.d/z.lua" ]; then
-		export _ZL_NO_PROMPT_COMMAND=1
-		dest="$(lua "$prefix/etc/profile.d/z.lua" -e "$@")"
-	# See https://github.com/rupa/z
-	elif [ -f "$prefix/etc/profile.d/z.sh" ] || [ -f "$prefix/share/z/z.sh"]; then
-		export _Z_NO_PROMPT_COMMAND=1
-		source "$prefix/etc/profile.d/z.sh" || source "$prefix/share/z/z.sh"
-		dest="$(_z "$@" && pwd)"
+	# elif [ -f "$prefix/etc/profile.d/z.lua" ]; then
+	# 	export _ZL_NO_PROMPT_COMMAND=1
+	# 	dest="$(lua "$prefix/etc/profile.d/z.lua" -e "$@")"
+	# # See https://github.com/rupa/z
+	# elif [ -f "$prefix/etc/profile.d/z.sh" ] || [ -f "$prefix/share/z/z.sh"]; then
+	# 	export _Z_NO_PROMPT_COMMAND=1
+	# 	source "$prefix/etc/profile.d/z.sh" || source "$prefix/share/z/z.sh"
+	# 	dest="$(_z "$@" && pwd)"
 	fi
 
 	if test -n "${dest}"; then
@@ -206,3 +210,4 @@ cmd resize %{{
 	# lf -remote "send $id echo 'ui adjusted for width of $w'"
 }}
 resize
+# vim:set ft=sh

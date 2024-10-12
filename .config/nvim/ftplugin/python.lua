@@ -1,4 +1,5 @@
 vim.b.slime_cell_delimiter = '#\\s\\=%%'
+-- vim.b.slime_cell_delimiter = [[# %%]]
 -- tabstop = 4,
 -- textwidth = 79,
 -- shiftwidth = 4,

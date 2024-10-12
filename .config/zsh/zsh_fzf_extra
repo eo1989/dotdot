@@ -1,0 +1,208 @@
+#!/usr/bin/env bash
+
+# if [[ -f ~/.fzf.zsh ]]; then
+#         source ~/.fzf.zsh
+# else
+#         [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ] && source /usr/local/opt/fzf/shell/key-bindings.zsh
+#         [ -f /usr/local/opt/fzf/shell/completion.zsh ] && source /usr/local/opt/fzf/shell/completion.zsh
+# fi
+
+[[ $- != *i* ]] && return
+
+if (($+commands[fzf])); then
+    eval "$(fzf --zsh)"
+else [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fi
+
+#######################################################################
+#                                 ENV                                 #
+#######################################################################
+FD_OPTIONS='--hidden --follow --exclude=.git --exclude=node_modules --exclude=__pycache__ --exclude=.venv --exclude=mypy_cache --exclude=pytest_cache --exclude=.cache --exclude=.julia --exclude=.ipython --exclude=.jupyter'
+export FD_OPTIONS
+# export FZF_COMPLETION_TRIGGER=''
+# bindkey '\t' fzf-completion
+# bindkey '^I' "$fzf_default_completion"
+FZF_FILE_HIGHLITER='bat'
+# (( $+commands[rougify]   )) && FZF_FILE_HIGHLITER='rougify'
+# (( $+commands[coderay]   )) && FZF_FILE_HIGHLITER='coderay'
+(( $+commands[highlight] )) && FZF_FILE_HIGHLITER='highlight -10 ansi'
+(( $+commands[bat])) && FZF_FILE_HIGHLITER='bat --style=numbers,grid --color=always'
+export FZF_FILE_HIGHLITER
+
+FZF_DIR_HIGHLIGHTER='eza -Tl2 --color=always'
+(( $+commands[eza] ))  && FZF_DIR_HIGHLIGHTER='eza --color=always -TL2'
+(( $+commands[lsd] ))  && FZF_DIR_HIGHLIGHTER='lsd --color=always --tree --depth=2'
+(( $+commands[tree] )) && FZF_DIR_HIGHLIGHTER='tree -CL2'
+export FZF_DIR_HIGHLIGHTER
+
+FZF_DEFAULT_COMMAND='(git ls-tree -r --name-only HEAD || find . -path "*/\.*" -prune -o -type f -print -o -type l -print | sed s/^..//) 2> /dev/null'
+(( $+commands[fd] )) && FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git 2>/dev/null'
+# (( $+commands[fd] )) && FZF_DEFAULT_COMMAND='fd -tf -Hf -e .git 2>/dev/null'
+# (( $+commands[ag] )) && FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g "" 2>/dev/null'
+export FZF_DEFAULT_COMMAND
+
+FZF_DEFAULT_OPTS="\
+--exact
+--prompt '❯ '
+--pointer '➢'
+--marker ''
+--border=sharp
+--color=fg:-1,bg:-1,hl:#ffaf6f,fg+:-1,bg+:-1,hl+:#ffaf5f
+--color=prompt:#5fff87,marker:#ff87d7,spinner:#ff87d7
+--info inline
+--height 80%
+--extended
+--ansi
+--reverse
+--cycle
+--bind 'alt-a:select-all,ctrl-a:toggle-all'
+--bind 'alt-w:toggle-preview-wrap'
+--bind 'ctrl-s:toggle-sort'
+--bind 'ctrl-space:toggle-preview'
+--bind 'ctrl-/:change-preview-window(down|right|)'
+--bind 'ctrl-u:half-page-up,ctrl-d:half-page-down'
+--bind 'ctrl-k:preview-page-up,ctrl-j:preview-page-down'
+--bind='ctrl-e:execute(echo -n {2..} | xargs -o nvim {})+abort'
+--bind='ctrl-c:execute-silent(echo -n {2..} | pbcopy)+abort'
+--preview '($FZF_FILE_HIGHLITER {} || $FZF_DIR_HIGHLIGHTER {}) 2>/dev/null | head -n200'
+--preview-window 'right:65%'
+"
+# --bind 'change:top'
+# --bind 'ctrl-e:execute($EDITOR {} >/dev/tty </dev/tty)'
+# --bind 'alt-p:preview-up,alt-n:preview-down'
+# --bind 'ctrl-y:execute-silently(ruby -e 'puts ARGV' {+} | pbcopy)+abort'
+
+export FZF_DEFAULT_OPTS
+export FZF_COMPLETION_TRIGGER='**'
+
+(( $+commands[fd] )) && {
+    # export FD_OPTIONS="--hidden --follow --exclude={.git,node_modules,__pycache__,.venv,.mypy_cache,.pytest_cache,.cache,.julia,.ipython,.jupyter}"
+    # _fzf_compgen_path() { fd --hidden --follow --exclude ".git" . "$1" }
+    _fzf_compgen_path() { fd "${FD_OPTIONS}" . "$1" }
+    # _fzf_compgen_dir(){ fd --type d --hiddeo --follow --exclude ".git" . "$1" }
+    _fzf_compgen_dir(){ fd -td "${FD_OPTIONS}" . "$1" }
+    # unset FD_OPTIONS
+}
+
+FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND
+FZF_CTRL_T_OPTS="
+--preview='($FZF_FILE_HIGHLITER {} || $FZF_DIR_HIGHLIGHTER {}) 2>/dev/null | head -n200'
+--bind='enter:execute(echo {})+abort'
+--bind='ctrl-e:execute($EDITOR {} >/dev/tty </dev/tty)'
+--preview-window='default:right:65%'
+"
+export FZF_CTRL_T_OPTS
+
+# --preview-window='down:2:wrap'
+FZF_CTRL_R_OPTS="
+--height=~30%
+--layout=default
+--preview='echo {}'
+--preview-window='right,50%,border-left,wrap,<60(down,10%,border-top,wrap)'
+--bind='ctrl-space:toggle-preview'
+--bind='ctrl-c:execute-silent(echo -n {2..} | pbcopy)+abort'
+--header='•^S relevance/chronological  •^C to clipboard •^\\ preview'
+--exact
+--expect=ctrl-x
+"
+export FZF_CTRL_R_OPTS
+
+# FZF: Alt - C
+FZF_ALT_C_COMMAND="command find -L . -mindepth 1 \
+    \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) \
+    -prune -o -type d -print 2> /dev/null | cut -b3-"
+
+(( $+commands[fd] )) && FZF_ALT_C_COMMAND="fd -td '${FD_OPTIONS[@]}' 2>/dev/null"
+# (( $+commands[blsd]    )) && FZF_ALT_C_COMMAND='blsd $dir | grep -v "^\.$"'
+export FZF_ALT_C_COMMAND
+export FZF_ALT_C_OPTS="
+--exit-0
+--preview '($FZF_DIR_HIGHLIGHTER {}) | head -n200 2>/dev/null'
+--preview-window=right:50%
+"
+
+FZF_ALT_E_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_E_COMMAND
+FZF_ALT_E_OPTS="
+--preview \"($FZF_FILE_HIGHLITER {} || $FZF_DIR_HIGHLIGHTER {}) 2>/dev/null | head -n 20\"
+--bind 'ctrl-e:execute($EDITOR {} >/dev/tty </dev/tty)'
+--preview-window default:right:60%
+"
+export FZF_ALT_E_OPTS
+
+#######################################################################
+#                              FUNCTION                               #
+#######################################################################
+# ALT-E - Edit selected file
+# wfxr::fzf-file-edit-widget() {
+fzf-file-edit-widget() {
+   setopt localoptions pipefail 2> /dev/null
+   local files
+   files=$(eval "$FZF_ALT_E_COMMAND" |
+       FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse $FZF_DEFAULT_OPTS $FZF_ALT_E_OPTS" fzf -m |
+       sed 's/^\s\+.\s//')
+   local ret=$?
+
+   [[ $ret -eq 0 ]] && echo $files | xargs sh -c "$EDITOR \$@ </dev/tty" $EDITOR
+
+   zle redisplay
+   typeset -f zle-line-init >/dev/null && zle zle-line-init
+   return $ret
+}
+zle     -N    fzf-file-edit-widget
+bindkey '\ee' fzf-file-edit-widget
+# zle     -N    wfxr::fzf-file-edit-widget
+# bindkey '\ee' wfxr::fzf-file-edit-widget
+
+# CTRL-R - Paste the selected command from history into the command line
+# wfxr::fzf-history-widget() {
+fzf-history-widget() {
+   local selected num
+   setopt localoptions noglobsubst noposixbuiltins pipefail 2> /dev/null
+   selected=( $(fc -rl 1 | awk '{FIRST=$1; $1=""; if (!x[$0]++) {$1=FIRST; print $0}}' |
+       FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS --query=${(qqq)LBUFFER} +m" $(__fzfcmd)) )
+   local ret=$?
+   if [ -n "$selected" ]; then
+       num=$selected[1]
+       if [ -n "$num" ]; then
+           zle vi-fetch-history -n $num
+       fi
+   fi
+   zle redisplay
+   typeset -f zle-line-init >/dev/null && zle zle-line-init
+   return $ret
+}
+zle     -N   fzf-history-widget
+bindkey '^R' fzf-history-widget
+# zle     -N   wfxr::fzf-history-widget
+# bindkey '^R' wfxr::fzf-history-widget
+
+function Rg() {
+    local SELECTED
+    SELECTED=$(rg --column --line-number --no-heading --color=always --smart-case "$1" |
+        fzf --ansi \
+            --delimiter : \
+            --no-multi \
+            --bind 'alt-e:execute($EDITOR +{2} {1} >/dev/tty </dev/tty)' \
+            --preview 'bat --style=numbers,header,changes,snip --color=always --highlight-line {2} {1}' \
+            --preview-window 'default:right:60%:~1:+{2}+3/2:border-left'
+    ) && $EDITOR +$(cut -d: -f2 <<<$SELECTED) $(cut -d: -f1 <<<$SELECTED)
+}
+bindkey -s '\eg' 'Rg^M'
+
+function RG() {
+    local RG_PREFIX INITIAL_QUERY SELECTED
+    RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+    INITIAL_QUERY="$1"
+    SELECTED=$(FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY' || true" \
+        fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+        --ansi --disabled --query "$INITIAL_QUERY" \
+        --delimiter : \
+        --bind 'alt-e:execute($EDITOR +{2} {1} >/dev/tty </dev/tty)' \
+        --preview 'bat --style=numbers,header,changes,snip --color=always --highlight-line {2} {1}' \
+        --preview-window 'default:right:60%:~1:+{2}+3/2:border-left'
+    ) && $EDITOR +$(cut -d: -f2 <<<$SELECTED) $(cut -d: -f1 <<<$SELECTED)
+}
+
+# vim:ft=bash:ts=4:sw=4:sts=4:et:ai:tw=0:foldenable

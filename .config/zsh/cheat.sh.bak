@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+language=$1
+question=${2// /+}
+# available styles at https://cht.sh/:styles-demo
+style="native"
+
+if [ -z "$question" ]; then
+  curl -s cht.sh/$languge?style=$style
+else
+  curl -s cht.sh/$language/$question?style=$style
+fi
+

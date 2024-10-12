@@ -1,0 +1,172 @@
+#!/usr/bin/env zsh
+# from wfxr/dotfiles/zsh_aliases
+(( $+commands[ptpython] )) && alias ipython=ptipython
+# if exists ipython; then alias ipython=ptipython fi
+
+(( $+commands[tac] )) || alias tac='tail -r'
+# [[ -x "$(command -v conda)" ]] && alias conda="conda shell.zsh hook"
+
+# ZSH ONLY and most performant way to cehck existence of an executable
+# https://www.topbug.net/blog/2016/10/11/speed-test-check-the-existence-of-a-command-in-bash-and-zsh/
+exists() { (( $+commands[$1] )); }
+
+# sharkdp/bat ideas
+alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
+
+alias -g -- -h='-h 2>&1 | bathelp'
+alias -g -- --help='--help 2>&1 | bathelp'
+
+# if exists pipx; then
+#         { "register-python-argcomplete pipx" }
+# fi
+
+alias cpwd='pwd | tr -d "\n" | pbcopy'
+
+alias tv='tidy-viewer -a'
+
+# alias hdi='howdoi -c -n 9 $@'
+# alias h='function hdi() { howdoi "$*" -c -n 9; }; hdi'
+# alias hor='function hors() { hors "$*" -a -l -e "stackoverflow"; }; hors'
+
+# export DATEE=$(date +%s%N)
+# alias jukit_kitty="kitty --listen-on=/tmp/kitty_$DATEE -o allow_remote_control=yes"
+
+# alias dotdot="/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+
+# alias tail-nvim="tail -f ${@}" # how was this supposed to work?
+
+alias gpg-add="echo | gpg -s >/dev/null >&1"
+
+# alias ruby='/usr/local/opt/ruby/bin/ruby'
+# alias curl='/usr/local/opt/curl/bin/curl'
+
+if exists kitty; then
+	alias icat='kitty +kitten icat'
+fi
+
+alias dotfiles='/usr/local/bin/git --git-dir=${HOME}/.dotfiles/ --work-tree=${HOME}'
+# alias dotfiles='/usr/local/bin/git --git-dir=${HOME}/dotdot --work-tree=${HOME}' # shouldve showed a different
+# worktree or symlinks of some sort. maybe check out stow or yadm or chezmoi
+
+# if [[ $+commands[exa] ]]; then
+alias tree='tree --si --du -C'
+# if exists ~/.cargo/bin/exa; then
+# if ! type "eza" > /dev/null; then
+#         "something is wrong with exa, check installation or dylib, honestly its probably just the path variable, resorting to lsd -> gls"
+if exists eza; then
+	alias l='eza -lbF --git --icons -s=age --color-scale'                                                   # list, size, type, git
+	alias ls='eza -l --icons'                                                                  # ls
+	alias lS='eza -G --icons'                                                          # ls
+	alias ll='eza -lbgh --git --icons'                                                 # long list
+        alias ldot='ll -d .*'
+        alias lss='ll -s=size'
+        alias lst='ll -s=modified'
+	# alias ll='exa -lbGF --git --icons'                                                 # long list
+	alias llm='eza -lbGF --git --sort=modified --icons'                                # long list, modified date sort
+	alias la='eza -lbhHigUmuSa --time-style=long-iso --git --color-scale --icons'      # all list
+	alias lx='eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale --icons'     # all + extended list
+
+	alias lt='eza --tree --level=2 --icons'                                            # tree style, try to incorp as-tree?
+	alias lT='eza --tree --level=4 --icons'                                            # tree style, try to incorp as-tree?
+	alias lc='eza --git --icons --color-scale -lFbh -s=size'
+else
+	alias l='lsd -lbF --icon=always'                                                   # list, size, type, git
+	alias ls='lsd -l --icon=always'                                                                  # ls
+	alias lS='lsd -la --icon=always'                                                          # ls
+	alias ll='lsd -l --header --icon=always'                                                 # long list
+        alias ldot='ll -d .*'
+        alias lss='ll -s size'
+        alias lst='ll -s modified'
+fi
+
+# alias xargs='/usr/local/opt/findutils/libexec/gnubin/xargs'
+
+# alias jnb='jupyter lab --ip=0.0.0.0 --port=8080 --allow-root --no-browser'
+alias jnb='jupyter lab --ip=0.0.0.0 --port=8080 --allow-root'
+
+alias nbp="nbp -t material -u -n -m --cs truecolor"
+
+alias zshrc="$EDITOR ~/.zshrc"
+alias gn='z ~/.config/nvim/'
+
+# s() { if [[ "$SHELL" =~ "zsh" ]]; then source $HOME/.zshrc elif [[ "$SHELL" =~
+#         "bash" ]]; then
+#         # why not bashrc?
+#         source $HOME/.bash_profile fi }
+
+alias reload="exec $SHELL"
+
+alias bif='brew info'
+alias bish='HOMEBREW_NO_AUTO_UPDATE=1 brew install'
+alias bs='brew search'
+
+alias -g shrug="echo \¯\\\_\(\ツ\)\_\/\¯ | pbcopy"
+
+# alias diff="delta --line-numbers --navigate --side-by-side --syntax-theme='Dracula'"
+
+alias yt='yt-dlp --external-downloader aria2c --progress'
+
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias publicip='curl -s checkip.amazonaws.com'
+alias localip="ipconfig getifaddr en0"  # --> for for macos, not linux, use below for linux
+# alias ports='lsof -iTCP -P -sTCP:LISTEN'
+alias lanips='ifconfig -a | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"'
+
+alias dust='dust --si'
+
+# alias luamake=/Users/eo/lsp/lua-language-server/3rd/luamake/luamake
+
+## XXX: These two do the same thing!
+#  alias lpath='echo ${PATH} | tr ":" "\n"'  # better not to use it considering tr may not be in PATH (linux vs bsd)
+alias ppath='echo -e ${PATH//:/\\n}'
+
+# alias pbp=pbpaste
+alias aliases="grep 'alias '--include=$HOME/.config/zsh/aliases\{\,.zsh\} --include=$HOME/.zshrc | grep 'grep' -v | cut -d ' ' -f 2-"
+
+alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
+
+alias lg="git log --color --graph --pretty=format:'%Cred%h%Creset %>(32)%cD -%C(yellow)%d%Creset %<(35,trunc)%s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+
+alias rm='trash'
+
+alias chktermfont='echo -e "\nnormal flower\n\e[1mboldflower\e[0m\n\e[3mitalic flower\e[0m\n\e[3m\e[1mbold italic flower\e[0m\n\e[4munderline flower\e[0m\n\e[9mstrikethrough flower\e[0m\n\e[4:3mcurly underline flower\e[4:0m\n\e[4:3\e[58:mcurlyunderlinewithcolor flower\e[59m\e[4:0m"'
+
+# alias cht='cht.sh'
+
+alias c='clear'
+
+alias notes="z $SYNC_DIR/notes/neorg/ && nvim"
+
+# NOTE figure out how to set this up for other tools (lua/rocks?)!
+# alias -g brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+alias -g brew='env PATH="${PATH//$HOME/.pyenv/shims:/}" brew'
+
+# if exists gls; then
+#     alias gls="gls --color=auto --hyperlink=auto ${@}"
+# fi
+
+if exists pigz; then
+    alias gzip=pigz
+    alias gunzip="pigz -d"
+    alias zcat="pigz -dc"
+fi
+
+# alias terminal_color='wget -O gogh https://git.io/vQgMr && chmod +x gogh && ./gogh && rm gogh'
+
+alias stfu='osascript -e "set volume output muted true"'
+
+alias volumeup='osascript -e "set volume output volume 95"'
+
+alias spotoff="sudo mdutil -a -i off"
+
+alias spoton="sudo mdutil -a -i on"
+
+#  gh repo tracyone/dotfiles/.aliases
+#  NOTE: second trial
+#  intuitive map func
+#  ex: to list all directories that contain a certain file:
+#  find . -name .gitattributes | map dirname
+
+alias map="xargs -n1"
+alias ping='/usr/local/bin/gping'
+alias exportenv='while read -r f; do echo ''; done <<(env) > .env'

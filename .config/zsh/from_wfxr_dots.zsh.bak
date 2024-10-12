@@ -1,0 +1,56 @@
+#!/usr/bin/env zsh
+
+unicode-map() {
+    ruby -e '0x100.upto(0xFFFF) do |i| puts "%04X%8d%6s" % [i, i, i.chr("UTF-8")] rescue true end' | fzf -m
+}
+
+
+diffdays() {
+    d1=$(date -d "$1" +%s)
+    d2=$(date -d "$2" +%s)
+    echo $(( (d1 - d2) / 86400 ))
+}
+
+# Dump zsh hash map
+dump_map() {
+    local cmd="
+    for k in \"\${(@k)$1}\"; do
+            echo $2 \"\$k => \$$1[\$k]\"
+        done
+    "
+    eval "$cmd"
+}
+
+passgen() {
+    openssl rand -base64 ${1:-10} | tr -d '='
+}
+
+md5gen() { 
+    printf "${@:-$(passgen 128)}" | md5sum | awk '{print $1}'
+}
+
+handshake() {
+    curl -w "TCP handshake: %{time_connect}, SSL handshake: %{time_appconnect}\n" -so /dev/null "$@"
+}
+
+zsh_history_uniq() {
+    nl ~/.zsh_history | sort -t ';' -uk2 | sort -nk1 | cut -f2 > /tmp/zsh_history_short &&
+        mv ~/.zsh_history "$HOME/.zsh_history_$(date -I)" &&
+        mv /tmp/zsh_history_short ~/.zsh_history
+}
+
+webrt() {
+    local rt url
+    url=${1:-https://google.com}
+    rt=$(curl -fs -w '%{time_total}' "$url" -o /dev/null) || return 1
+    (( rt = rt * 1000 ))
+    printf "$url: %.02f ms\n" $rt
+}
+
+ansi_strip() {
+    # perl -pe 's/\e\[?.*?[\@-~]//g'
+    sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'
+}
+
+
+# vim: set ft=zsh:ts=4:sw=4:et:sts=4:tw=0:

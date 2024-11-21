@@ -18,8 +18,11 @@ return {
   -- },
   {
     '3rd/image.nvim',
-    ft = { 'markdown', 'quarto' },
-    dependencies = { 'leafo/magick' },
+    -- ft = { 'markdown', 'quarto' },
+    cond = function() return vim.fn.has('win32') ~= 1 end,
+    dependencies = {
+      'leafo/magick',
+    },
     opts = {
       backend = 'kitty',
       integrations = {

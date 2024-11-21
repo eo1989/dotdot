@@ -10,15 +10,15 @@
 # logit() { cat <&0 | tee "$(date +'%m-%d-%Y--%H:%M:S').log" }
 #
 # zsh-lovers rationalize-dot
-rationalize-dot() {
-    if [[ $LBUFFER = *.. ]]; then
-        LBUFFER+=/..
-    else
-        LBUFFER+=.
-    fi
-}
-zle -N rationalize-dot
-bindkey . rationalize-dot
+# rationalize-dot() {
+#     if [[ $LBUFFER = *.. ]]; then
+#         LBUFFER+=/..
+#     else
+#         LBUFFER+=.
+#     fi
+# }
+# zle -N rationalize-dot
+# bindkey . rationalize-dot
 
 # razak17/dotfiles/blob/main/.config/zsh/scripts/utils
 ch() {
@@ -148,6 +148,28 @@ zd() {
     cd "$dir" || exit
 }
 
+# rga-fzf interactivity
+rgaf() {
+    RG_PREFIX="rga --files-with-matches"
+    local file
+    file="$(
+        FZF_DEFAULT_COMMAND="$RG_PREFIX \'$1\'" \
+            fzf --sort --reverse --preview=\"[[ ! -z {} ]] && rga --pretty --context=5 {q} {}\" \
+            --phony -q \"$1\" \
+            --bind \"change:reload:$RG_PREFIX {q}\" \
+            --preview-window=\"down,70%:wrap,border-up\" \
+    )" && \
+        # Might help to convert to text and open said txt file instead, or
+        # as an option
+        echo "opening $file" && \
+        open "$file" || exit
+}
+
+envs() {
+        # ps eww -o command | tg ' ' '\n'
+    printenv | fzf
+}
+
 # find file, open it fzf -> fd -> nvim -- no args, looks in cwd - rg to
 # highlight
 # "highlight -O truecolor -l {} 2> /dev/null | \
@@ -199,28 +221,6 @@ zd() {
 #         && echo "opening $file" \
 #         && open "$file" || return 1;
 # }
-
-# rga-fzf interactivity
-rgaf() {
-    RG_PREFIX="rga --files-with-matches"
-    local file
-    file="$(
-        FZF_DEFAULT_COMMAND="$RG_PREFIX \'$1\'" \
-            fzf --sort --reverse --preview=\"[[ ! -z {} ]] && rga --pretty --context=5 {q} {}\" \
-            --phony -q \"$1\" \
-            --bind \"change:reload:$RG_PREFIX {q}\" \
-            --preview-window=\"down,70%:wrap,border-up\" \
-    )" && \
-        # Might help to convert to text and open said txt file instead, or
-        # as an option
-        echo "opening $file" && \
-        open "$file" || exit
-}
-
-envs() {
-        # ps eww -o command | tg ' ' '\n'
-    printenv | fzf
-}
 
 # alias histstats="history | gawk '{CMD[\$2]++;count++;}END { for (a in CMD)print CMD[a] \" \" CMD[a]/count*100 \"% \" a;}' | grep -v './' | gcolumn -c3 -s ' ' -t | sort -nr | n1 | head -n10"
 # create PR

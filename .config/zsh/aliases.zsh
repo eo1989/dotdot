@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 # ZSH ONLY and most performant way to cehck existence of an executable
 # https://www.topbug.net/blog/2016/10/11/speed-test-check-the-existence-of-a-command-in-bash-and-zsh/
-exists() { (( $+commands[$1] )); }
+exists() { (($ + commands[$1])); }
 
 # from wfxr/dotfiles/zsh_aliases
 # (( $+commands[ptpython] )) && alias ipython="ptipython --config-file=$HOME/Library/Application\\\ Support/ptpython/config.py"
@@ -9,7 +9,7 @@ exists() { (( $+commands[$1] )); }
 #     alias pipython='ptipython --config-file="~/Library/Application Support/ptpython/config.py"'
 # fi
 
-(( $+commands[tac] )) || alias tac='tail -r'
+(($ + commands[tac])) || alias tac='tail -r'
 # romkatv/dotfiles-public/blob/master/.zshrc
 # (( $+commands[tree]  )) && alias tree='tree -aC -I .git --gitignore --dirsfirst'
 if exists tree; then
@@ -18,19 +18,19 @@ if exists tree; then
 fi
 
 if exists dust; then
-  alias dust="dust -o si "$@""
+    alias dust="dust -o si "$@""
 fi
 
 if exists gping; then
-  alias ping='/usr/local/bin/gping'
+    alias ping="$BREW_PREFIX/bin/gping"
 fi
 
 alias NUL="> /dev/null 2>&1"
-alias  NL="2> /dev/null"
-alias   N="> /dev/null"
+alias NL="2> /dev/null"
+alias N="> /dev/null"
 
 if exists hors; then
-  alias ho="hors -a -l -n 5 "$*""
+    alias ho="hors -a -l -n 5 "$*""
 fi
 
 # sharkdp/bat ideas
@@ -69,18 +69,18 @@ else
     alias lSd='lsd -la --header -g'
     # alias ll='lsd -l --header'
     alias ldot='lsd -Rd --size=short --permission=octal ./*'
-    alias  lss='lsd -S'                                          # -S  --sizesort          == sort by size
-    alias  lsm='lsd -t'                                          # -t  --timesort          == sort by time modified
-    alias  lsx='lsd -X'                                          # -X  --extensionsort     == sort by file extension
-    alias  lsg='lsd -G'                                          # -G  --gitsort           == sort by git status
+    alias lss='lsd -S' # -S  --sizesort          == sort by size
+    alias lsm='lsd -t' # -t  --timesort          == sort by time modified
+    alias lsx='lsd -X' # -X  --extensionsort     == sort by file extension
+    alias lsg='lsd -G' # -G  --gitsort           == sort by git status
 fi
 
 alias ppath='echo -e ${PATH//:/\\n}'
 alias chkfpath='echo -e ${FPATH//:/\\n}'
 
-(( $+commands[jupyter-lab] )) && alias jnb='jupyter lab --ip=0.0.0.0 --port=8080 --allow-root'
+(($ + commands[jupyter - lab])) && alias jnb='jupyter-lab --ip=0.0.0.0 --port=8080 --allow-root'
 
-(( $+commands[nbp] )) && alias nbp="nbp -t material -u -n -m --cs truecolor"
+(($ + commands[nbp])) && alias nbp="nbp -t material -u -n -m --cs truecolor"
 
 alias -g shrug="echo \¯\\\_\(\ツ\)\_\/\¯ | pbcopy"
 
@@ -89,10 +89,9 @@ alias yt='yt-dlp --external-downloader aria2c --progress "$@"'
 
 alias ip='dig +short myip.opendns.com @resolver1.opendns.com'
 alias publicip='curl -s checkip.amazonaws.com'
-alias localip="ipconfig getifaddr en0"  # --> for for macos, not linux, use below for linux
+alias localip="ipconfig getifaddr en0" # --> for for macos, not linux, use below for linux
 alias ports='lsof -iTCP -P -sTCP:LISTEN'
 alias lanips='ifconfig -a | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}"'
-
 
 alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
 

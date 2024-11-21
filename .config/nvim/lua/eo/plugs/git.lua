@@ -1,11 +1,11 @@
 local cwd = vim.fn.getcwd
 local highlight = eo.highlight
--- local border = eo.ui.current.border
--- local icons = eo.ui.icons.separators
+local border = eo.ui.current.border
+local icons = eo.ui.icons.separators
 
 local neogit = eo.reqidx('neogit')
--- local gitlinker = eo.reqidx('gitlinker')
--- local function browser_open() return { action_callback = require('gitlinker.actions').open_in_browser } end
+local gitlinker = eo.reqidx('gitlinker')
+local function browser_open() return { action_callback = require('gitlinker.actions').open_in_browser } end
 
 return {
   {
@@ -45,16 +45,16 @@ return {
     'sindrets/diffview.nvim',
     enabled = true,
     cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
-    -- keys = {
-    --   { '<localleader>gd', '<Cmd>DiffviewOpen<CR>', desc = 'diffview: open', mode = 'n' },
-    --   { '<localleader>gh', [[:'<'>DiffviewFileHistory<CR>]], desc = 'diffview: file history', mode = 'v' },
-    --   {
-    --     '<localleader>gh',
-    --     '<Cmd>DiffviewFileHistory<CR>',
-    --     desc = 'diffview: file history',
-    --     mode = 'n',
-    --   },
-    -- },
+    keys = {
+      { '<localleader>gd', '<Cmd>DiffviewOpen<CR>', desc = 'diffview: open', mode = 'n' },
+      { '<localleader>gh', [[:'<'>DiffviewFileHistory<CR>]], desc = 'diffview: file history', mode = 'v' },
+      {
+        '<localleader>gh',
+        '<Cmd>DiffviewFileHistory<CR>',
+        desc = 'diffview: file history',
+        mode = 'n',
+      },
+    },
     opts = {
       default_args = { DiffviewFileHistory = { '%' } },
       enhanced_diff_hl = true,
@@ -84,50 +84,50 @@ return {
       require('diffview').setup(opts)
     end,
   },
-  -- {
-  --   'ruifm/gitlinker.nvim',
-  --   enabled = false,
-  --   dependencies = { 'nvim-lua/plenary.nvim' },
-  --   keys = {
-  --     {
-  --       '<localleader>gu',
-  --       function() gitlinker.get_buf_range_url('n') end,
-  --       desc = 'gitlinker: copy line to clipboard',
-  --       mode = 'n',
-  --     },
-  --     {
-  --       '<localleader>gu',
-  --       function() gitlinker.get_buf_range_url('v') end,
-  --       desc = 'gitlinker: copy range to clipboard',
-  --       mode = 'v',
-  --     },
-  --     {
-  --       '<localleader>go',
-  --       function() gitlinker.get_repo_url(browser_open()) end,
-  --       desc = 'gitlinker: open in browser',
-  --     },
-  --     {
-  --       '<localleader>go',
-  --       function() gitlinker.get_buf_range_url('n', browser_open()) end,
-  --       desc = 'gitlinker: open current line in browser',
-  --     },
-  --     {
-  --       '<localleader>go',
-  --       function() gitlinker.get_buf_range_url('v', browser_open()) end,
-  --       desc = 'gitlinker: open current selection in browser',
-  --       mode = 'v',
-  --     },
-  --   },
-  --   opts = {
-  --     mappings = nil,
-  --     callbacks = {
-  --       ['github-work'] = function(url_data) -- Resolve the host for work repositories
-  --         url_data.host = 'github.com'
-  --         return require('gitlinker.hosts').get_github_type_url(url_data)
-  --       end,
-  --     },
-  --   },
-  -- },
+  {
+    'ruifm/gitlinker.nvim',
+    enabled = true,
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      {
+        '<localleader>gu',
+        function() gitlinker.get_buf_range_url('n') end,
+        desc = 'gitlinker: copy line to clipboard',
+        mode = 'n',
+      },
+      {
+        '<localleader>gu',
+        function() gitlinker.get_buf_range_url('v') end,
+        desc = 'gitlinker: copy range to clipboard',
+        mode = 'v',
+      },
+      {
+        '<localleader>go',
+        function() gitlinker.get_repo_url(browser_open()) end,
+        desc = 'gitlinker: open in browser',
+      },
+      {
+        '<localleader>go',
+        function() gitlinker.get_buf_range_url('n', browser_open()) end,
+        desc = 'gitlinker: open current line in browser',
+      },
+      {
+        '<localleader>go',
+        function() gitlinker.get_buf_range_url('v', browser_open()) end,
+        desc = 'gitlinker: open current selection in browser',
+        mode = 'v',
+      },
+    },
+    opts = {
+      mappings = nil,
+      callbacks = {
+        ['github-work'] = function(url_data) -- Resolve the host for work repositories
+          url_data.host = 'github.com'
+          return require('gitlinker.hosts').get_github_type_url(url_data)
+        end,
+      },
+    },
+  },
   {
     'lewis6991/gitsigns.nvim',
     event = { 'BufReadPost', 'BufNewFile' },

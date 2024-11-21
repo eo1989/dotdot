@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# pull up documentation from dasht
+
+set -e
+
+[ -z "$1" ] && echo "Example: $(basename $0) os.environ python" && exit 1
+array=($@)
+len=${#array[@]}
+docset=${array[$len]}
+querry=${array[@]:0:$len-1}
+dasht "$querry" "$docset"
+
+# The script is pretty simple. It takes the arguments and passes them to  dasht  with the last argument being the docset.
+# The script is saved in  ~/.local/bin/_doc  and made executable with  chmod +x ~/.local/bin/_doc. Now, I can run
+# _doc os.environ python  to get the documentation for  os.environ  in the Python docset.

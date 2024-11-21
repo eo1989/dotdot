@@ -1,4 +1,5 @@
 local api, fs, fmt, uv = vim.api, vim.fs, string.format, vim.uv
+local map = vim.keymap.set
 local config = vim.env.HOME .. '/.config'
 return {
   {
@@ -10,7 +11,7 @@ return {
     -- init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
     keys = {
       {
-        '<localleader>=',
+        'g=',
         function()
           -- require('conform').format({ async = true, lsp_fallback = 'fallback' }, function(err)
           --   if not err then
@@ -22,16 +23,16 @@ return {
           require('conform').format { async = true, lsp_fallback = true }
         end,
         -- mode = '',
-        mode = { 'n', 'x' },
+        mode = { 'n', 'x', 'v' },
         desc = 'Format Buffer',
       },
       -- { '<leader>rf', '<cmd>lua require("conform").format()<CR>', desc = '[rf]ormat' },
     },
     opts = {
       format = {
-        timeout_ms = 500,
+        timeout_ms = 2000,
         async = true,
-        quiet = false,
+        quiet = true,
       },
       notify_on_error = true,
       notify_no_formatters = true,
@@ -40,7 +41,7 @@ return {
       default_format_opts = {
         lsp_format = 'fallback',
       },
-      format_on_save = { lsp_format = 'fallback', timeout_ms = 500 },
+      format_on_save = { lsp_format = 'fallback', timeout_ms = 2000 },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- ['python'] = function(bufnr)
@@ -50,18 +51,20 @@ return {
         --     return { 'black' }
         --   end
         -- end,
-        python = { { 'ruff_format', 'ruff_organize_imports' }, 'black' },
-        ['yaml'] = { 'yamlfmt', 'prettier', 'yq' },
-        ['json'] = { 'jq', 'dprint', 'prettier' },
-        markdown = { { 'injected' }, 'markdownlint-cli2' },
+        python = { { 'ruff_organize_imports', 'ruff_fix', 'ruff_format' }, 'black' },
+        ['yaml'] = { { 'yamlfmt', 'yq' }, 'prettier' },
+        ['json'] = { { 'jq', 'dprint' }, 'prettier' },
+        markdown = { 'markdownlint-cli2' },
+        -- markdown = { { 'injected' } },
         quarto = { 'injected' },
         -- ['norg'] = { { 'injected' }, 'dprint' },
         ['sh'] = { 'shfmt' },
-        ['zsh'] = { 'shfmt' },
+        -- ['zsh'] = { 'shfmt' },
         -- pgsql = { { 'pg_format', 'sqlfluff' } },
         ['sql'] = { 'sql_formatter', 'sqlfmt', 'sqlfluff' },
         ['toml'] = { 'taplo' },
-        ['_'] = { 'trim_whitespace', 'trim_newlines', 'squeeze_blanks' },
+        ['_'] = { 'trim_whitespace', 'trim_newlines' },
+        -- ['_'] = { 'trim_whitespace', 'trim_newlines', 'squeeze_blanks' },
         -- ['*'] = { 'trim_whitespace' },
       },
       formatters = {
@@ -89,30 +92,35 @@ return {
             lang_to_formatters = {},
           },
         },
-        -- nbqa = {
-        --   cmd = { 'nbqa' },
-        --   args = { '' },
-        -- },
         -- black = {
         --   args = { '--ipynb', '-q', '--fast', '--line-length', '80', '-t', 'py312' },
         -- },
         stylua = {
           args = { '--config-path', config .. '/nvim/stylua.toml', '-' },
         },
-        dprint = {
-          condition = function(ctx)
-            return fs.find({ 'dprint.json', 'dprint.toml' }, {
-              upward = true,
-              path = ctx.filename,
-              stop = uv.os_homedir(),
-            })[1]
-          end,
-        },
+        -- dprint = {
+        --   condition = function(ctx)
+        --     return fs.find({ 'dprint.json', 'dprint.toml' }, {
+        --       upward = true,
+        --       path = ctx.filename,
+        --       stop = uv.os_homedir(),
+        --     })[1]
+        --   end,
+        -- },
         shfmt = {
           args = { '-i', '4', '-ci' },
         },
       },
     },
+    config = function(_, opts)
+      require('conform').setup(opts)
+      map(
+        { 'n', 'v' },
+        '<leader>cF',
+        function() require('conform').format { formatters = { 'injected' }, timeout_ms = 2000 } end,
+        { desc = 'Format injected langs' }
+      )
+    end,
   },
   {
     'mfussenegger/nvim-lint',
@@ -165,22 +173,6 @@ return {
           env = { 'YAMLLINT_CONFIG_FILE' },
           args = function() return fmt('-c=%s/yamllint/config', config) end,
         },
-        -- ruff = {
-        --   cmd = 'ruff check',
-        --   args = {
-        --     function(ctx) return fs.find({ 'ruff.toml', 'pyproject.toml' }, { path = ctx.filename, upward = true })[1] end,
-        --   },
-        -- },
-        -- pflake8 = {
-        --   -- name = 'pflake8',
-        --   cmd = 'pflake8',
-        --   args = {
-        --     function()
-        --       return fmt('--config=%s/flake8', config)
-        --       -- return vim.fs.find({ 'flake8', '.flake8' }, { path = ctx.filename, upward = true })[1]
-        --     end,
-        --   },
-        -- },
       }
     end,
   },

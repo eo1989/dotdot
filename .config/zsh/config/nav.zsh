@@ -1,0 +1,115 @@
+# vim:ft=zsh ts=8 sw=4 sts=4 tw=100 fdm=marker et ai:
+# DOCS
+# https://blog.meain.io/2023/navigating-around-in-shell/
+# https://zsh.sourceforge.io/Doc/Release/Options.html#Changing-Directories
+#───────────────────────────────────────────────────────────────────────────────
+
+# CONFIG
+export CDPATH="$HOME/Dev:$HOME/"
+
+#───────────────────────────────────────────────────────────────────────────────
+
+# OPTIONS
+setopt CD_SILENT
+setopt AUTO_CD     # BUG -> https://github.com/marlonrichert/zsh-autocomplete/issues/749
+setopt CHASE_LINKS # follow symlinks when they are cd target
+
+# POST-DIRECTORY-CHANGE-HOOK
+# (use `cd -q` to suppress this hook)
+# function chpwd {
+#     _magic_dashboard
+#     _auto_venv
+# }
+
+#─────────────────────────────────────── eo ────────────────────────────────────
+# zsh-lovers
+# Another method for quick change directories. Add this to your ~/.zshrc, then just enter “cd
+# ..../dir”
+function rationalise-dot() {
+    if [[ $LBUFFER = *.. ]]; then
+        LBUFFER+=/..
+    else
+        LBUFFER+=.
+    fi
+}
+zle -N rationalise-dot
+bindkey . rationalise-dot
+
+#───────────────────────────────────────────────────────────────────────────────
+# SHORTHANDS
+
+# INFO leading space to ignore it in history due to HIST_IGNORE_SPACE
+alias -- -='cd -'
+alias ..=" cd .."
+alias ...=" cd ../.."
+alias ....=" cd ../../.."
+alias ..g=' cd "$(git rev-parse --show-toplevel)"' # goto git root
+
+#───────────────────────────────────────────────────────────────────────────────
+# RECENT DIRS
+# - the list from `dirs` is already populated by zsh-autocomplete, so we do not
+#   need to use `AUTO_PUSHD` etc to populate it
+# - the zsh builtin `cdr` completes based on a number as argument, so the
+#   completions are not searched, which is why we are using this setup of our own
+
+function gr {
+    local goto="$*"
+    [[ -z "$*" ]] && goto=$(dirs -p | sed -n '2p') # no arg: goto last (1st line = current)
+    goto="${goto/#\~/$HOME}"
+    cd "$goto" || return 1
+}
+_gr() {
+    [[ $CURRENT -ne 2 ]] && return # only complete first word
+
+    # get existing dirs
+    local -a folders=()
+    while IFS='' read -r dir; do # turn lines into array
+        expanded_dir="${dir/#\~/$HOME}"
+        [[ -d "$expanded_dir" ]] && folders+=("$dir")
+    done < <(dirs -p | sed '1d')
+
+    local expl && _description -V recent-folders expl 'Recent Folders'
+    compadd "${expl[@]}" -Q -- "${folders[@]}"
+}
+compdef _gr gr
+
+#───────────────────────────────────────────────────────────────────────────────
+
+# CYCLE THROUGH DIRECTORIES
+
+# function _grappling_hook {
+#     # CONFIG some perma-repos & desktop
+#     local some_perma_repos to_open locations_count dir locations
+#     some_perma_repos=$(cut -d, -f2 "$HOME/.config/perma-repos.csv" | sed "s|^~|$HOME|" | head -n3)
+#     locations="$HOME/Desktop\n$some_perma_repos"
+#
+#     to_open=$(echo "$locations" | sed -n "1p")
+#     locations_count=$(echo "$locations" | wc -l)
+#
+#     for ((i = 1; i <= locations_count - 1; i++)); do
+#         dir=$(echo "$locations" | sed -n "${i}p")
+#         [[ "$PWD" == "$dir" ]] && to_open=$(echo "$locations" | sed -n "$((i + 1))p")
+#     done
+#     cd -q "$to_open" || return 1
+#     zle reset-prompt
+#
+#     # so wezterm knows we are in a new directory
+#     [[ "$TERM_PROGRAM" == "WezTerm" ]] && wezterm set-working-directory
+# }
+# zle -N _grappling_hook
+# bindkey "^O" _grappling_hook # bound to cmd+enter via wezterm
+
+
+
+autoload -Uz add-zsh-hook
+
+if ! (( $chpwd_functions[(I)chpwd_cdls] )); then
+    chpwd_functions+=(chpwd_cdls)
+fi
+chpwd_cdls() {
+    if [[ -o interactive ]]; then
+        emulate -L zsh
+        eval ${CD_LS_COMMAND:-lsd --header -FXSlL --blocks date,size,git,name}
+    fi
+}
+add-zsh-hook chpwd chpwd_cdls

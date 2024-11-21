@@ -77,19 +77,14 @@ return {
   {
     'folke/lazydev.nvim',
     ft = 'lua',
-    dependencies = { 'Bilal2453/luvit-meta' },
-    opts = {
-      library = {
-        path = 'luvit-meta/library',
-        words = { 'vim%.uv' },
-      },
-    },
+    dependencies = { 'Bilal2453/luvit-meta', lazy = true },
+    opts = { library = { { path = 'luvit-meta/library', words = { 'vim%.uv' } } } },
   },
-  {
-    'Bilal2453/luvit-meta',
-    ft = 'lua',
-    lazy = true,
-  },
+  -- {
+  --   'Bilal2453/luvit-meta',
+  --   ft = 'lua',
+  --   lazy = true,
+  -- },
   {
     'dgagn/diagflow.nvim',
     event = 'DiagnosticChanged',
@@ -111,8 +106,8 @@ return {
       },
     },
   },
-  { 'mrjones2014/lua-gf.nvim', ft = 'lua' },
-  { 'onsails/lspkind.nvim' },
+  { 'mrjones2014/lua-gf.nvim', ft = 'lua', lazy = true },
+  { 'onsails/lspkind.nvim', lazy = false },
   {
     'utilyre/barbecue.nvim',
     event = 'LspAttach',
@@ -124,7 +119,7 @@ return {
       },
       { 'nvim-tree/nvim-web-devicons' },
     },
-    opts = function(_, opts)
+    opts = function(opts)
       local opts = {
         theme = 'auto',
         create_autocmd = false,
@@ -142,67 +137,67 @@ return {
         group = vim.api.nvim_create_augroup('Barbecue.updater', {}),
         callback = function() require('barbecue.ui').update() end,
       })
-      require('barbecue').setup {}
+      require('barbecue').setup { opts }
     end,
   },
-  {
-    'Wansmer/symbol-usage.nvim',
-    enabled = false,
-    event = 'LspAttach',
-    config = {
-      text_format = function(symbol)
-        local function h(name) return api.nvim_get_hl(0, { name = name }) end
-
-        api.nvim_set_hl(0, 'SymbolUsageRounding', { fg = h('CursorLine').bg, italic = true })
-        api.nvim_set_hl(0, 'SymbolUsageContent', { bg = h('CursorLine').bg, fg = h('Comment').fg, italic = true })
-        api.nvim_set_hl(0, 'SymbolUsageRef', { fg = h('Function').fg, bg = h('CursorLine').bg, italic = true })
-        api.nvim_set_hl(0, 'SymbolUsageDef', { fg = h('Type').fg, bg = h('CursorLine').bg, italic = true })
-        api.nvim_set_hl(0, 'SymbolUsageImpl', { fg = h('@keyword').fg, bg = h('CursorLine').bg, italic = true })
-
-        local stacked_funcs_content = symbol.stacked_count > 0 and ('+%S'):format(symbol.stacked_count) or ''
-
-        local res = {}
-        local ins = table.insert
-
-        local round_start = { '', 'SymbolUsageRounding' }
-        local round_end = { '', 'SymbolUsageRounding' }
-
-        if symbol.references then
-          local usage = symbol.references <= 1 and 'usage' or 'usages'
-          local num = symbol.references == 0 and 'no' or symbol.references
-          ins(res, round_start)
-          ins(res, { '󰌹 ', 'SymbolUsageRef' })
-          ins(res, { ('%s %s'):format(num, usage), 'SymbolUsageContent' })
-          ins(res, round_end)
-        end
-
-        if symbol.definition then
-          if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
-          ins(res, round_start)
-          ins(res, { '󰳽 ', 'SymbolUsageDef' })
-          ins(res, { symbol.definition .. ' defs', 'SymbolUsageContent' })
-          ins(res, round_end)
-        end
-
-        if symbol.implementation then
-          if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
-          ins(res, round_start)
-          ins(res, { '󰡱 ', 'SymbolUsageImpl' })
-          ins(res, { symbol.implementation .. ' impls', 'SymbolUsageContent' })
-          ins(res, round_end)
-        end
-
-        if stacked_funcs_content ~= '' then
-          if #res > 0 then ins(res, { ' ', 'NonText' }) end
-          ins(res, round_start)
-          ins(res, { ' ', 'SymbolUsageImpl' })
-          ins(res, { stacked_funcs_content, 'SymbolUsageContent' })
-          ins(res, round_end)
-        end
-
-        return res
-      end,
-      vt_position = 'textwidth', -- 'above' | 'textwidth' | 'signcolumn'
-    },
-  },
+  -- {
+  --   'Wansmer/symbol-usage.nvim',
+  --   enabled = false,
+  --   event = 'LspAttach',
+  --   config = {
+  --     text_format = function(symbol)
+  --       local function h(name) return api.nvim_get_hl(0, { name = name }) end
+  --
+  --       api.nvim_set_hl(0, 'SymbolUsageRounding', { fg = h('CursorLine').bg, italic = true })
+  --       api.nvim_set_hl(0, 'SymbolUsageContent', { bg = h('CursorLine').bg, fg = h('Comment').fg, italic = true })
+  --       api.nvim_set_hl(0, 'SymbolUsageRef', { fg = h('Function').fg, bg = h('CursorLine').bg, italic = true })
+  --       api.nvim_set_hl(0, 'SymbolUsageDef', { fg = h('Type').fg, bg = h('CursorLine').bg, italic = true })
+  --       api.nvim_set_hl(0, 'SymbolUsageImpl', { fg = h('@keyword').fg, bg = h('CursorLine').bg, italic = true })
+  --
+  --       local stacked_funcs_content = symbol.stacked_count > 0 and ('+%S'):format(symbol.stacked_count) or ''
+  --
+  --       local res = {}
+  --       local ins = table.insert
+  --
+  --       local round_start = { '', 'SymbolUsageRounding' }
+  --       local round_end = { '', 'SymbolUsageRounding' }
+  --
+  --       if symbol.references then
+  --         local usage = symbol.references <= 1 and 'usage' or 'usages'
+  --         local num = symbol.references == 0 and 'no' or symbol.references
+  --         ins(res, round_start)
+  --         ins(res, { '󰌹 ', 'SymbolUsageRef' })
+  --         ins(res, { ('%s %s'):format(num, usage), 'SymbolUsageContent' })
+  --         ins(res, round_end)
+  --       end
+  --
+  --       if symbol.definition then
+  --         if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
+  --         ins(res, round_start)
+  --         ins(res, { '󰳽 ', 'SymbolUsageDef' })
+  --         ins(res, { symbol.definition .. ' defs', 'SymbolUsageContent' })
+  --         ins(res, round_end)
+  --       end
+  --
+  --       if symbol.implementation then
+  --         if #res > 0 then table.insert(res, { ' ', 'NonText' }) end
+  --         ins(res, round_start)
+  --         ins(res, { '󰡱 ', 'SymbolUsageImpl' })
+  --         ins(res, { symbol.implementation .. ' impls', 'SymbolUsageContent' })
+  --         ins(res, round_end)
+  --       end
+  --
+  --       if stacked_funcs_content ~= '' then
+  --         if #res > 0 then ins(res, { ' ', 'NonText' }) end
+  --         ins(res, round_start)
+  --         ins(res, { ' ', 'SymbolUsageImpl' })
+  --         ins(res, { stacked_funcs_content, 'SymbolUsageContent' })
+  --         ins(res, round_end)
+  --       end
+  --
+  --       return res
+  --     end,
+  --     vt_position = 'textwidth', -- 'above' | 'textwidth' | 'signcolumn'
+  --   },
+  -- },
 }

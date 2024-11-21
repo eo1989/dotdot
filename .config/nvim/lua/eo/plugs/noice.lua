@@ -1,9 +1,9 @@
-local fn = vim.fn
--- local border, highlight, L = eo.ui.current.border, eo.highlight, vim.log.levels
+-- local fn = vim.fn
+local border, highlight, L = eo.ui.current.border, eo.highlight, vim.log.levels
 
 return {
   'folke/noice.nvim',
-  enabled = false,
+  enabled = true,
   event = 'VeryLazy',
   dependencies = { 'MunifTanjim/nui.nvim' },
   opts = {
@@ -35,7 +35,7 @@ return {
         silent = true,
       },
       override = {
-        ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+        ['vim.lsp.util.convert_input_to_markdown_lines'] = false,
         ['vim.lsp.util.stylize_markdown'] = true,
         ['cmp.entry.get_documentation'] = true,
       },
@@ -118,11 +118,11 @@ return {
             { event = 'msg_show', find = '^No hunks$' },
           },
         },
-        -- opts = { title = 'Warning', level = L.WARN, merge = false, replace = false },
+        opts = { title = 'Warning', level = L.WARN, merge = false, replace = false },
       },
       {
         view = 'notify',
-        -- opts = { title = 'Error', level = L.ERROR, merge = true, replace = false },
+        opts = { title = 'Error', level = L.ERROR, merge = true, replace = false },
         filter = {
           any = {
             { error = true },
@@ -149,44 +149,50 @@ return {
   config = function(_, opts)
     require('noice').setup(opts)
 
-    -- highlight.plugin('noice', {
-    --   { NoiceMini = { inherit = 'MsgArea', bg = { from = 'Normal' } } },
-    --   { NoicePopupBaseGroup = { inherit = 'NormalFloat', fg = { from = 'DiagnosticSignInfo' } } },
-    --   { NoicePopupWarnBaseGroup = { inherit = 'NormalFloat', fg = { from = 'Float' } } },
-    --   { NoicePopupInfoBaseGroup = { inherit = 'NormalFloat', fg = { from = 'Conditional' } } },
-    --   { NoiceCmdlinePopup = { bg = { from = 'NormalFloat' } } },
-    --   { NoiceCmdlinePopupBorder = { link = 'FloatBorder' } },
-    --   { NoiceCmdlinePopupTitle = { link = 'FloatTitle' } },
-    --   { NoiceCmdlinePopupBorderCmdline = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderSearch = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderFilter = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderHelp = { link = 'NoicePopupInfoBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderSubstitute = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderIncRename = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderInput = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceCmdlinePopupBorderLua = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceCmdlineIconCmdline = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceCmdlineIconSearch = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlineIconFilter = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlineIconHelp = { link = 'NoicePopupInfoBaseGroup' } },
-    --   { NoiceCmdlineIconIncRename = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlineIconSubstitute = { link = 'NoicePopupWarnBaseGroup' } },
-    --   { NoiceCmdlineIconInput = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceCmdlineIconLua = { link = 'NoicePopupBaseGroup' } },
-    --   { NoiceConfirm = { bg = { from = 'NormalFloat' } } },
-    --   { NoiceConfirmBorder = { link = 'NoicePopupBaseGroup' } },
-    -- })
+    highlight.plugin('noice', {
+      { NoiceMini = { inherit = 'MsgArea', bg = { from = 'Normal' } } },
+      { NoicePopupBaseGroup = { inherit = 'NormalFloat', fg = { from = 'DiagnosticSignInfo' } } },
+      { NoicePopupWarnBaseGroup = { inherit = 'NormalFloat', fg = { from = 'Float' } } },
+      { NoicePopupInfoBaseGroup = { inherit = 'NormalFloat', fg = { from = 'Conditional' } } },
+      { NoiceCmdlinePopup = { bg = { from = 'NormalFloat' } } },
+      { NoiceCmdlinePopupBorder = { link = 'FloatBorder' } },
+      { NoiceCmdlinePopupTitle = { link = 'FloatTitle' } },
+      { NoiceCmdlinePopupBorderCmdline = { link = 'NoicePopupBaseGroup' } },
+      { NoiceCmdlinePopupBorderSearch = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlinePopupBorderFilter = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlinePopupBorderHelp = { link = 'NoicePopupInfoBaseGroup' } },
+      { NoiceCmdlinePopupBorderSubstitute = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlinePopupBorderIncRename = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlinePopupBorderInput = { link = 'NoicePopupBaseGroup' } },
+      { NoiceCmdlinePopupBorderLua = { link = 'NoicePopupBaseGroup' } },
+      { NoiceCmdlineIconCmdline = { link = 'NoicePopupBaseGroup' } },
+      { NoiceCmdlineIconSearch = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlineIconFilter = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlineIconHelp = { link = 'NoicePopupInfoBaseGroup' } },
+      { NoiceCmdlineIconIncRename = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlineIconSubstitute = { link = 'NoicePopupWarnBaseGroup' } },
+      { NoiceCmdlineIconInput = { link = 'NoicePopupBaseGroup' } },
+      { NoiceCmdlineIconLua = { link = 'NoicePopupBaseGroup' } },
+      { NoiceConfirm = { bg = { from = 'NormalFloat' } } },
+      { NoiceConfirmBorder = { link = 'NoicePopupBaseGroup' } },
+    })
+
+    map({ 'n', 'i', 's' }, '<c-d>', function()
+      if not require('noice.lsp').scroll(4) then return '<c-d>' end
+    end, { silent = true, expr = true })
 
     map({ 'n', 'i', 's' }, '<c-f>', function()
-      if not require('noice.lsp').scroll(4) then return '<c-f>' end
+      if not require('noice.lsp').scroll(-4) then return '<c-f>' end
     end, { silent = true, expr = true })
 
-    map({ 'n', 'i', 's' }, '<c-b>', function()
-      if not require('noice.lsp').scroll(-4) then return '<c-b>' end
-    end, { silent = true, expr = true })
+    map('n', '<ESC>', function() require('notify').dismiss() end, { desc = 'Dismiss popup & clear hlsearch' })
 
-    map('c', '<M-CR>', function() require('noice').redirect(fn.getcmdline()) end, {
-      desc = 'redirect Cmdline',
-    })
+    -- map('n', '<ESC>', function()
+    --   if not require('noice').disable() then return vim.keycode('<ESC>') end
+    -- end, { silent = true, expr = true })
+
+    -- map('c', '<M-CR>', function() require('noice').redirect(fn.getcmdline()) end, {
+    --   desc = 'redirect Cmdline',
+    -- })
   end,
 }

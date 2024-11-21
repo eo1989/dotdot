@@ -5,7 +5,7 @@ function _G.dump(...)
   print(unpack(objects))
 end
 
-g.python3_host_prog = os.getenv('HOME') .. '/.pyenv/versions/gen/bin/python'
+g.python3_host_prog = os.getenv('HOME') .. '/.pyenv/versions/Gen/bin/python'
 
 -- solves the issue of missing luarocks when running neovim
 env.DYLD_LIBRARY_PATH = '$BREW_PREFIX/lib'
@@ -75,7 +75,7 @@ end
 
 opt.runtimepath:prepend(lazypath)
 
-if env.NVIM then return require('lazy').setup { { 'willothy/flatten.nvim', config = true } } end
+if env.NVIM then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
 
 require('lazy').setup {
   spec = {
@@ -100,7 +100,9 @@ require('lazy').setup {
   git = {
     log = { '--since=3 days ago' },
   },
-  rocks = { hererocks = true },
+  rocks = {
+    hererocks = true,
+  },
   performance = {
     cache = { enabled = true },
     rtp = {
@@ -133,7 +135,6 @@ require('lazy').setup {
     },
   },
 }
-
 
 vim.notify = require('notify')
 cmd.packadd('cfilter')

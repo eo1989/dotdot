@@ -13,7 +13,8 @@ return {
     event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = {
       { 'hrsh7th/cmp-nvim-lsp' },
-      { 'hrsh7th/cmp-path' },
+      -- { 'hrsh7th/cmp-path' },
+      'https://codeberg.org/FelipeLema/cmp-async-path',
       { 'onsails/lspkind.nvim' },
       { 'folke/lazydev.nvim' },
       { 'rcarriga/cmp-dap' },
@@ -22,6 +23,7 @@ return {
       { 'saadparwaiz1/cmp_luasnip' },
       { 'hrsh7th/cmp-buffer' },
       { 'hrsh7th/cmp-nvim-lsp-document-symbol' },
+      { 'lukas-reineke/cmp-rg' },
       { 'hrsh7th/cmp-cmdline' },
       { 'petertriho/cmp-git', ft = { 'git' } },
       { 'amarakon/nvim-cmp-lua-latex-symbols' },
@@ -31,6 +33,7 @@ return {
       local cmp = require('cmp')
       local cmp_context = require('cmp.config.context')
       local cmp_types_lsp = require('cmp.types.lsp')
+      local types = require('cmp.types')
       local lspkind = require('lspkind')
       local neotab = require('neotab')
       local luasnip = require('luasnip')
@@ -46,22 +49,26 @@ return {
       cmp.setup {
         experimental = { ghost_text = false, native_menu = false },
         performance = {
-          debounce = 18,
-          throttle = 24,
-          fetching_timeout = 80,
-          async_budget = 18,
+          debounce = 60,
+          throttle = 30,
+          fetching_timeout = 100,
+          filtering_context_budget = 3,
           confirm_resolve_timeout = 80,
-          max_view_entries = 32,
+          async_budget = 1,
+          max_view_entries = 50,
         },
-        -- completion = {
-        --  keyword_length = 1,
-        --  completeopt = 'menu,menuone,noselect,preview',
-        --  autocomplete = {
-        --    'TextChanged',
-        --    'TextChangedI',
-        --    'TextChangedT',
-        --  },
-        -- },
+        completion = {
+          -- keyword_length = 1,
+          completeopt = 'menu,menuone,noselect,preview',
+          autocomplete = {
+            types.cmp.TriggerEvent.TextChanged,
+          },
+          -- autocomplete = {
+          --   'TextChanged',
+          --   'TextChangedI',
+          --   'TextChangedT',
+          -- },
+        },
         snippet = {
           expand = function(args) luasnip.lsp_expand(args.body) end,
         },
@@ -77,41 +84,47 @@ return {
           disallow_fullfuzzy_matching = true,
           disallow_partial_fuzzy_matching = true,
           disallow_partial_matching = true,
-          disallow_prefix_unmatching = false,
+          disallow_prefix_unmatching = true,
         },
         preselect = cmp.PreselectMode.Item, -- Item | None
         sources = cmp.config.sources {
           { name = 'lazydev', group_index = 0 },
-          { name = 'luasnip' },
           {
-            name = 'nvim_lsp',
-            priority = 10,
-            ---@param ctx cmp.Context
-            entry_filter = function(entry, ctx)
-              local kind = entry:get_kind()
-              local line = ctx.cursor_line
+            { name = 'async_path' },
+            { name = 'luasnip', option = { show_autosnippets = true } },
+            {
+              name = 'nvim_lsp',
+              priority = 10,
+              ---@param ctx cmp.Context
+              entry_filter = function(entry, ctx)
+                local kind = entry:get_kind()
+                local line = ctx.cursor_line
 
-              local is_string_like = function()
-                return cmp_context.in_treesitter_capture('string')
-                  or cmp_context.in_treesitter_capture('comment')
-                  or cmp_context.in_syntax_group('Comment')
-                  or cmp_context.in_syntax_group('String')
-              end
-              -- if is_string_like() or entry:is_deprecated() then return false end
-              if is_string_like() then return false end
+                local is_string_like = function()
+                  return cmp_context.in_treesitter_capture('string')
+                    or cmp_context.in_treesitter_capture('comment')
+                    or cmp_context.in_syntax_group('Comment')
+                    or cmp_context.in_syntax_group('String')
+                end
+                -- if is_string_like() or entry:is_deprecated() then return false end
+                if is_string_like() then return false end
 
-              if vim.tbl_contains({ cmp_types_lsp.CompletionItemKind.Text }, kind) then return false end
+                if vim.tbl_contains({ cmp_types_lsp.CompletionItemKind.Text }, kind) then return false end
 
-              if string.match(line, '^%s+%w+$') then
-                return kind == cmp_types_lsp.CompletionItemKind.Function
-                  or kind == cmp_types_lsp.CompletionItemKind.Variable
-              end
+                if string.match(line, '^%s+%w+$') then
+                  return kind == cmp_types_lsp.CompletionItemKind.Function
+                    or kind == cmp_types_lsp.CompletionItemKind.Variable
+                end
 
-              return true
-            end,
+                return true
+              end,
+            },
+            { name = 'copilot', max_item_count = 2 },
           },
-          { name = 'path', option = { trailing_slash = true } },
-          { name = 'buffer', keyword_length = 2, keyword_pattern = [[\k\+]], max_item_count = 3, group_index = 3 },
+          {
+            { name = 'rg', keyword_length = 2 },
+            { name = 'buffer', keyword_length = 2, keyword_pattern = [[\k\+]], max_item_count = 3, group_index = 3 },
+          },
         },
         window = {
           documentation = {
@@ -131,13 +144,16 @@ return {
           -- ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
           ['<C-n>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
-              cmp.select_next_item { behavior = cmp.SelectBehavior.Insert }
+              -- cmp.select_next_item { behavior = cmp.SelectBehavior.Insert }
+              cmp.select_next_item()
+            elseif luasnip.expand_or_locally_jumpable() then
+              luansip.expand_or_jump()
             elseif has_words_before then
               cmp.complete()
             else
               fallback()
             end
-          end),
+          end, { 'i', 's' }),
           -- ['<C-n>'] = cmp.mapping(function(fallback)
           --   if cmp.visible() then
           --     cmp.select_next_item { behavior = cmp.SelectBehavior.Insert }
@@ -148,7 +164,16 @@ return {
           --     -- neotab.tabout()
           --   end
           -- end),
-          ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+          ['<C-p>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif leasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          -- ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
           -- ['<C-p>'] = cmp.mapping(function(fallback)
           --   if cmp.visible() then
           --     cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert }
@@ -160,6 +185,7 @@ return {
           -- ['<C-Space>'] = cmp.mapping(cmp.mapping.complete({reason = 'auto'})),
           -- ['<C-Space>'] = cmp.mapping(cmp.complete()),
           ['<C-e>'] = cmp.mapping.abort(),
+          ['<C-x>'] = cmp.mapping.close(),
           -- ['<C-g>'] = function(fallback)
           --   if cmp.core.view:visible() then
           --     if cmp.visible_docs() then
@@ -172,17 +198,28 @@ return {
           --   end
           -- end,
 
-          ['<CR>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              if cmp.get_selected_entry() then
-                cmp.confirm { select = false, cmp.ConfirmBehavior.Insert }
+          ['<CR>'] = cmp.mapping {
+            i = function(fallback)
+              if cmp.visible() and cmp.get_active_entry() then
+                cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
               else
-                cmp.close()
+                fallback()
               end
-            else
-              fallback()
-            end
-          end),
+            end,
+            s = cmp.mapping.confirm { select = false },
+          },
+
+          -- ['<CR>'] = cmp.mapping(function(fallback)
+          --   if cmp.visible() then
+          --     if cmp.get_selected_entry() then
+          --       cmp.confirm { select = false, cmp.ConfirmBehavior.Insert }
+          --     else
+          --       cmp.close()
+          --     end
+          --   else
+          --     fallback()
+          --   end
+          -- end),
           -- ['<CR>'] = cmp.mapping(cunfirm()),
 
           -- ['<C-u>'] = cmp.mapping.scroll_docs(-4),
@@ -199,7 +236,7 @@ return {
             -- elseif luasnip.locally_jumpable(1) then
             elseif luasnip.jumpable(1) then
               luasnip.jump(1)
-              -- neotab.taot()
+              -- neotab.tabout()
             else
               neotab.tabout()
               -- fallback()
@@ -234,20 +271,20 @@ return {
                 nvim_lua = ' ',
                 lazydev = ' ',
                 luasnip = ' ',
-                buffer = '﬘',
+                buffer = '֎ ',
                 latex_symbols = ' ',
                 ['lua-latex-symbols'] = ' ',
-                dictionary = ' ',
-                spell = '暈',
+                dictionary = '⎘ ',
+                spell = '󰓆 ',
                 snippets = ' ',
                 emoji = '󰞅 ',
-                dap = '暈',
+                dap = '◌ ',
                 path = ' ',
                 pandoc_references = ' ',
                 git = '',
                 norg = ' ',
-                cmp_zsh = ' ',
-                env = ' ',
+                cmp_zsh = ' ', -- 
+                env = ' ', -- 
                 async_path = ' ',
                 neorg = ' ',
                 cmdline = ' ',
@@ -278,34 +315,34 @@ return {
         },
       })
 
-      cmp.setup.cmdline('/', {
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp_document_symbol' },
-        }, {
-          { name = 'buffer' },
-        }),
-      })
+      -- cmp.setup.cmdline('/', {
+      --   sources = cmp.config.sources({
+      --     { name = 'nvim_lsp_document_symbol' },
+      --   }, {
+      --     { name = 'buffer' },
+      --   }),
+      -- })
 
-      cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources {
-          {
-            name = 'cmdline',
-            keyword_pattern = [=[[^[:blank:]\!]*]=],
-            option = { ignore_cmds = {} },
-          },
-          { name = 'path' },
-          matching = { disallow_symbol_nonprefix_matching = false },
-        },
-      })
+      -- cmp.setup.cmdline(':', {
+      --   mapping = cmp.mapping.preset.cmdline(),
+      --   sources = cmp.config.sources {
+      --     {
+      --       name = 'cmdline',
+      --       keyword_pattern = [=[[^[:blank:]\!]*]=],
+      --       option = { ignore_cmds = {} },
+      --     },
+      --     { name = 'path' },
+      --     matching = { disallow_symbol_nonprefix_matching = false },
+      --   },
+      -- })
     end,
   },
   {
     'zbirenbaum/copilot-cmp',
     event = { 'InsertEnter', 'LspAttach' },
-    -- opts = {
-    --   fix_pairs = true,
-    -- },
+    opts = {
+      fix_pairs = true,
+    },
     -- init = function() api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' }) end,
     dependencies = {
       {
@@ -326,9 +363,9 @@ return {
             },
           },
           filetypes = {
-            norg = false,
             ['*'] = true,
             quarto = true,
+            norg = false,
             gitcommit = false,
             ['dap-repl'] = false,
             ['FzfLua'] = false,

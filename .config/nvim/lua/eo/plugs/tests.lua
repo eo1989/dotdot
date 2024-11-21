@@ -89,9 +89,7 @@ return {
         status = {
           enabled = true,
         },
-        consumers = {
-          overseer = require('neotest.consumers.overseer'),
-        },
+        -- consumers = { overseer = require('neotest.consumers.overseer') },
         adapters = {
           -- require('neotest-plenary'),
           require('neotest-go'),

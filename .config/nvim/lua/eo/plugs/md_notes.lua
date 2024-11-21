@@ -7,7 +7,7 @@ return {
       { 'headlines.nvim', enabled = false },
     },
     opts = {
-      file_types = { 'markdown', 'rmd', 'vimwiki', 'norg', 'org', 'rst' },
+      file_types = { 'markdown', 'rmd', 'vimwiki', 'norg', 'org', 'rst', 'quarto' },
     },
   },
   {
@@ -85,4 +85,6 @@ return {
       map('n', '<localleader>ii', ':PasteImage<CR>', { desc = '[i]nsert [i]mage from clipboard' })
     end,
   },
+  { 'mathjiajia/latex.nvim' },
+  { 'OXY2DEV/markview.nvim', ft = 'markdown', opts = {} },
 }

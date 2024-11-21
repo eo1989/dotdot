@@ -1,4 +1,5 @@
 local catpuss = require('catppuccin.palettes')
+
 local function trunc(trunc_width, trunc_len, hide_width, ellipsis)
   return function(str)
     local win_width = vim.fn.winwidth(0)
@@ -85,6 +86,12 @@ return {
             'fancy_lsp_servers',
             separator = { left = '', right = '' },
             color = { fg = 'darkgrey', bg = '#414362', gui = 'italic,bold' },
+            padding = { left = 0, right = 0 },
+          },
+          {
+            function() return active_formatter() end,
+            separator = { left = '', right = '' },
+            color = { fg = 'darkgrey', bg = '#414362', gui = 'italic' },
             padding = { left = 0, right = 0 },
           },
         },

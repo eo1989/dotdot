@@ -90,10 +90,10 @@ return {
       timeout = 1200,
       -- max_height = function() return math.floor(vim.o.lines * 0.8) end,
       -- max_width = function() return math.floor(vim.o.columns * 0.6) end,
-      -- on_open = function(win)
-      --   if not api.nvim_win_is_valid(win) then return end
-      --   api.nvim_win_set_config(win, { border = 'rounded' })
-      -- end,
+      on_open = function(win)
+        -- if not api.nvim_win_is_valid(win) then return end
+        api.nvim_win_set_config(win, { border = 'rounded', focusable = false })
+      end,
       -- render = function(...)
       --   local notification = select(2, ...)
       --   local style = falsy(notification.title[1]) and 'minimal' or 'default'

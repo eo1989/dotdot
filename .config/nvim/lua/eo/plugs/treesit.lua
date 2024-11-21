@@ -126,7 +126,7 @@ return {
       {
         'andymass/vim-matchup',
         enabled = true,
-        -- event = { 'CursorHold' },
+        event = { 'CursorHold', 'CursorHoldI' },
         -- cmd = { 'MatchupWhereAmI' },
         -- init = function()
         --   -- vim.o.matchpairs = '(:),{:},[:],<:>'
@@ -186,9 +186,7 @@ return {
     -- lazy = false,
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = { hl_priority = 1000 },
-    config = function(_, opts)
-      require('hlargs').setup(opts)
-    end,
+    config = function(_, opts) require('hlargs').setup(opts) end,
   },
   {
     'HiPhish/rainbow-delimiters.nvim',

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+gli() {
+    # param validation
+    # if
+}

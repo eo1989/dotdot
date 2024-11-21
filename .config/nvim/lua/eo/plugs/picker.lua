@@ -44,13 +44,13 @@ local function dropdown(opts)
     fzf_opts = { ['--layout'] = 'reverse' },
     winopts = {
       title_pos = opts.winopts.title and 'center' or nil,
-      height = 0.6,
+      height = 0.7,
       width = 0.45,
       row = 0.1,
       -- preview = { hidden = 'hidden', layout = 'horizontal', horizontal = 'right:50%' },
       -- preview = { hidden = 'nohidden', layout = 'vertical', vertical = 'up:50%' },
       -- preview = { hidden = false, layout = 'horizontal', vertical = 'right:60%' },
-      preview = { hidden = 'nohidden', layout = 'horizontal', horizontal = 'up:50%' },
+      preview = { hidden = 'nohidden', layout = 'horizontal', horizontal = 'down:60%' },
     },
   }, opts)
 end
@@ -124,7 +124,7 @@ return {
       { '<leader>fgc',    fzf_lua.git_commits,                          desc = 'commits' },
       { '<leader>fgB',    fzf_lua.git_bcommits,                         desc = 'buffer commits' },
       { '<localleader>p', fzf_lua.registers,                            desc = 'Registers' },
-      { '<leader>fs',     fzf_lua.live_grep,                            desc = 'live grep' },
+      { '<leader>fS',     fzf_lua.live_grep,                            desc = 'live grep' },
       { '<leader>fc',     function() file_picker(vim.g.nvim_dir) end,   desc = 'nvim config' },
     },
     -- stylua: ignore end
@@ -176,7 +176,18 @@ return {
           },
         },
         -- stylua: ignore stop
+
+        -- winopts = {
+        --   row = 1,
+        --   relative = 'cursor',
+        --   height = 0.33,
+        --   width = 0.25,
+        -- },
         winopts = {
+          row = 1,
+          relative = 'cursor',
+          height = 0.33,
+          width = 0.25,
           preview = { layout = 'horizontal' },
           on_create = function()
             vim.keymap.set('t', '<C-j>', '<Down>', { silent = true, buffer = true })

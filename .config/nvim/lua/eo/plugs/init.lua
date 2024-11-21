@@ -47,9 +47,9 @@ return {
         map_c_w = true,
         fast_wrap = {
           map = '<M-e>',
-          chars = { "{", "[", "(", '"', "'" },
-          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,%;] ]], "%s+", ""),
-          end_key = "l",
+          chars = { '{', '[', '(', '"', "'" },
+          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,%;] ]], '%s+', ''),
+          end_key = 'l',
           offset = -2,
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
           check_comma = true,
@@ -179,9 +179,7 @@ return {
     enabled = true,
     keys = { { 'gx', '<cmd>Browse<cr>', mode = { 'n', 'x' } } },
     cmd = { 'Browse' },
-    init = function()
-      vim.g.netrw_nogx = 1
-    end,
+    init = function() vim.g.netrw_nogx = 1 end,
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
       handler_options = {

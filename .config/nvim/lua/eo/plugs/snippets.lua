@@ -23,7 +23,8 @@ return {
       -- region_check_events = 'CursorMoved', -- prevent <tab> from jumping back to a snippet after its left
       -- delete_check_events = { 'TextChanged', 'InsertEnter' },
       -- ft_func = require('extras').filetype_functions.from_pos_or_filetype,
-      ft_func = require('luasnip.extras.filetype_functions').from_cursor_pos,
+      -- ft_func = require('luasnip.extras.filetype_functions').from_cursor_pos,
+      ft_func = require('luasnip.extras.filetype_functions').from_pos_or_filetype,
       -- specifically from akinsho.
       ext_opts = {
         [types.choiceNode] = {

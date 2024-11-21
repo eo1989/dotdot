@@ -11,8 +11,8 @@ local fn, g, go, o, opt, uv, v = vim.fn, vim.g, vim.go, vim.o, vim.opt, vim.uv, 
 -- cmd([[ set path=.,,**,$PWD/**,~/.config/nvim/**]])
 
 -- HOW DID I NOT KNOW ABOUT THIS OPTION BEFORE?!
-vim.env.SHELL = '/usr/local/bin/zsh'
-o.shell = '/usr/local/bin/zsh'
+vim.env.SHELL = '/opt/homebrew/bin/zsh'
+o.shell = '/opt/homebrew/bin/zsh'
 -- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
 opt.wrap = false
 o.wrapscan = true
@@ -50,9 +50,10 @@ o.eadirection = 'hor'
 opt.termguicolors = true
 o.emoji = false
 opt.guifont = {
-  'FiraCodeNF-Ret',
-  'Symbols Nerd Font',
-  'VictorMonoNF-MediumOblique:h10',
+  'CascadiaCodeNF',
+  'CascadiaCodeNFItalic',
+  'SymbolsNerdFont-Regular',
+  'VictorMonoNerdFont-SemiBoldOblique:h10',
 }
 -- 'Symbols Nerd Font',
 -- 'Delugia Italic:h12',

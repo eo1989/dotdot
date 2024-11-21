@@ -1,0 +1,4 @@
+list=( ${(Q)"${(z)$(<<\EO:list
+'alias' 'brewcask-upgrade' 'bundle' 'command-not-found-init' 'cu' 'services' 'test-bot' 'unalias' 'which-formula' 'which-update'
+EO:list
+)}"} )

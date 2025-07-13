@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# MNEMONIC: [F]uzzy search [O]pen
+# SYNOPSIS: fo [DIR] [QUERY]
+# DESCRIPTION: Fuzzy finder for opening files under DIR based on QUERY
+# - CTRL-o: using the default application
+# - CTRL-v or ENTER: using $EDITOR
+
+if [[ -d $1 ]]; then
+  dir=$1
+  query=$2
+else
+  dir=""
+  query=$1
+fi
+
+header=":: CTRL-O (Open in default application), ENTER (Open in EDITOR)"
+
+while IFS= read -r file; do
+  files+=("$file")
+done < <(
+  eval "fd --hidden --follow --type f $FD_EXCLUDE '.*' $dir" |
+  fzf --query="$query" --exit-0 --prompt="Open> " --header "$header"
+)
+
+if [[ ${#files[@]} -gt 0 ]]; then
+  ${EDITOR:-vim} "${files[@]}"
+fi

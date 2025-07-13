@@ -1,0 +1,130 @@
+#!/usr/bin/env zsh
+
+if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
+fi
+
+eval "$(fzf --zsh)"
+# source <(fzf --zsh)
+
+FD="fd --hidden --follow $FD_EXCLUDE"
+
+export FZF_DEFAULT_COMMAND="$FD -tf -tl"
+
+# Define color themes
+# Default colors are defined in https://github.com/junegunn/fzf/blob/master/src/tui/tui.go
+if $TRANSPARENT; then
+    bg=-1
+fi
+
+# TODO: Change this to whatever my current colorschemes are
+# arctic theme
+if [[ $COLOR_THEME == 'arctic' ]]; then
+    [[ $bg != -1 ]] && bg='#1f1f1f'
+    fg='#cccccc'
+    colors="dark,fg:$fg,bg:$bg,hl:#ffdd33,fg+:#ffffff,bg+:#04395e,gutter:$bg,hl+:#ffdd33,query:$fg,disabled:#808080,border:$fg,separator:#454545,label:#4ec9b0,header:#f9ae28:underline"
+fi
+# monokai theme
+if [[ $COLOR_THEME == 'monokai' ]]; then
+    [[ $bg != -1 ]] && bg='#272822'
+    fg='#f8f8f2'
+    colors="dark,fg:$fg,bg:$bg,hl:#ffdd33:bold,fg+:#ffffff,bg+:#414339,gutter:$bg,hl+:#ffdd33:bold,query:$fg,disabled:#7a7a77,border:$fg,separator:#454545,label:$fg,header:#fd9621:underline:bold"
+fi
+
+export FZF_DEFAULT_OPTS=" \
+    --reverse \
+    --ansi \
+    --height 85% \
+    --multi \
+    --scrollbar '█' \
+    --history /tmp/fzfhistory \
+    --prompt '> ' \
+    --border rounded \
+    --tabstop=4 \
+    --highlight-line \
+    --tmux 80%,85% \
+    --bind 'ctrl-d:preview-page-down,ctrl-u:preview-page-up,`
+        `alt-a:select-all,ctrl-a:toggle-all,esc:abort,`
+        `ctrl-space:toggle-preview,`
+        `ctrl-/:change-preview-window(down|right),`
+        `alt-w:toggle-preview-wrap,`
+        `ctrl-w:toggle-wrap,`
+        `ctrl-s:toggle-sort,`
+        `ctrl-o:execute(open {+}),`
+        `ctrl-y:execute-silent(echo -n {+} | pbcopy),`
+        `ctrl-e:execute(\$EDITOR {+} < /dev/tty > /dev/tty 2>&1),`
+        `alt-x:exclude-multi,`
+        `change:first' \
+    --bind 'focus:transform-preview-label:echo [ {} ]' \
+    --preview '~/.config/fzf/fzf-previewer.sh {}' \
+    --preview-window 'right,60%,nowrap' \
+    --color=$colors"
+
+_fzf_compgen_path() {
+    fd --hidden --follow ${(z)FD_EXCLUDE} . "$1"
+}
+
+_fzf_compgen_dir() {
+    fd --type d --hidden --follow ${(z)FD_EXCLUDE} . "$1"
+}
+
+ctrl_t_is_home="/tmp/fzf-ctrl-t-is-home"
+export FZF_CTRL_T_COMMAND="$FD"
+export FZF_CTRL_T_OPTS=" \
+    --prompt 'Fzf [Current]> ' \
+    --header ':: CTRL-L (toggle HOME/Current), CTRL-R (Root)' \
+    --bind 'start:execute:rm -f $ctrl_t_is_home' \
+    --bind 'ctrl-r:reload($FD . /)+change-prompt(Fzf [Root]> )' \
+    --bind 'ctrl-l:transform: \
+        [[ ! -e $ctrl_t_is_home ]] && { \
+            echo \"reload($FD . $HOME)+change-prompt(Fzf [HOME]> )\"; \
+            touch $ctrl_t_is_home; \
+        } || { \
+            echo \"reload($FD)+change-prompt(Fzf [Current]> )\"; \
+            rm $ctrl_t_is_home; \
+        }' \
+"
+
+# CTRL-R to search the command history
+export FZF_CTRL_R_OPTS=" \
+    --prompt 'Command History> ' \
+    --preview 'echo {}' \
+    --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
+    --header ':: CTRL-Y (copy to clipboard)' \
+"
+
+# CTRL-J to cd into the selected dir
+# - ALT-P: show parent dirs
+# - ALT-S: show sub dirs
+alt_c_is_home="/tmp/fzf-alt-c-is-home"
+bindkey '^j' fzf-cd-widget
+export FZF_ALT_C_COMMAND="$FD --type d"
+export FZF_ALT_C_OPTS=" \
+    --preview '[[ \$(command -v eza) ]] && eza -la --color=always --icons -g --group-directories-first {} || tree -C {} | head -200' \
+    --header ':: CTRL-L (toggle HOME/Current), CTRL-R (Root), CTRL-H (Parent)' \
+    --prompt 'SubDirs [Current]> ' \
+    --bind 'start:execute:rm -f $alt_c_is_home' \
+    --bind 'ctrl-r:reload($FD --type d . /)+change-prompt(SubDirs [Root]> )' \
+    --bind 'ctrl-h:reload(print-parent-dirs)+change-prompt(SubDirs [Parent]> )' \
+    --bind 'ctrl-l:transform: \
+        [[ ! -e $alt_c_is_home ]] && { \
+            echo \"reload($FD --type d . $HOME)+change-prompt(SubDirs [HOME]> )\"; \
+            touch $alt_c_is_home; \
+        } || { \
+            echo \"reload($FD --type d)+change-prompt(SubDirs [Current]> )\"; \
+            rm $alt_c_is_home; \
+        }' \
+"
+
+# fzf + git
+# Reference: https://github.com/junegunn/fzf-git.sh
+# CTRL-G F for files
+# CTRL-G B for branches
+# CTRL-G T for tags
+# CTRL-G R for remotes
+# CTRL-G H for commit hashes
+# CTRL-G S for stashes
+# CTRL-G L for Reflogs
+# CTRL-G E for Each ref (git for-each-ref)
+# CTRL-G W for Worktrees
+source $HOME/.config/fzf/fzf-git.sh

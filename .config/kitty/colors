@@ -1,7 +1,7 @@
-
 #!/usr/bin/env python3
 import argparse as arrg
-import os, sys
+import os
+import sys
 from pathlib import Path
 
 import pynvim as pyv
@@ -22,21 +22,21 @@ color_file = "/Users/eo/.config/kitty/main_colors_scheme.conf"
 #     "light": "vscode.light",
 # }
 
-colorschemes: dict[dict[list, str], str ] = {
-        'dark': [ 'doom-one', 'darkplus', 'onedarker' ],
-        'light': 'vscode.light'
-        }
+colorschemes: dict[dict[list, str], str] = {
+    "dark": ["doom-one", "darkplus", "onedarker"],
+    "light": "vscode.light",
+}
 
 
-parser = arrg.ArgumentParser()
-parser.add_argument("bg",
-                    nargs = "?",
-                    default = None,
-                    choices = ["dark", "light", "toggle"])
+parser = arrg.ArgumentParser(
+parser.add_argument(
+    "bg", nargs="?", default=None, choices=["dark", "light", "toggle"]
+)
 
 args = parser.parse_args()
 bg = args.bg
 current_bg = os.getenv("NVIM_COLORSCHEME_BG")
+
 
 def set_env(background, cmd):
     os.system("kitty @ set-colors --all --configured " + color_file)
@@ -46,7 +46,7 @@ def set_env(background, cmd):
 
 
 if Path(color_file).exists():
-    cfile = open(color_file, "r")
+    cfile = open(color_file)
     first_line = cfile.readline().rstrip()
     current_bg = first_line.split("=")[1]
 elif not bg:
@@ -57,11 +57,12 @@ elif not bg:
 
     print(
         # f"You need to provide a background type argument on first run {file = sys.stderr()}"
-        f"You need to provide a background type argument on first run {file}")
+        f"You need to provide a background type argument on first run {file}"
+    )
     exit()
 if not bg:
     print(f";".join(set_env(current_bg)))
-    print(f"echo \"Current background is {set_env(current_bg)}\"")
+    print(f'echo "Current background is {set_env(current_bg)}"')
     exit()
 
 if bg == "toggle":
@@ -69,8 +70,9 @@ if bg == "toggle":
 
 os.environ["NVIM_COLORSCHEME_BG"] = bg
 os.environ["NVIM_COLORSCHEME"] = colorschemes[bg]
-nvim = pyv.attach("child",
-                  argv=["/usr/bin/env", "nvim", "--embed", "--headless"])
+nvim = pyv.attach(
+    "child", argv=["/usr/bin/env", "nvim", "--embed", "--headless"]
+)
 
 
 def get_hl_color(name):
@@ -95,17 +97,18 @@ command = [
     "foreground " + normal_fg,
     "background " + normal_bg,
     "cursor " + (cursor_bg.startswith("#") and cursor_bg or normal_fg),
-    "cursor_text_color " +
-    (cursor_fg.startswith("#") and cursor_fg or "background"),
-    "selection_foreground " +
-    (selection_fg.startswith("#") and selection_fg or "none"),
-    "selection_background " +
-    (selection_bg.startswith("#") and selection_bg or normal_fg),
+    "cursor_text_color "
+    + (cursor_fg.startswith("#") and cursor_fg or "background"),
+    "selection_foreground "
+    + (selection_fg.startswith("#") and selection_fg or "none"),
+    "selection_background "
+    + (selection_bg.startswith("#") and selection_bg or normal_fg),
 ]
 
 for i in range(0, 16):
-    command.append("color" + str(i) + " " +
-                   nvim.eval("g:terminal_color_" + str(i)))
+    command.append(
+        "color" + str(i) + " " + nvim.eval("g:terminal_color_" + str(i))
+    )
 
 nvim.close()
 
@@ -118,4 +121,5 @@ is_bg_changed = bg != current_bg
 # if is_bg_changed:
 # additional work if needed
 
+# print(f'{";"}'.join(cmd))
 print(f'{";"}'.join(cmd))

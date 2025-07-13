@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# MNEMONIC: [F]uzzy search [.]dotfiles
+# SYNOPSIS: f. [QUERY]
+# DESCRIPTION: Fuzzy search for the dotfiles and open the selected files via vim
+
+# In fzf, list all the dot files managed by the bare repo including untracked files.
+# Support displaying the two-letter status code.
+
+# shellcheck disable=SC2016
+while IFS= read -r file; do
+    files+=("${file/#~/$HOME}") # replace the leading ~ to $HOME
+done < <(
+    ls-gitfiles 'dot' | fzf \
+        --ansi \
+        --multi \
+        --delimiter='\t' \
+        --with-nth=1 \
+        --query="$1" \
+        --prompt='.dotfiles> ' \
+        --preview='
+        line={}
+        if [[ "${line:1:2}" =~ D ]]; then
+            if git --git-dir=$HOME/dotfiles --work-tree=$HOME show HEAD:{2} | file - | grep -q text; then
+                git --git-dir=$HOME/dotfiles --work-tree=$HOME show HEAD:{2} | bat --color=always --style=numbers
+            else
+                echo "No preview for this deleted file"
+            fi
+        else
+            ~/.config/fzf/fzf-previewer.sh ~/{2}
+        fi
+    ' \
+        --bind='focus:transform-preview-label:echo [ {2} ]' \
+        --accept-nth='~/{2}'
+)
+
+if [[ ${#files[@]} -gt 0 ]]; then
+    ${EDITOR:-nvim} "${files[@]}"
+fi

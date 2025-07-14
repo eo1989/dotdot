@@ -1,213 +1,313 @@
-# much of these new cmds were taken from rafi gh -> .com/rafi/.config
-# interpreter for shell commands (needs to be POSIX compatible)
-set shell /usr/local/bin/zsh
+# lf doc - https://godoc.org/github.com/gokcehan/lf
+# lfrc example - https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
-# set '-eu' options for shell commands
-# These options are used to have safer shell commands. Option '-e' is used to
-# exit on error and option '-u' is used to give error for unset variables.
-# Option '-f' disables pathname expansion which can be useful when $f, $fs, and
-# $fx variables contain names with '*' or '?' characters. However, this option
-# is used selectively within individual commands as it can be limiting at
-# times.
+# ========== General settings ==========
+
+set shell zsh
 set shellopts '-eu'
-
-# set internal field separator (IFS) to "\n" for shell commands
-# This is useful to automatically split file names in $fs and $fx properly
-# since default file separator used in these variables (i.e. 'filesep' option)
-# is newline. You need to consider the values of these options and create your
-# commands accordingly.
 set ifs "\n"
-
-# leave some space at the top and the bottom of the screen
-set scrolloff 6
-
-set color256
-set icons true
-set ignorecase true
-set hidden true
-set incsearch true
-set tabstop 2
-set smartcase true
-set dircounts true
+set scrolloff 10
+set icons
+# set drawbox
+set incsearch
+set smartcase
+set ignorecase
+set anchorfind
+set findlen 1
+set tabstop 4
 set info size
-set sortby natural
-set ratios '1:2:3'
 set sixel true
 set preview true
-# set previewer "/users/eo/.config/lf/lfpreview"
-set previewer "/users/eo/lf-preview"
-set drawbox true
-set promptfmt "
-\033[38;5;8m\033[48;5;236m %u@%h \033[38;5;236m\033[48;5;234m
-\033[38;5;8m\033[48;5;234m %w/%f \033[0m\033[38;5;234m\033[0m
-"
-# use enter for shell commands
-# map <enter> shell
-# open machanisms
-map <enter> open
-map E &$OPENER $f
-map o $mimeopen --ask $f
-map O $mimeopen --ask-default $f
+set previewer ~/.config/lf/previewer.sh
+set cleaner ~/.config/lf/cleaner.sh
+set dircounts
+setlocal ~/Downloads sortby "atime"
+setlocal ~/Downloads reverse
+set hiddenfiles ".DS_Store:.git"
 
-# dedicated keys for file opener actions
-# map o &mimeopen $f
-# map O $mimeopen --ask $f
+# ========== Commands ==========
+map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' | less -R $f
 
-
-# general utilities
-# ---
-map i $LESS='-iWQMXR~' bat --paging=always --theme="Sublime Snazzy" "$f"
-map I push A<c-a>
-map R rename
-map D trash
-map H cd ..
-map . set hidden!
-
-# create directory/file
-map ad push $mkdir<space>
-map af push $touch<space>
-# map au !du -hsx * | sort -rh | less
-map au !dust -si * |  less
-map ai !gstat $f || stat $f; echo ; du -sh $f ; echo ; file --mime-type -b -p $f
-
-# Quickly locate a file with fzf and select it in lf
-map gf $lf -remote "send $id select $(fzf-tmux --query="$1" --select-1 --exit-0 --preview="bat --paging=always --theme='Sublime Snazzy'")"
-
-map <esc> unselect; clear
-map zz push :z<space>
-
-map sn :{{ set sortby natural; set info size; set preview; }}
-map sa :{{ set sortby natural; set info size; set nopreview; set ratios 3:5; }}
-map ss :{{ set sortby size; set info size; set preview; }}
-map st :{{ set sortby time; set info time; set preview; }}
-
-# Tmux
-map sg &tmux split-window -h lf
-map sv &tmux split-window -v lf
-
-# show documentation
-map g? $lf -doc | less
-
-# beyond compare selected files/directories
-map = &bcompare $fx
-
-# execute current fie (must be executable)
-map x $$f
-map X !$f
-
-# define a custom 'open' command
-# This command is called when current file is not a directory. You may want to
-# use either file extensions and/or mime types here. Below uses an editor for
-# text files and a file opener for the rest.
-cmd open ${{
-    case $(file --mime-type $f -b) in
-        text/*) $EDITOR $fx;;
-        *) for f in $fx; do setsid $OPENER $f >/dev/null 2>/dev/null & done;;
+# Override the default open for file opening (binded to 'l' by default)
+cmd open &{{
+    case $(file --mime-type "$(readlink -f $f)" -b) in
+        text/*|application/json|inode/x-empty|application/octet-stream) lf -remote "send $id \$$EDITOR \$fx";;
+        *) for f in $fx; do open $f > /dev/null 2> /dev/null & done;;
     esac
 }}
 
-# define a custom 'rename' command without prompt for overwrite
-# cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
-# map r push :rename<space>
+cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
 
-# make sure trash folder exists
-# %mkdir -p ~/.trash
+# Create a directory with the selected items
+cmd new-folder-with-selection ${{
+    set -f
+    printf "Directory name: "
+    read newd
+    mkdir -- "$newd"
+    mv -- $fx "$newd"
+}}
 
-# move current file or selected files to trash folder
-# (also see 'man mv' for backup/overwrite options)
-cmd trash %set -f; mv $fx ~/.trash
+cmd chmod ${{
+    printf "\nMode Bits: "
+    read ans
+    for file in "$fx"
+    do
+        chmod $ans $file
+    done
+    lf -remote 'send reload'
+}}
 
-# define a custom 'delete' command
-# cmd delete ${{
-#     set -f
-#     printf "$fx\n"
-#     printf "delete?[y/n]"
-#     read ans
-#     [ $ans = "y" ] && rm -rf $fx
-# }}
-
-# use '<delete>' key for either 'trash' or 'delete' command
-# map <delete> trash
-# map <delete> delete
-
-# extract the current file with the right command
-# (xkcd link: https://xkcd.com/1168/)
 cmd extract ${{
     set -f
     case $f in
         *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
         *.tar.gz|*.tgz) tar xzvf $f;;
         *.tar.xz|*.txz) tar xJvf $f;;
+        *.tar) tar xvf $f;;
         *.zip) unzip $f;;
         *.rar) unrar x $f;;
         *.7z) 7z x $f;;
+        *) echo "Unsupported format";;
     esac
 }}
 
-# compress current file or selected files with tar and gunzip
 cmd tar ${{
-    set -f
-    mkdir $1
-    cp -r $fx $1
-    tar czf $1.tar.gz $1
-    rm -rf $1
+        set -f
+        mkdir $1
+        cp -r $fx $1
+        tar czf $1.tar.gz $1
+        rm -rf $1
 }}
 
-# compress current file or selected files with zip
 cmd zip ${{
+        set -f
+        mkdir $1
+        cp -r $fx $1
+        zip -r $1.zip $1
+        rm -rf $1
+}}
+
+cmd delete ${{
     set -f
-    mkdir $1
-    cp -r $fx $1
-    zip -r $1.zip $1
-    rm -rf $1
-}}l
-
-# quickly cd into frecent directories using zoxide, zlua or rupa/z
-cmd z ${{
-	set +u
-	dest=''
-	prefix=''
-	[[ "$OSTYPE" == "darwin"* ]] && prefix='/usr/local'
-	if hash zoxide 2>/dev/null; then
-		dest="$(zoxide query "$@")"
-	# See: https://github.com/skywind3000/z.lua
-	# elif [ -f "$prefix/etc/profile.d/z.lua" ]; then
-	# 	export _ZL_NO_PROMPT_COMMAND=1
-	# 	dest="$(lua "$prefix/etc/profile.d/z.lua" -e "$@")"
-	# # See https://github.com/rupa/z
-	# elif [ -f "$prefix/etc/profile.d/z.sh" ] || [ -f "$prefix/share/z/z.sh"]; then
-	# 	export _Z_NO_PROMPT_COMMAND=1
-	# 	source "$prefix/etc/profile.d/z.sh" || source "$prefix/share/z/z.sh"
-	# 	dest="$(_z "$@" && pwd)"
-	fi
-
-	if test -n "${dest}"; then
-		lf -remote "send $id cd '${dest}'"
-	else
-		lf -remote "send $id echo 'Invalid directory ${dest}'"
-	fi
+    printf "\n$fx\n"
+    printf "delete?[y/N]"
+    read ans
+    if [[ $ans == "y" ]]; then
+        rm -rf $fx
+    fi
 }}
 
-cmd fzf_z ${{
-	sel="$(zoxide query -l | fzf +s)"
-	[ -d "$sel" ] && lf -remote "send $id cd \"$sel\""
+cmd trash !{{
+    set -f
+    printf "\nItems to be trashed:\n$fx\n\nTrash? [y/N]"
+    read ans
+    if [[ $ans == "y" ]]; then
+        trash -F $fx && echo "Trash complete!"
+    elif [[ $ans == "n" ]]; then
+        echo "Canceled!"
+    else
+        echo "Failed! Use y to trash."
+    fi
 }}
 
-# dynamically set info displayed based on the number of columns
-cmd resize %{{
-	w=$(tmux display-message -p '#{pane_width}' || tput cols)
-	# w=$(tput cols)
-	if [ $w -le 62 ]; then
-		lf -remote "send $id set ratios 1:4"
-		lf -remote "send $id set nopreview"
-	elif [ $w -le 80 ]; then
-		lf -remote "send $id set ratios 1:2:2"
-	elif [ $w -le 100 ]; then
-		lf -remote "send $id set ratios 1:2:3"
-	else
-		lf -remote "send $id set ratios 2:4:5"
-	fi
-	# lf -remote "send $id echo 'ui adjusted for width of $w'"
+cmd select-all :unselect; invert
+
+# Bulk rename on selected files or all the non-hidden files in the current directory if no selection
+cmd bulk-rename ${{
+    old="$(mktemp)"
+    new="$(mktemp)"
+    if [ -n "$fs" ]; then
+        fs="$(basename $fs)"
+    else
+        fs="$(ls)"
+    fi
+    printf '%s\n' "$fs" >"$old"
+    printf '%s\n' "$fs" >"$new"
+    $EDITOR "$new"
+    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+    paste "$old" "$new" | while IFS= read -r names; do
+        src="$(printf '%s' "$names" | cut -f1)"
+        dst="$(printf '%s' "$names" | cut -f2)"
+        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+                continue
+        fi
+        mv -- "$src" "$dst"
+    done
+    rm -- "$old" "$new"
+    lf -remote "send $id unselect"
 }}
-resize
-# vim:set ft=sh
+
+# Copy the file names (including extension) of the selections separated by \n
+cmd copy-filename ${{
+    names="$(echo $fx | tr ' ' '\n' | xargs -I{} basename {})"
+    echo $names | tr ' ' '\n' | pbcopy
+}}
+
+# Copy the absolute paths of selections separated by \n
+cmd copy-absolute-path ${{
+    echo $fx | tr ' ' '\n' | pbcopy
+}}
+
+# -- eo -----------------------------------------------------------------------------------------------
+cmd fzf_search ${{
+    cmd="rg --column --line-number --no-heading --color=always --smart-case"
+    fzf --ansi --disabled --layout=reverse --header="Search in files" --delimiter=: \
+        --bind="start:reload([ -n {q} ] && $cmd -- {q} || true)" \
+        --bind="change:reload([ -n {q} ] && $cmd -- {q} || true)" \
+        --bind="enter:become(lf -remote "send $id select \"$(printf "%s" {1} | sed '\''s/\\/\\\\/g;s"/\\"/g'\'')\"")' \
+        --preview-window='+{2}-/2' \
+        --preview='bat --color=always --highlight-line={2} -- {1}'
+        --preview='~/.config/lf/cleaner; ~/.config/lf/previewer {1} "$FZF_PREVIEW_COLUMNS" "$FZF_PREVIEW_LINES" "$FZF_PREVIEW_LEFT" "$FZF_PREVIEW_TOP"'
+}}
+map gs :fzf_search
+# --preview='cat -- {1}'
+
+cmd on-select set user_preview_offset 1
+# `set preview true` is a hack used to reload the preview
+cmd scroll-preview &{{
+    offset=$((lf_user_preview_offset + $1))
+    [ $offset -lt 1] && offset=1
+    lf -remote "send $id :set user_preview_offset $offset; set preview true"
+}}
+map <a-j> scroll-preview 1
+map <a-k> scroll-preview -1
+
+# -- eo -----------------------------------------------------------------------------------------------
+# Fzf to toggle the selections
+cmd fzf-toggle-select ${{
+    no_depth="/tmp/lf-fzf-toggle-select-no-depth"
+    rm -f $no_depth
+    fd_cmd="fd --max-depth 1 --hidden --follow $FD_EXCLUDE"
+    selections=$(eval "$fd_cmd" | fzf \
+        --multi \
+        --header ':: ENTER (toggle selections), CTRL-T (toggle no-depth/depth-1 traversal)' \
+        --prompt 'Files> ' \
+        --bind "ctrl-t:transform: \
+        [[ ! -e $no_depth ]] && { \
+            touch $no_depth; \
+            echo \"reload(fd --hidden --follow $FD_EXCLUDE)\"; \
+        } || { \
+            rm $no_depth; \
+            echo \"reload($fd_cmd)\"; \
+        }" \
+    ) || true
+    if [[ -n $selections ]]; then
+        # Escape white spaces and format multi-line string to a single line one
+        targets=$(echo "$selections" | sed 's/ /\\ /g' | tr '\n' ' ')
+        cnt=$(echo "$selections" | wc -l)
+        lf -remote "send $id toggle $targets"
+        lf -remote "send $id echo Toggle $cnt selections"
+    fi
+}}
+
+# Fzf: change the current file selection
+cmd fzf-file ${{
+    fd_cmd="fd --type f --type l --hidden --follow $FD_EXCLUDE"
+    select=$(eval "$fd_cmd" | fzf \
+        --no-multi \
+        --header ':: ALT-/ (toggle HOME/Current dir)' \
+        --prompt 'Files [Current]> ' \
+        --bind "alt-/:transform: \
+        [[ ! \$FZF_PROMPT =~ HOME ]] && { \
+            echo \"reload($fd_cmd . $HOME | sed 's|^$HOME|~|')+change-prompt(Files [HOME]> )\"; \
+        } || { \
+            echo \"reload($fd_cmd)+change-prompt(Files [CWD]> )\"; \
+        }" \
+    ) || true
+    if [[ -n $select ]]; then
+        lf -remote "send $id select $select"
+    fi
+}}
+
+# Fzf: cd into the selected directory
+cmd fzf-cd ${{
+    fd_cmd="fd --type d --hidden --follow $FD_EXCLUDE"
+    select=$(eval "$fd_cmd" | fzf \
+        --no-multi \
+        --header ':: ALT-/ (toggle HOME/Current dir)' \
+        --prompt 'Dirs [Current]> ' \
+        --bind "alt-/:transform: \
+        [[ ! \$FZF_PROMPT =~ HOME ]] && { \
+            echo \"reload($fd_cmd . $HOME | sed 's|^$HOME|~|')+change-prompt(Dirs [HOME]> )\"; \
+        } || { \
+            echo \"reload($fd_cmd)+change-prompt(Dirs [CWD]> )\"; \
+        }") || true
+    if [[ -n $select ]]; then
+        lf -remote "send $id cd $select"
+    fi
+}}
+
+# Zoxide
+cmd z %{{
+    result="$(zoxide query --exclude "$PWD" "$@" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id cd \"$result\""
+}}
+
+cmd zi ${{
+    result="$(zoxide query -i | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id cd \"$result\""
+}}
+
+cmd on-cd &{{
+    zoxide add "$PWD"
+}}
+
+# Git for dotfiles
+cmd dot ${{
+    git --git-dir=/Users/eo/.dotdot/ --work-tree=/Users/eo $@
+}}
+
+# ========== Mappings ==========
+
+# Remove some defaults
+map gh
+map d
+map y
+map zh
+
+# <space> is used as the leader key
+map <space>
+
+map f $$EDITOR $(fzf)
+map z. set hidden!
+map <tab> :toggle; down
+map <c-s> :toggle
+map yy copy
+map yn copy-filename
+map yP copy-absolute-path
+map <enter> shell
+map d delete
+map T trash
+# list the size of each item in the current directory
+map U !printf "\n"; du -csh *
+map <c-t> fzf-toggle-select
+map <c-f> fzf-file
+map <c-j> fzf-cd
+# give a name and then make a directory
+map <c-n> push :mkdir<space>
+map <a-n> new-folder-with-selection
+map x cut
+# give a name and then use neovim to edit it
+map V push :!nvim<space>
+
+# Navigate among the parent directories
+map [ push hkl
+map ] push hjl
+
+# Rename
+map r
+map A rename # at the very end
+map I push A<c-a> # at the very beginning
+map rn push A<c-u> # rename the filename
+map re push A<c-f><c-k> # rename the extension
+map <c-r> bulk-rename
+
+# compress (give a name like abc and it will compress the selected items to abc.zip)
+map <space>c push :zip<space>
+# extract
+map <space>x extract
+# Open the directory in Finder on macOS
+map <space>f &if [[ -d $f ]]; then open $f; fi
+
+cmap <tab> cmd-menu-complete
+cmap <backtab> cmd-menu-complete-back

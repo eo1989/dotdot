@@ -11,9 +11,10 @@
 # device_name="$(scutil --get ComputerName | cut -d" " -f2-) ($(sw_vers -productVersion))"
 device_name="$(scutil --get ComputerName) ($(sw_vers -productVersion))"
 
+# HOMEBREW_BAT_THEME="Sublime Snazzy" \
 export HOMEBREW_BAT=1 \
-    HOMEBREW_BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/config" \
-    HOMEBREW_BAT_THEME="Sublime Snazzy" \
+    HOMEBREW_BAT_CONFIG_PATH="${XDG_CONFIG_HOME}/bat/config" \
+    HOMEBREW_BAT_THEME="Dracula" \
     HOMEBREW_CASK_OPTS="--no-quarantine" \
     HOMEBREW_AUTO_UPDATE_SECS=86400 \
     HOMEBREW_CLEANUP_MAX_AGE_DAYS=60 \
@@ -23,13 +24,6 @@ export HOMEBREW_BAT=1 \
     HOMEBREW_DISPLAY_INSTALL_TIMES=1 \
     HOMEBREW_BUNDLE_FILE_GLOBAL="$HOME/Brewfile_$device_name"
 
-if [[ "$(uname -p)" == "arm" ]]; then
-    if which luarocks >/dev/null; then
-        eval "$(luarocks --lua-version=5.1 path)"
-    fi
-    # alias brewfile="brew bundle dump --describe --global --force"
-    alias brewfile="brew bundle dump --describe --vscode --mas  --global --force"
-fi
 
 function _print-section() {
     echo
@@ -66,8 +60,8 @@ bupdate() {
     # Finish
     # TODO: add logic that checks if sketchybar is installed
     # sketchybar restart for new permission
-    sketchybar_was_updated=$(find "$BREW_PREFIX/bin/sketchybar" -mtime -1h)
-    [[ -n "$sketchybar_was_updated" ]] && brew services restart sketchybar
+    # sketchybar_was_updated=$(find "$BREW_PREFIX/bin/sketchybar" -mtime -1h)
+    # [[ -n "$sketchybar_was_updated" ]] && brew services restart sketchybar
 
     # "$ZDOTDIR/notificator" --title "🍺 Homebrew" --message "Update finished." --sound "Blow"
 }

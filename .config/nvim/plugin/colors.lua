@@ -3,27 +3,35 @@ local P = eo.ui.palette
 local highlight = eo.highlight
 
 local function general_overrides()
+  local is_dark = vim.g.high_contrast_theme
+  local dim_factor = is_dark and 0.75 or 0.25
   highlight.all {
     -----------------------------------------------------------------------------//
     -- Native
     -----------------------------------------------------------------------------//
     { VertSplit = { fg = { from = 'Comment' } } },
     { WinSeparator = { fg = { from = 'Comment' } } },
-    { CursorLineNr = { bold = true, fg = P.teal, bg = 'NONE' } },
+    -- { CursorLineNr = { bold = true, fg = P.teal, bg = 'NONE' } },
+    { CursorLine = { bg = { from = 'Normal', alter = dim_factor } } },
+    { CursorLineNr = { bg = 'NONE' } },
     { iCursor = { bg = P.dark_blue } },
     { PmenuSbar = { link = 'Normal' } },
-    { Folded = { link = 'Normal' } },
+    -- { Folded = { link = 'Normal' } },
+    -- { Folded = { clear = true } },
+    { Folded = { bg = 'NONE', fg = { from = 'normal', alter = -0.8 } } },
     --------------------------------------------//
     -- Floats
     ---------------------------------------------//
-    -- { NormalFloat = { bg = { from = 'NormalFloat', alter = -0.15 } } },
+    { NormalFloat = { bg = { from = 'Normal', alter = -0.15 } } },
     { FloatBorder = { bg = { from = 'NormalFloat' }, fg = { from = 'Comment' } } },
     { FloatTitle = { bold = true, fg = 'white', bg = { from = 'FloatBorder', attr = 'fg' } } },
     -----------------------------------------------------------------------------//
     -- Created highlights
     -----------------------------------------------------------------------------//
-    { Dim = { fg = { from = 'Normal', attr = 'bg', alter = 0.25 } } },
+    -- { Dim = { fg = { from = 'Normal', attr = 'bg', alter = 0.25 } } },
+    { Dim = { fg = { from = 'Normal', attr = 'bg', alter = dim_factor } } },
     { PickerBorder = { fg = P.grey, bg = 'bg' } },
+    { PickerTitle = { fg = 'white', bg = P.grey, bold = true } },
     { UnderlinedTitle = { bold = true, underline = true } },
     { StatusColSep = { link = 'LineNr' } },
     -----------------------------------------------------------------------------//
@@ -87,8 +95,8 @@ local function general_overrides()
     -----------------------------------------------------------------------------//
     { ['@keyword.return'] = { italic = true, fg = { from = 'Keyword' } } },
     { ['@type.qualifier'] = { inherit = '@keyword', italic = true } },
-    { ['@variable'] = { clear = true } },
-    { ['@parameter'] = { italic = true, bold = true, fg = 'NONE' } },
+    -- { ['@variable'] = { clear = true } },
+    -- { ['@parameter'] = { italic = true, bold = true, fg = 'NONE' } },
     { ['@error'] = { fg = 'fg', bg = 'NONE' } },
     { ['@text.diff.add'] = { link = 'DiffAdd' } },
     { ['@text.diff.delete'] = { link = 'DiffDelete' } },
@@ -154,7 +162,7 @@ local function colorscheme_overrides()
       { ['@variable'] = { fg = { from = 'Normal' } } },
       { ['@constant.comment'] = { inherit = 'Constant', bold = true } },
       { ['@constructor.lua'] = { inherit = 'Type', italic = false, bold = false } },
-      { ['@lsp.type.parameter'] = { fg = { from = 'Normal' } } },
+      -- { ['@lsp.type.parameter'] = { fg = { from = 'Normal' } } },
       { VisibleTab = { bg = { from = 'Normal', alter = 0.4 }, bold = true } },
       { PanelBackground = { link = 'Normal' } },
       { PanelWinSeparator = { inherit = 'PanelBackground', fg = { from = 'WinSeparator' } } },

@@ -1,11 +1,11 @@
-# vim:ft=zsh ts=8 sw=4 sts=4 tw=100 fdm=marker et ai:
+#───────────────────────────────────────────────────────────────────────────────
 # DOCS
 # https://blog.meain.io/2023/navigating-around-in-shell/
 # https://zsh.sourceforge.io/Doc/Release/Options.html#Changing-Directories
 #───────────────────────────────────────────────────────────────────────────────
 
 # CONFIG
-export CDPATH="$HOME/Dev:$HOME/"
+# export CDPATH="$HOME/Dev:$HOME/"
 
 #───────────────────────────────────────────────────────────────────────────────
 
@@ -109,7 +109,9 @@ fi
 chpwd_cdls() {
     if [[ -o interactive ]]; then
         emulate -L zsh
-        eval ${CD_LS_COMMAND:-lsd --header -FXSlL --blocks date,size,git,name}
+        # eval ${CD_LS_COMMAND:-lsd --header -FXSlLag --blocks date,size,name}
+        eval ${CD_LS_COMMAND:-eza -lhG --git-repos-no-status}
     fi
 }
 add-zsh-hook chpwd chpwd_cdls
+# vim: ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:

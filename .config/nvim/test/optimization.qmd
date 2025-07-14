@@ -1,0 +1,28 @@
+---
+author: Ernest Orlowski
+format:
+  html:
+    code-fold: true
+engine: julia
+---
+
+### Parametric Plots
+
+Plot function pair (x(u), y(u)).
+see @fig-parametric for example.
+
+```{julia}
+#| label: fig-parametric
+#| fig-cap: "Parametric Plots"
+using Plots
+
+plot(
+    sin,
+    x -> sin(2x),
+    0,
+    2π,
+    leg = false,
+    fill = (0, :lavender)
+)
+```
+

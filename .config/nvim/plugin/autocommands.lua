@@ -3,46 +3,46 @@ if not eo then return end
 local api, cmd, env, fn, fmt, v = vim.api, vim.cmd, vim.env, vim.fn, string.format, vim.v
 local map = map or vim.keymap.set
 
--- api.nvim_create_user_command('JsonF', function() cmd('%!jq .') end, {})
--- eo.command('JsonF', '%!jq .')
-
 map({ 'n', 'v', 'o', 'i', 'c' }, '<Plug>(StopHL)', 'execute("nohlsearch")[-1]', { expr = true })
 
--- local function stop_hl()
---   if v.hlsearch == 0 or api.nvim_get_mode().mode ~= 'n' then return end
---   api.nvim_feedkeys(vim.keycode('<Plug>(StopHL)'), 'm', false)
--- end
+local function stop_hl()
+  if v.hlsearch == 0 or api.nvim_get_mode().mode ~= 'n' then return end
+  api.nvim_feedkeys(vim.keycode('<Plug>(StopHL)'), 'm', false)
+end
 
+local function hl_search()
+  local col = api.nvim_win_get_cursor(0)[2]
+  local curr_line = api.nvim_get_current_line()
+  local ok, match = pcall(fn.matchstrpos, curr_line, fn.getreg('/'), 0)
+  if not ok then return end
+  local _, p_start, p_end = unpack(match)
+  -- if the cursor is in a search result, leave highlighting on
+  if col < p_start or col > p_end then stop_hl() end
+end
 
--- local function hl_search()
---   local col = api.nvim_win_get_cursor(0)[2]
---   local curr_line = api.nvim_get_current_line()
---   local ok, match = pcall(fn.matchstrpos, curr_line, fn.getreg('/'), 0)
---   if not ok then return end
---   local _, p_start, p_end = unpack(match)
---   -- if the cursor is in a search result, leave highlighting on
---   if col < p_start or col > p_end then stop_hl() end
--- end
-
--- eo.augroup('VimrcIncSearchHighlight', {
---   event = { 'CursorMoved' },
---   command = function() hl_search() end,
--- }, {
---   event = { 'InsertEnter' },
---   command = function() stop_hl() end,
--- }, {
---   event = { 'OptionSet' },
---   pattern = { 'hlsearch' },
---   command = function()
---     vim.schedule(function() cmd.redrawstatus() end)
---   end,
--- }, {
---   event = 'RecordingEnter',
---   command = function() vim.o.hlsearch = false end,
--- }, {
---   event = 'RecordingLeave',
---   command = function() vim.o.hlsearch = true end,
--- })
+eo.augroup('VimrcIncSearchHighlight', {
+  event = { 'CursorMoved' },
+  command = function() hl_search() end,
+}, {
+  event = { 'InsertEnter' },
+  command = function() stop_hl() end,
+}, {
+  event = { 'OptionSet' },
+  pattern = { 'hlsearch' },
+  command = function()
+    vim.schedule(function() cmd.redrawstatus() end)
+  end,
+}, {
+  event = 'RecordingEnter',
+  command = function() vim.o.hlsearch = false end,
+}, {
+  event = 'RecordingLeave',
+  command = function() vim.o.hlsearch = true end,
+}, {
+  event = 'BufEnter',
+  command = function() vim.opt.formatoptions:remove { 'c', 'r', 'o' } end,
+  desc = 'Disable new line comment',
+})
 
 local smart_close_filetypes = eo.p_table {
   ['qf'] = true,
@@ -50,7 +50,8 @@ local smart_close_filetypes = eo.p_table {
   ['help'] = true,
   ['query'] = true,
   ['dbui'] = true,
-  ['lspinfo'] = true,
+  ['LspInfo'] = true,
+  ['Lazy'] = true,
   ['git.*'] = true,
   ['Neogit.*'] = true,
   ['neotest.*'] = true,
@@ -106,49 +107,77 @@ eo.augroup('SmartClose', {
 --   event = { 'BufEnter' },
 --   pattern = { '*.png', '*.jpg', '*.gif', '*.webp', '*.svg' },
 --   command = function()
---     if package.loaded['image.nvim'] ~= 1 then cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%'))) end
+--     if package.loaded['image.nvim'] ~= 1 then
+--       cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%')))
+--     end
+--   end,
+-- })
+-- eo.augroup('Treesitter', {
+--   event = { 'FileType' },
+--   -- callback = function(ctx)
+--   --   local ft = ctx.match
+--   --   local lang = vim.treesitter.language.get_lang(ft)
+--   --   if vim.tbl_contains(require('nvim-treesitter.config').get_available(), lang) then
+--   --     require('nvim-treesitter').install(lang):await(function()
+--   --       vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+--   --       vim.bo.indentexpr = 'v:lua.require("nvim-treesitter".indentexpr())'
+--   --       vim.treesitter.start()
+--   --     end)
+--   --   end
+--   --   local no_indent = {'bash', 'zsh', 'python'}
+--   --   if has_started and not vim.list_contains(no_indent, ft) then
+--   --     vim.bo.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
+--   --     -- vim.treesitter.start(ctx.buf, ctx.match)
+--   --   end
+--   -- end,
+--   command = function(ctx)
+--     local bufnr = ctx.buf
+--     -- if not pcall(vim.treesitter.start, bufnr) then return end
+--     vim.treesitter.start(bufnr)
+--     vim.wo.foldmethod = 'expr'
+--     vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+--     vim.bo[bufnr].indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
 --   end,
 -- })
 
-  -- automatically check for changed files outside vim
---   eo.augroup('CheckOutsideTime', {
---   event = { 'WinEnter', 'BufWinEnter', 'BufWinLeave', 'BufRead', 'BufEnter', 'FocusGained' },
---   command = 'silent! checktime',
--- })
+-- automatically check for changed files outside vim
+eo.augroup('CheckOutsideTime', {
+  event = { 'WinEnter', 'BufWinEnter', 'BufWinLeave', 'BufRead', 'BufEnter', 'FocusGained' },
+  command = 'silent! checktime',
+})
 
 eo.augroup('TextYankHighlight', {
   -- don't execute silently in case of errors
   event = { 'TextYankPost' },
-  command = function() vim.highlight.on_yank { timeout = 250, on_visual = true, higroup = 'Visual' } end,
+  command = function() vim.highlight.on_yank { timeout = 150, on_visual = true, higroup = 'Visual' } end,
+  desc = 'Highlight on yank',
 })
 
--- eo.augroup('UpdateVim',
--- {
---   event = { 'FocusLost' },
---   pattern = { '*' },
---   command = 'silent! wall',
--- },
--- {
---   event = { 'VimResized' },
---   pattern = { '*' },
---   command = 'wincmd =', -- Make windows equal size when vim resizes
--- })
+eo.augroup('UpdateVim', {
+  event = { 'FocusLost' },
+  pattern = { '*' },
+  command = 'silent! wall',
+}, {
+  event = { 'VimResized' },
+  pattern = { '*' },
+  command = 'wincmd =', -- Make windows equal size when vim resizes
+})
 
--- eo.augroup('WindowBehaviours', {
---   event = { 'CmdWinEnter' }, -- map q to close command window on quit
---   pattern = { '*' },
---   command = 'nnoremap <silent><buffer><nowait> q <C-W>c',
--- }, {
---   event = { 'BufWinEnter' },
---   command = function(args)
---     if vim.wo.diff then vim.diagnostic.enable(false, args.buf) end
---   end,
--- }, {
---   event = { 'BufWinLeave' },
---   command = function(args)
---     if vim.wo.diff then vim.diagnostic.enable(args.buf) end
---   end,
--- })
+eo.augroup('WindowBehaviours', {
+  event = { 'CmdWinEnter' }, -- map q to close command window on quit
+  pattern = { '*' },
+  command = 'nnoremap <silent><buffer><nowait> q <C-W>c',
+}, {
+  event = { 'BufWinEnter' },
+  command = function(args)
+    if vim.wo.diff then vim.diagnostic.enable(false, args.buf) end
+  end,
+}, {
+  event = { 'BufWinLeave' },
+  command = function(args)
+    if vim.wo.diff then vim.diagnostic.enable(args.buf) end
+  end,
+})
 
 local cursorline_exclude = { 'alpha', 'toggleterm' }
 
@@ -162,44 +191,44 @@ local function should_show_cursorline(buf)
     and not vim.tbl_contains(cursorline_exclude, vim.bo[buf].filetype)
 end
 
--- eo.augroup('Cursorline', {
---   event = { 'BufEnter' },
---   pattern = { '*' },
---   command = function(args) vim.wo.cursorline = should_show_cursorline(args.buf) end,
--- }, {
---   event = { 'BufLeave' },
---   pattern = { '*' },
---   command = function() vim.wo.cursorline = false end,
--- })
+eo.augroup('Cursorline', {
+  event = { 'BufEnter' },
+  pattern = { '*' },
+  command = function(args) vim.wo.cursorline = should_show_cursorline(args.buf) end,
+}, {
+  event = { 'BufLeave' },
+  pattern = { '*' },
+  command = function() vim.wo.cursorline = false end,
+})
 
--- local save_excluded = {
---   'neo-tree',
---   'neo-tree-popup',
---   'lua.luapad',
---   'gitcommit',
---   'NeogitCommitMessage',
--- }
+local save_excluded = {
+  'neo-tree',
+  'neo-tree-popup',
+  'lua.luapad',
+  'gitcommit',
+  'NeogitCommitMessage',
+}
 
--- local function can_save()
---   return eo.falsy(fn.win_gettype())
---     and eo.falsy(vim.bo.buftype)
---     and not eo.falsy(vim.bo.filetype)
---     and vim.bo.modifiable
---     and not vim.tbl_contains(save_excluded, vim.bo.filetype)
--- end
+local function can_save()
+  return eo.falsy(fn.win_gettype())
+    and eo.falsy(vim.bo.buftype)
+    and not eo.falsy(vim.bo.filetype)
+    and vim.bo.modifiable
+    and not vim.tbl_contains(save_excluded, vim.bo.filetype)
+end
 
 eo.augroup(
   'Utilities',
-  -- {
-  --   ---@source: https://vim.fandom.com/wiki/Use_gf_to_open_a_file_via_its_URL
-  --   event = { 'BufReadCmd' },
-  --   pattern = { 'file:///*' },
-  --   nested = true,
-  --   command = function(args)
-  --     cmd.bdelete { bang = true }
-  --     cmd.edit(vim.uri_to_fname(args.file))
-  --   end,
-  -- },
+  {
+    ---@source: https://vim.fandom.com/wiki/Use_gf_to_open_a_file_via_its_URL
+    event = { 'BufReadCmd' },
+    pattern = { 'file:///*' },
+    nested = true,
+    command = function(args)
+      cmd.bdelete { bang = true }
+      cmd.edit(vim.uri_to_fname(args.file))
+    end,
+  },
   {
     -- always add a guard clause when creating plugin files
     event = 'BufNewFile',
@@ -220,14 +249,14 @@ eo.augroup(
   --     vim.b[args.buf].formatting_disabled = match ~= nil
   --   end,
   -- },
-  -- {
-  --   event = { 'BufLeave' },
-  --   pattern = { '*' },
-  --   command = function(args)
-  --     if api.nvim_buf_line_count(args.buf) <= 1 then return end
-  --     if can_save() then cmd('silent! write ++p') end
-  --   end,
-  -- },
+  {
+    event = { 'BufLeave' },
+    pattern = { '*' },
+    command = function(args)
+      if api.nvim_buf_line_count(args.buf) <= 1 then return end
+      if can_save() then cmd('silent! write ++p') end
+    end,
+  },
   {
     event = { 'BufWritePost' },
     pattern = { '*' },

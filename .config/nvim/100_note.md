@@ -1,13 +1,12 @@
-Examples:
 
-# _Functional Python_
+- Efficient frontier graph
+Expected return for a portfolio, $R_p$ with n assets is defined as:
 
-1.
+    1.
 
 ```python
 mersenne =
 ```
 
 ```python
-# __import__('ptpython.repl', fromlist=('repl')).embed(globals(), locals(), vi_mode=False, history_filename=None)
 ```

@@ -1,0 +1,17 @@
+{
+  // "driver": "mysql",
+  // "host": "localhost",
+  // "uesr": "root", // "eo"
+  // "password": "eoeo",
+  // "port": 3306,
+  "ignore-errors": [
+    "odd-code-point",
+    "missing-where",
+    "trailiing-whitespace",
+    "hungarian-notation",
+    "invalid-drop-option",
+    "invalid-create-option",
+    "invalid-truncate-option",
+    "invalid-alter-option"
+  ]
+}

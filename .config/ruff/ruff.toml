@@ -1,42 +1,131 @@
-[lint]
-extend-include = ["*.ipynb"]
-exclude = [
-  ".git",
-  ".tox",
-  ".venv",
-  "venv",
-  "pytypes",
-  "node_modules",
-  "egg-info",
-  "env",
-  ".vim",
-  ".pytest_cache",
-  ".mypy_cache",
-  ".virtual_documents",
-  ".vscode",
-  ".ipynb_checkpoints",
-  "__pycache__",
-  "docs/source/conf.py",
-  "old",
-  "build",
-  "dist",
-  "*migrations*",
+line-length=80
+target-version="py312"
+cache-dir="/Users/eo/.cache/ruff/"
+
+include=["*.ipynb", "*.qmd"]
+exclude=[
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    ".git",
+    ".tox",
+    ".venv",
+    "venv",
+    "pytypes",
+    "node_modules",
+    "egg-info",
+    "env",
+    ".vim",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".virtual_documents",
+    ".vscode",
+    ".ipynb_checkpoints",
+    "__pycache__",
+    "docs/source/conf.py",
+    "old",
+    "build",
+    "dist",
+    "*migrations*",
 ]
 
-ignore = ["D203", "E4", "E5", "F40", "F82", "F84", "W2"]
+# ignore = ["D203", "E4", "E5", "F40", "F82", "F84", "W2"]
+# ignore = [
+#   "COM",
+#   "BLE",
+#   "DTZ",
+#   "D20",
+#   "ISC",
+#   "I",
+#   "NPY",
+#   "INP",
+#   "PIE",
+#   "F4",
+#   "F82",
+#   "F84",
+#   "E4",
+#   "E5",
+#   "E7",
+#   "E9",
+#   "W",
+#   "W2",
+# ]
 
-select = ["B", "C", "UP"]
+# select = ["B", "C", "UP"]
 
-fixable = "ALL"
-unfixable = []
+[lint]
+    # fixable = "ALL"
+    preview=true
+    fixable=["ALL"]
+    unfixable=[]
+    dummy-variable-rgx="^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[lint.mccabe]
-max-complexity = 10
+    ignore=[
+        "COM",
+        "BLE",
+        "DTZ",
+        "D20",
+        "ISC",
+        "I",
+        "NPY",
+        "INP",
+        "PIE",
+        "F4",
+        "F82",
+        "F84",
+        "E4",
+        "E5",
+        "E7",
+        "E9",
+        "W",
+        "W2",
+    ]
 
-[lint.per-file-ignores]
-"__init__.py" = ["F401"]
+    select=["B", "C", "UP"]
+
+    extend-select=["UP"]
+
+    [lint.pydocstyle]
+        convention="numpy"
+
+    [lint.mccabe]
+        max-complexity=10
+
+    [lint.per-file-ignores]
+        "__init__.py"=["F401"]
 
 [format]
-# for black
-line-length = 80
-target-version = ["py312"]
+
+    # unknown field `fixable`,
+    # expected one of:
+    #     `exclude`, `preview`, `indent-style`, `quote-style`, `skip-magic-trailing-comma`,
+    #     `line-ending`, `docstring-code-format`, `docstring-code-line-length`
+    # fixable = ["ALL"]
+    preview=true
+    quote-style="double"
+    skip-magic-trailing-comma=false
+    docstring-code-format=true
+    docstring-code-line-length=100

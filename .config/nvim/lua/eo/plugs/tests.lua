@@ -76,7 +76,7 @@ return {
         },
       }, namespace)
       neotest.setup {
-        discovery = { enabled = false },
+        discovery = { enabled = true },
         diagnostic = { enabled = true },
         -- floating = {
         --   border = eo.ui.current.border,
@@ -121,7 +121,7 @@ return {
           -- passed = misc.passed or '󰄴',
           -- running = misc.running or '󰴲',
           -- failed = misc.running or '',
-          -- unknown = misc.unkonwn or '❓',
+          -- unknown = misc.unknown or '❓',
           passed = '󰄴 ',
           running = '󰴲 ',
           failed = ' ',
@@ -132,17 +132,27 @@ return {
           ),
         },
       }
-      map('n', '<localleader>tn', function() neotest.run.run {} end)
-      map('n', '<localleader>tt', function() neotest.run.run { vim.api.nvim_buf_get_name(0) } end)
+      map('n', '<localleader>tn', function() neotest.run.run {} end, { desc = 'neotest: run' })
+      map(
+        'n',
+        '<localleader>tt',
+        function() neotest.run.run { vim.api.nvim_buf_get_name(0) } end,
+        { desc = 'neotest: run buf' }
+      )
       map('n', '<localleader>ta', function()
         for _, adaptor_id in ipairs(require('neotest').run.adaptors()) do
           require('neotest').run.run { suite = true, adaptor = adaptor_id }
         end
-      end)
-      map('n', '<localleader>tl', function() neotest.run.run_last() end)
-      map('n', '<localleader>td', function() neotest.run.run { strategy = 'dap' } end)
-      map('n', '<localleader>tp', function() neotest.summary.toggle() end)
-      map('n', '<localleader>to', function() neotest.output.open { short = true } end)
+      end, { desc = 'neotest: run adapter/suite' })
+      map('n', '<localleader>tl', function() neotest.run.run_last() end, { desc = 'neotest: run last' })
+      map('n', '<localleader>td', function() neotest.run.run { strategy = 'dap' } end, { desc = 'neotest: run w/ dap' })
+      map('n', '<localleader>tp', function() neotest.summary.toggle() end, { desc = 'neotest: toggle summary' })
+      map(
+        'n',
+        '<localleader>to',
+        function() neotest.output.open { short = true } end,
+        { desc = 'neotest: open output' }
+      )
       -- map('n', '<localleader>ts', function() neotest.run.stop() end)
     end,
   },

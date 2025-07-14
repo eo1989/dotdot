@@ -22,46 +22,67 @@ return {
         default = {
           augend.integer.alias.decimal,
           augend.integer.alias.hex,
-          augend.integer.alias.binary,
+          augend.constant.alias.bool,
           augend.date.alias['%m/%d/%Y'],
-          augend.date.new(
-            {
-              pattern = '%m/%d',
-              default_kind ="day",
-              only_valid = true,
-              word = true,
-              clamp = true,
-              end_sensitive = true,
-            }
-          ),
-          -- augend.constant.alias.bool,
-          augend.constant.new({
-            elements = { 'and', 'or' },
-            word = true, -- if false, 'sand' is incremented into 'sor', 'doctor' into 'doctand', etc
-            cyclic = true, -- 'or' increments into 'and'
-          }),
-          augend.constant.new { elements = { 'True', 'False' }, word = false, preserve_case = true, cyclic = true },
-          augend.constant.new { elements = { 'true', 'false' }, word = false, cyclic = true },
+          augend.date.new {
+            pattern = '%m/%d',
+            default_kind = 'day',
+            only_valid = true,
+            word = true,
+            clamp = true,
+            end_sensitive = true,
+          },
+          augend.constant.new { elements = { 'True', 'False' }, word = false, cyclic = true },
         },
       }
 
-      -- config.augends:register_group {
-      --   python = {
-      --     augend.integer.alias.decimal,
-      --     augend.constant.new { elements = { 'True', 'False' }, word = false, cyclic = true },
-      --     augend.constant.new { elements = { 'and', 'or' }, word = false, cyclic = true },
-      --     augend.constant.new { elements = { '&', '|' }, word = false, cyclic = true },
-      --     augend.constant.new { elements = { 'is', 'is not' }, word = false, cyclic = true },
-      --   },
+      -- local operators = augend.constant.new {
+      --   elements = { '&&', '||' },
+      --   word = false,
+      --   cyclic = true,
       -- }
 
+      -- config.augends:on_filetype {
+      --   julia = {
+      --     operators,
+      --     augend.integer.alias.decimal,
+      --     augend.integer.alias.hex,
+      --     augend.constant.alias.bool,
+      --   },
+      --   python = {
+      --     augend.constant.new {
+      --       elements = { 'and', 'or' },
+      --       word = true, -- if false, 'sand' is incremented into 'sor', 'doctor' into 'doctand', etc
+      --       cyclic = true, -- 'or' increments into 'and'
+      --     },
+      --     augend.constant.new { elements = { 'True', 'False' }, word = false, preserve_case = true, cyclic = true },
+      --     augend.integer.alias.decimal,
+      --     augend.integer.alias.hex,
+      --     augend.constant.alias.bool,
+      --   },
+      --   markdown = {
+      --     augend.integer.alias.decimal,
+      --     augend.misc.alias.markdown_header,
+      --   },
+      --   yaml = {
+      --     augend.integer.alias.decimal,
+      --     augend.semver.alias.semver,
+      --   },
+      --   toml = {
+      --     augend.integer.alias.decimal,
+      --     augend.semver.alias.semver,
+      --   },
+      -- }
     end,
   },
   {
     'jghauser/fold-cycle.nvim',
     opts = {},
     keys = {
-      { '<BS>', function() require('fold-cycle').open() end, desc = 'fold-cycle: toggle' },
+      -- stylua: ignore start
+      { '<BS>',   function() require('fold-cycle').open() end,      desc = 'fold: toggle',    mode = 'n', silent = true },
+      { 'zC',     function() require('fold-cycle').close_all() end, desc = 'fold: close all', mode = 'n', silent = true },
+      -- stylua: ignore end
     },
   },
   {
@@ -80,28 +101,11 @@ return {
       { 'ix', '<Plug>(textobj-comment-i)', mode = { 'x', 'o' } },
     },
   },
-  -- {
-  --   'chrisgrieser/nvim-various-textobjs',
-  --   enabled = false,
-  --   -- ft = { 'markdown', 'quarto' },
-  --   config = function()
-  --     require('various_textobjs').setup {
-  --       lookForwardLines = 8, -- default 5
-  --     }
-  --     map(
-  --       { 'o', 'x' },
-  --       'is',
-  --       ":lua require('various-textobjs').sub_word(true)<CR>",
-  --       { silent = true, desc = 'inner subword' }
-  --     )
-  --     map(
-  --       { 'o', 'x' },
-  --       'as',
-  --       ":lua require('various-textobjs').sub_word(false)<CR>",
-  --       { silent = true, desc = 'around subword' }
-  --     )
-  --   end,
-  -- },
+  {
+    'echasnovski/mini.ai',
+    event = 'VeryLazy',
+    config = function() require('mini.ai').setup { mappings = { around_last = '', inside_last = '' } } end,
+  },
   {
     'tpope/vim-abolish',
     event = 'CmdlineEnter',
@@ -130,3 +134,25 @@ return {
     },
   },
 }
+-- {
+--   'chrisgrieser/nvim-various-textobjs',
+--   enabled = false,
+--   -- ft = { 'markdown', 'quarto' },
+--   config = function()
+--     require('various_textobjs').setup {
+--       lookForwardLines = 8, -- default 5
+--     }
+--     map(
+--       { 'o', 'x' },
+--       'is',
+--       ":lua require('various-textobjs').sub_word(true)<CR>",
+--       { silent = true, desc = 'inner subword' }
+--     )
+--     map(
+--       { 'o', 'x' },
+--       'as',
+--       ":lua require('various-textobjs').sub_word(false)<CR>",
+--       { silent = true, desc = 'around subword' }
+--     )
+--   end,
+-- },

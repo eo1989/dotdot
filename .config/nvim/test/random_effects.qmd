@@ -1,0 +1,15 @@
+---
+author: Ernest Orlowski
+format: html
+# engine: julia
+jupyter: julia-1.11
+---
+
+
+# Testing quarto with multiple languages
+
+## Julia
+- From "Statistics with Julia" pg.165, Listing 4.21: Q-Q Plots
+```{julia}
+using Random, Distributions, StatsPlots, Plots, Measures; pyplot()
+```

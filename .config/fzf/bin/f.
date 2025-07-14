@@ -21,8 +21,8 @@ done < <(
         --preview='
         line={}
         if [[ "${line:1:2}" =~ D ]]; then
-            if git --git-dir=$HOME/dotfiles --work-tree=$HOME show HEAD:{2} | file - | grep -q text; then
-                git --git-dir=$HOME/dotfiles --work-tree=$HOME show HEAD:{2} | bat --color=always --style=numbers
+            if git --git-dir=$HOME/dotdot --work-tree=$HOME show HEAD:{2} | file - | grep -q text; then
+                git --git-dir=$HOME/dotdot --work-tree=$HOME show HEAD:{2} | bat --color=always --style=numbers
             else
                 echo "No preview for this deleted file"
             fi

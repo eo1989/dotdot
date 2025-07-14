@@ -102,7 +102,7 @@ end
 function eo.pcall(msg, func, ...)
   local args = { ... }
   if type(msg) == 'function' then
-    local arg = func --[[@eo any]]
+    local arg = func --[[@as any]]
     args, func, msg = { arg, unpack(args) }, msg, nil
   end
   return xpcall(func, function(err)
@@ -111,7 +111,7 @@ function eo.pcall(msg, func, ...)
   end, unpack(args))
 end
 
-local LATEST_NIGHTLY_MINOR = 10
+local LATEST_NIGHTLY_MINOR = 12
 function eo.nightly() return vim.version().minor >= LATEST_NIGHTLY_MINOR end
 
 ----------------------------------------------------------------------------------------------------
@@ -327,4 +327,32 @@ function eo.reqcall(require_path)
       return function(...) return require(require_path)[k](...) end
     end,
   })
+end
+
+--[[
+-- from dhruvmanila's dotfiles:
+https://github.com/dhruvmanila/dotfiles/blob/master/config/nvim/lua/dm/globals.lua#L125
+--]]
+
+--- Return `true` if the given path exists
+---@param cmd string
+---@return boolean
+function eo.path_exists(path)
+  local _, err = vim.uv.fs_fstat(path)
+  return err == nil
+end
+
+-- redraws the line at the center of the window, maintaining the cursor position.
+-- this is equiv to `normal zz`
+function eo.center_cursor() cmd.normal { 'zz', bang = true } end
+
+-- Returns the current buffer's LSP client for the given language server name.
+-- Raises an error if no client is found.
+---@param name string
+---@return vim.lsp.Client
+function eo.get_client(name)
+  return assert(
+    vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf(), name = name })[1],
+    ('No %s client found for the current buffer'):format(name)
+  )
 end

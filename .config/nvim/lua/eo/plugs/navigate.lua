@@ -5,29 +5,43 @@ local icons = ui.icons
 return {
   {
     'nvim-neo-tree/neo-tree.nvim',
-    -- version = '*',
-    branch = 'v3.x',
+    version = false,
+    -- branch = '>=v3.12',
     cmd = 'Neotree',
     keys = {
-      { '<C-n>', '<Cmd>Neotree toggle reveal<CR>', desc = 'NeoTree' },
-      -- {
-      --   '<C-n>',
-      --   -- function() require('neo-tree.command').execute { toggle = true, dir = vim.uv.cwd() } end,
-      --   desc = 'NeoTree (cwd)',
-      -- },
+      { '<C-n>', ':Neotree toggle reveal<CR>', desc = 'NeoTree', silent = true },
     },
     deactivate = function() vim.cmd([[Neotree close]]) end,
-    init = function()
-      if vim.fn.argc(-1) == 1 then
-        local stat = vim.uv.fs_stat(vim.fn.argv(0))
-        if stat and stat.type == 'Directory' then require('neo-tree') end
+    --[[ event = <- wookayin/dotfiles]]
+    event = (function()
+      if vim.tbl_contains(vim.tbl_map(vim.fn.isdirectory, vim.fn.argv()), 1) then
+        return 'VimEnter'
+      else
+        return 'VeryLazy'
       end
+    end)(),
+    init = function()
+      vim.g.neo_tree_remove_legacy_commands = 1
+      ---@type string[]
+      local argv = vim.fn.argv() or {} ---@diagnostic disable-line
+      if vim.tbl_contains(argv, '.') then vim.schedule(function() pcall(require, 'neo-tree') end) end
+      vim.api.nvim_set_hl(0, 'NeoTreeNormal', { link = 'NormalFloat', default = true })
+      vim.api.nvim_set_hl(0, 'NeoTreeNormalNC', { link = 'NormalFloat', default = true })
+      -- if vim.fn.argc(-1) == 1 then
+      --   local stat = vim.uv.fs_stat(vim.fn.argv(0))
+      --   if stat and stat.type == 'Directory' then require('neo-tree') end
+      -- end
     end,
     opts = {
       close_if_last_window = true,
       enable_diagnostics = false,
-      auto_clean_after_session_restore = false,
-      sources = { 'filesystem', 'document_symbols', 'git_status' },
+      auto_clean_after_session_restore = true,
+      sources = {
+        'filesystem',
+        'document_symbols',
+        'git_status',
+        'buffers',
+      },
       default_source = 'filesystem',
       enable_modified_markers = true,
       enable_opened_markers = true,
@@ -50,33 +64,25 @@ return {
       resize_timer_interval = 500, -- in ms, needed for containers to redraw right aligned and faded content
       source_selector = {
         winbar = true,
-        -- separator = { left = '◖ ', right = ' ◗' },
-        separator = { left = '◤ ', right = ' ◥' },
-        separator_active = '',
+        -- separator = { left = '╱', right = '╲', override = 'active' },
+        -- separator_active = { left = '╱', right = '╲', override = 'active' },
         sources = {
-          {
-            source = 'filesystem',
-            display_name = '  Files ',
-          },
-          {
-            source = 'git_status',
-            display_name = '  Git ',
-          },
-          {
-            source = 'document_symbols',
-            display_name = '  Symbols ',
-          },
+          { source = 'filesystem', display_name = ' 󰉓 File ' },
+          { source = 'git_status', display_name = '  Git ' },
+          { source = 'document_symbols', display_name = '  Sym ' },
+          { source = 'buffers', display_name = ' 󰓩 Buf ' },
         },
+        content_layout = 'center',
       },
       -- enable_normal_mode_for_inputs = false,
       git_status_async = true,
       filesystem = {
         bind_to_cwd = false,
-        -- hijack_netrw_behavior = 'open_current',
+        hijack_netrw_behavior = 'open_current',
         use_libuv_file_watcher = true,
         group_empty_dirs = false,
         follow_current_file = {
-          enabled = false,
+          enabled = true,
           leave_dirs_open = true,
         },
         async_directory_scan = 'auto',
@@ -100,6 +106,9 @@ return {
         name = { highlight_opened_files = true },
         indent = {
           with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
+          indent_marker = '│',
+          last_indent_marker = '└',
+          indent_size = 2,
           -- expander_collapsed = '',
           -- expander_expanded = '',
           expander_highlight = 'NeoTreeExpander',
@@ -151,20 +160,17 @@ return {
       event_handlers = {
         {
           event = 'neo_tree_popup_input_ready',
+          handler = function() vim.cmd('stopinsert') end,
+        },
+        {
+          event = 'neo_tree_popup_input_ready',
           ---@param args { bufnr: integer, winid: integer }
-          handler = function(args)
-            vim.cmd([[stopinsert]])
-            map('i', '<ESC>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr })
-          end,
+          handler = function(args) map('i', '<ESC>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr }) end,
         },
       },
     },
     config = function(_, opts)
       opts.event_handlers = opts.event_handlers or {}
-      -- vim.list_extend(opts.event_handlers, {
-      --   { event = events.FILE_MOVED, handler = on_move }
-      --   { event = events.FILE_RENAMED, handler = on_move }
-      -- })
       require('neo-tree').setup(opts)
       vim.api.nvim_create_autocmd('TermClose', {
         -- [[* lua require('neo-tree.events').on_term_close()]],
@@ -175,13 +181,15 @@ return {
       })
     end,
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      'nvim-tree/nvim-web-devicons',
-      '3rd/image.nvim',
+      {'nvim-lua/plenary.nvim'},
+      {'MunifTanjim/nui.nvim'},
+      {'nvim-tree/nvim-web-devicons'},
+      {'3rd/image.nvim'},
+      {'pysan3/pathlib.nvim'},
+      {'nvim-neotest/nvim-nio'},
       {
         's1n7ax/nvim-window-picker',
-        version = '*',
+        version = false,
         opts = {
           filter_rules = {
             include_current_win = false,

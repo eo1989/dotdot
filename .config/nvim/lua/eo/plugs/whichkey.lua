@@ -4,6 +4,7 @@ return {
   -- dependencies = { 'mrjones2014/legendary.nvim' },
   event = { 'VeryLazy' },
   opts = {
+    preset = 'helix',
     setup = {
       show_help = true,
       plugins = {
@@ -27,19 +28,9 @@ return {
         align = 'center', -- align columns left, center or right
       },
     },
-    -- defaults = {
-    --   prefix = '<leader>',
-    --   mode = { 'n', 'v' },
-    --   q = {
-    --     name = 'Quit',
-    --     q = { function() require('bufdelete').bufdelete(0, true) end, 'delete buf' },
-    --     t = { '<cmd>tabclose<cr>', 'Close Tab' },
-    --   },
-    -- },
   },
   config = function(_, opts)
     local wk = require('which-key')
     wk.setup(opts)
-    -- wk.register(opts.defaults)
   end,
 }

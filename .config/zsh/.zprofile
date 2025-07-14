@@ -4,7 +4,7 @@ else
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-export BREW_PREFIX="$(brew --prefix)"
+export BREW_PREFIX="/opt/homebrew"
 
 # path=(
 #     "$BREW_PREFIX/opt/ruby/bin"
@@ -12,6 +12,18 @@ export BREW_PREFIX="$(brew --prefix)"
 #     $path
 # )
 
-export DYLD_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_LIBRARY_PATH"
+# export PAGER="$BREW_PREFIX/bin/less -R"
+# export MANPAGER='sh -c "col -b | bat -pl man"'
+
+# export LESSOPEN='| $commands[(i)lesspipe.sh] LESS_ADVANCED_PREPROCESSOR=1 %s 2>&-'
+# export LESSOPEN="|lesspipe.sh %s"
+# LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
+
+export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
+
+(( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
+# (( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="${HOME}/.cache"
+(( ${+ZDOTDIR} )) || export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+(( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="${HOME}/.cache/zsh"
 
 # export MANPATH="$BREW_PREFIX/opt/coreutils/libexec/gnuman:${MANPATH}"

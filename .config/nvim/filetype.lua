@@ -1,41 +1,51 @@
 vim.filetype.add {
   extension = {
-    -- lock = 'yaml',
-    -- norg = 'norg',
-    json = 'jsonc',
+    pip = 'requirements',
+    mdx = 'markdown',
     cconf = 'python',
+    -- jl = 'julia',
     plist = 'xml.plist', -- macOS PropertyList files
-    -- tex = 'latex',
-    zsh = 'sh',
-    sh = 'sh', -- force sh-files with zsh-shebang to still get sh as ft
+    pcf = 'pkl',
+    pkl = 'pkl',
+    tex = 'latex',
   },
   filename = {
+    ['.rgignore'] = 'gitignore',
+    ['PklProject'] = 'pkl',
     ['NEOGIT_COMMIT_EDITMSG'] = 'NeogitCommitMessage',
     ['.psqlrc'] = 'conf',
-    -- ['launch.json'] = 'jsonc',
+    ['launch.json'] = 'jsonc',
     Podfile = 'ruby',
     Brewfile = 'ruby',
-    ['.flake8'] = 'ini',
     ['MANIFEST.in'] = 'pymanifest',
     -- ['config.custom'] = 'sshconfig',
     ['fish_history'] = 'yaml',
-    -- ['poetry.lock'] = 'toml',
+    ['Cargo.toml'] = 'caddyfile',
     -- dsully/nvim/blob/main/filetype.lua ex:
     -- set specific ft to enable ruff_lsp & taplo to attach as lang servers
-    -- ['pyproject.toml'] = 'toml.pyproject',
-    -- ['ruff.toml'] = 'toml.ruff',
+    ['poetry.lock'] = 'toml',
+    ['pyproject.toml'] = 'toml.pyproject',
+    ['ruff.toml'] = 'toml.ruff',
+    ['uv.lock'] = 'toml',
+    ['.flake8'] = 'ini',
     -- ['.zshrc'] = 'sh',
     -- ['.zshenv'] = 'sh',
   },
   pattern = {
     ['*Caddyfile*'] = 'caddyfile',
-    ['.*/.github/workflows/.*%yaml'] = 'yaml.ghaction',
-    ['.*/.github/workflows/.*%yml'] = 'yaml.ghaction',
+    ['.*/%.github[%w/]+workflows[%w/]+.*%.ya?ml'] = 'yaml.github',
+    -- ['.*/.github/workflows/.*%yaml'] = 'yaml.ghaction',
+    -- ['.*/.github/workflows/.*%yml'] = 'yaml.ghaction',
+    ['.yml$'] = function(path) return path:find('compose') and 'yaml.docker-compose' or 'yaml' end,
+    ['*.dockerignore'] = 'gitignore',
     ['.*requirements%.in'] = 'requirements',
-    ['.*requirements%.txt'] = 'requirements',
     ['.*requirements.*%.in'] = 'requirements',
-    ['.*requirements.*%.txt'] = 'requirements',
-    ['.*/%.vscode/.*%.json'] = 'json5', -- stevearc dotfiles -> these json files freq have comments
+    ['requirements[%w_.-]+%.txt'] = 'requirements', --[[ this covers the 2 below ]]
+    -- ['.*requirements%.txt'] = 'requirements',
+    -- ['.*requirements.*%.txt'] = 'requirements',
+    -- ['.*/%.vscode/.*%.json'] = 'json5', -- stevearc dotfiles -> these json files freq have comments
+    ['.*/%.?vscode/settings.json'] = 'jsonc', -- dhruvmanilla dotfiles
+    ['.*/zed/settings.json'] = 'jsonc',
     ['.*%.conf'] = 'conf',
     ['.*%.theme'] = 'conf',
     ['.*%.gradle'] = 'groovy',

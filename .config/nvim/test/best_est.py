@@ -4,6 +4,7 @@
 import numpy as np
 from numba import njit
 from numba.typed import List
+
 # from typing import Tuple, Dict, Any, Optional
 
 ONE_OV_SQRT_2PI = 0.3989422804014327  # 1.0/sqrt(2.0*pi)
@@ -113,6 +114,7 @@ def is_intrinsic(ttm: float, vol: float) -> bool:
 #                                """prices"""
 ################################################################################
 
+
 @njit
 def compute_bsm_vanilla_price(
     forward: float,
@@ -209,6 +211,7 @@ def compute_bsm_forward_grid_prices(
 #                                """deltas"""
 ################################################################################
 
+
 @njit
 def compute_bsm_vanilla_delta(
     ttm: float,
@@ -239,7 +242,9 @@ def compute_bsm_vanilla_delta(
     return bsm_deltas
 
 
-bsm_delta_vector = np.vectorize(compute_bsm_vanilla_delta, doc="Vectorized `bsm_delta`")
+bsm_delta_vector = np.vectorize(
+    compute_bsm_vanilla_delta, doc="Vectorized `bsm_delta`"
+)
 
 
 @njit
@@ -329,8 +334,11 @@ def compute_bsm_strike_from_delta(
 #                                """Vega"""
 ################################################################################
 
+
 @njit
-def compute_bsm_vanilla_vega(ttm: float, forward: float, strike: float, vol: float) -> float:
+def compute_bsm_vanilla_vega(
+    ttm: float, forward: float, strike: float, vol: float
+) -> float:
     """Vectorised bsm vegas for array of aligned strikes, vols, & optypes."""
     if is_intrinsic(ttm=ttm, vol=vol):
         vega = 0.0
@@ -341,7 +349,9 @@ def compute_bsm_vanilla_vega(ttm: float, forward: float, strike: float, vol: flo
     return vega
 
 
-bsm_vega_vector = np.vectorize(compute_bsm_vanilla_vega, doc="Vectorized `bsm_vega`")
+bsm_vega_vector = np.vectorize(
+    compute_bsm_vanilla_vega, doc="Vectorized `bsm_vega`"
+)
 
 
 @njit
@@ -388,8 +398,11 @@ def compute_bsm_vegas_ttms(
 #                                """Gamma"""
 ################################################################################
 
+
 @njit
-def compute_bsm_vanilla_gamma(ttm: float, forward: float, strike: float, vol: float) -> float:
+def compute_bsm_vanilla_gamma(
+    ttm: float, forward: float, strike: float, vol: float
+) -> float:
     """Vectorised bsm gammas for array of aligned strikes, vols, & optypes."""
     if is_intrinsic(ttm=ttm, vol=vol):
         gamma = 0.0
@@ -400,12 +413,15 @@ def compute_bsm_vanilla_gamma(ttm: float, forward: float, strike: float, vol: fl
     return gamma
 
 
-bsm_gamma_vector = np.vectorize(compute_bsm_vanilla_gamma, doc="Vectorized `bsm_gamma`")
+bsm_gamma_vector = np.vectorize(
+    compute_bsm_vanilla_gamma, doc="Vectorized `bsm_gamma`"
+)
 
 
 ################################################################################
 #                                """Theta"""
 ################################################################################
+
 
 @njit
 def compute_bsm_vanilla_theta(
@@ -437,7 +453,9 @@ def compute_bsm_vanilla_theta(
     return theta
 
 
-bsm_theta_vector = np.vectorize(compute_bsm_vanilla_theta, doc="Vectorized `bsm_theta`")
+bsm_theta_vector = np.vectorize(
+    compute_bsm_vanilla_theta, doc="Vectorized `bsm_theta`"
+)
 
 
 @njit
@@ -483,6 +501,7 @@ def compute_bsm_vanilla_vega_ttms(
 ################################################################################
 #                          """Implied Vols"""
 ################################################################################
+
 
 @njit
 def infer_bsm_ivols_from_model_slice_prices(
@@ -658,6 +677,7 @@ def infer_bsm_ivols_from_model_chain_prices(
 ###############################################################################
 #                              """Digital Prices"""
 ###############################################################################
+
 
 @njit
 def compute_bsm_digital_price(

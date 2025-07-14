@@ -1,6 +1,5 @@
-# vim:ft=zsh sw=4 ts=4 sts=4 et ai
-# shellcheck disable=SC1090,SC1094,SC2148,SC2153,SC2034,SC2086,SC2296
-#
+# shellcheck disable=SC1083,SC1086,SC1090,SC1091,SC1094,SC2148,SC2153,SC2154,SC2034,SC2086,SC2296,SC2206
+
 # ------------------------------------------------------------------------------
 #       ENV VARIABLES
 # ------------------------------------------------------------------------------
@@ -16,11 +15,6 @@
 #  t   : tail of the path
 # CREDIT: @ahmedelgabri
 # -------------------------------------------------------------------------------
-#
-export -U PATH path FPATH fpath MANPATH manpath
-export -UT INFOPATH infopath # -T creates a "tied" pair
-unsetopt GLOBAL_RCS
-setopt noglobalrcs
 
 exists() { (( $+commands[$1])); }
 
@@ -33,46 +27,52 @@ exists() { (( $+commands[$1])); }
 #     eval "$(/usr/local/bin/brew shellenv)" # Intel Mac
 # fi
 
-# (( ${+*} )) = if variable is set dont set it anmyore, or use [[ -z ${*} ]]
+unsetopt GLOBAL_RCS
+
+# `(( ${+*} ))` == if variable is set dont set it anmyore, or use `[[ -z ${*} ]]`
 (( ${+LANG} )) || export LANG="en_US.UTF-8"
-(( ${+LC_ALL} )) || export LC_ALL=${LANG}
-(( ${+LC_CTYPE} )) || export LC_CTYPE=${LANG}
-(( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="$HOME/.config"
-(( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="$HOME/.cache"
+(( ${+LC_ALL} )) || export LC_ALL="en_US.UTF-8"
+(( ${+LC_CTYPE} )) || export LC_CTYPE="en_US.UTF-8"
 (( ${+BREW_PREFIX} )) || export BREW_PREFIX="/opt/homebrew"
-(( ${+ZDOTDIR} )) || export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-(( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"
-(( ${+SHELL} )) || export SHELL="$BREW_PREFIX/bin/zsh"
-(( ${+INFOPATH} )) || export INFOPATH="$BREW_PREFIX/share/info:${INFOPATH:-}"
-(( ${+MANPATH} )) || export MANPATH=":${MANPATH#:}"
-(( ${+EDITOR} )) || export EDITOR="$HOME/.local/share/bob/nightly/bin/nvim"
-(( ${+JUPYTER_CONFIG_DIR} )) || export JUPYTER_CONFIG_DIR="${JUPYTER_CONFIG_DIR:-$XDG_CACHE_HOME/jupyter}"
+(( ${+DYLD_FALLBACK_LIBRARY_PATH} )) || export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
+(( ${+EDITOR} )) || export EDITOR="${BREW_PREFIX/bin/nvim}":-"${BREW_PREFIX}/bin/code-insiders"
+(( ${+JUPYTER_CONFIG_DIR} )) || export JUPYTER_CONFIG_DIR="${JUPYTER_CONFIG_DIR:-$HOME}/.jupyter"
+(( ${+SHELL} )) || export SHELL="${BREW_PREFIX}/bin/zsh"
+(( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
+(( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="${HOME}/.cache"
+(( ${+ZDOTDIR} )) || export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+(( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="${XDG_CACHE_HOME}/zsh"
 
+# setopt no_global_rcs
+# typeset -U path PATH fpath FPATH manpath MANPATH
+# export -UT INFOPATH infopath # -T creates a "tied" pair
 
-path=(
-    $HOME/.local/{bin,share}(N-/)
-    /Applications/quarto/bin(N-/)
-    $BREW_PREFIX/opt/{coreutils,findutils}/libexec/gnubin(N-/)
-    $BREW_PREFIX/opt/{curl,ruby}/bin(N-/)
-	$BREW_PREFIX/{s,}bin(N-/)
-    $path
-)
+# path=(
+#     ~/.local/{bin,share}(N-/)
+#     $BREW_PREFIX/opt/{coreutils,findutils,rustup,node}/libexec/gnubin(N-/)
+#     $BREW_PREFIX/opt/{llvm,curl,ruby}/bin(N-/)
+#     ~/.julia/juliaup(N-/)
+#     ~/.{yarn,npm}/bin(N-/)
+#     ~/go/bin(N-/)
+#     ~/.{go,cargo}/bin(N-/)
+#     $BREW_PREFIX/opt/{grep,gnu-{sed,which,tar}}/libexec/gnubin(N-/)
+#     $BREW_PREFIX/opt/gnu-getopt/bin(N)
+#     $BREW_PREFIX/{bin,sbin}(N-/)
+#     /usr/local/{bin,sbin}(N-/)
+#     /usr/local/texlive/2024basic/bin(N-/)
+#     $path
+# )
 
-# $BREW_PREFIX/opt/curl/bin(N-/)
-# $BREW_PREFIX/opt/findutils/libexec/gnubin(N-/)
-# $BREW_PREFIX/sbin(N-/)
+# /opt/homebrew/opt/grep/libexec/gnubin(N)
 
-export PYENV_ROOT=~/.pyenv
+# export PYENV_ROOT=~/.pyenv
+# [[ -d $PYENV_ROOT/bin ]] && export PATH="${PYENV_ROOT}/bin:$PATH"
+# if exists pyenv; then
+#   eval "$(pyenv init --path zsh)"
+#   eval "$(pyenv init - --no-rehash zsh)"
+#   eval "$(pyenv virtualenv-init - zsh)"
+# fi
 
-[[ -d $PYENV_ROOT/bin ]] && export PATH="${PYENV_ROOT}/bin:$PATH"
+# export PATH=$HOME/.local/bin:/Applications/quarto/bin:$PATH
 
-if exists pyenv; then
-  eval "$(pyenv init --path zsh)"
-  eval "$(pyenv init - --no-rehash zsh)"
-  eval "$(pyenv virtualenv-init - zsh)"
-fi
-
-path+=(
-    /usr/local/{bin,sbin}(N-/)   # may need to set GLOBAL_RCS due to the stupid path-helper
-	~/.{npm,yarn}/bin(N-/)
-)
+# vim: ft=zsh sw=4 ts=4 sts=4 et ai:

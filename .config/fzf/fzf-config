@@ -1,7 +1,11 @@
 #!/usr/bin/env zsh
 
-# eval $("fzf --zsh")
-source <(fzf --zsh)
+if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
+fi
+
+eval "$(fzf --zsh)"
+# source <(fzf --zsh)
 
 FD="fd --hidden --follow $FD_EXCLUDE"
 
@@ -44,6 +48,7 @@ export FZF_DEFAULT_OPTS=" \
         `ctrl-space:toggle-preview,`
         `ctrl-/:change-preview-window(down|right),`
         `alt-w:toggle-preview-wrap,`
+        `ctrl-w:toggle-wrap,`
         `ctrl-s:toggle-sort,`
         `ctrl-o:execute(open {+}),`
         `ctrl-y:execute-silent(echo -n {+} | pbcopy),`
@@ -63,22 +68,21 @@ _fzf_compgen_dir() {
     fd --type d --hidden --follow ${(z)FD_EXCLUDE} . "$1"
 }
 
-ctrl_t_is_home="/tmp/fzf-ctrl-t-is-home"
+# ctrl_t_is_home="/tmp/fzf-ctrl-t-is-home"
 export FZF_CTRL_T_COMMAND="$FD"
 export FZF_CTRL_T_OPTS=" \
     --prompt 'Fzf [Current]> ' \
-    --header ':: CTRL-L (toggle HOME/Current), CTRL-R (Root)' \
-    --bind 'start:execute:rm -f $ctrl_t_is_home' \
-    --bind 'ctrl-r:reload($FD . /)+change-prompt(Fzf [Root]> )' \
-    --bind 'ctrl-l:transform: \
-        [[ ! -e $ctrl_t_is_home ]] && { \
-            echo \"reload($FD . $HOME)+change-prompt(Fzf [HOME]> )\"; \
-            touch $ctrl_t_is_home; \
-        } || { \
-            echo \"reload($FD)+change-prompt(Fzf [Current]> )\"; \
-            rm $ctrl_t_is_home; \
+    --header ':: ALT-L (toggle HOME/Current), ALT-R (Root)' \
+    --bind 'alt-r:reload($FD . /)+change-prompt(Fzf [Root]> )' \
+    --bind 'alt-l:transform: \
+      [[ ! \$FZF_PROMPT =~ HOME ]] && { \
+          echo \"reload($FD . $HOME)+change-prompt(Fzf [HOME]> )\"; \
+      } || { \
+      echo \"reload($FD)+change-prompt(Fzf [CWD]> )\"; \
         }' \
 "
+# --bind 'start:execute:rm -f $ctrl_t_is_home' \
+# --header ':: CTRL-L (toggle HOME/Current), CTRL-R (Root)' \
 
 # CTRL-R to search the command history
 export FZF_CTRL_R_OPTS=" \
@@ -91,25 +95,23 @@ export FZF_CTRL_R_OPTS=" \
 # CTRL-J to cd into the selected dir
 # - ALT-P: show parent dirs
 # - ALT-S: show sub dirs
-alt_c_is_home="/tmp/fzf-alt-c-is-home"
+# alt_c_is_home="/tmp/fzf-alt-c-is-home"
 bindkey '^j' fzf-cd-widget
 export FZF_ALT_C_COMMAND="$FD --type d"
 export FZF_ALT_C_OPTS=" \
     --preview '[[ \$(command -v eza) ]] && eza -la --color=always --icons -g --group-directories-first {} || tree -C {} | head -200' \
-    --header ':: CTRL-L (toggle HOME/Current), CTRL-R (Root), CTRL-H (Parent)' \
+    --header ':: ALT-L (toggle HOME/Current), ALT-R (Root), ALT-P (Parent)' \
     --prompt 'SubDirs [Current]> ' \
-    --bind 'start:execute:rm -f $alt_c_is_home' \
-    --bind 'ctrl-r:reload($FD --type d . /)+change-prompt(SubDirs [Root]> )' \
-    --bind 'ctrl-h:reload(print-parent-dirs)+change-prompt(SubDirs [Parent]> )' \
-    --bind 'ctrl-l:transform: \
-        [[ ! -e $alt_c_is_home ]] && { \
-            echo \"reload($FD --type d . $HOME)+change-prompt(SubDirs [HOME]> )\"; \
-            touch $alt_c_is_home; \
-        } || { \
-            echo \"reload($FD --type d)+change-prompt(SubDirs [Current]> )\"; \
-            rm $alt_c_is_home; \
-        }' \
+    --bind 'alt-r:reload($FD --type d . /)+change-prompt(SubDirs [Root]> )' \
+    --bind 'alt-p:reload(print-parent-dirs)+change-prompt(SubDirs [Parent]> )' \
+    --bind 'alt-l:transform: \
+      [[ ! \$FZF_PROMPT =~ HOME ]] && { \
+        echo \"reload($FD -td . $HOME)+change-prompt(SubDirs [HOME]> )\"; \
+      } || { \
+        echo \"reload($FD -td)+change-prompt(SubDirs [CWD]> )\"; \
+      }' \
 "
+# --bind 'start:execute:rm -f $alt_c_is_home' \
 
 # fzf + git
 # Reference: https://github.com/junegunn/fzf-git.sh
@@ -123,3 +125,5 @@ export FZF_ALT_C_OPTS=" \
 # CTRL-G E for Each ref (git for-each-ref)
 # CTRL-G W for Worktrees
 source $HOME/.config/fzf/fzf-git.sh
+
+# vim: set ft=zsh ts=8 sw=4 et:

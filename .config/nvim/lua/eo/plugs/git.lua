@@ -10,20 +10,36 @@ local function browser_open() return { action_callback = require('gitlinker.acti
 return {
   {
     'akinsho/git-conflict.nvim',
+    version = '*',
     enabled = true,
-    event = 'VeryLazy',
-    opts = { disable_diagnostics = true },
+    event = { 'VeryLazy', 'BufReadPost' },
+    opts = {
+      disable_diagnostics = true,
+      default_mappings = true,
+      default_commands = true,
+      -- must have a background color otherwise the default color will be used
+      highlights = {
+        incoming = 'Visual',
+        current = 'Visual',
+        ancestor = 'Visual',
+      },
+    },
   },
   {
     'NeogitOrg/neogit',
     enabled = true,
     cmd = 'Neogit',
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+    },
     keys = {
+      -- stylua ignore start
       { '<localleader>gs', function() neogit.open() end, desc = 'open status buffer' },
       { '<localleader>gc', function() neogit.open { 'commit' } end, desc = 'open commit buffer' },
       { '<localleader>gl', function() neogit.popups.pull.create() end, desc = 'open pull popup' },
       { '<localleader>gp', function() neogit.popups.push.create() end, desc = 'open push popup' },
+      -- stylua ignore end
     },
     opts = {
       disable_signs = false,
@@ -38,8 +54,29 @@ return {
       },
       integrations = {
         diffview = true,
+        fzf_lua = true,
+      },
+      ---@ rest are from pricehiller/dots
+      --- https://github.com/PriceHiller/dots/blob/Development/users/price/dots/.config/nvim/lua/plugins/configs/neogit.lua
+      -- auto_refresh = true, -- default
+      -- preview_buffer = { kind = "split" }, -- default
+      -- filewatcher = { enabled = true }, -- default
+      graph_style = 'unicode', -- "ascii"
+      mappings = {
+        popup = {
+          ['l'] = false,
+          ['L'] = 'LogPopup',
+        },
       },
     },
+    config = function(_, opts)
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'Neogit*',
+        desc = 'Handle Neogit Refreshes',
+        callback = function() neogit.status:refresh() end,
+      })
+      require('neogit').setup(opts)
+    end,
   },
   {
     'sindrets/diffview.nvim',
@@ -85,7 +122,8 @@ return {
     end,
   },
   {
-    'ruifm/gitlinker.nvim',
+    -- 'ruifm/gitlinker.nvim',
+    'linrongbin16/gitlinker.nvim',
     enabled = true,
     dependencies = { 'nvim-lua/plenary.nvim' },
     keys = {
@@ -161,44 +199,38 @@ return {
           end
 
           -- stylua: ignore start
-          bmap('n', '<localleader>hu',    gs.undo_stage_hunk,                           { desc = 'undo stage'                          })
-          bmap('n', '<localleader>hi',    gs.preview_hunk_inline,                       { desc = 'preview current hunk'                })
-          bmap('n', '<localleader>hb',    gs.toggle_current_line_blame,                 { desc = 'toggle current line blame'           })
-          bmap('n', '<localleader>gd',    gs.diffthis,                                  { desc = 'diff this'                           })
-          bmap('n', '<localleader>gD',    '<cmd>Gitsigns diffthis ~',                   { desc = 'diff this ~'                         })
-          bmap('n', '<localleader>hw',    gs.toggle_word_diff,                          { desc = 'toggle word diff'                    })
-          bmap('n', '<localleader>gw',    gs.stage_buffer,                              { desc = 'stage entire buffer'                 })
-          bmap('n', '<localleader>gre',   gs.reset_buffer,                              { desc = 'reset entire buffer'                 })
-          bmap('n', '<localleader>td',    gs.toggle_deleted,                            { desc = 'show deleted lines'                  })
-          bmap('n', '<localleader>gbl',   function() gs.blame_line({full = true}) end,  { desc = 'blame current line'                  })
-          bmap('n', '<localleader>gQ',    function() gs.setqflist('all') end,           { desc = 'list modified in quickfix'           })
-          bmap('n', '<localleader>gq',    gs.setqflist,                                 { desc = 'quickfix'                            })
-          bmap('v' , '<localleader>hs',   function() gs.stage_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'stage git hunk'})
-          bmap('v' , '<localleader>hr',   function() gs.reset_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'reset hunk'    })
-          bmap({ 'o', 'x' }, 'ih',        ':<C-U>Gitsigns select_hunk<CR>',             { desc = 'select hunk'                         })
+          bmap('n', '<localleader>hu',    gs.undo_stage_hunk,                           { desc = 'Git: undo stage'                          })
+          bmap('n', '<localleader>hi',    gs.preview_hunk_inline,                       { desc = 'Git: preview current hunk'                })
+          bmap('n', '<localleader>hb',    gs.toggle_current_line_blame,                 { desc = 'Git: toggle current line blame'           })
+          bmap('n', '<localleader>gd',    gs.diffthis,                                  { desc = 'Git: diff this'                           })
+          bmap('n', '<localleader>gD',    '<cmd>Gitsigns diffthis ~',                   { desc = 'Git: diff this ~'                         })
+          bmap('n', '<localleader>hw',    gs.toggle_word_diff,                          { desc = 'Git: toggle word diff'                    })
+          bmap('n', '<localleader>gS',    gs.stage_buffer,                              { desc = 'Git: stage entire buffer'                 })
+          bmap('n', '<localleader>gre',   gs.reset_buffer,                              { desc = 'Git: reset entire buffer'                 })
+          bmap('n', '<localleader>td',    gs.toggle_deleted,                            { desc = 'Git: show deleted lines'                  })
+          -- bmap('n', '<localleader>gbl',   function() gs.blame_line({full = true}) end,  { desc = 'Git: blame current line'                  })
+          bmap('n', '<localleader>gb',    function() gs.blame_line() end,               { desc = 'Git: blame current line'                  })
+          bmap('n', '<localleader>gQ',    function() gs.setqflist('all') end,           { desc = 'Git: list modified in quickfix'           })
+          bmap('n', '<localleader>gq',    gs.setqflist,                                 { desc = 'Git: quickfix'                            })
+          bmap('v' , '<localleader>hs',   function() gs.stage_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'Git: stage git hunk'})
+          bmap('v' , '<localleader>hr',   function() gs.reset_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'Git: reset hunk'    })
+          bmap({ 'o', 'x' }, 'ih',        ':<C-U>Gitsigns select_hunk<CR>',             { desc = 'Git: select hunk'                         })
           -- stylua: ignore stop
 
 
-          bmap('n', ']c', function()
-            -- if vim.wo.diff then
+          bmap('n', ']h', function()
             --   vim.cmd.normal { ']h', bang = true }
-            -- else
-            --   gs.nav_hunk('next')
-            -- end
             if vim.wo.diff then
-              return "]c"
+              return "]h"
             end
             vim.schedule(function() gs.nav_hunk { 'next', preview = false, count = 1 }  end)
             return "<ignore>"
           end, { expr = true })
-          bmap('n', '[c', function()
-            -- if vim.wo.diff then
+
+          bmap('n', '[h', function()
             --   vim.cmd.normal { '[h', bang = true }
-            -- else
-            --   gs.nav_hunk('prev')
-            -- end
             if vim.wo.diff then
-              return "[c"
+              return "[h"
             end
             vim.schedule(function() gs.nav_hunk { 'prev', preview = false, count = 1 } end)
             return "<ignore>"

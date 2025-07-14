@@ -1,32 +1,18 @@
-local cmd, env, fn, g, opt, uv = vim.cmd, vim.env, vim.fn, vim.g, vim.opt, vim.uv
+vim.loader.enable()
+local cmd, env, fn, fs, g, opt, uv = vim.cmd, vim.env, vim.fn, vim.fs, vim.g, vim.opt, vim.uv
+
+g.python3_host_prog = fn.expand('~/.pyenv/versions/gen/bin/python')
+
+g.mapleader = ' '
+g.maplocalleader = ','
+
+-- solves the issue of missing luarocks when running neovim
+env.DYLD_LIBRARY_PATH = fn.expand('$BREW_PREFIX/lib')
 
 function _G.dump(...)
   local objects = vim.tbl_map(vim.inspect, { ... })
   print(unpack(objects))
 end
-
-g.python3_host_prog = os.getenv('HOME') .. '/.pyenv/versions/Gen/bin/python'
-
--- solves the issue of missing luarocks when running neovim
-env.DYLD_LIBRARY_PATH = '$BREW_PREFIX/lib'
-
--- add luarocks to rtp
--- TODO: Add before or after sourcing all config files? before lsp? before lazy?
-local home = vim.uv.os_homedir()
-package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?/init.lua;'
-package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?.lua;'
-
-vim.loader.enable()
-
-g.os = vim.uv.os_uname().sysname
-g.open_cmd = g.os == 'Darwin' and 'open' or 'xdg-open'
-g.nvim_dir = fn.expand('~/.config/nvim')
-env.NVIM_CONFIG = g.nvim_dir
--- g.nvim_dir = fn.expand('~/.config/nvim/')
--- g.vim_dir = g.dotfiles or fn.expand('~/.dotfiles')
-
-g.mapleader = ' '
-g.maplocalleader = ','
 
 local namespace = {
   ui = {
@@ -37,66 +23,115 @@ local namespace = {
   -- apparently some mappings require a mix of cmd line & function calls
   -- this table is a place to store lua functions to be called in those mappings
   mappings = { enable = true },
+
+  --[[ everything below is thanks to
+  --  https://github.com/dhruvmanila/dotfiles/blob/master/config/nvim/init.lua && dsully
+  --]]
+
+  -- inlay_hint = { enable = false },
+  -- code_action_lightbulb = { enable = false },
+  KITTY_SCROLLBACK = env.KITTY_SCROLLBACK ~= nil,
+
+  -- System name
+  ---@type 'Darwin'|'Windows_NT'|'Linux'
+  OS_UNAME = vim.uv.os_uname().sysname,
+
+  -- Path to the home directory
+  ---@type string
+  OS_HOMEDIR = assert(uv.os_homedir()),
+
+  -- Path to current working
+  ---@type string
+  CWD = assert(uv.cwd()),
 }
+
 --- NOTE: this table is a globally accessible store to facilitate accessing
 --- helper functions and variables throughout the configuration.
 _G.eo = eo or namespace
 _G.map = vim.keymap.set
 _G.P = vim.print
 
+g.os = vim.uv.os_uname().sysname
+
+-- g.open_cmd = g.os == 'Darwin' and 'open' or 'xdg-open'
+-- stylua: ignore start
+eo.OPEN_CMD = (eo.OS_UNAME == 'Darwin' and 'open')
+    or (eo.OS_UNAME == 'Windows_NT' and 'start')
+    or 'xdg-open'
+-- stylua: ignore end
+
+g.nvim_dir = fn.expand('~/.config/nvim')
+env.NVIM_CONFIG = g.nvim_dir
+-- g.nvim_dir = fn.expand('~/.config/nvim/')
+-- g.vim_dir = g.dotfiles or fn.expand('~/.dotfiles')
+
 require('eo.globals')
 require('eo.highlights')
 require('eo.ui')
 require('eo.options')
 
--- g.defaults = {
---   lazyfile = { { 'BufReadPost', 'BufNewFile', 'BufWritePre' } },
--- }
+g.border = not vim.g.vscode and eo.ui.current.border or 'rounded'
+-- g.large_file = true
+-- g.large_file_size = 1024 * 512
 
-g.large_file = false
-g.large_file_size = 1024 * 512
-
+-- do
 local data = fn.stdpath('data')
-local lazypath = data .. '/lazy/lazy.nvim'
-
-if not vim.uv.fs_stat(lazypath) then
-  -- bootstrap lazy.nvim
+local lazy_path = fs.joinpath(fn.stdpath('data'), 'lazy', 'lazy.nvim')
+-- local lazypath = data .. '/lazy/lazy.nvim'
+if not uv.fs_stat(lazy_path) then
+  -- vim.notify('Installing the Lazy plugin manager, .. ...')
   -- stylua: ignore
   fn.system({
     "git",
     "clone",
     "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
     "--branch=stable",
-    lazypath,
+    "https://github.com/folke/lazy.nvim.git",
+    lazy_path,
   })
-  vim.notify('Installed Lazy.vim')
+  vim.notify('Installed lazy.nvim')
 end
 
-opt.runtimepath:prepend(lazypath)
+opt.runtimepath:prepend(lazy_path)
+--end
+
+-- add luarocks to rtp
+-- TODO: Add before or after sourcing all config files? before lsp? before lazy?
+local home = uv.os_homedir()
+package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?/init.lua;'
+package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?.lua;'
 
 if env.NVIM then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
 
-require('lazy').setup {
-  spec = {
-    { import = 'eo.plugs' },
+-- local specs = {
+--   { import = 'eo.plugs' },
+-- }
+-- local lazy = require('lazy')
+require('lazy').setup('eo.plugs', {
+  specs = { import = 'eo.plugs' },
+  ui = {
+    border = g.border,
+    wrap = true,
   },
-  defaults = { lazy = true, version = '*' },
+  defaults = {
+    lazy = false,
+    version = '*',
+    -- version = false,
+    cond = not eo.KITTY_SCROLLBACK, -- disable lazy loading for kitty scrollback
+  },
   install = {
-    colorscheme = { 'tokyonight-storm', 'catppuccin-mocha' },
+    colorscheme = { 'catppuccin-macchiato', 'tokyonight-storm', 'lunaperche', 'slate' },
     missing = true,
   },
   change_detection = {
-    enabled = false,
     notify = false,
   },
   checker = {
     enabled = true,
-    concurrency = 4,
     frequency = 24 * 60 * 60, -- 24h
     notify = true,
   },
-  diff = { cmd = 'terminal_git' },
+  -- diff = { cmd = 'terminal_git' },
   git = {
     log = { '--since=3 days ago' },
   },
@@ -106,49 +141,66 @@ require('lazy').setup {
   performance = {
     cache = { enabled = true },
     rtp = {
-      paths = { data .. '/site' },
+      -- paths = { data .. '/site' },
       disabled_plugins = {
-        '2html_plugin',
-        'getscript',
-        'getscriptPlugin',
+        -- 'matchit', -- see if matchup will run correctly now
         'gzip',
-        -- 'health',
-        -- 'man',
-        'spellfile',
-        'spellfilePlugin',
-        'logipat',
-        -- 'rplugin',
-        -- 'rrhelper',
-        -- 'matchit',
-        -- 'matchparen',
-        'netrw',
-        'netrwFileHandlers',
-        'netrwSettings',
         'netrwPlugin',
+        'tarPlugin',
         'tohtml',
         'tutor',
-        'vimball',
-        'vimballPlugin',
-        'zip',
         'zipPlugin',
       },
     },
   },
-}
+  -- readme = {
+  --   root = fn.stdpath('state') .. '/lazy/readme',
+  --   files = { 'README.md', 'lua/**/README.md' },
+  --   -- only generate markdown helptags for plugins that dont have docs
+  --   skip_if_doc_exists = true,
+  -- },
+  -- state = fn.stdpath('state') .. '/lazy/state.json',
+})
 
-vim.notify = require('notify')
+if eo.KITTY_SCROLLBACK then
+  require('eo.kitty.scrollback')
+  return
+end
+
+-- vim.notify = require('notify')
 cmd.packadd('cfilter')
 -- cmd.colorscheme('tokyonight-storm')
 cmd.colorscheme('catppuccin-macchiato')
 
-vim.api.nvim_create_user_command(
-  'TSR',
-  function()
-    vim.cmd([[
-    write
-    edit
-    TSBufEnable highlight
-    ]])
-  end,
-  {}
-)
+-- require('eo.lsp')
+
+map('n', '<leader>pm', '<cmd>Lazy<cr>', { desc = 'Lazy manage' })
+
+-- doesnt work after nvim-treesitter branch='main' anymore.
+-- vim.api.nvim_create_user_command(
+--   'TSR',
+--   function()
+--     vim.cmd([[
+--     write
+--     edit
+--     TSBufEnable highlight
+--     ]])
+--   end,
+--   {}
+-- )
+
+function SourcePluginFiles()
+  local plugin_path = fn.stdpath('config') .. '/plugin'
+  -- local scandir = uv.fs_scandir(fn.stdpath('config') .. '/plugin')
+  local scandir = uv.fs_scandir(plugin_path)
+  if not scandir then
+    vim.notify_once('Error: Couldnt open plugin directory..?', vim.log.levels.WARN)
+    return
+  end
+  while true do
+    local name, type = uv.fs_scandir_next(scandir)
+    if not name then break end
+    if type == 'file' and name:match('%.lua$') then cmd('luafile ' .. plugin_path .. '/' .. name) end
+  end
+  print('Sourced all the lua files in: ' .. plugin_path)
+end

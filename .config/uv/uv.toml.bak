@@ -1,0 +1,3 @@
+[uv]
+managed = true
+python-preference = "managed-only"

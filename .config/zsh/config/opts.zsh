@@ -1,5 +1,3 @@
-# vim:ft=zsh ts=8 sw=4 sts=4 tw=100 fdm=marker et ai:
-#
 #-------------------------------------------------------------------------------
 #                                OPTIONS
 # DOCS https://zsh.sourceforge.io/Doc/Release/Options.html
@@ -8,9 +6,11 @@
 setopt CD_SILENT # follow symlinks when they are cd targets
 setopt CHASE_LINKS
 setopt AUTO_CD # XXX BUG|>https://github.com/marlonrichert/zsh-autocomplete/issues/749
+setopt AUTO_LIST
+setopt AUTO_MENU
 setopt RM_STAR_WAIT
-setopt CORRECT # command auto-correction ... hmmm idk
-setopt COMPLETE_ALIASES
+# setopt CORRECT # command auto-correction ... hmmm idk
+# setopt COMPLETE_ALIASES
 setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
@@ -31,6 +31,11 @@ setopt PUSHD_SILENT      # Do not print the directory stack after pushd or popd.
 setopt NO_CLOBBER
 setopt EXTENDED_GLOB
 setopt INTERACTIVE_COMMENTS
+# dont treat non-executables files in your $path as commands. this makes sure they dont show up as
+# command completions. Setting this option can impact perf on older sysytems, but shouldnt be
+# a problem on modern ones.
+setopt HASH_EXECUTABLES_ONLY
+
 setopt ALWAYS_TO_END
 setopt AUTO_MENU
 setopt LIST_PACKED
@@ -38,6 +43,12 @@ setopt LIST_PACKED
 setopt GLOB_DOTS    # glob includes dotfiles; think this is set in .zshrc??
 setopt PIPE_FAIL    # tracability: exit if pipeline failed
 setopt NO_BANG_HIST # dont expand '!'
+# setopt NO_HUP       # dont kill jobs on shell exit
+# enable ** and *** as shortcuts for **/* and ***/*, respectively
+# https://zsh.sourceforge.io/Doc/Release/Expansion.html#Recursive-Globbing
+setopt GLOB_STAR_SHORT
+# sort numbers numerically, not lexicographically
+setopt NUMERIC_GLOB_SORT
 
 # Keep a ton of history.
 export HISTSIZE=20000
@@ -54,3 +65,5 @@ command_not_found_handler() {
 # autoload -U url-quote-magic bracketed-paste-magic
 # zle -N self-insert url-quote-magic
 # zle -N bracketed-paste bracketed-paste-magic
+
+# vim: ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:

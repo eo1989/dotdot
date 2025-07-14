@@ -4,7 +4,7 @@ file="${1/#\~/$HOME}"
 
 if [[ $(file -b "$file") == directory ]]; then
     # tree -C "$file"
-    if command -v eza &>/dev/null; then
+    if command -v eza &> /dev/null; then
         eza -la --color=always --icons -g --group-directories-first "$file"
     else
         gls -hFNla --color=always --group-directories-first --hyperlink=auto "$file"
@@ -22,10 +22,10 @@ fi
 image_previewer() {
     #
     # In Kitty
-    # Kitty image protocol works well in both normal terminal and tmux, but not in Neovim's builtin
+    # Kitty image protocal works well in both normal terminal and tmux, but not in Neovim's builtin
     # terminal. Tmux is special, it works in tmux pane but fails in tmux popup (ref:
     # https://github.com/junegunn/fzf/issues/3972). My fzf starts in tmux popup when it runs in
-    # tmux, so kitty image protocol does not work. In all the situations where kitty image protocol
+    # tmux, so kitty image protocal does not work. In all the situations where kitty image protocal
     # fails to work, use chafa with symbols (ANSI art) format as a workaround.
     #
     # For Ghostty, since it uses the Kitty graphic protocol, we handle image preview in the same way
@@ -59,7 +59,6 @@ if [[ $mime =~ image/ ]]; then
     image_previewer "$file"
     exit
 fi
-
 # Video can be previewed by previewing its thumbnail
 if [[ $mime =~ video/|audio/ ]]; then
     dimensions=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$file")
@@ -69,9 +68,7 @@ if [[ $mime =~ video/|audio/ ]]; then
     exit
 fi
 
-(bat --color=always --style=numbers "$file" ||
-    highlight --out-format truecolor --style dracula --force --line-numbers "$file" ||
-    cat "$file") | head -200 ||
-    echo -e " No preview supported for the current selection:\n\n $file"
-
-# vim: set ts=4 sw=4 ts=4 et:
+(bat --color=always --style=numbers "$file" \
+    || highlight --out-format truecolor --style darkplus --force --line-numbers "$file" \
+    || cat "$file") | head -200 \
+    || echo -e " No preview supported for the current selection:\n\n $file"

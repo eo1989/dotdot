@@ -1,3 +1,4 @@
 .zsh_sessions
 .zcompdump
 ._api.txt
+.env

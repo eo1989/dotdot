@@ -34,7 +34,13 @@
       "undefined-global",
       "duplicate-set-field",
       "assign-type-mismatch",
-      "undefined-field"
+      "undefined-field",
+        "redundant-parameter",
+        "deprecated",
+        "undefined-doc-name",
+        "unused-local",
+        "need-check-nil"
     ],
-    "workspace.checkThirdParty": false
+    "workspace.checkThirdParty": false,
+    "completion.autoRequire": false
 }

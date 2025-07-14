@@ -16,7 +16,7 @@
 # --theme="Coldest-Dark"
 # --theme="1337"
 
---style="changes,grid,header-filesize"
+# --style="changes,grid,header-filesize"
 # --force
 
 # Enable this to use italic text on the terminal. This is not supported on all
@@ -38,3 +38,5 @@
 --map-syntax "*.ignore:Git Ignore"
 --map-syntax "*.h:C++"
 --map-syntax "*.t:perl"
+--map-syntax "uv.lock:toml"
+# --map-syntax "*.lock:yaml"

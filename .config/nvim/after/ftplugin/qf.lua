@@ -1,7 +1,27 @@
+if not eo then return end
+
 local optl = vim.opt_local
 
 -- TODO: this is set in the autocommk file ... do i leave this or leave the autocomm vim.cmd?
--- vim.cmd([[autocmd! BufEnter <buffer> if winnr('$') < 2 | q | endif]])
+vim.cmd([[autocmd! BufEnter <buffer> if winnr('$') < 2 | q | endif]])
+
+-- vim.api.nvim_exec_autocmds({ 'Filetype', 'BufEnter', 'BufWinEnter' }, {
+--   group = 'treesitter_stuff',
+--   -- pattern = '*',
+--   buffer = 0,
+--   callback = function()
+--     pcall(vim.treesitter.start)
+--     -- vim.bo[args.buf].syntax = 'ON'
+--   end,
+-- })
+
+-- vim.bo['ft'].syntax = 'on'
+-- if vim.version().minor >= 12 then
+--   vim.treesitter.start(0, require('nvim-treesitter').supported_filetypes())
+-- else
+--   vim.bo.syntax = 'ON'
+--   return true
+-- end
 
 optl.scrolloff = 0
 optl.wrap = false

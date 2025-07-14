@@ -1,5 +1,27 @@
 local cmd, fn, fmt, map = vim.cmd, vim.fn, string.format, vim.keymap.set
 
+local options = {
+  tabstop = 8,
+  textwidth = 100,
+  shiftwidth = 2,
+  softtabstop = 2,
+  autoindent = true,
+  expandtab = true,
+  -- conceallevel = 2,
+  -- foldmethod = "expr", -- indent? syntax?
+}
+local window_local_only = {
+  colorcolumn = '+1',
+}
+
+for k, v in pairs(options) do
+  vim.bo[k] = v
+end
+
+for k, v in pairs(window_local_only) do
+  vim.wo[k] = v
+end
+
 cmd.inoreabbrev('<buffer> True true')
 cmd.inoreabbrev('<buffer> False false')
 
@@ -69,7 +91,7 @@ end)
 --   },
 -- }, { mode = 'n', prefix = '<leader>' })
 
--- TODO: set this up as a auggroup so that you dont need to rely on akinsho's global fucntions.
+-- TODO: set this up as a auggroup so that you dont need to rely on akinsho's global functions.
 -- NOTE: Check out Murderballon or something for their lua "functools" lib
 eo.ftplugin_conf {
   ['nvim-surround'] = function(surround)

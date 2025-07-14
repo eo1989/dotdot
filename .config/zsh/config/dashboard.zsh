@@ -1,5 +1,3 @@
-#!/usr/bin/env zsh
-# vim: ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:
 # shellcheck disable=2086 # simpler for various pseudo-options
 
 # CONFIG
@@ -14,7 +12,7 @@ disabled_below_height=${MAGIC_DASHBOARD_DISABLED_BELOW_TERM_HEIGHT:-15}
 function _separator {
     local sep_char="─" # ─ ═
     local sep=""
-    for ((i = 0; i < COLUMNS; i++)); do
+    for ((i = 0; i < $COLUMNS; i++)); do
         sep="$sep$sep_char"
     done
     print "\033[1;30m$sep\033[0m"
@@ -58,11 +56,11 @@ function _gitlog {
 }
 
 function _list_files_here {
-    if [[ ! -x "$(command -v eza)" ]]; then print "\033[0;33mMagic Dashboard: \`eza\` not installed.\033[0m" && return 1; fi
+    if [[ ! -x "$(command -Pv eza)" ]]; then print "\033[0;33mMagic Dashboard: \`eza\` not installed.\033[0m" && return 1; fi
 
     local eza_output
     eza_output=$(
-        eza --width="$COLUMNS" --all --grid --color=always --icons \
+        command "${BREW_PREFIX}/bin/eza" --width="$COLUMNS" --all --grid --color=always --icons \
             --git-ignore --ignore-glob=".DS_Store|Icon?|.localized" \
             --sort=age --group-directories-first --no-quotes \
             --git --long --no-user --no-permissions --no-filesize --no-time
@@ -179,3 +177,5 @@ builtin)
 esac
 
 zle -N accept-line _magic_enter_accept_line
+
+# vim:set ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:

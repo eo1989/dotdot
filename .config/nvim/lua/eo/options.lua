@@ -1,6 +1,6 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
-local fn, g, go, o, opt, uv, v = vim.fn, vim.g, vim.go, vim.o, vim.opt, vim.uv, vim.v
+local fn, g, o, opt, uv, v = vim.fn, vim.g, vim.o, vim.opt, vim.uv, vim.v
 -- local icons = eo.ui.icons
 -- local misc = icons.misc
 
@@ -10,45 +10,60 @@ local fn, g, go, o, opt, uv, v = vim.fn, vim.g, vim.go, vim.o, vim.opt, vim.uv, 
 -- cmd([[ set path=.,,,$PWD/**]])
 -- cmd([[ set path=.,,**,$PWD/**,~/.config/nvim/**]])
 
--- HOW DID I NOT KNOW ABOUT THIS OPTION BEFORE?!
+-- Used for the "n" flag in 'formatoptions'
+--                           ┌ recognize numbered lists (default)
+--                           ├─────────────┐
+opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
+--                                            ├───┘
+--                                            └ recognize unordered lists
+
+g.query_lint_on = {}
 vim.env.SHELL = '/opt/homebrew/bin/zsh'
-o.shell = '/opt/homebrew/bin/zsh'
+opt.shell = '/opt/homebrew/bin/zsh'
 -- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
 opt.wrap = false
-o.wrapscan = true
-o.wrapmargin = 2
+opt.wrapscan = true
+opt.wrapmargin = 2
 -- o.textwidth = 80
-o.colorcolumn = '+1'
-
+opt.colorcolumn = '+1'
 -- o.wrapscan = true
 -- opt.matchpairs:append('<:>')
-opt.syntax = 'enable'
+-- opt.syntax = 'enable'
 opt.incsearch = true
 opt.smarttab = true
 g.vimsyn_embed = 'alpPrj'
 opt.path:append { '**' } --'**'
-o.synmaxcol = 300
-o.whichwrap = 'h,l'
+opt.synmaxcol = 300
+opt.whichwrap = 'h,l'
 opt.clipboard = { 'unnamedplus' }
-o.showmatch = true
-o.ignorecase = true
-o.smartcase = true
-o.infercase = true
-o.expandtab = true -- convert all tabs that are typed into spaces
-o.shiftwidth = 2
+opt.showmatch = true
+opt.ignorecase = true
+opt.smartcase = true
+opt.infercase = true
+opt.expandtab = true -- convert all tabs that are typed into spaces
+opt.shiftwidth = 2
 -- o.smartindent = true -- add <tab> depending on syntax (C/C++)
-o.autoindent = true
-o.shiftround = true
-o.swapfile = false
-o.undofile = true
-o.backup = false
-o.writebackup = false
-o.splitkeep = 'screen'
-o.splitbelow = true
-o.splitright = true
-o.eadirection = 'hor'
+opt.autoindent = true
+opt.shiftround = true
+
+-- Use 'shiftwidth' for `TAB`/`BS` {{{
+--
+-- When we press `Tab` or `BS` in other locations (i.e. after first
+-- non-whitespace), we don't want 'softtabstop' to determine how many spaces are
+-- added/removed (nor 'tabstop', hence why we don't set 'softtabstop' to zero).
+-- }}}
+opt.softtabstop = -1
+
+opt.swapfile = false
+opt.undofile = true
+opt.backup = false
+opt.writebackup = false
+opt.splitkeep = 'screen'
+opt.splitbelow = true
+opt.splitright = true
+opt.eadirection = 'hor'
 opt.termguicolors = true
-o.emoji = false
+opt.emoji = false
 opt.guifont = {
   'CascadiaCodeNF',
   'CascadiaCodeNFItalic',
@@ -68,17 +83,17 @@ opt.guicursor = {
 -- function eo.modified_icon() return vim.bo.modified and misc.circle or '' end
 -- o.titlestring = '%{fnamemodify(getcwd(), ":t")}%( %{v:lua.eo.modified_icon()}%)'
 ---@diagnostic disable-next-line: missing-parameter
-o.titleold = fn.fnamemodify(uv.os_getenv('SHELL'), ':t') or ''
-o.title = true
-o.titlelen = 70
+opt.titleold = fn.fnamemodify(uv.os_getenv('SHELL'), ':t') or ''
+opt.title = true
+opt.titlelen = 70
 opt.cursorlineopt = { 'both' }
-o.updatetime = 300
-o.timeout = true
-o.timeoutlen = 300
-o.ttimeoutlen = 50
-o.switchbuf = 'useopen,uselast'
+opt.updatetime = 300
+opt.timeout = true
+opt.timeoutlen = 300
+opt.ttimeoutlen = 50
+opt.switchbuf = 'useopen,uselast'
 
-o.showmode = false
+opt.showmode = false
 -- dont remember:
 -- * help files since that will error if theyre from a lazy loaded plugin
 -- * folds since they are created dynamically and might be missing on startup
@@ -122,14 +137,15 @@ opt.diffopt = vim.opt.diffopt
 -----------------------------------------------------------------------------//
 -- Format Options {{{1
 -----------------------------------------------------------------------------//
+
 opt.formatoptions = {
   ['1'] = true,
   ['2'] = true, -- Use indent from 2nd line of a paragraph
   q = true, --  continue comments with gq"
   c = true, --  Auto-wrap comments using textwidth
-  r = false, -- Continue comments when pressing Enter
-  o = false, -- Continue comments using o or O with the correct comment leader
-  t = false, -- autowrap lines using text width value
+  -- r = false, -- Continue comments when pressing Enter
+  -- o = false, -- Continue comments using o or O with the correct comment leader
+  -- t = false, -- autowrap lines using text width value
   n = true, --  Recognize numbered lists
   j = true, --  remove a comment leader when joining lines.
   -- Only break if the line was not longer than 'textwidth' when the insert
@@ -138,6 +154,8 @@ opt.formatoptions = {
   l = true,
   v = true,
 }
+
+vim.cmd([[ set formatoptions-=rot ]])
 -- opt.formatoptions:remove { 'r', 'o', 't' }
 
 -- NOTE: from akinsho dotfiles ... date: 10-14-2023
@@ -145,9 +163,12 @@ opt.formatoptions = {
 -- at X then it will auto fold anything at that level, all good so far. If you then
 -- try to edit the content of your fold and the foldmethod=manual then it will
 -- recompute the fold which when using nvim-ufo means it will be closed again...
-o.foldlevelstart = 3
-opt.foldmethod = 'expr'
-opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+-- o.foldlevelstart = 3
+-- o.foldlevelstart = 9
+-- o.foldlevel = 99
+-- opt.foldmethod = 'expr'
+-- opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 
 -- function eo.ui.foldtext()
 --   local fold = vim.treesitter.foldtext() --[=[@as string[][]]=]
@@ -177,7 +198,7 @@ o.mousemoveevent = true
 opt.mousescroll = { 'ver:1', 'hor:6' }
 opt.autowrite = false
 
-o.conceallevel = 2
+-- o.conceallevel = 2
 o.concealcursor = 'niv'
 o.breakindentopt = 'sbr'
 o.linebreak = true -- lines wrap at words rather than random chars
@@ -194,9 +215,9 @@ o.laststatus = 3
 o.showtabline = 1
 opt.rnu = true
 opt.nu = true
-o.pumblend = 20 -- make popup window translucent
-o.pumheight = 20
-o.previewheight = 20
+o.pumblend = 10 -- make popup window translucent
+o.pumheight = 25
+o.previewheight = 25
 o.hlsearch = true
 o.autowriteall = true -- automatically :write before running commands and changing files
 opt.shortmess = {
@@ -266,7 +287,7 @@ elseif eo and not eo.falsy(fn.executable('ag')) then
   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 end
 
-g['markdown_fenced_languages'] = {
+vim.g.markdown_fenced_languages = {
   'go',
   'zsh=sh',
   'bash=sh',
@@ -275,5 +296,21 @@ g['markdown_fenced_languages'] = {
   'julia',
   'sql',
   'yaml',
-  'json',
 }
+
+-- Support for semantic highlighting https://github.com/neovim/neovim/pull/21100
+g.lsp_semantic_enabled = 1
+
+-- vim.cmd([[ syntax on plugin on indent on ]])
+-- vim.treesitter.start()
+-- hack: query caching not working normally for whatever reason
+-- https://github.com/Saghen/tuque/blob/main/lua/config/options.lua#L114
+-- local query_parse = vim.treesitter.query.parse
+-- local cache = {}
+-- vim.treesitter.query.parse = function(lang, query)
+--   local hash = lang .. '-' .. vim.fn.sha256(query)
+--   if cache[hash] then return cache[hash] end
+--   local result = query_parse(lang, query)
+--   cache[hash] = result
+--   return result
+-- end

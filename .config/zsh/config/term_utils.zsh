@@ -1,4 +1,3 @@
-# vim:ft=zsh ts=8 sw=4 sts=4 tw=100 fdm=marker et ai:
 # Quick Open File
 function o() {
     # skip `fzf` if file is fully named, e.g. through tab completion
@@ -23,7 +22,7 @@ function o() {
                 --bind="zero:$reload" \
                 --preview-window="55%" \
                 --preview '[[ $(file --mime {}) =~ text ]] && bat --color=always --wrap=never --style=header-filesize,header-filename,grid {} || file {} | fold -w $FZF_PREVIEW_COLUMNS' \
-                --height="100%"
+                --height="70%"
         # height of 100% required for wezterm's `pane:is_alt_screen_active()`
     )
     [[ -z "$selected" ]] && return 0
@@ -78,7 +77,7 @@ function S {
             fzf --ansi --select-1 --delimiter=":" \
                 --preview="bat {1} --no-config --color=always --highlight-line={2} --line-range={2}: " \
                 --preview-window="60%,top,border-down" \
-                --height="100%" # required for for wezterm's `pane:is_alt_screen_active()`
+                --height="70%" # required for for wezterm's `pane:is_alt_screen_active()`
     )
     [[ -z "$selected" ]] && return 0
     file=$(echo "$selected" | cut -d: -f1)
@@ -119,11 +118,12 @@ function Sr {
 function hs() {
     local selected item key_pressed
     selected=$(
-        fc -rl 1 | cut -c8- | bat --color=always --theme=ansi --language=zsh |
+        fc -rl 1 | cut -c8- | bat --plain --terminal-width="${COLUMNS}" --color=always --theme=ansi --language=zsh |
             fzf --ansi --multi --query="$1" --scheme=history \
                 --bind="change:first" \
+                \
                 --height=50% --info=inline \
-                --expect="ctrl-y" --header-first --header="↵ : Put into buffer    ^Y: Copy"
+                --expect="ctrl-y" --header-first --header="↵ : Put into buffer    ^Y: Copy" # --bind="ctrl-y:execute-silently(echo -n {2..} | pbcopy)" \
     )
     [[ -z "$selected" ]] && return 0
     key_pressed=$(echo "$selected" | head -n1)
@@ -182,22 +182,24 @@ compdef _xc xc
 # requires a `trash` command
 
 # no arg = all files in folder will be deleted
-function d {
-    if [[ $# == 0 ]]; then
-        trash ./*(D) # (D) makes the glob include dotfiles (zsh-specific)
-    else
-        trash "$@"
-    fi
-}
+# function D {
+#     if [[ $# == 0 ]]; then
+#         trash ./*(D) # (D) makes the glob include dotfiles (zsh-specific)
+#     else
+#         trash "$@"
+#     fi
+# }
 
 # go up and delete current dir
-function ..d() {
-    # GUARD accidental deletions of folders
-    if [[ ! "$PWD" =~ /Dev/ ]]; then
-        print '\e[0;33mCan only delete inside "Developer" folder.\e[0m'
-        return 1
-    fi
+# GUARD accidental deletions of folders
+#     function ..D() {
+#     if [[ ! "$PWD" =~ /Dev/ ]]; then
+#         print '\e[0;33mCan only delete inside "Dev" folder.\e[0m'
+#         return 1
+#     fi
+#
+#     # INFO `cd .` to trigger cd-hook *after* deletion
+#     cd -q .. && trash "$OLDPWD" && cd .
+# }
 
-    # INFO `cd .` to trigger cd-hook *after* deletion
-    cd -q .. && trash "$OLDPWD" && cd .
-}
+# vim:ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:

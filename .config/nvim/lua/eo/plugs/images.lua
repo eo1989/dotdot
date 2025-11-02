@@ -1,5 +1,5 @@
 local api = vim.api
-local map = map or vim.keymap.set
+local map = vim.api.nvim_set_keymap or vim.keymap.set
 
 --[[ Requirements for linux
 https://github.com/3rd/image.nvim?tab=readme-ov-file#requirements
@@ -11,6 +11,7 @@ sudo apt install liblua5.1-0-dev
 sudo apt install luajit
 ]]
 
+---@type LazySpec
 return {
   -- {
   --   'https://github.com/leafo/magick',
@@ -21,28 +22,32 @@ return {
     -- ft = { 'markdown', 'quarto' },
     enabled = true, -- testing snacks image thing
     cond = function() return vim.fn.has('win32') ~= 1 end and vim.env.KITTY_SCROLLBACK_NVIM ~= 'true',
+    event = 'VeryLazy',
     dependencies = {
       'leafo/magick',
     },
     opts = {
       backend = 'kitty',
+      processor = 'magick_cli', -- faster performance than 'magick_cli', which is the default w/ kitty & ImageMagick, magick_rock is fucking annoying
       integrations = {
         markdown = {
           enabled = true,
           clear_in_insert_mode = false,
           download_remote_images = true,
           only_render_image_at_cursor = false,
+          floating_windows = true, -- default = false
           filetypes = { 'markdown', 'quarto' },
         },
-        -- neorg = {
-        --   enabled = false,
-        --   clear_in_insert_mode = false,
-        --   download_remote_images = false,
-        --   only_render_image_at_cursor = false,
-        --   filetypes = { 'norg' },
-        -- },
+        neorg = {
+          enabled = false,
+          -- clear_in_insert_mode = false,
+          -- download_remote_images = false,
+          -- only_render_image_at_cursor = false,
+          filetypes = { 'norg' },
+        },
         html = { enabled = true },
         css = { enabled = true },
+        typst = { enabled = true, filetypes = { 'typst' } }, -- doesnt work for some reason
       },
       max_width = nil,
       max_height = nil,
@@ -50,7 +55,7 @@ return {
       max_height_window_percentage = 50,
       max_width_window_percentage = nil,
       window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
-      window_overlap_clear_ft_ignore = { 'cmp_menu', 'cmp_docs', '' },
+      window_overlap_clear_ft_ignore = { 'cmp_menu', 'cmp_docs', 'snacks_notif', 'scrollview', 'scrollview_sign' },
       editor_only_render_when_focused = false,
       tmux_show_only_in_active_window = true,
       kitty_method = 'normal',
@@ -58,9 +63,11 @@ return {
     },
     config = function(_, opts)
       local imaged = require('image')
+      local bufnr = api.nvim_get_current_buf()
+      imaged.setup(opts)
 
       local function clear_all_images()
-        local bufnr = api.nvim_get_current_buf()
+        -- local bufnr = api.nvim_get_current_buf()
         local images = imaged.get_images { buffer = bufnr }
         for _, img in ipairs(images) do
           img:clear()
@@ -94,7 +101,7 @@ return {
           zindex = 1000,
         })
 
-        map('n', '<ESC>', function()
+        map('n', '<esc>', function()
           api.nvim_win_close(win, true)
           img.global_state.options.max_height_window_percentage = og_max_height
         end, { buffer = buf })
@@ -109,13 +116,14 @@ return {
         imaged.hijack_buffer(img.path, preview.win, preview.buf)
       end
 
-      map('n', '<localleader>io', function()
-        local bufnr = api.nvim_get_current_buf()
-        handle_zoom(bufnr)
-      end, { buffer = true, desc = 'image [o]pen' })
+      -- map(
+      --   'n',
+      --   '<localleader>io',
+      --   function() return handle_zoom(api.nvim_get_current_buf) end,
+      --   { desc = '[i]mage [o]pen' }
+      -- )
 
-      map('n', '<localleader>ic', clear_all_images, { desc = 'image [c]lear' })
-      imaged.setup(opts)
+      -- map('n', '<localleader>ic', clear_all_images, { desc = 'image [c]lear' })
     end,
   },
 }

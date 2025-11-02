@@ -1,0 +1,4 @@
+--single-instance
+--listen-on unix:/tmp/kitty
+-o allow_remote_control=yes
+--override env=PATH="/Users/eo/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/sbin"

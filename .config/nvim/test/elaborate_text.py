@@ -1,7 +1,11 @@
 # get_ipython().run_line_magic('matplotlib', 'kitcat')
 # get_ipython().system('echo $KITTY_LISTEN_ON')
 # get_ipython().system('echo $KITTY_WINDOW_ID')
+
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+mpl.use("kitcat")
 import numpy as np
 
 eqs = []

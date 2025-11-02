@@ -1,6 +1,6 @@
 ---@diagnostic disable: need-check-nil
 local api, ts = vim.api, vim.treesitter
-local b, wo = vim.b, vim.wo
+local b, opt, wo = vim.b, vim.opt, vim.wo
 
 b.slime_cell_delimiter = '```'
 
@@ -13,8 +13,6 @@ wo.wrap = true
 wo.linebreak = true
 wo.breakindent = true
 wo.showbreak = '|'
-
-
 
 api.nvim_buf_set_var(0, 'did_ftplugin', true)
 
@@ -32,9 +30,9 @@ if vim.fn.has('nvim-0.10.0') == 0 then return end
 local buf = api.nvim_get_current_buf()
 local parsername = 'markdown'
 local parser = ts.get_parser(buf, parsername)
-local tsquery = '(fenced_code_block)@code_cell'
+local tsquery = '(fenced_code_block)@block'
 
-api.nvim_set_hl(0, '@markup.code_cell', { link = 'CursorLine' })
+api.nvim_set_hl(0, '@markup.block', { link = 'CursorLine' })
 
 local function clear_all()
   local all = api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
@@ -45,7 +43,7 @@ end
 
 local function highlight_range(from, to)
   for i = from, to do
-    api.nvim_buf_add_extmark(buf, ns, i, 0, { hl_eol = true, line_hl_group = '@markup.code_cell' })
+    api.nvim_buf_add_extmark(buf, ns, i, 0, { hl_eol = true, line_hl_group = '@markup.block' })
   end
 end
 
@@ -64,7 +62,7 @@ local function highlight_cells()
   end
 end
 
--- higlight_cells()
+-- higlight_cells() -- needed? render-markdown/markview are available now.
 
 api.nvim_create_autocmd({ 'ModeChanged', 'BufWrite' }, {
   group = api.nvim_create_augroup('QuartoCellHighlight', { clear = true }),

@@ -1,9 +1,9 @@
 if not eo then return end
 
 local api, cmd, env, fn, fmt, v = vim.api, vim.cmd, vim.env, vim.fn, string.format, vim.v
-local map = map or vim.keymap.set
+-- local map = map or vim.keymap.set
 
-map({ 'n', 'v', 'o', 'i', 'c' }, '<Plug>(StopHL)', 'execute("nohlsearch")[-1]', { expr = true })
+vim.keymap.set({ 'n', 'v', 'o', 'i', 'c' }, '<Plug>(StopHL)', 'execute("nohlsearch")[-1]', { expr = true })
 
 local function stop_hl()
   if v.hlsearch == 0 or api.nvim_get_mode().mode ~= 'n' then return end
@@ -59,6 +59,9 @@ local smart_close_filetypes = eo.p_table {
   ['copilot.*'] = true,
   ['tsplayground'] = true,
   ['startuptime'] = true,
+  ['fzf'] = true,
+  ['fzf-lua'] = true,
+  ['trouble'] = true,
 }
 
 local smart_close_buftypes = eo.p_table {
@@ -85,14 +88,26 @@ eo.augroup('SmartClose', {
       or smart_close_filetypes[buf.ft]
       or smart_close_buftypes[buf.bt]
     if is_eligible then map('n', 'q', smart_close, { buffer = args.buf, nowait = true }) end
+
+    -- map('n', '<Esc>', 'q', { noremap = true })
+
+    if is_eligible then map('n', '<ESC>', smart_close, { buffer = args.buf, nowait = true }) end
   end,
 }, {
-  -- TODO: this is set in the ftplugin/qf.lua file ... do i leave this or leave the ftpl/qf vim.cmd?
+  -- TODO: this is set in the ftplugin/qf.lua file ... do i leave this or leave the ftplugin/qf vim.cmd?
   -- Close quick fix window if the file containing it was closed
-  event = { 'BufEnter' },
+
+  --[[ QuickfixFormatting ]]
+  event = { 'BufEnter', 'WinEnter' },
+
   command = function()
-    if fn.winnr('$') == 1 and vim.bo.buftype == 'quickfix' then api.nvim_buf_delete(0, { force = true }) end
+    if fn.winnr('$') < 2 and vim.bo.buftype == 'quickfix' then
+      api.nvim_set_option_value({ 'cursorline' }, false, { scope = 'local' })
+      api.nvim_set_option_value({ 'number' }, true, { scope = 'local' })
+      api.nvim_buf_delete(0, { force = true })
+    end
   end,
+  pattern = { '*' },
 }, {
   -- automatically close corresponding loclist when quitting a window
   event = { 'QuitPre' },
@@ -149,7 +164,7 @@ eo.augroup('CheckOutsideTime', {
 eo.augroup('TextYankHighlight', {
   -- don't execute silently in case of errors
   event = { 'TextYankPost' },
-  command = function() vim.highlight.on_yank { timeout = 150, on_visual = true, higroup = 'Visual' } end,
+  command = function() vim.highlight.on_yank { timeout = 100, on_visual = true, higroup = 'Visual' } end,
   desc = 'Highlight on yank',
 })
 
@@ -167,6 +182,7 @@ eo.augroup('WindowBehaviours', {
   event = { 'CmdWinEnter' }, -- map q to close command window on quit
   pattern = { '*' },
   command = 'nnoremap <silent><buffer><nowait> q <C-W>c',
+  -- command = 'nnoremap <silent><buffer><nowait> <ESC> <C-W>c',
 }, {
   event = { 'BufWinEnter' },
   command = function(args)
@@ -192,11 +208,11 @@ local function should_show_cursorline(buf)
 end
 
 eo.augroup('Cursorline', {
-  event = { 'BufEnter' },
+  event = { 'InsertLeave', 'WinEnter' },
   pattern = { '*' },
   command = function(args) vim.wo.cursorline = should_show_cursorline(args.buf) end,
 }, {
-  event = { 'BufLeave' },
+  event = { 'InsertEnter', 'WinLeave' },
   pattern = { '*' },
   command = function() vim.wo.cursorline = false end,
 })
@@ -286,13 +302,13 @@ eo.augroup(
   }
 )
 
-eo.augroup('TerminalAutocommands', {
-  event = { 'TermClose' },
-  command = function(args)
-    --- automatically close a terminal if the job was successful
-    if eo.falsy(v.event.status) and eo.falsy(vim.bo[args.buf].ft) then cmd.bdelete { args.buf, bang = true } end
-  end,
-})
+-- eo.augroup('TerminalAutocommands', {
+--   event = { 'TermClose' },
+--   command = function(args)
+--     --- automatically close a terminal if the job was successful
+--     if eo.falsy(v.event.status) and eo.falsy(vim.bo[args.buf].ft) then cmd.bdelete { args.buf, bang = true } end
+--   end,
+-- })
 
 -- vim.api.nvim_create_autocmd('OptionSet', {
 --   pattern = { 'list' },

@@ -17,6 +17,7 @@ opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
 --                                            ├───┘
 --                                            └ recognize unordered lists
 
+o.cursorline = true
 g.query_lint_on = {}
 vim.env.SHELL = '/opt/homebrew/bin/zsh'
 opt.shell = '/opt/homebrew/bin/zsh'
@@ -164,11 +165,11 @@ vim.cmd([[ set formatoptions-=rot ]])
 -- try to edit the content of your fold and the foldmethod=manual then it will
 -- recompute the fold which when using nvim-ufo means it will be closed again...
 
--- o.foldlevelstart = 3
--- o.foldlevelstart = 9
--- o.foldlevel = 99
--- opt.foldmethod = 'expr'
--- opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+o.foldlevelstart = 3
+o.foldlevelstart = 9
+o.foldlevel = 99
+opt.foldmethod = 'expr'
+opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 
 -- function eo.ui.foldtext()
 --   local fold = vim.treesitter.foldtext() --[=[@as string[][]]=]
@@ -296,6 +297,7 @@ vim.g.markdown_fenced_languages = {
   'julia',
   'sql',
   'yaml',
+  'ruby',
 }
 
 -- Support for semantic highlighting https://github.com/neovim/neovim/pull/21100

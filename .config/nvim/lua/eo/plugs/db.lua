@@ -1,3 +1,4 @@
+---@type LazySpec
 return {
   {
     'lifepillar/pgsql.vim',

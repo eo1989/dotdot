@@ -7,7 +7,7 @@ g.mapleader = ' '
 g.maplocalleader = ','
 
 -- solves the issue of missing luarocks when running neovim
-env.DYLD_LIBRARY_PATH = fn.expand('$BREW_PREFIX/lib')
+-- env.DYLD_LIBRARY_PATH = fn.expand('$BREW_PREFIX/lib')
 
 function _G.dump(...)
   local objects = vim.tbl_map(vim.inspect, { ... })
@@ -107,10 +107,17 @@ if env.NVIM then return require('lazy').setup { { 'willothy/flatten.nvim', opts 
 --   { import = 'eo.plugs' },
 -- }
 -- local lazy = require('lazy')
-require('lazy').setup('eo.plugs', {
-  specs = { import = 'eo.plugs' },
+require('lazy').setup {
+  spec = {
+    -- { import = 'eo' },
+    { import = 'eo.plugs' },
+    -- { import = 'eo.plugs.luasnip' },
+    { import = 'eo.langs' },
+    -- { import = 'overseer' },
+  },
   ui = {
-    border = g.border,
+    -- border = g.border,
+    border = 'rounded',
     wrap = true,
   },
   defaults = {
@@ -120,8 +127,8 @@ require('lazy').setup('eo.plugs', {
     cond = not eo.KITTY_SCROLLBACK, -- disable lazy loading for kitty scrollback
   },
   install = {
-    colorscheme = { 'catppuccin-macchiato', 'tokyonight-storm', 'lunaperche', 'slate' },
     missing = true,
+    colorscheme = { 'catppuccin-macchiato', 'tokyonight-storm', 'lunaperche', 'slate' },
   },
   change_detection = {
     notify = false,
@@ -131,17 +138,32 @@ require('lazy').setup('eo.plugs', {
     frequency = 24 * 60 * 60, -- 24h
     notify = true,
   },
-  -- diff = { cmd = 'terminal_git' },
+  diff = { cmd = 'diffview.nvim' }, -- terminal git, diffview or browser
   git = {
+    throttle = {
+      enabled = true,
+      rate = 10,
+      duration = 150,
+    },
     log = { '--since=3 days ago' },
   },
+  pkg = {
+    enabled = true,
+    sources = {
+      'lazy',
+      'packspec',
+      'rockspec',
+    },
+  },
   rocks = {
+    enabled = true,
     hererocks = true,
   },
   performance = {
     cache = { enabled = true },
+    reset_packpath = true,
     rtp = {
-      -- paths = { data .. '/site' },
+      reset = true,
       disabled_plugins = {
         -- 'matchit', -- see if matchup will run correctly now
         'gzip',
@@ -153,14 +175,14 @@ require('lazy').setup('eo.plugs', {
       },
     },
   },
-  -- readme = {
-  --   root = fn.stdpath('state') .. '/lazy/readme',
-  --   files = { 'README.md', 'lua/**/README.md' },
-  --   -- only generate markdown helptags for plugins that dont have docs
-  --   skip_if_doc_exists = true,
-  -- },
-  -- state = fn.stdpath('state') .. '/lazy/state.json',
-})
+  readme = {
+    root = fn.stdpath('state') .. '/lazy/readme',
+    files = { 'README.md', 'lua/**/README.md' },
+    -- only generate markdown helptags for plugins that dont have docs
+    skip_if_doc_exists = true,
+  },
+  state = fn.stdpath('state') .. '/lazy/state.json',
+}
 
 if eo.KITTY_SCROLLBACK then
   require('eo.kitty.scrollback')
@@ -168,13 +190,23 @@ if eo.KITTY_SCROLLBACK then
 end
 
 -- vim.notify = require('notify')
-cmd.packadd('cfilter')
+-- cmd.packadd('cfilter')
 -- cmd.colorscheme('tokyonight-storm')
 cmd.colorscheme('catppuccin-macchiato')
 
 -- require('eo.lsp')
 
 map('n', '<leader>pm', '<cmd>Lazy<cr>', { desc = 'Lazy manage' })
+
+--NOTE: Next time copy down the link you found this at. 😐
+map('n', '<leader>U', function()
+  return {
+    pcall(require('lazy').sync), -- update lazy
+    -- pcall(require('nvim-treesitter.install').install { with_sync = true }),
+
+    require('nvim-treesitter.install').update(),
+  } -- update ts parsers
+end, { desc = 'update plugins & TS parsers', silent = true })
 
 -- doesnt work after nvim-treesitter branch='main' anymore.
 -- vim.api.nvim_create_user_command(
@@ -189,18 +221,18 @@ map('n', '<leader>pm', '<cmd>Lazy<cr>', { desc = 'Lazy manage' })
 --   {}
 -- )
 
-function SourcePluginFiles()
-  local plugin_path = fn.stdpath('config') .. '/plugin'
-  -- local scandir = uv.fs_scandir(fn.stdpath('config') .. '/plugin')
-  local scandir = uv.fs_scandir(plugin_path)
-  if not scandir then
-    vim.notify_once('Error: Couldnt open plugin directory..?', vim.log.levels.WARN)
-    return
-  end
-  while true do
-    local name, type = uv.fs_scandir_next(scandir)
-    if not name then break end
-    if type == 'file' and name:match('%.lua$') then cmd('luafile ' .. plugin_path .. '/' .. name) end
-  end
-  print('Sourced all the lua files in: ' .. plugin_path)
-end
+-- function SourcePluginFiles()
+--   local plugin_path = fn.stdpath('config') .. '/plugin'
+--   -- local scandir = uv.fs_scandir(fn.stdpath('config') .. '/plugin')
+--   local scandir = uv.fs_scandir(plugin_path)
+--   if not scandir then
+--     vim.notify_once('Error: Couldnt open plugin directory..?', vim.log.levels.WARN)
+--     return
+--   end
+--   while true do
+--     local name, type = uv.fs_scandir_next(scandir)
+--     if not name then break end
+--     if type == 'file' and name:match('%.lua$') then cmd('luafile ' .. plugin_path .. '/' .. name) end
+--   end
+--   print('Sourced all the lua files in: ' .. plugin_path)
+-- end

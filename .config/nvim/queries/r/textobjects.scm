@@ -1,5 +1,5 @@
 ; extends
 (
- (comment) @code_cell.inner
- (#eq? @code_cell.inner "#%%")
+ (comment) @block.inner
+ (#eq? @block.inner "#%%") (#eq? @block.inner "# %%")
 )

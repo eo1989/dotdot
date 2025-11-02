@@ -21,7 +21,7 @@ local function dump_file_debug_info(kind)
     nil,
     function()
       vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath('log'), 'lsp.pyright.log'))
-      map('n', 'q', '<Cmd>quit<CR>', { buffer = true })
+      vim.api.nvim_set_keymap('n', 'q', '<Cmd>quit<CR>', { buffer = true })
       vim.lsp.set_log_level(current_lsp_log_level)
     end
   )

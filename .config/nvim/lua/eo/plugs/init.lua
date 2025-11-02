@@ -1,18 +1,22 @@
 local api, cmd, fn, fmt = vim.api, vim.cmd, vim.fn, string.format
+local separators = require('defaults').icons.separators
 local border, highlight, icons = eo.ui.current.border, eo.highlight, eo.ui.icons
 
+---@type LazySpec
 return {
   {
     'nvim-lua/plenary.nvim',
+    priority = 1001,
     version = false,
     lazy = false,
   },
   { 'kkharji/sqlite.lua', event = 'VeryLazy' },
-  { 'nvim-tree/nvim-web-devicons', lazy = false, priority = 999 },
+  { 'nvim-tree/nvim-web-devicons', lazy = false, priority = 1001 },
   { 'psliwka/vim-smoothie', lazy = false },
   {
     -- TODO: check Oliver-Leete for his julia autopairs configurations
     'windwp/nvim-autopairs',
+    version = false,
     enabled = true,
     event = { 'InsertEnter' },
     -- dependencies = { 'hrsh7th/nvim-cmp' },
@@ -22,6 +26,12 @@ return {
       -- local cmp_autopairs = require('nvim-autopairs.completion.cmp')
       -- local handlers = require('nvim-autopairs.completion.handlers')
       -- cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = { tex = '' } })
+
+      --[[fast_wrap options below]]
+      -- pattern = string.gsub([[ [%'%"%)%>%]%)%}%,%;] ]], '%s+', ''),
+      -- end_key = 'l',
+      -- check_comma = true,
+
       autopairs.setup {
         close_triple_quotes = true,
         disable_filetype = { 'neo-tree-popup', 'FzfLua' },
@@ -29,14 +39,18 @@ return {
         check_ts = true,
         map_cr = true,
         map_c_w = true,
+        -- fast_wrap = {},
         fast_wrap = {
           map = '<M-e>',
           chars = { '{', '[', '(', '<', '"', "'" },
-          pattern = string.gsub([[ [%'%"%)%>%]%)%}%,%;] ]], '%s+', ''),
-          end_key = 'l',
+          pattern = [=[[%'%"%>%]%)%}%%,]]=],
+          before_key = 'h',
+          after_key = 'l',
+          cursor_pos_before = true,
+          avoid_move_to_end = true,
           offset = -2,
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
-          check_comma = true,
+          manual_position = true,
           highlight = 'Search',
           highlight_grey = 'Comment',
         },
@@ -63,21 +77,25 @@ return {
   },
   { 'fladson/vim-kitty', lazy = false },
   { 'neoclide/jsonc.vim', ft = { 'jsonc', 'json' }, opts = {} },
-  { 'fei6409/log-highlight.nvim', ft = 'log', event = 'BufRead *.log', opts = {} },
+  -- { 'fei6409/log-highlight.nvim', ft = 'log', event = 'BufRead *.log', opts = {} },
+  { 'fei6409/log-highlight.nvim', event = 'BufRead *.log', opts = {} },
   {
     'mrjones2014/smart-splits.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
-    opts = {},
+    opts = {
+      ignore_filetypes = { 'nofile', 'quickfix', 'qf', 'prompt' },
+      ignore_buftypes = { 'nofile' },
+    },
     build = './kitty/install-kittens.bash',
     keys = {
-      -- stylua: ignore start
-      -- TODO: Change these as <A-h/l> are already mapped to resize left/right
-      { '<A-h>',   function() require('smart-splits').resize_left()       end, mode = 'n' },
-      { '<A-l>',   function() require('smart-splits').resize_right()      end, mode = 'n' },
-      { '<C-A-j>', function() require('smart-splits').resize_down()       end, mode = 'n' },
-      { '<C-A-k>', function() require('smart-splits').resize_up()         end, mode = 'n' },
-      { '<C-h>',   function() require('smart-splits').move_cursor_left()  end, mode = 'n' },
-      { '<C-l>',   function() require('smart-splits').move_cursor_right() end, mode = 'n' },
+        -- stylua: ignore start
+        -- TODO: Change these as <A-h/l> are already mapped to resize left/right
+        { '<A-h>',   function() require('smart-splits').resize_left()       end, mode = 'n' },
+        { '<A-l>',   function() require('smart-splits').resize_right()      end, mode = 'n' },
+        { '<C-A-j>', function() require('smart-splits').resize_down()       end, mode = 'n' },
+        { '<C-A-k>', function() require('smart-splits').resize_up()         end, mode = 'n' },
+        { '<C-h>',   function() require('smart-splits').move_cursor_left()  end, mode = 'n' },
+        { '<C-l>',   function() require('smart-splits').move_cursor_right() end, mode = 'n' },
       -- stylua: ignore end
       {
         '<C-j>',
@@ -91,32 +109,80 @@ return {
       },
     },
   },
-  { 'tpope/vim-repeat', event = 'VeryLazy' },
-  { 'tpope/vim-scriptease', event = 'VeryLazy' },
+  { 'tpope/vim-repeat', event = 'VeryLazy', config = function() end },
+  { 'tpope/vim-scriptease', lazy = true, opts = {} },
   { 'milisims/nvim-luaref', lazy = true, opts = {} },
+  -- {
+  --   url = 'https://gitlab.com/yorickpeterse/nvim-pqf',
+  --   enabled = true,
+  --   ft = 'qf',
+  --   dependencies = {
+  --     'nvim-treesitter',
+  --     'nvim-web-devicons',
+  --   },
+  --   config = function()
+  --     highlight.plugin('pqf', {
+  --       theme = {
+  --         ['*'] = { { qfPosition = { link = 'Todo' } } }, -- try 'String' next
+  --         -- ['*'] = { { qfPosition = { link = 'Todo' } } },
+  --       },
+  --     })
+  --     require('pqf').setup()
+  --   end,
+  -- },
   {
-    url = 'https://gitlab.com/yorickpeterse/nvim-pqf',
-    enabled = true,
-    event = 'FileType qf',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-tree/nvim-web-devicons',
-    },
+    'stevearc/quicker.nvim',
+    -- event = 'FileType qf',
+    -- ft = { 'qf' },
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
     config = function()
-      highlight.plugin('pqf', {
-        theme = {
-          ['*'] = { { qfPosition = { link = 'Todo' } } }, -- try 'String' next
-          -- ['*'] = { { qfPosition = { link = 'Todo' } } },
-        },
-      })
-      require('pqf').setup()
+      -- https://github.com/matthewgrossman/dotfiles/blob/master/config/nvim/init.lua
+      require('quicker').setup {
+        borders = { vert = separators.bar2.vertical_center_thin },
+      }
+      map('n', '<localleader>q', function() require('quicker').toggle() end, { desc = 'Toggle quickfix' })
+      map(
+        'n',
+        '>',
+        function() require('quicker').expand { before = 2, after = 2, add_to_existing = true } end,
+        { desc = 'Expand context' }
+      )
+      map('n', '<', function() require('quicker').collapse() end, { desc = 'Collapse context' })
     end,
+    keys = {
+      -- https://github.com/bassamsdata/nvim/blob/main/lua/plugins/qf.lua
+      {
+        '<leader>xd',
+        function()
+          local quicker = require('quicker')
+          if quicker.is_open() then
+            quicker.close()
+          else
+            vim.diagnostic.setloclist()
+          end
+        end,
+        desc = 'Toggle diagnostics',
+      },
+      -- {
+      --   '>',
+      --   -- function() require('quicker').expand() end,
+      --   function() require('quicker').expand { before = 2, after = 2, add_to_existing = true } end,
+      --   desc = 'Expand context',
+      -- },
+      -- {
+      --   '<',
+      --   function() require('quicker').collapse() end,
+      --   desc = 'Collapse context',
+      -- },
+    },
   },
   {
     'kevinhwang91/nvim-bqf',
     enabled = true,
+    branch = 'main',
     -- ft = 'qf',
-    event = 'FileType qf',
+    -- event = 'FileType qf',
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons',
@@ -145,13 +211,21 @@ return {
       highlight.plugin('bqf', {
         { BqfPreviewBorder = { fg = { from = 'Comment' } } },
       })
-      require('bqf').setup(opts)
-      -- api.nvim_create_autocmd({ 'FileType', 'BufEnter' }, {
-      --   buffer = 0,
-      --   callback = function(args)
-      --     if vim.bo[args.buf].filetype == 'qf' then vim.treesitter.start() end
+      -- local bqf_config = api.nvim_create_augroup('bqf_config', { clear = true })
+      -- api.nvim_create_autocmd('FileType', {
+      --   group = bqf_config,
+      --   pattern = 'qf',
+      --   callback = function() vim.cmd([[ runtime after/ftplugin/qf/bqf.vim ]]) end,
+      -- })
+      -- api.nvim_create_autocmd({ 'FileType', 'BufWinEnter', 'DiagnosticChanged' }, {
+      --   -- buffer = 0,
+      --   pattern = { 'qf' },
+      --   callback = function(ev)
+      --     local ft = vim.bo[ev.buf].filetype
+      --     vim.treesitter.start(ev.buf, vim.treesitter.language.get_lang(ft))
       --   end,
       -- })
+      require('bqf').setup(opts)
     end,
   },
   {

@@ -1,3 +1,4 @@
+local api = vim.api
 local cwd = vim.fn.getcwd
 local highlight = eo.highlight
 local border = eo.ui.current.border
@@ -7,6 +8,7 @@ local neogit = eo.reqidx('neogit')
 local gitlinker = eo.reqidx('gitlinker')
 local function browser_open() return { action_callback = require('gitlinker.actions').open_in_browser } end
 
+---@type LazySpec
 return {
   {
     'akinsho/git-conflict.nvim',
@@ -188,9 +190,18 @@ return {
         -- current_line_blame = not cwd():match('dotfiles'),
         current_line_blame_formatter = ' <author>, <author_time> · <summary>',
         preview_config = { border = 'rounded' },
+        --[[NOTE: Gitsigns doesnt play well with ipynb files at all, as per jupytext.nvim docs:
+        --  its best to deactivate gitsigns for .ipynb files via the on_attach callback below
+        --  https://github.com/goerz/jupytext.nvim?tab=readme-ov-file#compatibility
+        --]]
         on_attach = function(bufnr)
-          local gs = package.loaded.gitsigns
-          -- local gs = require('gitsigns')
+          if api.nvim_buf_get_name(bufnr):match('%.ipynb') then
+            -- dont attach for .ipynb, since these are converted with jupytext.nvim
+            return false
+          end
+
+          -- local gs = package.loaded.gitsigns
+          local gs = require('gitsigns')
 
           local function bmap(mode, l, r, opts)
             opts = opts or {}

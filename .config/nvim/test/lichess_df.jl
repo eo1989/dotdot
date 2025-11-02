@@ -6,9 +6,15 @@
 
 using CSV, DataFrames
 file = "/Users/eo/Downloads/lichess_db_puzzle.csv"
+if isfile(file) == false
+    error("File not found: $file")
+    download("https://database.lichess.org/lichess_db_puzzle.csv.bz2", file * ".bz2")
+    
+end
+
 
 puzzles = CSV.read(file, DataFrame);
-show(describe(puzzles); truncate = 14);
+show(describe(puzzles); truncate=14);
 
 using Statistics
 plays_lo = median(puzzles.NbPlays)
@@ -33,10 +39,10 @@ row_selector = (puzzles.NbPlays .> plays_lo) .&& (rating_lo .< puzzles.Rating .<
 sum(row_selector) == count(row_selector)
 # true
 
-gaood = puzzles[row_selector, ["Rating", "Popularity"]]
+good = puzzles[row_selector, ["Rating", "Popularity"]]
 
 using Plots
-plot(histogram(good.Rating; label = "Rating"), histogram(good.Popularity; label = "Popularity"))
+plot(histogram(good.Rating; label="Rating"), histogram(good.Popularity; label="Popularity"))
 
 # puzzles[1, "Rating"]
 # puzzles[:, "Rating"]

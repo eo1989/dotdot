@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 #───────────────────────────────────────────────────────────────────────────────
 # DOCS
 # https://blog.meain.io/2023/navigating-around-in-shell/
@@ -10,9 +12,9 @@
 #───────────────────────────────────────────────────────────────────────────────
 
 # OPTIONS
-setopt CD_SILENT
-setopt AUTO_CD     # BUG -> https://github.com/marlonrichert/zsh-autocomplete/issues/749
-setopt CHASE_LINKS # follow symlinks when they are cd target
+# setopt CD_SILENT
+# setopt AUTO_CD     # BUG -> https://github.com/marlonrichert/zsh-autocomplete/issues/749
+# setopt CHASE_LINKS # follow symlinks when they are cd target
 
 # POST-DIRECTORY-CHANGE-HOOK
 # (use `cd -q` to suppress this hook)
@@ -52,26 +54,28 @@ alias ..g=' cd "$(git rev-parse --show-toplevel)"' # goto git root
 # - the zsh builtin `cdr` completes based on a number as argument, so the
 #   completions are not searched, which is why we are using this setup of our own
 
-function gr {
-    local goto="$*"
-    [[ -z "$*" ]] && goto=$(dirs -p | sed -n '2p') # no arg: goto last (1st line = current)
-    goto="${goto/#\~/$HOME}"
-    cd "$goto" || return 1
-}
-_gr() {
-    [[ $CURRENT -ne 2 ]] && return # only complete first word
+# function gr {
+#     local goto="$*"
+#     [[ -z "$*" ]] && goto=$(dirs -p | sed -n '2p') # no arg: goto last (1st line = current)
+#     goto="${goto/#\~/$HOME}"
+#     cd "$goto" || return 1
+# }
 
-    # get existing dirs
-    local -a folders=()
-    while IFS='' read -r dir; do # turn lines into array
-        expanded_dir="${dir/#\~/$HOME}"
-        [[ -d "$expanded_dir" ]] && folders+=("$dir")
-    done < <(dirs -p | sed '1d')
+# _gr() {
+#     [[ $CURRENT -ne 2 ]] && return # only complete first word
+#
+#     # get existing dirs
+#     local -a folders=()
+#     while IFS='' read -r dir; do # turn lines into array
+#         expanded_dir="${dir/#\~/$HOME}"
+#         [[ -d "$expanded_dir" ]] && folders+=("$dir")
+#     done < <(dirs -p | sed '1d')
+#
+#     local expl && _description -V recent-folders expl 'Recent Folders'
+#     compadd "${expl[@]}" -Q -- "${folders[@]}"
+# }
 
-    local expl && _description -V recent-folders expl 'Recent Folders'
-    compadd "${expl[@]}" -Q -- "${folders[@]}"
-}
-compdef _gr gr
+# compdef _gr gr
 
 #───────────────────────────────────────────────────────────────────────────────
 

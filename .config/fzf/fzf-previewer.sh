@@ -20,12 +20,11 @@ if [[ $mime =~ \-binary ]]; then
 fi
 
 image_previewer() {
-    #
     # In Kitty
-    # Kitty image protocal works well in both normal terminal and tmux, but not in Neovim's builtin
+    # Kitty image protocol works well in both normal terminal and tmux, but not in Neovim's builtin
     # terminal. Tmux is special, it works in tmux pane but fails in tmux popup (ref:
     # https://github.com/junegunn/fzf/issues/3972). My fzf starts in tmux popup when it runs in
-    # tmux, so kitty image protocal does not work. In all the situations where kitty image protocal
+    # tmux, so kitty image protocol does not work. In all the situations where kitty image protocol
     # fails to work, use chafa with symbols (ANSI art) format as a workaround.
     #
     # For Ghostty, since it uses the Kitty graphic protocol, we handle image preview in the same way
@@ -35,7 +34,7 @@ image_previewer() {
         # In Kitty or Ghostty
         if [[ ! $TERM =~ "tmux" && -z $NVIM ]]; then
             # Not in tmux and not in neovim's builtin terminal
-            kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --align left --place="${FZF_PREVIEW_COLUMNS}x$((FZF_PREVIEW_LINES - 1))"@0x0 "$1" | sed '$d' | sed $'$s/$/\e[m/'
+            kitty icat --clear --transfer-mode=stream --unicode-placeholder --stdin=no --align left --place="${FZF_PREVIEW_COLUMNS}x$((FZF_PREVIEW_LINES - 1))"@0x0 "$1" | sed '$d' | sed $'$s/$/\e[m/'
             # --transfer-mode=memory is the fastest option but if we want fzf to be able to redraw the image
             # on terminal resize or on 'change-preview-window', we need to use --transfer-mode=stream.
         else
@@ -63,7 +62,7 @@ fi
 if [[ $mime =~ video/|audio/ ]]; then
     dimensions=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$file")
     echo "Dimensions: $dimensions"
-    thumbnail=$("$HOME"/.config/lf/vidthumb "$file")
+    thumbnail=$("$HOME/.config/lf/vidthumb" "$file")
     image_previewer "$thumbnail"
     exit
 fi

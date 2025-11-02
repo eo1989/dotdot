@@ -8,6 +8,7 @@
 --]]
 -- local code_cell = [[# %%]]
 
+---@type LazySpec
 return {
   -- {
   --   'klafyvel/nvim-smuggler',
@@ -41,24 +42,27 @@ return {
   --     },
   --   },
   -- },
+  'GCBallesteros/Notebooknavigator.nvim',
   {
     'GCBallesteros/jupytext.nvim',
-    -- event = { 'VeryLazy', 'BufReadPre', 'BufEnter' },
-    priority = 1001,
-    lazy = false,
+    event = { 'BufReadCmd *.ipynb' },
+    priority = 999,
+    -- lazy = false,
+    -- ft = { 'ipynb' },
     -- lazy = vim.fn.argc(-1) == 0, -- load jupytext early when opening a file from cmdline
     opts = {
+      -- style = 'hydrogen',
       custom_language_formatting = {
-        python = {
-          extension = 'md',
-          style = 'markdown',
-          force_ft = 'markdown', -- you can set whatever ft you want here
+        julia = {
+          extension = 'qmd',
+          style = 'quarto',
+          force_ft = 'quarto', -- you can set whatever ft you want here
         },
-        -- python = {
-        --   extension = 'qmd',
-        --   style = 'quarto',
-        --   force_ft = 'quarto', -- you can set whatever ft you want here
-        -- },
+        python = {
+          extension = 'qmd',
+          style = 'quarto',
+          force_ft = 'quarto', -- you can set whatever ft you want here
+        },
       },
     },
   },
@@ -87,10 +91,21 @@ return {
       endfunction
       ]])
 
-      vim.g.slime_target = 'kitty'
+      vim.g.slime_target = 'kitty' -- 'neovim' | 'tmux' | 'screen' | etc etc
       vim.g.slime_no_mappings = false
       vim.g.slime_python_ipython = 1
+
+      -- if vim.b[bufnr].filetype == 'julia' then
+      --   vim.g.slime_cell_delimiter = '#\\s\\=%%'
+      -- elseif vim.b[bufnr].filetype == 'python' then
       vim.g.slime_cell_delimiter = '# %%'
+      -- end
+
+      -- vim.g.slime_cell_delimiter = '# %%'
+
+      -- vim.g.slime_cell_delimiter = '#\\s\\=%%'
+      -- required true for proper julia repl (kitty/nvim term), but it messes with pt|ipython kek
+
       vim.g.slime_bracketed_paste = 0
     end,
     config = function()
@@ -99,16 +114,17 @@ return {
       vim.g.slime_menu_config = false
       vim.g.slime_neovim_ignore_unlisted = true
 
-      -- local function mark_terminal()
-      --   -- vim.g.slime_last_channel = vim.b.terminal_job_id
-      --   local job_id = vim.b.terminal_job_id
-      --   vim.print('job_id: ' .. job_id)
-      -- end
+      -- required for neovim terminals
+      local function mark_terminal()
+        vim.g.slime_last_channel = vim.b.terminal_job_id
+        local job_id = vim.b.terminal_job_id
+        vim.print('job_id: ' .. job_id)
+      end
 
-      -- local function set_terminal()
-      --   -- vim.b.slime_config = { jobid = vim.g.slime_last_channel }
-      --   vim.fn.call('slime#config', {})
-      -- end
+      local function set_terminal()
+        vim.b.slime_config = { jobid = vim.g.slime_last_channel }
+        vim.fn.call('slime#config', {})
+      end
 
       -- map('n', '<localleader>cm', mark_terminal, { desc = 'mark terminal' })
       -- map('n', '<localleader>cs', set_terminal, { desc = 'set terminal' })
@@ -117,7 +133,7 @@ return {
   --[[ lkhphuc/dotfiles/blob/master/nvim/lua/plugins/repl.lua ]]
   {
     'benlubas/molten-nvim',
-    enabled = true,
+    enabled = false,
     build = ':UpdateRemotePlugins',
     event = { 'VeryLazy', 'BufReadPre', 'BufEnter' },
     init = function()

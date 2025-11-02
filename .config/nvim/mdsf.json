@@ -1,0 +1,69 @@
+{
+  "$schema": "https://raw.githubusercontent.com/hougesen/mdsf/main/schemas/v0.10.5/mdsf.schema.json",
+  "languages": {
+    "c": "clang-format",
+    "cpp": "clang-format",
+    "json": ["biome:lint", "biome:check", "biome:format", "prettier"],
+    "jsonc": ["biome:lint", "biome:check", "biome:format", "prettier"],
+    "julia": ["juliaformatter.jl", "runic"],
+    "python": [ "ruff:check", "ruff:format" ],
+    "shell": [
+      [
+        "shfmt",
+        "beautysh"
+      ]
+    ],
+    "sql": [
+      [
+        "sqlfluff:fix",
+        "sqlfluff:lint",
+        "sqlfluff:format",
+        "sql-formatter",
+        "sqlint",
+        "sqlfmt",
+        "sqruff",
+        "sleek"
+      ]
+    ]
+  }
+}
+    // "csharp": "csharpier",
+    // "go": [
+    //   [
+    //     "gci",
+    //     "goimports-reviser",
+    //     "goimports"
+    //   ],
+    //   [
+    //     "gofumpt",
+    //     "gofmt"
+    //   ]
+    // ],
+    // "java": "google-java-format",
+    // "javascript": "prettier",
+    // "python": [
+    //   // [
+    //   //   "usort",
+    //   //   "isort"
+    //   // ],
+    //   // "blue",
+    //   // "black",
+    //   // "yapf"
+    //   // "autopep8",
+    //   // "pyink"
+    //   [
+    //     "ruff:format"
+    //   ]
+    // ],
+    // "ruby": [
+    //   [
+    //     "rubocop",
+    //     "rufo",
+    //     "rubyfmt",
+    //     "standardrb"
+    //   ]
+    // ],
+    // "rust": "rustfmt",
+    // "toml": "taplo",
+    // "typescript": "prettier"
+    // "yaml": "prettier"

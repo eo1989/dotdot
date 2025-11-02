@@ -19,7 +19,7 @@ export BREW_PREFIX="/opt/homebrew"
 # export LESSOPEN="|lesspipe.sh %s"
 # LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
 
-export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
+# export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
 
 (( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
 # (( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="${HOME}/.cache"

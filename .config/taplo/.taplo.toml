@@ -1,0 +1,47 @@
+include = ["**/*.toml"]
+exclude = [
+  "**/node_modules/**",
+  "**/.venv/**",
+  "**/pyproj*.toml",
+  "**/uv*.toml",
+]
+
+
+[formatting]
+
+[[rule]]
+
+[rule.formatting]
+array_auto_collapse = false
+align_entries = true
+align_comments = true
+array_auto_expand   = false
+inline_table_expand = false
+
+
+# [[rule]]
+# [rule.formatting]
+# include = ["**/*.toml"]
+# keys    = ["exclude"]
+
+# [[rule]]
+# [rule.formatting]
+# include = ["**/Cargo.toml"]
+# array_auto_expand   = false
+# inline_table_expand = false
+
+# [[rule]]
+# include = ["**/Cargo.toml"]
+# keys = [ "dependencies", "*-dependencies", "workspace" ]
+
+# [rule.formatting]
+# reorder_keys   = true
+# align_comments = true
+
+# [[rule]]
+# include = ["**/Cargo.toml"]
+# keys    = ["package", "workspace.package"]
+
+# [rule.formatting]
+# reorder_keys = true
+# align_comments = true

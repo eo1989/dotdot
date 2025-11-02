@@ -1,5 +1,6 @@
 """Utility functions first."""
-# pyright: ignore[reportReturnType]
+# pyright: ignore[*]
+
 
 import numpy as np
 from numba import njit

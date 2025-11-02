@@ -1,9 +1,8 @@
 if not eo then return end
 
-local optl = vim.opt_local
+local optl, wo = vim.opt_local, vim.wo
 
--- TODO: this is set in the autocommk file ... do i leave this or leave the autocomm vim.cmd?
-vim.cmd([[autocmd! BufEnter <buffer> if winnr('$') < 2 | q | endif]])
+-- vim.cmd([[autocmd! BufEnter <buffer> if winnr('$') < 2 | q | endif]])
 
 -- vim.api.nvim_exec_autocmds({ 'Filetype', 'BufEnter', 'BufWinEnter' }, {
 --   group = 'treesitter_stuff',
@@ -23,22 +22,28 @@ vim.cmd([[autocmd! BufEnter <buffer> if winnr('$') < 2 | q | endif]])
 --   return true
 -- end
 
+-- TODO: think all of these may be handled by quicker.nvim, need to check
 optl.scrolloff = 0
-optl.wrap = false
-optl.number = false
+optl.list = false
+vim.o.buflisted = false
+wo.nu = true
+wo.rnu = true
+-- optl.wrap = false
+-- optl.number = false
 -- optl.relativenumber = false
 -- optl.linebreak = true
 -- optl.list = true
-optl.cursorline = true
-optl.spell = false
-optl.buflisted = false
-optl.signcolumn = 'yes'
+-- optl.cursorline = true
+-- optl.spell = false
+-- optl.buflisted = false
+-- optl.signcolumn = 'yes'
 
 map('n', 'dd', eo.list.qf.delete, { desc = 'delete current qf entry', buffer = 0 })
 map('v', 'd', eo.list.qf.delete, { desc = 'delete current qf entry', buffer = 0 })
 map('n', 'H', ':colder<CR>', { buffer = 0 })
 map('n', 'L', ':cnewer<CR>', { buffer = 0 })
 
+vim.cmd.packadd('cfilter')
 -- force qf to open beneath all other splits
 vim.cmd.wincmd('J')
 eo.adjust_split_height(3, 10)

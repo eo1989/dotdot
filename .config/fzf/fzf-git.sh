@@ -159,7 +159,6 @@ else
     }
 fi
 
-
 # Check git repository
 _fzf_git_check() {
   # Handle the bare repo that manages my dotfiles

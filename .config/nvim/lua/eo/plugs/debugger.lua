@@ -3,6 +3,7 @@ local icons, highlight, border, palette = eo.ui.icons, eo.highlight, eo.ui.curre
 
 eo.debug = { layout = { ft = { dart = 2 } } }
 
+---@type LazySpec
 return {
   {
     'mfussenegger/nvim-dap',

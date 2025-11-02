@@ -21,7 +21,7 @@
 --]]
 local border = eo.ui.current.border
 
-local map = vim.keymap.set or map
+local map = vim.keymap.set or vim.api.nvim_set_keymap
 
 -- local function run_sniprun_section()
 --   if vim.bo.filetype ~= "python" then
@@ -85,6 +85,8 @@ local map = vim.keymap.set or map
 
 -- map({ 'v', 'x', 'o' }, '<localleader>rs', function() run_sniprun_section() end, { desc = 'SnipRun Selection' })
 -- map('<localleader>rc', run_sniprun_section, {desc = 'SR trial'})
+
+---@type LazySpec
 return {
   {
     'michaelb/sniprun',
@@ -149,11 +151,12 @@ return {
         'Python3_fifo',
         'GFM_original',
         'Python3_original',
+        -- 'Python3_jupyter',
         'Julia_original',
       },
       repl_enable = {
         'Python3_jupyter',
-        'Python3_fifo',
+        -- 'Python3_fifo',
         'GFM_original',
         'Julia_original',
         -- 'Python3_jupyter',
@@ -165,13 +168,14 @@ return {
           interpreter = vim.fn.expand('~/.pyenv/versions/gen/bin/python'),
           -- interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
           -- venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
-          venv = { vim.fn.expand('~/.pyenv/versions'), '../.venv' },
+          venv = { vim.fn.expand('~/.pyenv/versions'), '../.venv', vim.fn.expand('~/Dev/') },
           error_truncate = 'auto',
         },
         Python3_jupyter = {
           interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
-          venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab', '../.venv'),
+          venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
           error_truncate = 'auto',
+          use_on_filetypes = { 'quarto', 'markdown', 'markdown.pandoc', 'gfm' },
         },
         -- TODO: make this from a function
         --
@@ -186,6 +190,7 @@ return {
         },
         GFM_original = {
           default_filetype = 'python',
+          use_on_filetypes = { 'markdown', 'markdown.pandoc', 'gfm', 'quarto' },
         },
       },
       borders = 'rounded',
@@ -195,6 +200,8 @@ return {
       },
       display_options = {
         terminal_widths = 25,
+        terminal_signcolumn = false,
+        terminal_line_number = false,
         notification_timeout = 10,
       },
       live_mode_toggle = 'enable',

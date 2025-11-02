@@ -15,8 +15,6 @@ interests = [(0, "Hadoop"), (0, "Big Data"), (0, "HBase"), (0, "Java"), (0, "Spa
 
 
 _file = pd.read_csv()
-
-
 ```
 
 ![numfocus](./numfocus.png),

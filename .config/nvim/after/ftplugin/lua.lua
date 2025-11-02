@@ -83,6 +83,7 @@ map('n', '<leader>so', function()
   vim.cmd.luafile('%')
   vim.notify('Sourced ' .. fn.expand('%'))
 end)
+
 -- local wk = register('which-key')
 -- wk.register({
 --   s = {

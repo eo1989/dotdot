@@ -1,5 +1,5 @@
 local api, fn = vim.api, vim.fn
-local map = map or vim.keymap.set
+local map = vim.keymap.set
 local shell = nil
 
 -- local function sendit()
@@ -25,27 +25,57 @@ local shell = nil
 --   require('toggleterm').exec(cmd, 1)
 -- end
 
+---@type LazySpec
 return {
   {
-    "chomosuke/term-edit.nvim",
-    event = "TermOpen",
-    version = "1.*",
+    'xb-bx/editable-term.nvim',
+    event = 'VeryLazy',
+    opts = {},
   },
+  -- {
+  --   'chomosuke/term-edit.nvim',
+  --   enabled = false,
+  --   -- event = 'TermOpen',
+  --   version = false,
+  --   config = function()
+  --     require('term-edit').setup {
+  --       prompt_end = ' %$ ',
+  --       --[[ for ipython? ]]
+  --       use_up_down_arrows = function()
+  --         local lin = fn.getline(fn.line('.'))
+  --         if line:find(']:', 1, true) or line:find('...:', 1, true) then
+  --           return true
+  --         else
+  --           return false
+  --         end
+  --       end,
+  --     }
+  --   end,
+  -- },
   {
     'akinsho/toggleterm.nvim',
-    -- version = '*',
+    version = false,
     event = 'VeryLazy',
+    ---@type ToggleTermConfig
     opts = {
       open_mapping = [[<c-\>]],
       shade_filetypes = {},
       shade_terminals = true,
-      direction = 'horizontal',
+      -- direction = 'horizontal',
       autochdir = true,
-      persist_mode = true,
+      auto_scroll = true,
+      hide_numbers = true,
+      title_pos = 'right',
+      -- shell = vim.o.sh, -- default
+      persist_mode = true, -- default
+      persist_size = false, -- forces new terms to be opened by the `size` defined
       insert_mappings = true,
       env = { TERM = 'xterm-kitty' },
       start_in_insert = true,
-      winbar = { enabled = true },
+      winbar = {
+        enabled = false,
+        name_formatter = function(term) return term.name end,
+      },
       highlights = {
         FloatBorder = { link = 'FloatBorder' },
         NormalFloat = { link = 'NormalFloat' },
@@ -53,6 +83,9 @@ return {
       float_opts = {
         -- border = eo.ui.current.border,
         winblend = 3,
+      },
+      responsiveness = {
+        horizontal_breakpoint = 100,
       },
       -- shell = function()
       --   local ft = vim.bo.filetype
@@ -84,6 +117,11 @@ return {
           return math.floor(vim.o.columns * 0.3)
         end
       end,
+      -- ft_repls = {
+      --   julia = {
+      --     cmd = { 'julia', '--project=@.' },
+      --   },
+      -- },
     },
     config = function(_, opts)
       require('toggleterm').setup(opts)
@@ -104,9 +142,7 @@ return {
         direction = 'float',
         on_open = float_handler,
       }
-      map('n', '<leader>lg', function() lazygit:toggle() end, {
-        desc = 'toggleterm: toggle lazygit',
-      })
+      map('n', '<localleader>lg', function() lazygit:toggle() end, { desc = 'toggleterm: toggle lazygit' })
 
       local btop = Terminal:new {
         cmd = 'btop',
@@ -131,7 +167,7 @@ return {
         },
       }
 
-      map('n', '<leader>lh', function() gh_dash:toggle() end, {
+      map('n', '<localleader>lh', function() gh_dash:toggle() end, {
         desc = 'toggleterm: toggle github dashboard',
       })
 

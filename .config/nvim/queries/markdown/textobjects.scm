@@ -1,7 +1,7 @@
 ; extends
-(code_fence_content) @code_cell.inner
+(code_fence_content) @block.inner
 
-(fenced_code_block (code_fence_content) @code_cell.inner) @code_cell.outer
+(fenced_code_block (code_fence_content) @block.inner) @block.outer
 
 (paragraph) @function.outer @function.inner
 

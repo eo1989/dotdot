@@ -1,0 +1,41 @@
+---
+author: ernest orlowski
+title: 'Excel Notes Corewell'
+format: pdf
+---
+
+# Excel Level 2 
+Notes w.r.t `Excel Level 2 Student Workbook 1_eo_1.xlsx`
+
+## Functions
+
+
+## Tables
+
+### Table Tool Options
+- Table formatting automatically adds filters to your header rows. You may turn off the filter at any
+  time. When adding a new row to your database, they are automatically formatted as the row above.
+  - Helpful options on Table Design:
+    - **Total Row**: will add a total row at the end of your database to perform totals.
+    - **First Column**: will embolden the data in the first column.
+    - **Last Column**: will embolden the data in the last column.
+    - **Banded Rows**: will shade every other row.
+    - **Remove Duplicates**: will find and remove duplicate rows in your table.
+    - **Insert Slicer**: - will add a widget that makes it easy to filter your data with a click of
+      a button.
+
+
+## Sort & Filtering
+
+### Sort
+- NOTE: Be sure to check `My data has headers` under `Custom Sort`.
+- NOTE: Excel only performs operations on contiguous tables. Any missing rows will result in operations
+  performed up to that row.
+- With `AutoSort`
+- With `Custom Sort`:
+  - Whenever sorting by a "total" value be sure to sort descending.
+
+### Filtering
+
+## Charts
+

@@ -35,6 +35,11 @@ local function start_euporie(bufnr, term, type)
   eu.term = get_alt_win(term, eu.cmd)
   vim.b[bufnr].euporie_console = eu
 
+  --[[TODO: Problem with jupyter kernel doesnt start immediately
+            How to schedule? Just let user run EuporieAttach? or watch file
+            vim.defer_fn(function() vim.cmd.JupyterAttach(eu.kern) end, 2000)
+  --]]
+
   vim.api.nvim_create_user_command(
     'EuporieAttach',
     function() require('jupyter_kernel').attach { args = eu.kern } end,

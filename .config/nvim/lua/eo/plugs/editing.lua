@@ -1,14 +1,19 @@
+---@type LazySpec
 return {
   {
     'monaqa/dial.nvim',
+    -- stylua: ignore start
     keys = {
-      { '<C-a>', '<Plug>(dial-increment)', mode = 'n' },
-      { '<C-x>', '<Plug>(dial-decrement)', mode = 'n' },
-      { '<C-a>', '<Plug>(dial-increment)', mode = 'v' },
-      { '<C-x>', '<Plug>(dial-decrement)', mode = 'v' },
-      { 'g<C-a>', 'g<Plug>(dial-increment)', mode = 'v' },
-      { 'g<C-x>', 'g<Plug>(dial-decrement)', mode = 'v' },
+      { '<C-a>',   '<Plug>(dial-increment)',   mode = 'n' },
+      { '<C-x>',   '<Plug>(dial-decrement)',   mode = 'n' },
+      { 'g<C-a>',  '<Plug>(dial-g-increment)', mode = 'n' },
+      { 'g<C-x>',  '<Plug>(dial-g-decrement)', mode = 'n' },
+      { '<C-a>',   '<Plug>(dial-increment)',   mode = 'v' },
+      { '<C-x>',   '<Plug>(dial-decrement)',   mode = 'v' },
+      { 'g<C-a>',  '<Plug>(dial-g-increment)', mode = 'x' },
+      { 'g<C-x>',  '<Plug>(dial-g-decrement)', mode = 'x' },
     },
+    -- stylua: ignore end
     config = function()
       local augend = require('dial.augend')
       local config = require('dial.config')

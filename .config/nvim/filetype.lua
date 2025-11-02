@@ -1,3 +1,4 @@
+---@type vim.filetype.add.filetypes
 vim.filetype.add {
   extension = {
     pip = 'requirements',

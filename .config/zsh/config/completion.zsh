@@ -31,19 +31,23 @@ zstyle ':completion:*' group-name ''
 # zstyle ':autocomplete:*' list-colors ${(s.:.)LS_COLORS:-${ZLS_COLORS}}
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
+
+# 1. option descriptions in gray (`38;5;245` is visible in dark and light mode)
+# 2. apply LS_COLORS to files/directories
+# 3. selected item (styled via `ma=`)
+zstyle ':completion:*:default' list-colors \
+    '=(#4b)*(-- *)=39=38;5;245' \
+    "$LS_COLORS" \
+    "ma=7;38;5;68"
+
 # zstyle ':completion:*' format %F{yellow}%B%U%{$__DOTS[ITALIC_ON]%}%d%{$__DOTS[ITALIC_OFF]%}%b%u%f
 # zstyle ':autocomplete:*' list-colors ${(s.:.)LS_COLORS}
 # zstyle ':completion:*:descriptions' format $'\e[7;38;5;103m %d \e[0;38;5;103m \e[0m'
 zstyle ':completion:*:descriptions' format %F{yellow}%B%U%{$__DOTS[ITALIC_ON]%}%d%{$__DOTS[ITALIC_OFF]%}%b%u%f
 
-# color items in specific group
+# color items in specific groups (here: aliases in magenta)
 # zstyle ':completion:*:aliases' list-colors '=*=35'
 
-# 1. option descriptions in gray (`38;5;245` is visible in dark and light mode)
-# 2. apply LS_COLORS to files/directories
-# 3. selected item (styled via `ma=`)
-# zstyle ':completion:*:default' list-colors \
-#     "=(#b)*(-- *)=39=38;5;245:+${LS_COLORS}:ma=7;38;5;68"
 
 # hide info message if there are no completions https://github.com/marlonrichert/zsh-autocomplete/discussions/513
 zstyle ':completion:*:warnings' format ""
@@ -66,34 +70,48 @@ zstyle ':completion:*:manuals' separate-sections true
 # Dont prompt for a huge list, menu it!
 # Enable keyboard navigation of completions in menu
 # (not just tab/shift-tab but cursor keys as well):
-# zstyle ':completion:*' menu 'select=0'
-zstyle ':completion:*' menu select
+zstyle ':completion:*' menu 'select=0'
+# zstyle ':completion:*' menu select
 
 # New # -- dont prompt for a huge list, page it!
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 
 # zstyle ':autocomplete:tab:*' insert-unambiguous yes
-# zstyle ':autocomplete:tab:*' fzf yes
+zstyle ':autocomplete:tab:*' fzf-completion yes
 # zstyle ':autocomplete:*' widget-style menu "select=0"
 zstyle -e ':autocomplete:*:*' list-lines 'reply=( $(( LINES / 2 )) )'
 
 #───────────────────────────────────────────────────────────────────────────────
 # BINDINGS
 
-# BUG not working: https://github.com/marlonrichert/zsh-autocomplete/issues/749
-# bindkey '\t' menu-select   # <Tab> starts completion
-# bindkey '^[[Z' menu-select # <S-Tab> starts completion
+# BUG: https://github.com/marlonrichert/zsh-autocomplete/issues/749
+# was answered though
 
-# bindkey -M menuselect '^I' menu-complete                      # <Tab> next item
-# bindkey -M menuselect '^[[Z' reverse-menu-complete            # <S-Tab> prev suggestion
-# bindkey -M menuselect              '^I' menu-complete
-# bindkey -M menuselect "$terminfo[kcbt]" reverse-menu-complete
-# bindkey -M menuselect              '\r' .accept-line            # <CR> select & execute
+# on empty buffer, `tab` opens `cd` completion menu, otherwise, select completion.
+# (This is better than `AUTO_CD`, since `zstyle ':completion:*' group-order` doesnt affect AUTO_CD, but is normal `cd`, which we emulate here.)
+_tab-on-empty-buffer() {
+    # source: https://stackoverflow.com/a/29103676/22114136
+    if [[ -z "$BUFFER" && "$CONTEXT" == "start" ]]; then
+        BUFFER="cd "
+        export CURSOR=3
+        zle list-choices  # open completion
+    else
+        zle menu-select   # select completion (w/o zsh-autocomplete use `zle expand-or-complete`)
+    fi
+}
+zle -N _tab-on-empty-buffer
+bindkey '^I' _tab-on-empty-buffer
+
+# `menuselect` = when in completion menu
+# bindkey -M menu-select '^I' menu-complete             # <Tab> next item
+# bindkey -M menu-select '^[[Z' reverse-menu-complete   # <S-Tab> prev suggestion
+# bindkey -M menu-select '\r' .accept-line              # <CR> select, execute
+
 
 #───────────────────────────────────────────────────────────────────────────────
 # SORT
 
-zstyle ':completion:*' file-sort modification follow reverse # "follow" makes it follow symlinks
+zstyle ':completion:*' file-sort modification follow # "follow" makes it follow symlinks
 
 # INFO inserting "path-directories" to add "directories in cdpath" to the top <-- Annoying af
 # zstyle ':completion:*' group-order \
@@ -128,7 +146,7 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # zstyle ':completion:*' completer _complete _approximate _prefix _complete:-fuzzy _correct
 zstyle ':completion:*' completer _complete _approximate _prefix _complete:-fuzzy _prefix
 
-zstyle ':completion:*' ignored-patterns ".git" ".DS_Store" ".localized" "node_modules" "__pycache__" ".pytest_cache" ".venv" ".ipynb_checkpoints"
+zstyle ':completion:*' ignored-patterns ".git" ".DS_Store" ".localized" "node_modules" "__pycache__" ".pytest_cache" ".venv" ".ipynb_checkpoints" ".vscode"
 
 zstyle ':autocomplete:*' ignored-input '..##' # zsh-autocomplete
 

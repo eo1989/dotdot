@@ -12,8 +12,8 @@ __fda=${BASH_SOURCE[0]}
 git_cmd="git"
 status="status -s"
 # Handle my dotfile bare repo
-if [[ $PWD == $HOME/.config || $PWD == $HOME/.config/* && $PWD != $HOME/.config/nvim/pack* ]]; then
-  git_cmd="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
+if [[ $PWD == $HOME/.config || $PWD == $HOME/.config/* && $PWD != $HOME/.config/nvim/* ]]; then
+  git_cmd="git --git-dir=$HOME/.dotdot/ --work-tree=$HOME"
   # For my dotfile bare repo with set "showUntrackedFiles = no", show untracked files in ~/.config
   status+=" -uall $XDG_CONFIG_HOME"
 fi

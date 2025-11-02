@@ -1,5 +1,6 @@
+vim.treesitter.start()
 local api, bo, cmd, optl = vim.api, vim.bo, vim.cmd, vim.opt_local
-local map = map or vim.keymap.set
+local map = vim.api.nvim_set_keymap or vim.keymap.set
 
 -- cmd([[call matchadd('TabLineSel', '\%80v', 79)]])
 -- local options = {
@@ -16,11 +17,30 @@ optl.colorcolumn = '+1'           -- cc
 -- optl.foldmethod = 'syntax'        -- fdm  -- syntax?
 -- stylua: ignore end
 
+local options = {
+  tabstop = 4,
+  textwidth = 79,
+  shiftwidth = 4,
+  softtabstop = 4,
+  expandtab = true,
+  smarttab = true,
+}
+
+for k, v in pairs(options) do
+  vim.o[k] = v
+end
+
 vim.b.slime_cell_delimiter = '#\\s\\=%%'
 -- vim.b.slime_cell_delimiter = [[# %%]]
 
-optl.foldmethod = 'expr'
-optl.foldexpr = 'nvim_treesitter#foldexpr()'
+-- optl.foldmethod = 'expr'
+-- optl.foldexpr = 'nvim_treesitter#foldexpr()'
+
+cmd([[
+filetype plugin on
+setlocal include=^\\s*\\(from\\\|import\\)
+setlocal includeexpr=substitute(v:fname,'\\.','/','g')
+]])
 
 -- dont automatically adjust indentation when typing ":"
 -- need to do this in an autocmd. see https://stackoverflow.com/a/37889460/4151392
@@ -186,40 +206,40 @@ cmd.inoreabbrev('<buffer> nil None')
 -- map('n', 'gK', '<Cmd>vertical PyDoc<CR>', { buffer = 0 })
 -- map('n', '<C-w>gk', '<Cmd>tab PyDoc<CR>', { buffer = 0 })
 
-local function replaceNodeText(node, text)
-  local start_row, start_col, end_row, end_col = node:range()
-  local lines = vim.split(text, '\n')
-  cmd.undojoin() -- make undos ignore the next change, see issue #8
-  api.nvim_buf_set_text(0, start_row, start_col, end_row, end_col, lines)
-end
+-- local function replaceNodeText(node, text)
+--   local start_row, start_col, end_row, end_col = node:range()
+--   local lines = vim.split(text, '\n')
+--   cmd.undojoin() -- make undos ignore the next change, see issue #8
+--   api.nvim_buf_set_text(0, start_row, start_col, end_row, end_col, lines)
+-- end
 
-api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
-  pattern = { '*.py' },
-  callback = function()
-    local node = vim.treesitter.get_node()
-    if not node then return end
-
-    local str_node
-    if node:type() == 'string' then
-      str_node = node
-    elseif node:type():find('^string_') then
-      str_node = node:parent()
-    elseif node:type() == 'escape_sequence' then
-      str_node = node:parent():parent()
-    else
-      return
-    end
-
-    local text = vim.treesitter.get_node_text(str_node, 0)
-    if text == '' then return end
-    local isFString = text:find('^f')
-    local hasBraces = text:find('{.-}')
-
-    if not isFString and hasBraces then
-      replaceNodeText(str_node, 'f' .. text)
-    elseif isFString and not hasBraces then
-      text = text:sub(2)
-      replaceNodeText(str_node, text)
-    end
-  end,
-})
+-- api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
+--   pattern = { '*.py' },
+--   callback = function()
+--     local node = vim.treesitter.get_node()
+--     if not node then return end
+--
+--     local str_node
+--     if node:type() == 'string' then
+--       str_node = node
+--     elseif node:type():find('^string_') then
+--       str_node = node:parent()
+--     elseif node:type() == 'escape_sequence' then
+--       str_node = node:parent():parent()
+--     else
+--       return
+--     end
+--
+--     local text = vim.treesitter.get_node_text(str_node, 0)
+--     if text == '' then return end
+--     local isFString = text:find('^f')
+--     local hasBraces = text:find('{.-}')
+--
+--     if not isFString and hasBraces then
+--       replaceNodeText(str_node, 'f' .. text)
+--     elseif isFString and not hasBraces then
+--       text = text:sub(2)
+--       replaceNodeText(str_node, text)
+--     end
+--   end,
+-- })

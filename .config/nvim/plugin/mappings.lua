@@ -1,28 +1,63 @@
 ---@diagnostic disable: deprecated
 if not eo then return end
 
-local api, map = vim.api, vim.keymap.set
-
+local api = vim.api
 local trim_spaces = false
 
--- map("v", [[<leader>rt]], function() require('toggleterm').send_lines_to_terminal("visual", trim_spaces, { args = vim.v.count }) end)
+-- local cmp = require('blink.cmp')
+-- local function show_and_select(opts)
+--   cmp.show(opts)
+--   ---[[ run cmp.select_next as soon as the window is open ]]
+--   local select_immediately_cb
+--   select_immediately_cb = function()
+--     cmp.select_next()
+--     require('blink.cmp.completion.windows.menu').open_emitter:off(select_immediately_cb)
+--   end
+--   require('blink.cmp.completion.windows.menu').open_emitter:on(select_immediately_cb)
+-- end
+-- map('i', '<C-n>', function()
+--   if not require('blink.cmp.completion.windows.menu').win:is_open() then
+--     return '<C-n>'
+--   else
+--     cmp.select_next()
+--   end
+-- end, { expr = true })
+-- map('i', '<C-p>', function()
+--   if not require('blink.cmp.completion.windows.menu').win:is_open() then
+--     return '<C-p>'
+--   else
+--     cmp.select_prev()
+--   end
+-- end, { expr = true })
 
--- map("v", [[<leader>tr]], function() require('toggleterm').send_lines_to_terminal("visual_selection", trim_spaces, { args = vim.v.count }) end)
+-- map("v", [[<leader>rt]], function() require('toggleterm').send_lines_to_terminal("visual", trim_spaces, { args = vim.v.count }) end)
+-- map("v", [[<leader>tr]], function() require('toggleterm').send_lines_to_terminal("visual_selectiojjjjn", trim_spaces, { args = vim.v.count }) end)
 
 -- local M = vim.lsp.protocol.Methods
 -- local wk = require('which-key')
 
-vim.g['quarto_is_r_mode'] = nil
-vim.g['reticulate_running'] = false
+-- --#################################################################################################
+-- vim.g['quarto_is_r_mode'] = nil
+-- vim.g['reticulate_running'] = false
 
--- local opts = { noremap = true, silent = false }
+-- local function _inmap(key, effect)
+--   local opts = { noremap = true, silent = false }
+--   map({'n', 'i'}, key, effect, opts)
+-- end
+
+-- local function _vmap(key, effect)
+--   local opts = { noremap = true, silent = false }
+--   map({'n', 'v'}, key, effect, opts)
+-- end
+
 -- local nmap = function(key, effect) map('n', key, effect, { noremap = true, silent = false }) end
 -- local vmap = function(key, effect) map('v', key, effect, { noremap = true, silent = false }) end
 -- local imap = function(key, effect) map('i', key, effect, { noremap = true, silent = false }) end
 
 -- send code to terminal with vim-slime
--- TODO incorporate this into the quarto-nvim plugin s.t. QuartoRun functions get the same
--- capabilities
+--[[ TODO incorporate this into the quarto-nvim plugin s.t. QuartoRun functions get the same
+capabilities ]]
+
 -- local function send_cell()
 --   if vim.b['quarto_is_r_mode'] == nil then
 --     vim.fn['slime#send']()
@@ -43,10 +78,10 @@ vim.g['reticulate_running'] = false
 --   end
 -- end
 
--- local slime_send_region_cmd = ':<C-u>call slime#send_op(visualmode(), 1)<CR>'
--- slime_send_region_cmd = api.nvim_replace_termcodes(slime_send_region_cmd, true, false, true)
+-- local _slime_send_region_cmd = ':<C-u>call slime#send_op(visualmode(), 1)<CR>'
+-- local slime_send_region_cmd = api.nvim_replace_termcodes(_slime_send_region_cmd, true, false, true)
+
 -- local function send_region()
---   -- if ft is not quarto just send_region
 --   if vim.bo.filetype ~= 'quarto' or vim.b['quarto_is_r_mode'] == nil then
 --     vim.cmd('normal' .. slime_send_region_cmd)
 --     return
@@ -69,11 +104,15 @@ vim.g['reticulate_running'] = false
 -- needs kitty config:
 -- map shift-enter send_text all \x1b[13;2u
 -- map ctrl-enter send_text all \x1b[13;5u
+
 -- nmap('<C-CR>', send_cell)
--- nmap('<S-CR>', send_cell)
--- vmap('<S-CR>', send_region)
 -- imap('<C-CR>', send_cell)
+-- _map('<C-CR>', send_cell)
+
+-- nmap('<S-CR>', send_cell)
 -- imap('<S-CR>', send_cell)
+
+-- vmap('<S-CR>', send_region)
 
 -- local is_code_chunk = function()
 --   local current, _ = require('otter.keeper').get_current_language_context()
@@ -146,7 +185,7 @@ vim.g['reticulate_running'] = false
 
 -- local function get_otter_symbols_lang()
 --   local otterkeeper = require('otter.keeper')
---   local main_nr = vim.api.nvim_get_current_buf()
+--   local main_nr = api.nvim_get_current_buf()
 --   local langs = {}
 --   for i, l in ipairs(otterkeeper.rafts[main_nr].languages) do
 --     langs[i] = i .. ': ' .. l
@@ -243,6 +282,8 @@ vim.g['reticulate_running'] = false
 --   },
 -- }, { mode = 'n', prefix = '<localleader>' })
 
+-- --#################################################################################################
+
 for _, mode in ipairs { 'n', 'v' } do
   map(mode, 'H', '^', { noremap = true })
   map(mode, 'L', 'g_', { noremap = true })
@@ -274,21 +315,45 @@ map('n', '0', "getline('.')[0 : col('.') - 2] =~# '^\\s\\+$' ? '0' : '^'", { exp
 map('v', '$', 'g_', { noremap = true })
 
 -- stylua: ignore start
-map('n', [[<leader>"]], [[ciw"<c-r>""<esc>]], { desc = 'surround with double quotes', noremap = true })
-map('n', '<leader>`',   [[ciw`<c-r>"`<esc>]], { desc = 'surround with backticks',     noremap = true })
-map('n', "<leader>'",   [[ciw'<c-r>"'<esc>]], { desc = 'surround with single quotes', noremap = true })
-map('n', '<leader>)',   [[ciw(<c-r>")<esc>]], { desc = 'surround with parens',        noremap = true })
-map('n', '<leader>}',   [[ciw{<c-r>"}<esc>]], { desc = 'surround with curly braces',  noremap = true })
+map('n', [[<localleader>"]], [[ciw"<c-r>""<esc>]], { desc = 'surround with double quotes', noremap = true, silent = true })
+map('n', '<localleader>`',   [[ciw`<c-r>"`<esc>]], { desc = 'surround with backticks',     noremap = true, silent = true })
+map('n', "<localleader>'",   [[ciw'<c-r>"'<esc>]], { desc = 'surround with single quotes', noremap = true, silent = true })
+map('n', '<localleader>)',   [[ciw(<c-r>")<esc>]], { desc = 'surround with parens',        noremap = true, silent = true })
+map('n', '<localleader>}',   [[ciw{<c-r>"}<esc>]], { desc = 'surround with curly braces',  noremap = true, silent = true })
 -- stylua: ignore end
 
 -- Better escape using jk in insert and terminal mode
 map('i', 'kj', [[col('.') == 1 ? '<esc>' : '<esc>l']], { expr = true, nowait = true })
 
-map('t', 'kj', '<C-\\><C-n>', { nowait = true })
-map('t', '<C-h>', '<C-\\><C-n><C-w>h')
-map('t', '<C-j>', '<C-\\><C-n><C-w>j')
-map('t', '<C-k>', '<C-\\><C-n><C-w>k')
-map('t', '<C-l>', '<C-\\><C-n><C-w>l')
+eo.augroup('AddTerminalMappings', {
+  event = { 'TermOpen' },
+  pattern = { 'term://*' },
+  command = function()
+    if vim.bo.filetype == '' or vim.bo.filetype == 'toggleterm' then
+      local opts = { silent = false, buffer = 0 }
+      map('t', '<ESC>', [[<C-\><C-n>]], opts)
+      map('t', 'kj', [[<C-\><C-n>]], opts)
+      map('t', '<C-h>', [[<cmd>wincmd h<cr>]], opts)
+      map('t', '<C-j>', [[<cmd>wincmd j<cr>]], opts)
+      map('t', '<C-k>', [[<cmd>wincmd k<cr>]], opts)
+      map('t', '<C-l>', [[<cmd>wincmd l<cr>]], opts)
+      map('t', ']t', '<cmd>tablast<cr>')
+      map('t', '[t', '<cmd>tabnext<cr>')
+      map('t', '<S-Tab>', '<cmd>bprev<cr>')
+      map('t', '<leader><Tab>', '<cmd>close \\| :bnext<cr>')
+    end
+  end,
+})
+
+map('n', '<leader>tn', '<cmd>tabedit %<CR>', { noremap = true })
+map('n', '<leader>tc', '<cmd>tabclose<CR>', { noremap = true })
+map('n', '<leader>to', '<cmd>tabonly<CR>', { noremap = true })
+
+map('t', ']t', '<cmd>tablast<cr>')
+map('t', '[t', '<cmd>tabnext<cr>')
+
+map('x', 'ie', [[gg0eG$]], { noremap = true })
+map('o', 'ie', [[<cmd>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]], { noremap = true })
 
 -- Add undo break-points
 map('i', ',', ',<c-g>u')
@@ -296,14 +361,8 @@ map('i', '.', '.<c-g>u')
 map('i', ';', ';<c-g>u')
 
 -- Better indent
-map('v', '<', '<gv')
-map('v', '>', '>gv')
-
--- even better indent (wont kick you out of visual mode this time) ty famiu/dot-nvim/blob/master/lua/keybinds.lua
--- map('v', '<', '<gv^')
--- map('v', '>', '>gv^')
--- apply the . cmd to all selected lines in visual mode; again, ty famiu
--- map('v', '.', ':normal .<CR>', { silent = true })
+map({ 'x', 'v', 'n' }, '<', '<gv')
+map({ 'x', 'v', 'n' }, '>', '>gv')
 
 -- in case bufferline isnt setup or for whatever 4932849023840x10^3982498 reasons my config decides to fubar my day...
 map('n', '<leader><Tab>', ':bn<CR>', { silent = true })
@@ -313,8 +372,10 @@ map('n', '<leader><S-Tab>', ':bp<CR>', { silent = true })
 map('v', 'p', '"_dp')
 
 -- Insert blank line
-map('n', ']<Space>', [[:put =repeat(nr2char(10), v:count1)<cr>]], { desc = 'add space below' })
-map('n', '[<Space>', [[:put! =repeat(nr2char(10), v:count1)<cr>'[]], { desc = 'add space below' })
+-- stylua: ignore start
+map('n', ']<Space>', [[:put =repeat(nr2char(10), v:count1)<cr>]],    { desc = 'add space below', silent = true })
+map('n', '[<Space>', [[:put! =repeat(nr2char(10), v:count1)<cr>'[]], { desc = 'add space below', silent = true })
+-- stylua: ignore end
 
 -- Auto indent
 map('n', 'i', function()
@@ -401,3 +462,10 @@ end
 
 -- map('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
 -- map('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })
+
+map(
+  'n',
+  '<leader>qr',
+  function() vim.cmd('restart') end,
+  { desc = ':restart', silent = true, nowait = true, noremap = true }
+)

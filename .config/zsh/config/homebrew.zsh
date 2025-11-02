@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # case $(uname) in
 #     Darwin)
 #         if which luarocks >/dev/null; then
@@ -23,7 +25,6 @@ export HOMEBREW_BAT=1 \
     HOMEBREW_NO_ENV_HINTS=1 \
     HOMEBREW_DISPLAY_INSTALL_TIMES=1 \
     HOMEBREW_BUNDLE_FILE_GLOBAL="$HOME/Brewfile_$device_name"
-
 
 function _print-section() {
     echo

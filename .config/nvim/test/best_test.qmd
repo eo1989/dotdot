@@ -1,7 +1,7 @@
 ---
 author: Ernest Orlowski
 jupyter:
-  kernel: gen
+  kernel: "Python 3 (ipykernel)"
   cache: true
 title: Tidy Finance examples with Python
 editor:
@@ -13,7 +13,7 @@ execute:
 
 $$
 \begin{align*}
-r_{i,t+1} = α + λ
+r_{i,t+1} = \alpha + \lambda
 \end{align*}
 $$
 
@@ -30,8 +30,8 @@ def callPx(S_0, K, r, T, σ, τ):
     d2 = d1 - σRtT
     term1 = S_0 * norm.cdf(d1)
     term2 = K * mt.exp(-r * τ) * norm.cdf(d2)
-    price = term1 - term2
-    return price
+    # price = term1 - term2
+    return term1 - term2
 ```
 
 ```{python}

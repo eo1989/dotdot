@@ -2,6 +2,7 @@ local ui = eo.ui
 local lsp = ui.lsp
 local icons = ui.icons
 
+---@type LazySpec
 return {
   {
     'nvim-neo-tree/neo-tree.nvim',
@@ -9,7 +10,7 @@ return {
     -- branch = '>=v3.12',
     cmd = 'Neotree',
     keys = {
-      { '<C-n>', ':Neotree toggle reveal<CR>', desc = 'NeoTree', silent = true },
+      { '<C-n>', ':Neotree toggle reveal position=right<CR>', desc = 'NeoTree', silent = true },
     },
     deactivate = function() vim.cmd([[Neotree close]]) end,
     --[[ event = <- wookayin/dotfiles]]
@@ -165,7 +166,7 @@ return {
         {
           event = 'neo_tree_popup_input_ready',
           ---@param args { bufnr: integer, winid: integer }
-          handler = function(args) map('i', '<ESC>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr }) end,
+          handler = function(args) vim.api.nvim_set_keymap('i', '<ESC>', vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr }) end,
         },
       },
     },
@@ -181,12 +182,12 @@ return {
       })
     end,
     dependencies = {
-      {'nvim-lua/plenary.nvim'},
-      {'MunifTanjim/nui.nvim'},
-      {'nvim-tree/nvim-web-devicons'},
-      {'3rd/image.nvim'},
-      {'pysan3/pathlib.nvim'},
-      {'nvim-neotest/nvim-nio'},
+      { 'nvim-lua/plenary.nvim' },
+      { 'MunifTanjim/nui.nvim' },
+      { 'nvim-tree/nvim-web-devicons' },
+      { '3rd/image.nvim' },
+      { 'pysan3/pathlib.nvim' },
+      { 'nvim-neotest/nvim-nio' },
       {
         's1n7ax/nvim-window-picker',
         version = false,

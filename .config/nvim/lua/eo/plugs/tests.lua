@@ -1,5 +1,7 @@
-local map = map or vim.keymap.set
+-- local map = vim.api.nvim_set_keymap or vim.keymap.set
 -- local misc = eo.ui.icons.misc
+
+---@type LazySpec
 return {
   {
     'nvim-neotest/neotest',
@@ -8,9 +10,9 @@ return {
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-neotest/neotest-python',
-      'nvim-neotest/neotest-go',
+      -- 'nvim-neotest/neotest-go',
       'nvim-lua/plenary.nvim',
-      -- 'stevearc/overseer.nvim',
+      'stevearc/overseer.nvim',
     },
     -- keys = {
     --   {
@@ -89,14 +91,14 @@ return {
         status = {
           enabled = true,
         },
-        -- consumers = { overseer = require('neotest.consumers.overseer') },
+        consumers = { overseer = require('neotest.consumers.overseer') },
         adapters = {
           -- require('neotest-plenary'),
-          require('neotest-go'),
+          -- require('neotest-go'),
           require('neotest-python') {
             dap = { justMyCode = false },
             -- Use whatever Python is on the path from the virtualenv.
-            python = 'python3',
+            python = 'python',
             runner = 'pytest',
             args = {
               '--log-level',

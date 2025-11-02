@@ -1,11 +1,20 @@
 # ZSH ONLY and most performant way to check existence of an executable
 # https://www.topbug.net/blog/2016/10/11/speed-test-check-the-existence-of-a-command-in-bash-and-zsh/
-exists() { (($+commands[$1])); }
+# exists() { (($+commands[$1])); }
+
+# (( $+commands[ptpython] )) && alias ptipython='ptipython --config-file=~/.config/ptpython/config.py'
 
 alias icat='kitten icat'
+# format off
 (($+commands[rga])) && alias rga='rga --rga-adapters="+poppler,pandoc"'
 (($+commands[ptpython])) && alias ipython='ptipython --config-file=$HOME/Library/Application\ Support/ptpython/config.py'
 (($+commands[ptpython])) && alias ptpython='ptipython --config-file=$HOME/Library/Application\ Support/ptpython/config.py'
+(($+commands[jupyter-lab])) && alias jnb='jupyter-lab --ip=0.0.0.0 --port=8080 --allow-root'
+(($+commands[nbp])) && alias nbp='nbp --cs=truecolor -t material -unm "$@"'
+(($+commands[dig])) && alias ip='dig +short myip.opendns.com @resolver1.opendns.com'
+(($+commands[lsof])) && alias ports='lsof -iTCP -P -sTCP:LISTEN'
+(($+commands[tac])) || alias tac='tail -r'
+# format on
 
 taocl() {
     curl -s https://raw.githubusercontent.com/jlevy/the-art-of-command-line/master/README.md |
@@ -44,14 +53,7 @@ alias bif='brew info'
 alias bs='brew search'
 alias bish='env HOMEBREW_NO_AUTO_UPDATE=1 brew install --build-from-source'
 
-# (( $+commands[ptpython] )) && alias ptipython='ptipython --config-file=~/.config/ptpython/config.py'
-(($+commands[jupyter-lab])) && alias jnb='jupyter-lab --ip=0.0.0.0 --port=8080 --allow-root'
-(($+commands[nbp])) && alias nbp='nbp --cs=truecolor -t material -unm "$@"'
-(($+commands[dig])) && alias ip='dig +short myip.opendns.com @resolver1.opendns.com'
-(($+commands[lsof])) && alias ports='lsof -iTCP -P -sTCP:LISTEN'
-(($+commands[tac])) || alias tac='tail -r'
-
-alias zip='zip --recurse-paths --symlinks "$@"'
+alias zip='zip --recurse-paths --symlinks "${@}"'
 
 alias brewfile="brew bundle dump --describe --vscode --mas  --global --force"
 
@@ -66,6 +68,10 @@ add_to_path() {
         export PATH="$1:$PATH"
     fi
 }
+
+# function export_mason_path() {
+#     export PATH="$HOME/.local/share/nvim/mason/bin":$PATH
+# }
 
 # UTF8-encode a string of unicode symbols
 escape() {
@@ -121,6 +127,18 @@ ic() {
         fzf --cycle --preview='kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}')
     [ -z "$image" ] || pbcopy "$image"
 }
+
+# GLOBAL ALIAS to be used at the end of the buffer, mostly
+alias -g RG=' rga'
+alias -g G='| rg'
+alias -g B='| bat'
+alias -g N='| wc -l | tr -d " "' # count lines
+alias -g L='| less'
+alias -g J='| yq --prettyPrint --output-format=json --colors | less'
+alias -g C='| pbcopy ; echo "Copied."'
+alias P='pbpaste'
+
+alias ils='timg --grid=3x1 --upscale=i --center --title --frames=1 -bgray -Bdarkgray'
 
 alias NULL=" >/dev/null 2>&1"
 alias NUL=" 2>/dev/null"
@@ -197,19 +215,18 @@ ipinfo() {
 }
 
 # NOTE: Unnecessary, thanks to bob-nvim
-#
-# build-nvim() {
-#     neovim_dir="$PROJECTS_DIR/eo_contrib/neovim"
-#     [ ! -d $neovim_dir ] && git clone git@github.com:neovim/neovim.git $neovim_dir
-#     pushd $neovim_dir
-#     git checkout master
-#     # git checkout origin/HEAD
-#     git pull
-#     [ -d "$neovim_dir/build/" ] && rm -r ./build/  # to clear the cmake cache
-#     make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/dev/eo_contrib/neovim"
-#     make install
-#     popd || exit
-# }
+build-nvim() {
+    neovim_dir="$HOME/dev/scripts/"
+    [ ! -d $neovim_dir ] && git clone git@github.com:neovim/neovim.git $neovim_dir
+    pushd $neovim_dir
+    git checkout master
+    # git checkout origin/HEAD
+    git pull
+    [ -d "$neovim_dir/build/" ] && rm -r ./build/ # to clear the cmake cache
+    make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/dev/scripts/neovim"
+    make install
+    popd || exit
+}
 
 fancy-ctrl-z() {
     if [[ $#BUFFER -eq 0 ]]; then
@@ -303,8 +320,9 @@ if exists eza; then
     alias lt='eza --tree --level=3'
     alias lT='eza --tree --level=7'
 fi
+
 if exists lsd; then
-    alias lsd='lsd --color=always --icon=always -lagF'
+    alias lsd='lsd --color=always --icon=always --header -lagF'
     alias ldt='lsd -Rd --size=short --permission=octal ./*'
     alias lss='lsd -S' # -S  --sizesort          == sort by size
     alias lsm='lsd -t' # -t  --timesort          == sort by time modified
@@ -313,6 +331,7 @@ if exists lsd; then
 fi
 
 alias ppath='echo -e ${PATH//:/\\n}'
+# alias ppath='print -l $path'
 alias chkfpath='echo -e ${FPATH//:/\\n}'
 
 alias -g shrug="echo \¯\\\_\(\ツ\)\_\/\¯ | pbcopy"
@@ -356,11 +375,8 @@ alias exportenv='while read -r f; do echo ''; done <<(env) > .env'
 #     command bat --theme="$theme" "$@"
 # }
 
-function export_mason_path() {
-    export PATH="$HOME/.local/share/nvim/mason/bin":$PATH
-}
-
 function which {
+    # builtin which -a "$@" | bat --style="-numbers,grid" --wrap=character --pager="<$(lesspipe.sh | source /dev/stdin)"
     builtin which -a "$@" | bat --style="-numbers,grid" --wrap=character --pager="<$(lesspipe.sh | source /dev/stdin)"
 }
 
@@ -378,17 +394,6 @@ function p() {
     # Usage: p [file1] [file2]
     qlmanage -p "${1}" &>/dev/null # or "$1" ??
 }
-
-# GLOBAL ALIAS to be used at the end of the buffer, mostly
-alias -g RG=' rga'
-alias -g G='| rg'
-alias -g B='| bat'
-alias -g N='| wc -l | tr -d " "' # count lines
-alias -g L='| less'
-alias -g J='| yq --prettyPrint --output-format=json --colors | less'
-alias -g C='| pbcopy ; echo "Copied."'
-alias P='pbpaste'
-alias ils='timg --grid=3x1 --upscale=i --center --title --frames=1 -bgray -Bdarkgray'
 
 # ZSH_HIGHLIGHT_REGEXP+=(' G(S$| )' 'fg=magenta,bold')
 # ZSH_HIGHLIGHT_REGEXP+=(' C$' 'fg=magenta,bold')

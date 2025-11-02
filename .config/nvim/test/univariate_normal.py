@@ -33,6 +33,7 @@ x = np.linspace(-4, 5, num=150)
 
 # TODO: create a function to make all of this plt code less verbose & reusable!
 mpl.use("kitcat")
+# mpl.use("pdf")
 plt.plot(x, univariate_normal(x, mu=0, variance=1), label="$N(0, 1)$")
 plt.plot(x, univariate_normal(x, mu=0, variance=0.2), label="$N(0, 0.2)$")
 plt.plot(x, univariate_normal(x, mu=2, variance=3), label="$N(2, 3)$")

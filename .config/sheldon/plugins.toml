@@ -11,8 +11,43 @@
 # See the documentation for more https://github.com/rossmacarthur/sheldon#readme
 
 shell = "zsh"
+apply = ["defer"]
 
-[plugins]
+# from rossmacarthur/dotfiles/src/sheldon/plugins.toml
+[templates]
+defer = '''
+    {{- hooks?.pre | nl }}
+    {%- for file in files %}zsh-defer source "{{ file }}"{{ "\n" }}
+    {%- endfor %}
+    {{- hooks?.post | nl }}'''
+
+# Completions
+# -----------
+
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+apply = ["source"]
+
+[plugins.zsh-autopair]
+github = "hlissner/zsh-autopair"
+
+# [plugins.docker-zsh-completion]
+# github = "greymd/docker-zsh-completion"
+
+# [plugins.rust-zsh-completions]
+# github = "ryutok/rust-zsh-completions"
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+[plugins.zsh-syntax-highlighting]
+github = "zsh-users/zsh-syntax-highlighting"
+
+[plugins.zsh-autocomplete]
+github = "marlonrichert/zsh-autocomplete"
 
 # For example:
 #

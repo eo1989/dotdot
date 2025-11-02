@@ -1,10 +1,24 @@
 [project]
+name = "dotdot"
 requires-python = ">=3.12"
 
 # [tool.poetry]
 # python = "^3.12"                          # "^3.12"
 # build = "poetry build"
 # files = ["pyproject.toml", "poetry.lock"]
+
+[tool.basedpyright]
+# exclude = ["**/node_modules", "**/__pycache__", "**/rplugin"]
+# ignore = ["rplugin/**"]
+reportMissingImports = false  # ruff will already do these
+reportMissingTypeStubs = false
+pythonVersion = "3.12"
+pythonPlatform = "Darwin"
+typeCheckingMode = "off"
+useLibraryCodeForTypes = true
+
+[tool.mdformat]
+number = true
 
 [tool.ruff]
 line-length = 80
@@ -63,21 +77,9 @@ convention = "numpy"
 [tool.ruff.format]
 quote-style = "double"
 skip-magic-trailing-comma = false
+# blank-line-before-module-docstring = true
 # trailing-comma = true
 
 # [tool.black]
 # line-length = 80
 # target-version = ['py312']
-
-[tool.mdformat]
-number = true
-
-[tool.basedpyright]
-# exclude = ["**/node_modules", "**/__pycache__", "**/rplugin"]
-# ignore = ["rplugin/**"]
-reportMissingImports = true
-reportMissingTypeStubs = false
-pythonVersion = "3.12"
-pythonPlatform = "Darwin"
-typeCheckingMode = "basic"
-useLibraryCodeForTypes = true

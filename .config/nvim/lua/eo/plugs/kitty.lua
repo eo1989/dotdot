@@ -5,7 +5,7 @@ api.nvim_create_user_command('KittyTab', function(args)
     -- Replace this with any other `new_*` api to choose where to launch it
     -- new_window, new_os_window, new_overlay, new_tab are all good
     -- You can also use 'kitty.current_win'
-    require('kitty').new_tab({
+    require('kitty').new_overlay({
       keep_open = true, -- Keep the window open when the launched process exits,
       -- good(necessary) for short running commands
       focus_on_open = false, -- Dont change focus to the new window
@@ -88,162 +88,90 @@ local function kitty_terms()
   -- )
   -- map(
   --   'n',
-  --   '<leader>ohu',
+  --   '<localleader>ohu',
   --   function() Term.hints { type = 'url', program = true } end,
   --   { desc = 'hinted url From Kitty' }
   -- )
+  map(
+    'n',
+    '<localleader>ohf',
+    function() Term.hints { type = 'path', launch = 'nvim' } end,
+    { desc = 'hinted file From Kitty in Nvim' }
+  )
   -- map(
   --   'n',
-  --   '<leader>ohf',
-  --   function() Term.hints { type = 'path', launch = 'nvim' } end,
-  --   { desc = 'hinted file From Kitty in Nvim' }
-  -- )
-  -- map(
-  --   'n',
-  --   '<leader>ohp',
+  --   '<localleader>ohp',
   --   function() Term.hints { type = 'path', program = true } end,
   --   { desc = 'hinted file From Kitty' }
   -- )
   -- map(
   --   'n',
-  --   '<leader>ohe',
+  --   '<localleader>ohe',
   --   function() Term.hints { type = 'linenum', launch = 'nvim' } end,
   --   { desc = 'hinted linenum From Kitty' }
   -- )
-  map('n', '<c-;>', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
-  map('n', '<leader>oK', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
-  -- map('n', '<leader>oKC', function() Term.cmd('cd ' .. vim.fn.getpwd()) end, { desc = 'Kitty CWD' })
-  map('n', '<leader>ok', function() Term.move('this-tab') end, { desc = 'Kitty To This Tab' })
-  -- map('n', '<leader>oKN', function() Term.move('new-tab') end, { desc = 'Kitty To New Tab' })
-  -- map('n', '<leader>oKW', function() Term.move('new-window') end, { desc = 'Kitty To New OSWin' })
+  -- map('n', '<c-;>', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
+  -- map('n', '<localleader>oK', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
+  -- map('n', '<localleader>oKC', function() Term.cmd('cd ' .. vim.fn.getpwd()) end, { desc = 'Kitty CWD' })
+  map('n', '<localleader>ok', function() Term.move('this-tab') end, { desc = 'Kitty To This Tab' })
+  -- map('n', '<localleader>oKN', function() Term.move('new-tab') end, { desc = 'Kitty To New Tab' })
+  -- map('n', '<localleader>oKW', function() Term.move('new-window') end, { desc = 'Kitty To New OSWin' })
   -- map('ca', 'K', ":=require'kitty.current_win'", { desc = 'Kitty Control' })
   -- map('ca', 'T', ':=Term', { desc = 'Kitty Control' })
   -- map('ca', 'KT', ":=require'kitty.terms'", { desc = 'Kitty Control' })
   -- map('ca', 'KK', ":=require'kitty'", { desc = 'Kitty Control' })
 
   -- TODO:
-
-  -- local function scroll(opts)
-  --   return function() Term.scroll(opts) end
-  -- end
-  -- local vert_spd = require('keymappings.scroll_mode').vert_spd
-  -- local scroll_hydra = require('hydra') {
-  --   name = 'Scroll Terminal',
-  --   hint = '',
-  --   config = {
-  --     invoke_on_body = true,
-  --     hint = {
-  --       float_opts = { border = 'rounded' },
-  --       offset = -1,
-  --     },
-  --   },
-  --   mode = 'n',
-  --   body = '<leader>vt',
-  --   heads = {
-  --     -- TODO: emulate this
-  --
-  --     -- { "b", "zb", {exit = true, desc = "Center this Line" } },
-  --     -- { "t", "zt", {exit = true, desc = "Bottom this Line" } },
-  --     -- { "c", "zz", {exit = true, desc = "Top this Line" } },
-  --     { 'j', scroll { down = vert_spd } },
-  --     { 'k', scroll { up = vert_spd } },
-  --     { 'J', scroll { prompts = '1' } },
-  --     { 'K', scroll { prompts = '-1' } },
-  --     { 'd', scroll { down = '0.5p' } },
-  --     { 'u', scroll { up = '0.5p' } },
-  --     { 'G', scroll('end') },
-  --     { 'gg', scroll('start') },
-  --     { 'p', scroll { prompts = '0' } },
-  --     { '<esc>', nil, { exit = true, nowait = true, desc = 'exit' } },
-  --   },
-  -- }
-  -- local key = function(from, to, desc)
-  --   to = to or from:sub(2, -2) -- strip the <>
-  --   return { from, function() Term.send_key(to) end, { desc = desc or to } }
-  -- end
-  -- map('n', 'mtt', function() Term.send_key { 'up', 'enter' } end, { desc = 'Kitty Redo Cmd' })
-  -- local cmdline_hydra = require('hydra') {
-  --   name = 'Remote Cmdline',
-  --   hint = '',
-  --   config = {
-  --     invoke_on_body = false,
-  --     hint = {
-  --       float_opts = { border = 'rounded' },
-  --       offset = -1,
-  --     },
-  --   },
-  --   mode = 'n',
-  --   body = 'mt',
-  --   heads = {
-  --     key('k', 'up'),
-  --     key('j', 'down'),
-  --     key('h', 'left'),
-  --     key('l', 'right'),
-  --     { 'K', scroll { prompts = '1' } },
-  --     { 'J', scroll { prompts = '-1' } },
-  --     { 'p', scroll { prompts = '0' } },
-  --     { 'd', scroll { down = '0.5p' } },
-  --     { 'u', scroll { up = '0.5p' } },
-  --     { 'G', scroll('end') },
-  --     { 'gg', scroll('start') },
-  --     key('<esc>'),
-  --     key('<enter>'),
-  --     key('<tab>'),
-  --     key('c', 'ctrl+c'), -- TODO: use signal_child instead
-  --     key('d', 'ctrl+d'),
-  --     key('z', 'ctrl+z'),
-  --     { 'f', function() Term.hints { yank = '' } end },
-  --     { ' ', ':Kitty ', { exit_before = true } },
-  --     { '<esc>', nil, { exit = true, nowait = true, desc = 'exit' } },
-  --   },
-  -- }
 end
 
+---@type LazySpec
 return {
   {
     'indianboy42/kitty.lua',
     event = 'VeryLazy',
-    cond = not not vim.env.KITTY_PID and not vim.g.kitty_scrollback,
+    cond = not not vim.env.KITTY_PID and not vim.g.kitty_scrollback and not eo.KITTY_SCROLLBACK,
     -- opts = {},
-    -- keys = {
-    --   {
-    --     '<leader>ok',
-    --     ":require('kitty').open()<CR>",
-    --     desc = 'kitty open',
-    --   },
-    -- },
-    config = function() kitty_terms() end,
-  },
-  {
-    'mikesmithgh/kitty-scrollback.nvim',
-    build = ':KittyScrollbackGenerateKittens',
-    cmd = {
-      'KittyScrollbackGenerateKittens',
-      'KittyScrollbackCheckHealth',
-      'KittyScrollbackGenerateCommandLineEditing',
-    },
-    event = { 'User KittyScrollbackLaunch' },
-    opts = {
+    keys = {
       {
-        callbacks = {
-          after_paste_window_ready = (function()
-            local once = true
-            return function(paste_window_data, kitty_data, opts)
-              if once then
-                once = false
-                vim.keymap.set(
-                  'n',
-                  '<esc>',
-                  '<C-w>k',
-                  { desc = 'Back to the scrollback', buffer = paste_window_data.paste_window.bufid }
-                )
-              end
-            end
-          end)(),
-        },
+        '<localleader>ok',
+        ":require('kitty').open()<CR>",
+        desc = 'kitty open',
       },
     },
+    config = function() kitty_terms() end,
   },
+  -- {
+  --   'mikesmithgh/kitty-scrollback.nvim',
+  --   enable = true,
+  --   build = ':KittyScrollbackGenerateKittens',
+  --   cmd = {
+  --     'KittyScrollbackGenerateKittens',
+  --     'KittyScrollbackCheckHealth',
+  --     'KittyScrollbackGenerateCommandLineEditing',
+  --   },
+  --   lazy = true,
+  --   event = { 'User KittyScrollbackLaunch' },
+  --   opts = {
+  --     {
+  --       callbacks = {
+  --         after_paste_window_ready = (function()
+  --           local once = true
+  --           return function(paste_window_data, kitty_data, opts)
+  --             if once then
+  --               once = false
+  --               vim.keymap.set(
+  --                 'n',
+  --                 '<esc>',
+  --                 '<C-w>k',
+  --                 { desc = 'Back to the scrollback', buffer = paste_window_data.paste_window.bufid }
+  --               )
+  --             end
+  --           end
+  --         end)(),
+  --       },
+  --     },
+  --   },
+  -- },
 }
 
 --[[

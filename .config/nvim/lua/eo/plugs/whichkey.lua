@@ -1,6 +1,7 @@
+---@type LazySpec
 return {
   'folke/which-key.nvim',
-  version = '*',
+  version = false,
   -- dependencies = { 'mrjones2014/legendary.nvim' },
   event = { 'VeryLazy' },
   opts = {
@@ -12,7 +13,6 @@ return {
         registers = false,
         spelling = { enabled = false },
       },
-      -- key_labels = { ['<leader>'] = 'SPC' },
       triggers = 'auto',
       window = {
         border = 'single', -- none, single, double, shadow

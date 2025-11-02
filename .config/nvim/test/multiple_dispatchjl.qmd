@@ -1,0 +1,51 @@
+---
+title: Multiple Dispatch
+author: Ernest Orlowski
+format: html
+engine: julia
+---
+
+# Speed Comparisons
+
+Some quick and dirty speed comparisons between python, r, and julia all through quarto.
+
+```{julia}
+import Pkg; Pkg.add("BenchmarkTools", "PyCall", "RCall", "PythonCall")
+
+using BenchmarkTools
+
+@btime smallest_divisall(20)
+@time smallest_divisall(20)
+```
+
+```{julia}
+function smallest_divisall(n::Int64)
+    for i=1:factorial(n)
+        for j=1:n
+            if i % j != 0
+                break
+            elseif j == n
+                return i
+            end
+        end
+    end
+end
+```
+
+
+```{python}
+from numba import jit
+import numpy as np
+from math import factorial
+
+@jit
+def smallest_divisall(n):
+    for i in range(1, factorial(n) + 1):
+        for j in range(1, n + 1):
+            if i % j != 0:
+                break
+            elif j == n:
+                return i
+
+%time smallest_divisall(20)
+```

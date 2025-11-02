@@ -3,6 +3,7 @@
 -- vim.opt_local.conceallevel = 0
 vim.wo.conceallevel = 0
 
+vim.b.slime_cell_delimiter = '```'
 -- local ok, quarto = pcall(require, 'quarto')
 -- if ok then quarto.activate() end
 

@@ -38,7 +38,7 @@ export FZF_DEFAULT_OPTS=" \
     --multi \
     --scrollbar '█' \
     --history /tmp/fzfhistory \
-    --prompt 'FZF> ' \
+    --prompt '󰘧 ' \
     --tabstop=4 \
     --highlight-line \
     --tmux 80%,85% \
@@ -52,27 +52,12 @@ export FZF_DEFAULT_OPTS=" \
         `ctrl-o:execute(open {+}),`
         `ctrl-y:execute-silent(echo -n {+} | pbcopy),`
         `ctrl-e:execute(\$EDITOR {+} < /dev/tty > /dev/tty 2>&1),`
-        `alt-x:exclude-multi,`
+        `alt-x:exclude-multi,` \
         `change:first' \
     --bind 'focus:transform-preview-label:echo ┨ {} ┠' \
     --preview '/Users/eo/.config/fzf/fzf-previewer.sh {}' \
     --preview-window 'right,60%,nowrap' \
 "
-
-# --color=`
-#     `fg:#ffffff,`
-#     `bg:#1f1f1f,`
-#     `hl:#ffdd33,`
-#     `fg+:#ffffff,`
-#     `bg+:#04395e,`
-#     `gutter:#1f1f1f,`
-#     `hl+:#ffdd33,`
-#     `query:#ffffff,`
-#     `disabled:#808080,`
-#     `border:#ffffff,`
-#     `separator:#454545,`
-#     `label:#4ec9b0,`
-#     `header:#f9ae28:underline:bold' \
 
 # Use fd for FZF completion
 # 1). listing files and dirs ($1 is the base path to start search) such as "vim ~/.config/**<TAB>"
@@ -88,14 +73,14 @@ _fzf_compgen_dir() {
 # ctrl_t_is_home="/tmp/fzf-ctrl-t-is-home"
 export FZF_CTRL_T_COMMAND="$FD"
 export FZF_CTRL_T_OPTS=" \
-    --prompt 'Fzf [Current]> ' \
+    --prompt '󰘧 [Current]> ' \
     --header ':: ALT-L (toggle HOME/Current), ALT-R (Root)' \
-    --bind 'alt-r:reload($FD . /)+change-prompt(Fzf [Root]> )' \
+    --bind 'alt-r:reload($FD . /)+change-prompt(󰘧 [Root]> )' \
     --bind 'alt-l:transform: \
       [[ ! \$FZF_PROMPT =~ HOME ]] && { \
-          echo \"reload($FD . $HOME)+change-prompt(Fzf [HOME]> )\"; \
+          echo \"reload($FD . $HOME)+change-prompt(󰘧 [HOME]> )\"; \
       } || { \
-          echo \"reload($FD)+change-prompt(Fzf [CWD]> )\"; \
+          echo \"reload($FD)+change-prompt(󰘧 [CWD]> )\"; \
       }' \
 "
 # --bind 'start:execute:rm -f $ctrl_t_is_home' \
@@ -141,6 +126,6 @@ export FZF_ALT_C_OPTS=" \
 # CTRL-G L for Reflogs
 # CTRL-G E for Each ref (git for-each-ref)
 # CTRL-G W for Worktrees
-source "${HOME}/.config/fzf/fzf-git.sh"
+source "$HOME/.config/fzf/fzf-git.sh"
 
-# vim: set ft=zsh ts=8 sw=4 et:
+# vim: ft=zsh ts=8 sw=4 et:

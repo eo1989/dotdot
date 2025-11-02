@@ -1,0 +1,12 @@
+{
+  "lineWidth": 80,
+  "ruff": {
+    "lineLengtjjh": 80,
+  },
+  "jupyter": {},
+  "excludes": [],
+  "plugins": [
+    "https://plugins.dprint.dev/ruff-0.5.0.wasm",
+    "https://plugins.dprint.dev/jupyter-0.2.0.wasm"
+  ]
+}

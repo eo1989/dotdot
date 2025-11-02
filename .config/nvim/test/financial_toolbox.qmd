@@ -1,0 +1,42 @@
+---
+title: Financial Toolbox
+format: html
+jupyter: julia-1.11
+---
+
+# Pricing and Risk Management
+
+Pricing a European Option in the Black Scholes Framework. According to the BSM
+a european option can be expressed as follows:
+
+**_European Call Option Price_**
+$$
+\begin{columns}
+  \begin{column}
+    \text{European Call Price} \enspace
+   C_{bs}(S, K, r, T, \sigma, d) = S e^{-d, T} N(d_{1}) - Ke^{-r, T} N(d_{2})
+  \end{column}
+\end{columns}
+$$
+
+**_European Put Option Price_**
+$$
+\begin{columns}
+  \begin{column}
+    \text{European Put Price} \enspace
+   P_{bs}(S, K, r, T, \sigma, d) = Ke^{-r, T} N(-d_{2}) - S e^{-d, T} N(-d_{1})
+  \end{column}
+\end{columns}
+$$
+Where:
+- $ d_{1} = \frac{\ln\left(\frac{S}{K}\right) + \left(r-q+\frac{\sigma^{2}}{2}\right)T}{\sigma\sqrt{T}} $
+- $ d_{2} = d_{1} - \sigma\sqrt{T}$
+And:
+- $S$ is the underlying spot price
+- $K$ is the strike price
+- $r$ is the risk free rate
+- $T$ is the tiime to maturity
+- $\sigma$ is the implied volatility of the underlying
+- $d$ is the implied dividend of the underlying
+
+

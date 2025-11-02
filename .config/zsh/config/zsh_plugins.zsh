@@ -5,11 +5,11 @@
 # load various completions of clis installed via homebrew
 # needs to be run *before* compinit/zsh-autocomplete
 # export FPATH="$ZDOTDIR/completions:$BREW_PREFIX/share/zsh/site-functions:$BREW_PREFIX/share/zsh-completions:$HOME/.zfunc:$FPATH"
-export FPATH="$BREW_PREFIX/share/zsh-completions:/Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/completions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions:$HOME/.zfunc:$FPATH"
+export FPATH="${BREW_PREFIX}/share/zsh-completions:/Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/completions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions:$HOME/.zfunc:$FPATH"
 
 # ZSH-SYNTAX-HIGHLIGHTING
 # DOCS https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/regexp.md
-. "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
+. "${BREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(
     main
     brackets
@@ -31,7 +31,7 @@ typeset -A ZSH_HIGHLIGHT_REGEXP # actual highlighters defined in bottom of alias
 # More info: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
 (( ! ${+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE} )) &&
     typeset -g ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=5'
-. "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
+. "${BREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
 
 # akinsho's
 # export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=241'
@@ -49,13 +49,13 @@ bindkey '^E' autosuggest-accept
 # ZSH-COMPLETIONS
 # also loads compinit stuff, therefore has to be loaded before most plugins // maybe it can be
 # loaded after to get the original UX back? this new one sucks.
-. "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" 2>/dev/null
+. "${BREW_PREFIX}/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" 2>/dev/null
 
 # ZSH-AUTOPAIR
-. "$BREW_PREFIX/share/zsh-autopair/autopair.zsh" 2>/dev/null
+. "${BREW_PREFIX}/share/zsh-autopair/autopair.zsh" 2>/dev/null
 
 # ZSH-HISTORY-SUBSTRING-SEARCH
-. "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null
+. "${BREW_PREFIX}/share/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null
 export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 
 

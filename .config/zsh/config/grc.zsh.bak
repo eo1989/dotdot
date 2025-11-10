@@ -1,0 +1,5 @@
+# grc colorizes a bunch of unix tools all over the place
+# it fucks with julia
+# if $(grc &>/dev/null) && ! $(brew &>/dev/null); then
+#     source /opt/homebrew/etc/grc.zsh
+# fi

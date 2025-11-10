@@ -1,5 +1,4 @@
 local api, fn = vim.api, vim.fn
--- local ls = require('luasnip')
 local opts = { noremap = true, silent = true }
 
 ---@type LazySpec
@@ -30,6 +29,7 @@ return {
       local ft_functions = require('luasnip.extras.filetype_functions')
       local util = require('luasnip.util.util')
 
+      ---@type LuaSnip
       ls.config.setup {
         keep_roots = true,
         link_roots = true,
@@ -40,7 +40,7 @@ return {
         store_selection_keys = '<Tab>',
         -- update_events = 'InsertLeave',
         -- update_events = 'TextChanged,TextChangedI,InsertLeave',
-        -- update_events = 'TextChanged,InsertLeave',
+        update_events = 'TextChanged,InsertLeave',
         region_check_events = { 'CursorMoved', 'CursorHold', 'InsertEnter' },
         -- region_check_events = { 'CursorMoved', 'InsertEnter' },
         delete_check_events = 'InsertLeave',
@@ -55,6 +55,7 @@ return {
           i = ls.insert_node,
           l = extras.lambda,
           s = ls.snippet,
+          snippet = ls.snippet,
           sn = ls.snippet_node,
           isn = ls.indent_snippet_node,
           r = ls.restore_node,
@@ -95,7 +96,7 @@ return {
           [types.exitNode] = {
             -- passive = { hl_group = 'Substitute' },
             unvisited = {
-              -- virt_text = { { '|', 'Conceal' } },
+              virt_text = { { '|', 'Type' } },
               virt_text_pos = 'inline',
             },
           },
@@ -204,11 +205,11 @@ return {
         fs_event_providers = { 'autocmd', 'libuv' },
       }
 
-      local aug = api.nvim_create_augroup('ClearLuasnipSession', { clear = true })
+      local luasnip_aug = api.nvim_create_augroup('ClearLuasnipSession', { clear = true })
       api.nvim_create_autocmd('CursorHold', {
         desc = 'Deactivate snippet after leaving insert/select mode',
         pattern = '*',
-        group = aug,
+        group = luasnip_aug,
         callback = function()
           vim.cmd.LuaSnipUnlinkCurrent { mods = { emsg_silent = true } }
           vim.snippet.stop()

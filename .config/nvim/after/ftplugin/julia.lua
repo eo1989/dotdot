@@ -1,7 +1,11 @@
 local optl = vim.opt_local
 -- local bo = vim.bo
 
-vim.b.slime_cell_delimiter = '#\\s\\=%%'
+-- vim.g.slime_cell_delimiter = '#\\s\\=%%'
+vim.b['slime_cell_delimiter'] = '#\\s\\=%%'
+vim.b['slime_bracketed_paste'] = true
+
+vim.treesitter.start()
 
 -- bo.tabstop = 4
 -- bo.textwidth = 79

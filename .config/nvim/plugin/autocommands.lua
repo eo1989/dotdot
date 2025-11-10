@@ -302,6 +302,18 @@ eo.augroup(
   }
 )
 
+-- Set kitty terminal padding to 0 when in nvim
+--[[ https://github.com/hendrikmi/dotfiles/blob/main/nvim/lua/core/snippets.lua ]]
+eo.augroup('kitty_mp', {
+  event = { 'VimEnter' },
+  pattern = { '*' },
+  command = function() vim.cmd([[silent !kitty @ set-spacing padding=0 margin=0 3 0 3]]) end,
+}, {
+  event = { 'VimLeave' },
+  pattern = { '*' },
+  command = function() vim.cmd([[silent !kitty @ set-spacing padding=default margin=default]]) end,
+})
+
 -- eo.augroup('TerminalAutocommands', {
 --   event = { 'TermClose' },
 --   command = function(args)

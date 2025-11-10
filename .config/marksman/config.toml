@@ -4,4 +4,4 @@
 toc.enable = true
 
 [core]
-marksman.file_extensions = ["md", "markdown", "qmd"]
+marksman.file_extensions = ["md", "markdown", "qmd", "quarto"]

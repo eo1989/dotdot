@@ -1,0 +1,59 @@
+---
+author: Ernest Orlowski
+jupyter:
+  kernel: "Python 3 (ipykernel)"
+  cache: true
+title: "Learn Data Science OReilly"
+format: html
+editor:
+  markdown:
+    wrap: sentence
+execute:
+  echo: true
+---
+
+
+# Learning Data Science
+
+
+## Chapter 1:
+{visibility="uncounted"}
+
+
+## Chapter 2: Question & Data Scope
+
+
+
+
+## Chapter 3: Simulation & Data Design
+
+2016 pollsters correctly predicted the election outcome in 46 of 50 states. Of those 46 states, 
+Donny got 231 and Hillary Clinton received 
+
+```{python} 
+import pandas as pd
+import numpy as np
+from scipy.stats import multivariate_normal, multivariate_hypergeom
+
+proportions = np.array([0.4818, 0.4746, 1 - (0.4818 + 0.4746)])
+n = 1_500
+N = 6_165_478
+votes = np.trunc(N * proportions).astype(int)
+votes
+
+# array([2970527, 2926135,  268814])
+
+multivariate_hypergeom.rvs(votes, n)
+# array([715, 710, 75])
+```
+
+Each time you call `multivariate_hypergeom.rvs` we get a different sample and counts:
+
+```{python} 
+multivariate_hypergeom.rvs(votes, n=n)
+# array([725, 712, 63])
+```
+
+
+
+

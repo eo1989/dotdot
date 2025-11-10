@@ -4,7 +4,7 @@ local api, fn, fs, lsp = vim.api, vim.fn, vim.fs, vim.lsp
 return {
   cmd = { 'basedpyright-langserver', '--stdio' },
   filetypes = { 'python' },
-  ---@param client vim.lsp.Client
+  ---@param client vim.lsp.ClientConfig
   on_attach = function(client)
     -- let treesitter handle semantic tokens
     -- client.server_capabilities.semanticTokensProvider = false
@@ -27,32 +27,57 @@ return {
   single_file_support = true,
   settings = {
     basedpyright = {
-      disableOrganizeImports = true, -- |> ruff
+      disableOrganizeImports = true,
+      disableLanguageServices = false,
+      disableTaggedHints = false,
+      openFilesOnly = true,
       analysis = {
+        autoImportCompletions = false,
+        autoSearchPaths = true,
+        diagnosticMode = 'openFilesOnly',
         typeCheckingMode = 'off',
-        autoImportCompletions = true, -- |> ruff
-        autoSearchPaths = true, -- already done in base config
-        diagnosticMode = false, --'openFilesOnly' |> ruff
-        ignore = { '*' },
+        autoFormatStrings = true,
+        useLibraryCodeForTypes = true,
+        inlayHints = {
+          variableTypes = true,
+          callArgumentNames = true,
+          callArgumentNamesMatching = false,
+          functionReturnTypes = true,
+          genericTypes = true,
+        },
+        -- ignore = { '*' },
         diagnosticSeverityOverrides = {
-          reportAny = 'none',
-          reportArgumentType = 'none', -- |> ruff
-          reportAssignmentType = 'none',
-          reportAttributeAccessIssue = 'none',
-          reportDeprecated = 'none',
-          reportExplicitAny = 'none',
-          reportGeneralTypeIssues = 'none',
-          reportMissingTypeStubs = 'none',
-          reportOptionalMemberAccess = 'none',
-          reportUndefinedVariable = 'none', -- |> ruff
-          reportUnreachable = 'none',
-          reportUnusedCallResult = 'none',
-          reportUnusedFunction = 'none',
-          reportUnusedImport = 'none', -- |> ruff
+          -- reportAny = 'none',
+          -- reportArgumentType = 'none',
+          -- reportAssignmentType = 'none',
+          -- reportAttributeAccessIssue = 'none',
+          -- reportDeprecated = 'none',
+          -- reportExplicitAny = 'none',
+          -- reportGeneralTypeIssues = 'none',
+          -- reportMissingTypeStubs = 'none',
+          -- reportOptionalMemberAccess = 'none',
+          -- reportUndefinedVariable = 'none',
+          -- reportUnreachable = 'none',
+          -- reportUnusedCallResult = 'none',
+          -- reportUnusedFunction = 'none',
+          -- reportUnusedImport = 'none',
+          reportAny = false,
+          reportArgumentType = false,
+          reportAssignmentType = false,
+          reportAttributeAccessIssue = false,
+          reportDeprecated = false,
+          reportExplicitAny = false,
+          reportGeneralTypeIssues = false,
+          reportMissingTypeStubs = false,
+          reportOptionalMemberAccess = false,
+          reportUndefinedVariable = false,
+          reportUnreachable = false,
+          reportUnusedCallResult = false,
+          reportUnusedFunction = false,
+          reportUnusedImport = false,
         },
         loglevel = 'error',
         stubpath = fn.expand('~') .. '/.local/share/nvim/lazy/python-type-stubs/stubs',
-        useLibraryCodeForTypes = true, -- already true in base config
       },
     },
   },

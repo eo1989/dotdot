@@ -1,3 +1,4 @@
+-- local M = {}
 --- VSCode-like lightbulb.
 --- Implementation inspired from https://github.com/nvimdev/lspsaga.nvim/blob/a751b92b5d765a99fe3a42b9e51c046f81385e15/lua/lspsaga/codeaction/lightbulb.lua
 

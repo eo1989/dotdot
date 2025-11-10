@@ -7,7 +7,8 @@ fi
 eval "$(fzf --zsh)"
 # source <(fzf --zsh)
 
-FD="fd --hidden --follow $FD_EXCLUDE"
+# FD='fd --hidden --follow $FD_EXCLUDE'
+FD="fd -HL "${FD_EXCLUDE}""
 
 export FZF_DEFAULT_COMMAND="$FD -tf -tl"
 
@@ -56,7 +57,7 @@ export FZF_DEFAULT_OPTS=" \
         `change:first' \
     --bind 'focus:transform-preview-label:echo ┨ {} ┠' \
     --preview '/Users/eo/.config/fzf/fzf-previewer.sh {}' \
-    --preview-window 'right,60%,nowrap' \
+    --preview-window 'right,70%,nowrap' \
 "
 
 # Use fd for FZF completion
@@ -98,8 +99,8 @@ export FZF_CTRL_R_OPTS=" \
 # - ALT-P: show parent dirs
 # - ALT-S: show sub dirs
 # alt_c_is_home="/tmp/fzf-alt-c-is-home"
-bindkey '^j' fzf-cd-widget
-export FZF_ALT_C_COMMAND="$FD --type d"
+# bindkey '^j' fzf-cd-widget
+export FZF_ALT_C_COMMAND="$FD -td"
 export FZF_ALT_C_OPTS=" \
     --preview '[[ \$(command -v eza) ]] && eza -la --color=always --icons -g --group-directories-first {} || tree -C {} | head -200' \
     --header ':: ALT-/ (toggle HOME/Current), ALT-R (Root), ALT-P (Parent)' \

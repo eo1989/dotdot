@@ -4,16 +4,16 @@ if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
   PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
 fi
 
-eval "$(fzf --zsh)"
-# source <(fzf --zsh)
+# eval "$(fzf --zsh)"
+source <(fzf --zsh)
 
-FD="fd --hidden --follow $FD_EXCLUDE"
+FD="fd --hidden --follow ${FD_EXCLUDE}"
 
-export FZF_DEFAULT_COMMAND="$FD -tf -tl"
+export FZF_DEFAULT_COMMAND="${FD} -tf -tl"
 
 # Define color themes
 # Default colors are defined in https://github.com/junegunn/fzf/blob/master/src/tui/tui.go
-if $TRANSPARENT; then
+if "${TRANSPARENT}"; then
     bg=-1
 fi
 
@@ -52,33 +52,33 @@ export FZF_DEFAULT_OPTS=" \
         `ctrl-s:toggle-sort,`
         `ctrl-o:execute(open {+}),`
         `ctrl-y:execute-silent(echo -n {+} | pbcopy),`
-        `ctrl-e:execute(\$EDITOR {+} < /dev/tty > /dev/tty 2>&1),`
+        `ctrl-e:execute(\${EDITOR} {+} < /dev/tty > /dev/tty 2>&1),`
         `alt-x:exclude-multi,`
         `change:first' \
     --bind 'focus:transform-preview-label:echo [ {} ]' \
     --preview '~/.config/fzf/fzf-previewer.sh {}' \
     --preview-window 'right,60%,nowrap' \
-    --color=$colors"
+    --color=${colors}"
 
 _fzf_compgen_path() {
-    fd --hidden --follow ${(z)FD_EXCLUDE} . "$1"
+    fd --hidden --follow "${(z)FD_EXCLUDE}" . "$1"
 }
 
 _fzf_compgen_dir() {
-    fd --type d --hidden --follow ${(z)FD_EXCLUDE} . "$1"
+    fd --type d --hidden --follow "${(z)FD_EXCLUDE}" . "$1"
 }
 
 # ctrl_t_is_home="/tmp/fzf-ctrl-t-is-home"
-export FZF_CTRL_T_COMMAND="$FD"
+export FZF_CTRL_T_COMMAND="${FD}"
 export FZF_CTRL_T_OPTS=" \
     --prompt 'Fzf [Current]> ' \
     --header ':: ALT-L (toggle HOME/Current), ALT-R (Root)' \
-    --bind 'alt-r:reload($FD . /)+change-prompt(Fzf [Root]> )' \
+    --bind 'alt-r:reload("${FD}" . /)+change-prompt(Fzf [Root]> )' \
     --bind 'alt-l:transform: \
-      [[ ! \$FZF_PROMPT =~ HOME ]] && { \
-          echo \"reload($FD . $HOME)+change-prompt(Fzf [HOME]> )\"; \
+      [[ ! \${FZF_PROMPT} =~ HOME ]] && { \
+          echo \"reload("${FD}" . ${HOME})+change-prompt(Fzf [HOME]> )\"; \
       } || { \
-      echo \"reload($FD)+change-prompt(Fzf [CWD]> )\"; \
+      echo \"reload(${FD})+change-prompt(Fzf [CWD]> )\"; \
         }' \
 "
 # --bind 'start:execute:rm -f $ctrl_t_is_home' \
@@ -124,6 +124,6 @@ export FZF_ALT_C_OPTS=" \
 # CTRL-G L for Reflogs
 # CTRL-G E for Each ref (git for-each-ref)
 # CTRL-G W for Worktrees
-source $HOME/.config/fzf/fzf-git.sh
+source "${HOME}/.config/fzf/fzf-git.sh"
 
 # vim: set ft=zsh ts=8 sw=4 et:

@@ -416,15 +416,7 @@ diagnostic.config {
   severity_sort = true,
   underline = true,
   update_in_insert = false,
-  jump = {
-    severity = { min = S.WARN, max = S.ERROR },
-    -- wrap = true,
-    -- float = {
-    --   -- focus_id = false,
-    --   scope = 'line',
-    --   -- namespace = 0,
-    -- },
-  },
+  jump = { severity = { min = S.WARN, max = S.ERROR } },
   signs = {
     severity = { min = S.WARN },
     text = {
@@ -435,20 +427,23 @@ diagnostic.config {
     },
     -- linehl = {
     --   [S.WARN] = 'DiagnosticSignWarnLine',
-    --   [S.INFO] = 'DiagnosticSignInfoLine',
-    --   [S.HINT] = 'DiagnosticSignHintLine',
+    --   -- [S.INFO] = 'DiagnosticSignInfoLine',
+    --   -- [S.HINT] = 'DiagnosticSignHintLine',
     --   [S.ERROR] = 'DiagnosticSignErrorLine',
     -- },
   },
   virtual_text = false and {
     severity = { min = S.WARN },
-    -- severity = { min = diagnostic.severity.WARN },
     spacing = 6,
     prefix = function(d)
       -- local level = diagnostic.severity[d.severity]
       local level = S[d.severity]
       return icons[level:lower()]
     end,
+    -- format = function(diag)
+    --   local code = diag.code and fmt('[%s]', diag.code) or ''
+    --   return fmt('%s %s', code, diag.message)
+    -- end,
     -- suffix = function(diag)
     --   if not diag then return '' end
     --   local codeOrSource = (tostring(diag.code or diag.source or ''))
@@ -465,14 +460,13 @@ diagnostic.config {
     focusable = false, -- no need to enter these windows
     header = '',
     scope = 'line', -- to keep inline with diagflow.nvim
-    -- source = 'if_many',
     prefix = function(diag)
       local level = S[diag.severity]
       local prefix = fmt('%s ', icons[level:lower()])
       return prefix, 'Diagnostic' .. level:gsub('^%l', string.upper)
     end,
     ---[[ www.github.com/willothy/nvim-config/blob/main/lua/configs/lsp/lspconfig.lua ]]
-    source = 'if_many',
+    source = true, --' if_many'
     -- header = setmetatable({}, {
     --   __index = function(_, k)
     --     local arr = {
@@ -487,4 +481,7 @@ diagnostic.config {
     --   end,
     -- }),
   },
+  --[[ supposedly makes diagnostics background transparent]]
+
+  -- on_ready = function() vim.cmd([[highlight DiagnosticVirtualText guibg=NONE]]) end,
 }

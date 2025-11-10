@@ -54,7 +54,7 @@ return {
         ['neo-tree-popup'] = false,
         NeogitCommitMessage = false,
         sh = function()
-          if string.match(vim.fs.basename(api.nvim_buf_get_name(0)), "^%.env.*") then
+          if string.match(vim.fs.basename(api.nvim_buf_get_name(0)), '^%.env.*') then
             -- disable copilot for .env files
             return false
           end
@@ -64,15 +64,13 @@ return {
       },
       server_opts_overrides = {
         settings = {
-          telemetry = { telemetryLevel = 'off' }
+          telemetry = { telemetryLevel = 'off' },
         },
       },
       should_attach = function(_, bufname)
-        if string.match(bufname, "env") then
-          return false
-        end
+        if string.match(bufname, 'env') then return false end
         return true
-      end
+      end,
     },
   },
   -- {
@@ -108,8 +106,7 @@ return {
     ---@type blink.cmp.Config
     opts = {},
     config = function(_, opts)
-      local blink = require('blink-cmp')
-      -- local luasnip = require('luasnip')
+      local blink = require('blink.cmp')
 
       blink.setup {
         fuzzy = {
@@ -125,77 +122,6 @@ return {
 
           ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
           ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
-          --[[ from https://github.com/Saghen/blink.cmp/issues/743 ]]
-          -- ['<Tab>'] = {
-          --   function(cmp)
-          --     if cmp.snippet_active() then
-          --       return cmp.accept()
-          --     else
-          --       return cmp.select_and_accept()
-          --     end
-          --   end,
-          --   function()
-          --     if vim.fn.pumvisible() == 1 then
-          --       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-y>', true, false, true), 'n', false)
-          --       return true
-          --     else
-          --       return false
-          --     end
-          --   end,
-          --   'snippet_forward',
-          --   'fallback',
-          -- },
-          -- ['<Tab>'] = {
-          --   function(cmp)
-          --     if cmp.snippet_active() then
-          --       return cmp.accept()
-          --     else
-          --       return cmp.select_and_accept()
-          --     end
-          --     -- if has_words_before() then
-          --     --   return cmp.insert_next()
-          --     --   -- elseif cmp.is_active(1) then
-          --     --   --   return cmp.select_and_accept()
-          --     -- elseif luasnip.expand_or_jumpable(1) then
-          --     --   return luasnip.expand_or_jump(1)
-          --     --   -- elseif luasnip.jumpable(1) then
-          --     --   --   luasnip.jump(1)
-          --     -- else
-          --     --   return cmp.select_and_accept()
-          --     --   -- neotab.tabout_luasnip()
-          --     -- end
-          --   end,
-          --   'snippet_forward',
-          --   'fallback',
-          -- },
-          -- ['<S-Tab>'] = { 'snippet_backward', 'fallback' },
-          -- ['<M-Tab>'] = {
-          --   function(cmp)
-          --     if vim.b[api.nvim_get_current_buf()].nes_state then
-          --       cmp.hide()
-          --       return require('copilot-lsp.nes').apply_pending_nes()
-          --     end
-          --   end,
-          --   'fallback',
-          -- },
-          -- ['<Tab>'] = {
-          --   function(cmp)
-          --     if vim.b[vim.api.nvim_get_current_buf()].nes_state then
-          --       cmp.hide()
-          --       return (
-          --         require('copilot-lsp.nes').apply_pending_nes()
-          --         and require('copilot-lsp.nes').walk_cursor_end_edit()
-          --       )
-          --     end
-          --     if cmp.snippet_active() then
-          --       return cmp.accept()
-          --     else
-          --       return cmp.select_and_accept()
-          --     end
-          --   end,
-          --   'snippet_forward',
-          --   'fallback',
-          -- },
         },
         appearance = {
           nerd_font_variant = 'normal',
@@ -204,15 +130,6 @@ return {
         snippets = {
           preset = 'luasnip',
           expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
-          --[[ https://github.com/L3MON4D3/Dotfiles/blob/main/nvim/lua/plugins/blink.lua ]]
-          -- expand = function(snippet)
-          --   local override_snip = require('session').lsp_override_snips[snip]
-          --   if override_snip then
-          --     require('luasnip').snip_expand(override_snip)
-          --   else
-          --     require('luasnip').lsp_expand(snippet)
-          --   end
-          -- end,
           active = function(filter)
             if filter and filter.direction then return require('luasnip').jumpable(filter.direction) end
             return require('luasnip').in_snippet()
@@ -220,7 +137,7 @@ return {
           jump = function(direction) require('luasnip').jump(direction) end,
         },
         signature = {
-          enabled = false,
+          enabled = true,
           trigger = {
             enabled = true,
             show_on_insert = true,
@@ -230,9 +147,9 @@ return {
           window = {
             direction_priority = { 'n', 's' },
             -- border = 'solid',
-            border = 'none',
+            border = defaults.ui.border.name,
             treesitter_highlighting = true,
-            show_documentation = false,
+            show_documentation = true,
             -- max_width = 60,
             -- min_width = vim.o.pumwidth,
             -- max_height = vim.o.pumheight,
@@ -259,12 +176,7 @@ return {
             auto_show_delay_ms = 20,
             update_delay_ms = 50,
             treesitter_highlighting = true,
-            window = {
-              border = 'rounded',
-              -- min_width = 40,
-              -- max_width = 120,
-              -- max_height = 60,
-            },
+            window = { border = 'rounded' },
           },
           accept = {
             auto_brackets = {
@@ -274,18 +186,12 @@ return {
           },
           list = {
             selection = {
-              -- preselect = false or function(ctx) return not blink.snippet_active { direction = 1 } end,
               preselect = function(ctx) return not require('blink.cmp').snippet_active { direction = 1 } end,
               auto_insert = function(ctx) return ctx.mode == 'cmdline' and false or true end,
-              -- auto_insert = false,
             },
-            -- cycle = { from_top = true, from_bottom = true },
           },
           menu = {
             enabled = true,
-            -- min_width = 20,
-            -- max_height = 30,
-            -- border = 'rounded',
             border = border,
             auto_show = true,
             cmdline_position = function()
@@ -299,7 +205,6 @@ return {
             draw = {
               treesitter = { 'lsp', 'copilot' },
               align_to = 'none', -- 'none' = disable | 'cursor' = align to cursor | 'label'
-              -- padding = 1, -- { left, right }
               padding = { 1, 1 },
               gap = 1, -- gap between columns
               columns = {
@@ -308,7 +213,6 @@ return {
               },
               components = {
                 label = {
-                  -- width = { fill = true, max = 80 },
                   text = function(ctx)
                     local highlights_info = require('colorful-menu').blink_highlights(ctx)
                     if highlights_info ~= nil then
@@ -318,7 +222,6 @@ return {
                       return ctx.label
                     end
                   end,
-                  -- text = require('colorful-menu').blink_components_text,
                   highlight = function(ctx)
                     local highlights = {}
                     local highlights_info = require('colorful-menu').blink_highlights(ctx)
@@ -329,16 +232,12 @@ return {
                     -- Do something else
                     return highlights
                   end,
-                  -- highlight = require('colorful-menu').blink_components_highlight,
                 },
                 kind_icon = {
                   text = function(ctx)
                     local icon = defaults.icons.completion_items[ctx.kind] or ''
-                    -- local icon = defaults.icons.completion_items or ""
-                    -- return icon .." " .. (ctx.kind or "")
                     return icon or ''
                   end,
-                  -- treesitter_highlighting = true,
                   highlight = function(ctx) return 'CmpItemKind' .. (ctx.kind or 'Default') end,
                 },
               },
@@ -353,28 +252,18 @@ return {
           },
         },
         sources = {
-          default = { 'lsp', 'snippets', 'path', 'copilot', 'buffer', 'otter' },
-          -- default = function(ctx)
-          --   local node = vim.treesitter.get_node()
-          --   if vim.bo.filetype == 'lua' then
-          --     return { 'lsp', 'path', 'lazydev' }
-          --   elseif node and vim.tbl_contains({ 'comment', 'line_comment', 'block_comment' }, node:type()) then
-          --     return {'buffer'}
-          --   end
-          -- end,
+          default = { 'lsp', 'snippets', 'path', 'copilot', 'buffer' },
           per_filetype = {
             sql = { inherit_defaults = true, 'dadbod' },
             lua = { inherit_defaults = true, 'lazydev' },
-            markdown = { inherit_defaults = true, 'markdown', 'latex' },
-            quarto = { inherit_defaults = true, 'markdown', 'latex' },
+            markdown = { inherit_defaults = true, 'latex', 'otter' },
+            quarto = { inherit_defaults = true, 'markdown', 'latex', 'otter' },
             julia = { inherit_defaults = true, 'latex' },
-            -- python = { inherit_defaults = true, 'latex' },
           },
           providers = {
             otter = {
               name = 'otter',
               module = 'blink.compat.source',
-              -- cmp_name = 'otter',
               enabled = true,
               opts = {},
             },
@@ -428,17 +317,17 @@ return {
               async = true, -- Whether we should wait for the provider to return before showing the completions
               timeout_ms = 50, -- How long to wait for the provider to return before showing completions and treating it as asynchronous
               should_show_items = true, -- Whether or not to show the items ??
-              max_items = 20, -- Maximum number of items to display in the menu
+              -- max_items = 20, -- Maximum number of items to display in the menu
               min_keyword_length = 0, -- Minimum number of characters in the keyword to trigger the provider
               -- If this provider returns 0 items, it will fallback to these providers.
               -- If multiple providers fallback to the same provider, all of the providers must return 0 items for it to fallback
-              -- score_offset = 11, -- Boost/penalize the score of the items
+              score_offset = 6, -- Boost/penalize the score of the items
               -- override = nil, -- Override the source's functions
             },
             path = {
               name = 'path',
               module = 'blink.cmp.sources.path',
-              -- score_offset = 3,
+              score_offset = 3,
               opts = {
                 trailing_slash = true,
                 label_trailing_slash = true,
@@ -471,7 +360,7 @@ return {
             copilot = {
               name = 'Copilot',
               module = 'blink-copilot',
-              score_offset = -9,
+              score_offset = -3,
               deduplicate = { enabled = true },
               timeout_ms = 50,
               async = true,
@@ -497,15 +386,15 @@ return {
               name = 'Latex',
               module = 'blink-cmp-latex',
               async = true,
-              transform_items = function(ctx, items)
-                for _, item in ipairs(items) do
-                  item.kind_icon = ' '
-                end
-                return items
-              end,
-              opts = {
-                insert_command = true,
-              },
+              -- transform_items = function(ctx, items)
+              --   for _, item in ipairs(items) do
+              --     item.kind_icon = ' '
+              --   end
+              --   return items
+              -- end,
+              -- opts = {
+              --   insert_command = true,
+              -- },
             },
           },
         },
@@ -537,7 +426,7 @@ return {
         end,
       })
     end,
-    opts_extend = { 'sources.default' },
+    -- opts_extend = { 'sources.default' },
   },
 }
 

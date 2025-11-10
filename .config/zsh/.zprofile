@@ -1,10 +1,16 @@
 if [[ $(uname -p) == "arm" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-  eval "$(/usr/local/bin/brew shellenv)"
+    eval "$(/usr/local/bin/brew shellenv)"
 fi
 
 export BREW_PREFIX="/opt/homebrew"
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv virtualenv-init - zsh)"
+# eval "$(pyenv init - --path --no-rehash zsh)"
+eval "$(pyenv init - zsh)"
 
 # path=(
 #     "$BREW_PREFIX/opt/ruby/bin"
@@ -21,9 +27,13 @@ export BREW_PREFIX="/opt/homebrew"
 
 # export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
 
-(( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
+# (( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
 # (( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="${HOME}/.cache"
-(( ${+ZDOTDIR} )) || export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-(( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="${HOME}/.cache/zsh"
+# (( ${+ZDOTDIR} )) || export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+# (( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="${HOME}/.cache/zsh"
 
 # export MANPATH="$BREW_PREFIX/opt/coreutils/libexec/gnuman:${MANPATH}"
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+# source ~/.orbstack/shell/init.zsh 2>/dev/null || :

@@ -38,161 +38,161 @@
 # }
 
 # gh repo sweetbbak/sweet-zsh :: sweetbbak/sweet-zsh/blob/main/conf/zsh/functions.zsh
-find-git() {
-    cd "$(fd . "${1:-$HOME}" --hidden --max-depth 5 -t d -j20 -HI ".git" | sed 's|/.git$||' | fzf --preview 'eza -T {}')"
-}
+# find-git() {
+#     cd "$(fd . "${1:-$HOME}" --hidden --max-depth 5 -t d -j20 -HI ".git" | sed 's|/.git$||' | fzf --preview 'eza -T {}')"
+# }
 
-lman() {
-    man "${1}" | less -R --use-color -Dd+r -Du+b | bat -pl man
-}
+# lman() {
+#     man "${1}" | less -R --use-color -Dd+r -Du+b | bat -pl man
+# }
 
-show-color() {
-    perl -e 'foreach $a(@ARGV){print "\e[48:2::".join(":",unpack("C*",pack("H*",$a)))."m \e[49 "};print "\n"' "$@"
-}
+# show-color() {
+#     perl -e 'foreach $a(@ARGV){print "\e[48:2::".join(":",unpack("C*",pack("H*",$a)))."m \e[49 "};print "\n"' "$@"
+# }
 
-bytes() {
-    [ -f "${1}" ] && {
-        xxd -b "${1}" | sed -r "s/\d32{3,}.*//g" | sed "s/.*://" | sed "s/\d32//g"
-        exit 0
-    }
-    echo -e 'bytes <file>\ndump bytes of a file'
-}
+# bytes() {
+#     [ -f "${1}" ] && {
+#         xxd -b "${1}" | sed -r "s/\d32{3,}.*//g" | sed "s/.*://" | sed "s/\d32//g"
+#         exit 0
+#     }
+#     echo -e 'bytes <file>\ndump bytes of a file'
+# }
 
-yaa() {
-    tmp="$(mktemp -t "yazi-cwd.XXXX")"
-    yazi --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
-}
+# yaa() {
+#     tmp="$(mktemp -t "yazi-cwd.XXXX")"
+#     yazi --cwd-file="$tmp"
+#     if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+#         cd -- "$cwd"
+#     fi
+#     rm -f -- "$tmp"
+# }
 
-rp() {
-    case "$1" in
-        -h|--help)
-            echo "rp <file> - copies files full path"
-            ;;
-        *)
-            realpath "${1}" | tr -d \\n | pbcopy && echo "copied filepath"
-            ;;
-    esac
-}
+# rp() {
+#     case "$1" in
+#         -h|--help)
+#             echo "rp <file> - copies files full path"
+#             ;;
+#         *)
+#             realpath "${1}" | tr -d \\n | pbcopy && echo "copied filepath"
+#             ;;
+#     esac
+# }
 
-emoji() {
-    emojis=$(curl -sSL 'https://git.io/JXXO7')
-    selected_emoji=$(printf "%s" $emojis|fzf --preview-window=hidden --cycle)
-    [ -z "$selected_emoji" ] || printf "%s" "$selected_emoji" | cut -d" " -f1 | pbcopy
-}
+# emoji() {
+#     emojis=$(curl -sSL 'https://git.io/JXXO7')
+#     selected_emoji=$(printf "%s" $emojis|fzf --preview-window=hidden --cycle)
+#     [ -z "$selected_emoji" ] || printf "%s" "$selected_emoji" | cut -d" " -f1 | pbcopy
+# }
 
-ic() {
-    images=$(fd . "${1:-/Users/eo/Downloads}" -tf -d2 -e png -e jpg -e jpeg -e webm -e gif |\
-    fzf --cycle --preview='kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}')
-    [ -z "$image" ] || pbcopy "$image"
-}
+# ic() {
+#     images=$(fd . "${1:-/Users/eo/Downloads}" -tf -d2 -e png -e jpg -e jpeg -e webm -e gif |\
+#     fzf --cycle --preview='kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}')
+#     [ -z "$image" ] || pbcopy "$image"
+# }
 
-meme() {
-    img=$(cd ~/Downloads/memes && fzf --preview='
-      kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}
-    ')
-    [ -z "${img}" ] && exit 0
-    pbcopy "${img}"
-}
+# meme() {
+#     img=$(cd ~/Downloads/memes && fzf --preview='
+#       kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 {}
+#     ')
+#     [ -z "${img}" ] && exit 0
+#     pbcopy "${img}"
+# }
 
 # razak17/dotfiles/blob/main/.config/zsh/scripts/utils
-ch() {
-    sudo chmod -R 777 "$@"
-}
+# ch() {
+#     sudo chmod -R 777 "$@"
+# }
 
-cx() {
-    sudo chmod +x "$@"
-}
+# cx() {
+#     sudo chmod +x "$@"
+# }
 
-zshcomp() {
-    for command completion in ${(kv)_comps:#-*(-|-,*)}; do
-        printf "%-32s %s\n" $command $completion
-    done | sort
-}
+# zshcomp() {
+#     for command completion in ${(kv)_comps:#-*(-|-,*)}; do
+#         printf "%-32s %s\n" $command $completion
+#     done | sort
+# }
 #### razak finished
 
-logg() {
-    "${@}" > >(tee "$(basename "${1}").log")
-}
+# logg() {
+#     "${@}" > >(tee "$(basename "${1}").log")
+# }
 
-pdf_open() {
-    fd -e pdf "${1}" . 2>&1 | fzf | xargs -i open {}
-}
+# pdf_open() {
+#     fd -e pdf "${1}" . 2>&1 | fzf | xargs -i open {}
+# }
 
 # launch programs from commandline w/o messing up your current pty
 # usage: "standalone <your full command>"
 # NOTE: nohup?
-standalone() {
-    "${@}" > /dev/null 2>&1 &
-}
+# standalone() {
+#     "${@}" > /dev/null 2>&1 &
+# }
 
-weather() {
-    if [ "${1}" = "-h" ]; then
-        curl "wttr.in/:help"
-    else
-        curl "wttr.in/?A2Fn${@}"
-    fi
-}
+# weather() {
+#     if [ "${1}" = "-h" ]; then
+#         curl "wttr.in/:help"
+#     else
+#         curl "wttr.in/?A2Fn${@}"
+#     fi
+# }
 
-mediadiff() {
-    nvim -d <(mediainfo "$1" ) <(mediainfo "$2")
-}
+# mediadiff() {
+#     nvim -d <(mediainfo "$1" ) <(mediainfo "$2")
+# }
 
 # join a glob with the given delimiter
-join() {
-    local IFS=$1
-    shift
-    echo "${*}"
-}
+# join() {
+#     local IFS=$1
+#     shift
+#     echo "${*}"
+# }
 
-explain() {
-    open "https://explainshell.com/explain?cmd=${*}";
-}
+# explain() {
+#     open "https://explainshell.com/explain?cmd=${*}";
+# }
 
-ansi() { echo -e "\e[${1}m${*:2}\e[0m"; }
-bold() { ansi 1 "$@"; }
-italic() { ansi 3 "$@"; }
-underline() { ansi 4 "$@"; }
-strikethrough() { ansi 9 "$@"; }
-red() { ansi 31 "$@"; }
+# ansi() { echo -e "\e[${1}m${*:2}\e[0m"; }
+# bold() { ansi 1 "$@"; }
+# italic() { ansi 3 "$@"; }
+# underline() { ansi 4 "$@"; }
+# strikethrough() { ansi 9 "$@"; }
+# red() { ansi 31 "$@"; }
 
-speedtest() {
-    curl -s "https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py" | python3 -
-}
+# speedtest() {
+#     curl -s "https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py" | python3 -
+# }
 
-ipinfo() {
-    curl "https://ipinfo.io/$1" || curl "icanhazip.com"
-}
+# ipinfo() {
+#     curl "https://ipinfo.io/$1" || curl "icanhazip.com"
+# }
 
 ## Dont need this anymore with the rust library 'bob-nvim'
-build-nvim() {
-    neovim_dir="$PROJECTS_DIR/eo_contrib/neovim"
-    [ ! -d $neovim_dir ] && git clone git@github.com:neovim/neovim.git $neovim_dir
-    pushd $neovim_dir
-    git checkout master
-    # git checkout origin/HEAD
-    git pull
-    [ -d "$neovim_dir/build/" ] && rm -r ./build/  # to clear the cmake cache
-    make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/dev/eo_contrib/neovim"
-    make install
-    popd || exit
-}
+# build-nvim() {
+#     neovim_dir="$PROJECTS_DIR/eo_contrib/neovim"
+#     [ ! -d $neovim_dir ] && git clone git@github.com:neovim/neovim.git $neovim_dir
+#     pushd $neovim_dir
+#     git checkout master
+#     # git checkout origin/HEAD
+#     git pull
+#     [ -d "$neovim_dir/build/" ] && rm -r ./build/  # to clear the cmake cache
+#     make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/dev/eo_contrib/neovim"
+#     make install
+#     popd || exit
+# }
 
-fancy-ctrl-z() {
-    if [[ $#BUFFER -eq 0 ]]; then
-        BUFFER="fg"
-        zle accept-line
-    else
-        zle push-input
-        zle clear-screen
-    fi
-}
+# fancy-ctrl-z() {
+#     if [[ $#BUFFER -eq 0 ]]; then
+#         BUFFER="fg"
+#         zle accept-line
+#     else
+#         zle push-input
+#         zle clear-screen
+#     fi
+# }
 
-zle -N fancy-ctrl-z
-bindkey '^Z' fancy-ctrl-z
+# zle -N fancy-ctrl-z
+# bindkey '^Z' fancy-ctrl-z
 
 # ALT-I - Paste the selected entry from locate output into the command line
 # must be a faster, newer method than locate, like... ZoXiDe or fd!
@@ -208,44 +208,44 @@ bindkey '^Z' fancy-ctrl-z
 # bindkey '\ei' fzf-locate-widget
 
 # quickly add & remove '.bak' to files
-bak() {
-    for file in "$@"; do
-        if [[ $file =~ \.bak ]]; then
-            mv -iv "$file" "$(basename "${file}" .bak)"
-        else
-            mv -iv "$file" "${file}.bak"
-        fi
-    done
-}
+# bak() {
+#     for file in "$@"; do
+#         if [[ $file =~ \.bak ]]; then
+#             mv -iv "$file" "$(basename "${file}" .bak)"
+#         else
+#             mv -iv "$file" "${file}.bak"
+#         fi
+#     done
+# }
 
-hdi() {
-    howdoi -c -n 9 "$@";
-}
+# hdi() {
+#     howdoi -c -n 9 "$@";
+# }
 
-zd() {
-    local dir
-    dir=$(zoxide query -l | fzf)
-    cd "$dir" || exit
-}
+# zd() {
+#     local dir
+#     dir=$(zoxide query -l | fzf)
+#     cd "$dir" || exit
+# }
 
 # rga-fzf interactivity
-rgaf() {
-    RG_PREFIX="rga --files-with-matches"
-    local file
-    file="$(
-        FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
-            fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context=5 {q} {}" \
-            --phony -q "$1" \
-            --bind "change:reload:$RG_PREFIX {q}" \
-            --preview-window="down,70%:wrap,border-up"
-    )" &&
-    echo "opening $file" &&
-    open "$file"
-}
+# rgaf() {
+#     RG_PREFIX="rga --files-with-matches"
+#     local file
+#     file="$(
+#         FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
+#             fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context=5 {q} {}" \
+#             --phony -q "$1" \
+#             --bind "change:reload:$RG_PREFIX {q}" \
+#             --preview-window="down,70%:wrap,border-up"
+#     )" &&
+#     echo "opening $file" &&
+#     open "$file"
+# }
 
-envs() {
-    printenv | fzf
-}
+# envs() {
+#     printenv | fzf
+# }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)

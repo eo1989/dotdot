@@ -17,8 +17,10 @@ opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
 --                                            ├───┘
 --                                            └ recognize unordered lists
 
-o.cursorline = true
 g.query_lint_on = {}
+g.typst_embedded_languages = { 'python', 'r', 'julia' }
+
+o.cursorline = true
 vim.env.SHELL = '/opt/homebrew/bin/zsh'
 opt.shell = '/opt/homebrew/bin/zsh'
 -- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
@@ -33,6 +35,7 @@ opt.colorcolumn = '+1'
 opt.incsearch = true
 opt.smarttab = true
 g.vimsyn_embed = 'alpPrj'
+g.vimsyn_folding = 'afhlpPr'
 opt.path:append { '**' } --'**'
 opt.synmaxcol = 300
 opt.whichwrap = 'h,l'
@@ -217,8 +220,8 @@ o.showtabline = 1
 opt.rnu = true
 opt.nu = true
 o.pumblend = 10 -- make popup window translucent
-o.pumheight = 25
-o.previewheight = 25
+o.pumheight = 30
+o.previewheight = 30
 o.hlsearch = true
 o.autowriteall = true -- automatically :write before running commands and changing files
 opt.shortmess = {

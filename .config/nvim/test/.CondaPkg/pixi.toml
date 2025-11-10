@@ -1,17 +1,10 @@
 [dependencies]
-ipython = "*"
-jupyter_kernel_test = "*"
 openssl = ">=3, <3.6"
-ipywidgets = "*"
-matplotlib = "*"
-jupyter_client = "*"
-ipympl = "*"
-comm = "*"
 
     [dependencies.python]
     channel = "conda-forge"
     build = "*cp*"
-    version = ">=3.9,<4, 3.13.*"
+    version = ">=3.9,<4"
 
 [project]
 name = ".CondaPkg"

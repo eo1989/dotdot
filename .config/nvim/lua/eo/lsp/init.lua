@@ -4,27 +4,24 @@ local env, fn, fs = vim.env, vim.fn, vim.fs
 -- Return the stem part of the path, ie: without any extension
 ---@param path string
 ---@return string
-local function file_stem(path)
-  local filename = fs.basename(path)
-  local last_dot = filename:reverse():find('%.')
-
-  return filename:sub(1, last_dot and -last_dot - 1 or #filename)
-end
+-- local function file_stem(path)
+--   local filename = fs.basename(path)
+--   local last_dot = filename:reverse():find('%.')
+--
+--   return filename:sub(1, last_dot and -last_dot - 1 or #filename)
+-- end
 
 ---Return the XDG config path to a file
 ---@param path string
 ---@return string
-local function xdg_config(path)
-  return fs.joinpath(env.XDG_CONFIG_HOME or fs.abspath(fn.expand('~') .. '/.config/'), path)
-end
+-- local function xdg_config(path)
+--   return fs.joinpath(vim.env.XDG_CONFIG_HOME or fs.abspath(fn.expand('~') .. '/.config/'), path)
+-- end
 
 vim.lsp.config('*', {
-  ---@diagnostic disable-next-line: param-type-mismatch
+  -- -@diagnostic disable-next-line: param-type-mismatch
   capabilities = require('eo.lsp.capabilities').make_capabilities(),
-  -- root_markers = { '.git' },
 } --[[@as vim.lsp.Config]])
-
--- vim.lsp.set_log_level(vim.log.levels.OFF)
 
 local disabled = {
   emmylua_ls = true,
@@ -54,7 +51,6 @@ local configured = {
   'tailwindcss',
   'taplo',
   'tombi',
-  'ts_ls',
   'ty',
   'postgres_lsp', -- supabase-common/postgres-language-server
   'yamlls',
@@ -62,25 +58,27 @@ local configured = {
 }
 
 local function init()
-  -- vim.lsp.enable(vim.iter(vim.fs.dir(xdg_config('nvim/after/lsp'))):map(file_stem):totable())
-  vim.iter(configured):each(vim.schedule_wrap(function(server_name)
-    if disabled[server_name] then return end
-    vim.lsp.enable(server_name)
+  vim.iter(configured):each(vim.schedule_wrap(function(servers)
+    if disabled[configured] then return end
+
+    vim.lsp.enable(configured, true)
   end))
 end
 
 if vim.g.did_very_lazy ~= nil then
   vim.schedule(init)
 else
-  -- vim.api.nvim_create_autocmd({ 'FileType', 'User' }, {
-  --   pattern = '*',
-  --   once = true,
-  --   callback = function() vim.schedule_wrap(init) end,
-  -- })
-
-  vim.api.nvim_create_autocmd({ 'FileType', 'User' }, {
-    -- pattern = { '' },
+  vim.api.nvim_create_autocmd({ 'User' }, {
+    -- pattern = 'VeryLazy',
     once = true,
+    buffer = 0,
     callback = vim.schedule_wrap(init),
   })
 end
+
+-- vim.api.nvim_create_autocmd({ 'FileType', 'User' }, {
+--   -- pattern = { '' },
+--   once = true,
+--   callback = vim.schedule_wrap(init),
+-- })
+-- end

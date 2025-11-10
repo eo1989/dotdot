@@ -1,7 +1,7 @@
 # vim:ft=zsh ts=9 sw=4 sts=4 tw=100 fdm=marker et ai:
 # TODO add more from akinsho && check & add to/from global gitconfig file!
 alias gs='git status'
-alias co='git checkout'
+alias gco='git checkout'
 alias gd='git diff'
 alias gt='git stash push && git stash show 0'
 alias gT='git stash pop'

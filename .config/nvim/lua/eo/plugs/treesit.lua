@@ -47,7 +47,6 @@ local languagess = {
   'jsx',
   'julia',
   'just',
-  'kdl',
   'latex',
   'lua',
   'luadoc',
@@ -87,6 +86,7 @@ local languagess = {
   'todotext',
   'terraform',
   'toml',
+  'todotext',
   'typst',
   'tsv',
   'tsx',
@@ -99,6 +99,7 @@ local languagess = {
   'xml',
   'yaml',
   'zig',
+  'zsh',
 }
 
 --[[
@@ -111,95 +112,18 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     -- priority = 1000,
-    -- lazy = false,
-    lazy = vim.fn.argc(-1) == 0,
+    lazy = false,
+    -- lazy = vim.fn.argc(-1) == 0,
     branch = 'main',
+    -- main = 'nvim-treesitter.configs',
     version = false,
     build = ':TSUpdate',
-    -- init = function()
-    --   -- local config = {
-    --   --   highlight = {
-    --   --     skip = { 'bigfile' },
-    --   --   },
-    --   --   indent = {
-    --   --     skip = {
-    --   --       'markdown',
-    --   --       'quarto',
-    --   --       'python', -- has its own
-    --   --     },
-    --   --   },
-    --   --   languagess = {
-    --   --     bash = { 'zsh' },
-    --   --     ruby = { 'brewfile' },
-    --   --     markdown = { 'quarto', 'rmd', 'pandoc', 'vimwiki' },
-    --   --   },
-    --   -- }
-    --
-    --   -- map languages to filetypes
-    --   for lang, filetypes in pairs(config.languagess) do
-    --     vim.treesitter.language.register(lang, filetypes)
-    --   end
-    --
-    --   -- vim.hl.priorities.semantic_tokens = 100
-    --   -- vim.hl.priorities.treesitter = 125
-    --
-    --   api.nvim_create_autocmd('FileType', {
-    --     group = api.nvim_create_augroup('treesitter.setup', {}),
-    --     -- pattern = { '*' },
-    --     callback = function(ctx)
-    --       local buf = ctx.buf
-    --       local filetype = ctx.match
-    --
-    --       local treesitter = require('nvim-treesitter')
-    --       local available = treesitter.get_available()
-    --       local language = vim.treesitter.language.get_lang(filetype) or filetype
-    --       -- local language = vim.treesitter.language.get_lang(filetype)
-    --
-    --       if not vim.treesitter.language.add(language) then return end
-    --
-    --       if vim.list_contains(available, language) then
-    --         treesitter.install(language):await(function()
-    --
-    --           vim.wo.foldmethod = 'expr'
-    --           vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-    --
-    --           pcall(vim.treesitter.start)
-    --
-    --           if not vim.list_contains(config.indent.skip, filetype) then
-    --             vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    --           end
-    --
-    --         end)
-    --       end
-    --
-    --
-    --       -- vim.treesitter.start(buf, language)
-    --       --
-    --       -- vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    --     end,
-    --   })
-    --
-    --   -- vim.treesitter.language.register('bash', 'zsh')
-    --   -- vim.treesitter.language.register('ruby', 'brewfile')
-    --   -- vim.treesitter.language.register('gotmpl', 'gotexttmpl')
-    --   -- https://github.com/MeanderingProgrammer/render-markdown.nvim#vimwiki
-    --   -- vim.treesitter.language.register('markdown', 'quarto')
-    --   -- vim.treesitter.language.register('markdown', 'rmd')
-    --   -- vim.treesitter.language.register('markdown', 'pandoc')
-    --
-    --   -- https://github.com/neovim/neovim/issues/32660
-    --
-    --   vim.g._ts_force_sync_parsing = true
-    -- end,
-    config = function()
-      require('nvim-treesitter').update(languagess)
-    end,
+    config = function() require('nvim-treesitter').update(languagess) end,
+    -- opts_extend = { 'ensure_installed' },
     dependencies = {
       {
         'nvim-treesitter/nvim-treesitter-textobjects',
         branch = 'main',
-        -- event = 'FileType [^_]\\*',
-        -- lazy = false,
         opts = {},
         keys = {
           {
@@ -208,7 +132,7 @@ return {
               require('nvim-treesitter-textobjects.select').select_textobject('@function.outer', 'textobjects')
             end,
             desc = 'Select outer function',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
           },
           {
             'if',
@@ -216,13 +140,15 @@ return {
               require('nvim-treesitter-textobjects.select').select_textobject('@function.inner', 'textobjects')
             end,
             desc = 'Select inner function',
-            mode = { 'x', 'o' },
+            -- mode = { 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
           },
           {
             'ab',
             function() require('nvim-treesitter-textobjects.select').select_textobject('@block.outer', 'textobjects') end,
             desc = 'Select outer code cell',
-            mode = { 'n', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
             -- ft = { 'python', 'quarto', 'markdown', 'julia', 'r' },
             ft = { 'quarto', 'markdown', 'julia', 'r' },
           },
@@ -230,27 +156,31 @@ return {
             'ib',
             function() require('nvim-treesitter-textobjects.select').select_textobject('@block.inner', 'textobjects') end,
             desc = 'Select inner code cell',
-            mode = { 'n', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
             -- ft = { 'python', 'quarto', 'markdown', 'julia', 'r' },
             ft = { 'quarto', 'markdown', 'julia', 'r' },
+            mode = { 'n', 'v', 'x', 'o' },
           },
           {
             'ac',
             function() require('nvim-treesitter-textobjects.select').select_textobject('@class.outer', 'textobjects') end,
             desc = 'Select outer class',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
           },
           {
             'ic',
             function() require('nvim-treesitter-textobjects.select').select_textobject('@class.inner', 'textobjects') end,
             desc = 'Select inner class',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
           },
           {
             'as',
             function() require('nvim-treesitter-textobjects.select').select_textobject('@local.scope', 'locals') end,
             desc = 'Select local scope',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
           },
           {
             ']b',
@@ -259,18 +189,20 @@ return {
               require('nvim-treesitter-textobjects.move').goto_next('@block.inner', 'textobjects')
             end,
             desc = 'Next code cell',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
             -- ft = { 'markdown', 'quarto', 'julia', 'python', 'r' },
             ft = { 'markdown', 'quarto', 'julia', 'r' },
           },
           {
             '[b',
             function()
-              require('nvim-treesitter-textobjects.move').goto_next('@code_cell.inner', 'textobjects')
-              -- require('nvim-treesitter-textobjects.move').goto_previous('@block.inner', 'textobjects'),
+              -- require('nvim-treesitter-textobjects.move').goto_next('@code_cell.inner', 'textobjects')
+              require('nvim-treesitter-textobjects.move').goto_previous('@block.inner', 'textobjects')
             end,
             desc = 'Prev code cell',
-            mode = { 'n', 'x', 'o' },
+            mode = { 'n', 'v', 'x', 'o' },
+            -- mode = { 'n', 'x', 'o' },
             -- ft = { 'markdown', 'quarto', 'julia', 'python', 'r' },
             ft = { 'markdown', 'quarto', 'julia', 'r' },
           },
@@ -284,28 +216,22 @@ return {
         branch = 'main',
         -- 'brianhuster/treesitter-endwise.nvim',
         -- branch = 'fix/iter-matches',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
-        event = 'InsertEnter',
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- event = { 'InsertEnter' },
+        event = 'VeryLazy',
         ft = { 'ruby', 'lua', 'vim', 'bash', 'elixir', 'fish', 'julia' }, -- only langs currently supported anyway
         config = function()
           -- vim.g.treesitter_endwise_filetypes = { 'ruby', 'lua', 'vim', 'bash', 'elixir', 'fish', 'julia' }
           -- manually trigger `FileType` event to make sure nvim-treesitter-endwise attaches to current file when loaded
-          vim.api.nvim_exec_autocmds('FileType', {})
+          api.nvim_exec_autocmds('FileType', {})
         end,
       },
-      -- {
-      --   'MomePP/sentiment.nvim',
-      --   dependencies = { 'nvim-treesitter/nvim-treesitter' },
-      --   enabled = false,
-      --   event = 'VeryLazy',
-      --   config = true,
-      -- },
       {
         'andymass/vim-matchup',
         enabled = true,
         -- lazy = true,
-        event = 'BufReadPost',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        event = 'VeryLazy',
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         config = function()
           vim.g['matchup_enabled'] = true
           vim.g['matchup_surround_enabled'] = true
@@ -326,7 +252,7 @@ return {
         'm-demare/hlargs.nvim',
         -- lazy = false,
         -- priority = 1000,
-        event = { 'BufReadPost' },
+        event = 'VeryLazy',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = {
           hl_priority = 1001,
@@ -344,28 +270,30 @@ return {
         'https://gitlab.com/HiPhish/rainbow-delimiters.nvim.git',
         submodules = false,
         version = false,
-        -- event = 'VeryLazy',
+        event = 'VeryLazy',
         -- lazy = false,
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         config = function()
           local rainbow_delimiters = require('rainbow-delimiters')
 
           ---@type rainbow_delimiters.config
           vim.g.rainbow_delimiters = {
             strategy = {
-              [''] = rainbow_delimiters.strategy['global'],
+              [''] = rainbow_delimiters.strategy.global,
             },
             query = {
               [''] = rainbow_delimiters.strategy['local'],
             },
-            blacklist = { 'txt', 'c', 'cpp' },
+            -- blacklist = { 'txt', 'c', 'cpp' },
           }
+          rainbow_delimiters.enable(0)
+          if rainbow_delimiters.is_enabled(0) ~= 0 then rainbow_delimiters.toggle(0) end
         end,
       },
       {
         'CKolkey/ts-node-action',
-        -- lazy = true,
-        dependencies = { 'tpope/vim-repeat', 'nvim-treesitter/nvim-treesitter' },
+        lazy = true,
+        dependencies = { 'tpope/vim-repeat' },
         opts = function() return { julia = require('eo.ts_node_action.fts.julia') } end,
         keys = {
           { 'gA', function() require('ts-node-action').node_action() end, desc = 'Node Action' },
@@ -374,7 +302,7 @@ return {
       {
         'Wansmer/treesj',
         lazy = true,
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         cmd = { 'TSJSplit', 'TSJJoin' },
         opts = {
           use_default_keymaps = false,
@@ -396,7 +324,7 @@ return {
       },
       {
         'Wansmer/sibling-swap.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = {
           max_join_length = 120,
           check_syntax_error = true,
@@ -423,7 +351,7 @@ return {
       {
         'numToStr/Comment.nvim',
         lazy = false,
-        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = function(opts)
           local ok, integration = pcall(require, 'ts_context_commentstring.integrations.comment_nvim')
           if ok then opts.pre_hook = integration.create_pre_hook() end
@@ -481,9 +409,3 @@ return {
     end,
   },
 }
--- {
---   'LiadOz/nvim-dap-repl-highlights',
---   enabled = false,
---   lazy = true,
---   config = function() require('nvim-dap-repl-highlights').setup() end,
--- },

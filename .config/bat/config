@@ -4,8 +4,8 @@
 
 # Specify desired highlighting theme (e.g. "TwoDark"). Run `bat --list-themes`
 # for a list of all available themes
---theme="Sublime Snazzy"
-# --theme="Dracula"
+# --theme="Sublime Snazzy"
+--theme="Dracula"
 # --theme="ansi"
 # --theme="Visual Studio Dark+"
 # --theme="OneHalfDark"

@@ -30,7 +30,7 @@ export TRUECOLOR=1 \
 export PIP_DISABLE_PIP_VERSION_CHECK=1
 
 export NVYM="${BREW_PREFIX}/bin/nvim"
-export EDITOR="${NVYM:-"code-insiders"}"
+export EDITOR="${${NVYM}:-"code-insiders"}"
 export VISUAL="${EDITOR:-"code-insiders"}"
 export USE_EDITOR="${EDITOR}"
 
@@ -45,7 +45,7 @@ export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/rg/rgrc"
 export WORDCHARS="*?_[]~=&;:!#$%^(){}<>"
 
 # export LESSOPEN="| highlight %s -O truecolor -s"
-export LESSOPEN='| $commands[(i)lesspipe.sh] LESS_ADVANCED_PREPROCESSOR=1 %s 2>&-'
+# export LESSOPEN='| $commands[(i)lesspipe.sh] LESS_ADVANCED_PREPROCESSOR=1 %s 2>&-'
 
 export LESSKEYIN="${XDG_CONFIG_HOME}/less/lesskey"
 export LESSCOLORIZER='bat --theme="Dracula"'
@@ -59,7 +59,6 @@ export PAGER="less -r"
 export MANPAGER='sh -c "col -b | bat -pl man"'
 
 # export PATH="$HOME/.julia/bin:$PATH"
-export JULIA_PROJECT=@.
 
 export GPG_TTY=$TTY
 
@@ -121,5 +120,12 @@ export GH_NO_UPDATE_NOTIFIER=1 # updates managed via brew
 # echo \"Opened PDF in new window\"
 
 export HWATCH="--no-title --color --no-help-banner --border --with-scrollbar"
+
+export JUPYTER="/Users/eo/.local/pipx/venvs/jupyterlab/bin/jupyter"
+
+export JULIA_PROJECT=@.
+export JULIA_CONDAPKG_BACKEND="Null"
+export JULIA_PYTHONCALL_EXE="/Users/eo/.pyenv/shims/python"
+# export JULIA_PYTHONCALL_EXE="${HOME}/.pyenv/versions/Gen/bin/python:${HOME}/.local/share/uv/python/cpython-3.12.7-macos-aarch64-none/bin/python"
 
 # vim: set ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:

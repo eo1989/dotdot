@@ -2,11 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
-# mpl.use()
-
-# mpl.backends.backend_registry(
-#     "module://matplotlib-backend-kitty"
-# )  # or 'kitcat'
+mpl.use("module://matplotlib-backend-kitty")
 
 eqs = []
 eqs.append(
@@ -22,6 +18,7 @@ eqs.append(r"$F_G = G\frac{m_1m_2}{r^2}$")
 plt.axes((0.025, 0.025, 0.95, 0.95))
 
 rng = np.random.default_rng()
+
 
 for i in range(24):
     idx = rng.integers(0, len(eqs))
@@ -45,6 +42,7 @@ plt.xticks([])
 plt.yticks([])
 
 
-plt.switch_backend("module://matplotlib-backend-kitty")
+# plt.switch_backend("module://matplotlib-backend-kitty")
+plt.switch_backend("kitcat")
 
 plt.show()

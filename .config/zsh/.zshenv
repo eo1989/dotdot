@@ -5,7 +5,7 @@
 
 unsetopt GLOBAL_RCS
 
-ZDOTDIR=${XDG_CONFIG_HOME:=~/.config}/zsh
+# export ZDOTDIR=${XDG_CONFIG_HOME:=~/.config}/zsh
 
 # `(( ${+*} ))` == if variable is set dont set it anmyore, or use `[[ -z ${*} ]]`
 (( ${+LANG} )) || export LANG="en_US.UTF-8"
@@ -13,13 +13,19 @@ ZDOTDIR=${XDG_CONFIG_HOME:=~/.config}/zsh
 (( ${+LC_CTYPE} )) || export LC_CTYPE="en_US.UTF-8"
 (( ${+BREW_PREFIX} )) || export BREW_PREFIX="/opt/homebrew"
 # (( ${+DYLD_FALLBACK_LIBRARY_PATH} )) || export DYLD_FALLBACK_LIBRARY_PATH="${BREW_PREFIX}/lib:${DYLD_FALLBACK_LIBRARY_PATH}"
-(( ${+EDITOR} )) || export EDITOR="${BREW_PREFIX}/bin/nvim":-"${BREW_PREFIX}/bin/code-insiders"
+(( ${+EDITOR} )) || export EDITOR="${BREW_PREFIX}/bin/nvim:-${BREW_PREFIX}/bin/code-insiders"
+(( ${+JUPYTER} )) || export JUPYTER="${HOME}/.local/pipx/venvs/jupyterlab/bin/jupyter"
 (( ${+JUPYTER_CONFIG_DIR} )) || export JUPYTER_CONFIG_DIR="${JUPYTER_CONFIG_DIR:-$HOME}/.jupyter"
 (( ${+SHELL} )) || export SHELL="${BREW_PREFIX}/bin/zsh"
 (( ${+XDG_CONFIG_HOME} )) || export XDG_CONFIG_HOME="${HOME}/.config"
 (( ${+XDG_CACHE_HOME} )) || export XDG_CACHE_HOME="${HOME}/.cache"
 (( ${+ZDOTDIR} )) || export ZDOTDIR="${XDG_CONFIG_HOME:=$HOME/.config}/zsh"
 (( ${+ZSH_CACHE_DIR} )) || export ZSH_CACHE_DIR="${XDG_CACHE_HOME}/zsh"
+
+# for julia
+(( ${+JULIA_PROJECT} )) || export JULIA_PROJECT=@.
+(( ${+JULIA_CONDAPKG_BACKEND} )) || export JULIA_CONDAPKG_BACKEND="Null"
+(( ${+JULIA_PYTHONCALL_EXE} )) || export JULIA_PYTHONCALL_EXE="/Users/eo/.pyenv/shims/python"
 
 
 # ${X:=Y} specifies a default value Y to use for parameter X, if X has not been

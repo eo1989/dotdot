@@ -16,17 +16,22 @@ set anchorfind
 set findlen 1
 set tabstop 4
 set info size
-set sixel true
+# set sixel true
 set preview true
-set previewer ~/.config/lf/previewer.sh
-set cleaner ~/.config/lf/cleaner.sh
+# set previewer ~/.config/lf/previewer.sh
+# set cleaner ~/.config/lf/cleaner.sh
+set previewer ctpv
+set cleaner ctpvcleaner
+&ctpv -s $id
+&ctpvquit $id
+
 set dircounts
 setlocal ~/Downloads sortby "atime"
 setlocal ~/Downloads reverse
 set hiddenfiles ".DS_Store:.git"
 
 # ========== Commands ==========
-map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' | less -R $f
+# map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' | less -R $f |||| What was this for again?
 
 # Override the default open for file opening (binded to 'l' by default)
 cmd open &{{

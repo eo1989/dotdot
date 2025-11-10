@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+# #!/usr/bin/env zsh
 
 #-------------------------------------------------------------------------------
 #                                OPTIONS
@@ -8,20 +8,20 @@
 
 setopt EXTENDED_GLOB
 
-# export HISTSIZE=20000
+export HISTSIZE=20000
 # $VENDOR & $OSTYPE let us check what type of machine your on
 local histfile="${ZSH_CACHE_DIR}/.zsh_history"
-local icloud=~/Library/Mobile\ Documents/com\~apple\~CloudDocs
+local icloud="${HOME}/Library/Mobile Documents/com\~apple\~CloudDocs"
 
 # if parent directory doesnt exist, create it
 # [[ -d $HISTFILE:h ]] || mkdir -p $HISTFILE:h
 
-if [[ -d $histfile && $VENDOR == apple ]]; then
+if [[ -d "${histfile}" && "${VENDOR}" == apple ]]; then
     # if using iCloud (or dropbox) on macOS, store it there, so it syncs across multiple macs
-    HISTFILE=$icloud/.zsh_history
+    HISTFILE="${icloud}/.zsh_history"
 
     # -s: true if the file exists & isnt empty
-    if ! [[ -s $HISTFILE ]]; then
+    if ! [[ -s "${HISTFILE}" ]]; then
         # Sometimes (probably  due to  concurrency issues), when the histfile is kept
         # in iCloud, it is empty when zsh starts up. however there should always be a backup file we
         # can copy
@@ -34,12 +34,12 @@ if [[ -d $histfile && $VENDOR == apple ]]; then
         local -a files=( $HISTFILE(|\ <->)(OL) )
 
         # -n: true if the string is not empty.
-        [[ -n $files[1] ]] &&
-            fc -RI $files[1]
+        [[ -n "${files[1]}" ]] &&
+            fc -RI "${files[1]}"
     fi
 else
     # := assigns the variable if its unset or null and then substitutes its value
-    HISTFILE=${ZSH_CACHE_DIR}/.zsh_history
+    HISTFILE="${ZSH_CACHE_DIR}/.zsh_history"
 fi
 
 export SAVEHIST="$HISTSIZE"
@@ -85,7 +85,7 @@ setopt AUTO_MENU
 setopt LIST_PACKED
 # above -> akinsho, below chrisgrieser
 setopt GLOB_DOTS    # glob includes dotfiles; think this is set in .zshrc??
-setopt PIPE_FAIL    # tracability: exit if pipeline failed
+setopt PIPE_FAIL    # traceability: exit if pipeline failed
 setopt NO_BANG_HIST # dont expand '!'
 setopt NO_HUP       # dont kill jobs on shell exit
 
@@ -108,3 +108,4 @@ command_not_found_handler() {
 # zle -N bracketed-paste bracketed-paste-magic
 
 # vim: ft=zsh ts=8 sw=4 sts=4 tw=100 et ai:
+# export JUPYTER="/Users/eo/.local/pipx/venvs/jupyterlab/bin/jupyter"

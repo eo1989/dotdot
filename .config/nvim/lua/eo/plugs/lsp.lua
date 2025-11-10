@@ -76,6 +76,7 @@ return {
   },
   {
     'DNLHC/glance.nvim',
+    enabled = false,
     -- event = { 'LspAttach', 'VeryLazy' },
     cmd = 'Glance',
     config = function()
@@ -120,45 +121,18 @@ return {
         },
       }
     end,
-    --[[ these are already set in plugin/attach.lua ]]
-    -- keys = {
-    --   {
-    --     'gd',
-    --     [[:Glance definitions<CR>]],
-    --     desc = 'Glance definitions',
-    --     silent = true,
-    --   },
-    --   {
-    --     'gR',
-    --     [[:Glance references<CR>]],
-    --     desc = 'Glance references',
-    --     silent = true,
-    --   },
-    --   {
-    --     'gM',
-    --     [[:Glance implementations<CR>]],
-    --     desc = 'Glance implementations',
-    --     silent = true,
-    --   },
-    --   {
-    --     'gD',
-    --     [[:Glance type_definitions<CR>]],
-    --     desc = 'Glance type_definitions',
-    --     silent = true,
-    --   },
-    -- },
   },
   {
     'neovim/nvim-lspconfig',
     enabled = true,
     -- lazy = false,
-    event = { 'BufRead' },
+    -- event = { 'BufRead' },
     version = false,
     dependencies = {
       'saghen/blink.cmp',
       {
         'b0o/schemastore.nvim',
-        event = 'LspAttach',
+        -- event = 'LspAttach',
         -- ft = { 'json', 'jsonc', 'toml', 'yaml' },
       },
       {
@@ -168,7 +142,12 @@ return {
         -- priority = 999,
       },
     },
-    config = function() require('eo.lsp') end,
+    -- config = function() require('eo.lsp') end,
+    -- init = function() require('eo.lsp') end,
+    config = function()
+      require('lspconfig.ui.windows').default_options.border = eo.ui.current.border
+      require('eo.lsp')
+    end,
   },
   {
     'dgagn/diagflow.nvim',

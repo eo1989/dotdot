@@ -315,11 +315,12 @@ map('n', '0', "getline('.')[0 : col('.') - 2] =~# '^\\s\\+$' ? '0' : '^'", { exp
 map('v', '$', 'g_', { noremap = true })
 
 -- stylua: ignore start
-map('n', [[<localleader>"]], [[ciw"<c-r>""<esc>]], { desc = 'surround with double quotes', noremap = true, silent = true })
-map('n', '<localleader>`',   [[ciw`<c-r>"`<esc>]], { desc = 'surround with backticks',     noremap = true, silent = true })
-map('n', "<localleader>'",   [[ciw'<c-r>"'<esc>]], { desc = 'surround with single quotes', noremap = true, silent = true })
-map('n', '<localleader>)',   [[ciw(<c-r>")<esc>]], { desc = 'surround with parens',        noremap = true, silent = true })
-map('n', '<localleader>}',   [[ciw{<c-r>"}<esc>]], { desc = 'surround with curly braces',  noremap = true, silent = true })
+local oopts = { nowait = true, noremap = true, silent = true }
+map('n', [[<localleader><localleader>"]], [[ciw"<c-r>""<esc>]], { desc = 'surround with double quotes', opts })
+map('n', '<localleader><localleader>`',   [[ciw`<c-r>"`<esc>]], { desc = 'surround with backticks', opts })
+map('n', "<localleader><localleader>'",   [[ciw'<c-r>"'<esc>]], { desc = 'surround with single quotes', opts })
+map('n', '<localleader><localleader>)',   [[ciw(<c-r>")<esc>]], { desc = 'surround with parens', opts })
+map('n', '<localleader><localleader>}',   [[ciw{<c-r>"}<esc>]], { desc = 'surround with curly braces', opts })
 -- stylua: ignore end
 
 -- Better escape using jk in insert and terminal mode
@@ -463,9 +464,4 @@ end
 -- map('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
 -- map('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })
 
-map(
-  'n',
-  '<leader>qr',
-  function() vim.cmd('restart') end,
-  { desc = ':restart', silent = true, nowait = true, noremap = true }
-)
+map('n', '<leader>qr', function() vim.cmd([[restart]]) end, { desc = ':restart', silent = true, noremap = true })

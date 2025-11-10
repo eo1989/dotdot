@@ -2,6 +2,7 @@ local api, cmd, fn, fmt = vim.api, vim.cmd, vim.fn, string.format
 local separators = require('defaults').icons.separators
 local border, highlight, icons = eo.ui.current.border, eo.highlight, eo.ui.icons
 
+---@module "lazy"
 ---@type LazySpec
 return {
   {
@@ -12,17 +13,19 @@ return {
   },
   { 'kkharji/sqlite.lua', event = 'VeryLazy' },
   { 'nvim-tree/nvim-web-devicons', lazy = false, priority = 1001 },
-  { 'psliwka/vim-smoothie', lazy = false },
+  { 'psliwka/vim-smoothie', lazy = false, enabled = false },
+  --[[ TODO: check Oliver-Leete for his julia autopairs configurations ]]
   {
-    -- TODO: check Oliver-Leete for his julia autopairs configurations
+    ---@module "nvim-autopairs"
     'windwp/nvim-autopairs',
     version = false,
     enabled = true,
     event = { 'InsertEnter' },
-    -- dependencies = { 'hrsh7th/nvim-cmp' },
+    dependencies = { 'saghen/blink.cmp' },
     config = function()
       -- local cmp = require('cmp')
       local autopairs = require('nvim-autopairs')
+      local blink = require('blink-cmp')
       -- local cmp_autopairs = require('nvim-autopairs.completion.cmp')
       -- local handlers = require('nvim-autopairs.completion.handlers')
       -- cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done { map_char = { tex = '' } })
@@ -75,10 +78,11 @@ return {
       },
     },
   },
-  { 'fladson/vim-kitty', lazy = false },
-  { 'neoclide/jsonc.vim', ft = { 'jsonc', 'json' }, opts = {} },
+  { 'fladson/vim-kitty' },
+  { 'neoclide/jsonc.vim' },
   -- { 'fei6409/log-highlight.nvim', ft = 'log', event = 'BufRead *.log', opts = {} },
-  { 'fei6409/log-highlight.nvim', event = 'BufRead *.log', opts = {} },
+  -- { 'fei6409/log-highlight.nvim', event = 'BufRead *.log', opts = {} },
+  { 'fei6409/log-highlight.nvim', ft = { 'checkhealth', 'log' }, opts = {} },
   {
     'mrjones2014/smart-splits.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
@@ -112,24 +116,24 @@ return {
   { 'tpope/vim-repeat', event = 'VeryLazy', config = function() end },
   { 'tpope/vim-scriptease', lazy = true, opts = {} },
   { 'milisims/nvim-luaref', lazy = true, opts = {} },
-  -- {
-  --   url = 'https://gitlab.com/yorickpeterse/nvim-pqf',
-  --   enabled = true,
-  --   ft = 'qf',
-  --   dependencies = {
-  --     'nvim-treesitter',
-  --     'nvim-web-devicons',
-  --   },
-  --   config = function()
-  --     highlight.plugin('pqf', {
-  --       theme = {
-  --         ['*'] = { { qfPosition = { link = 'Todo' } } }, -- try 'String' next
-  --         -- ['*'] = { { qfPosition = { link = 'Todo' } } },
-  --       },
-  --     })
-  --     require('pqf').setup()
-  --   end,
-  -- },
+  {
+    url = 'https://gitlab.com/yorickpeterse/nvim-pqf',
+    enabled = false,
+    -- ft = 'qf',
+    dependencies = {
+      'nvim-treesitter',
+      'nvim-web-devicons',
+    },
+    config = function()
+      highlight.plugin('pqf', {
+        theme = {
+          ['*'] = { { qfPosition = { link = 'Todo' } } }, -- try 'String' next
+          -- ['*'] = { { qfPosition = { link = 'Todo' } } },
+        },
+      })
+      require('pqf').setup()
+    end,
+  },
   {
     'stevearc/quicker.nvim',
     -- event = 'FileType qf',
@@ -164,17 +168,6 @@ return {
         end,
         desc = 'Toggle diagnostics',
       },
-      -- {
-      --   '>',
-      --   -- function() require('quicker').expand() end,
-      --   function() require('quicker').expand { before = 2, after = 2, add_to_existing = true } end,
-      --   desc = 'Expand context',
-      -- },
-      -- {
-      --   '<',
-      --   function() require('quicker').collapse() end,
-      --   desc = 'Collapse context',
-      -- },
     },
   },
   {
@@ -211,20 +204,6 @@ return {
       highlight.plugin('bqf', {
         { BqfPreviewBorder = { fg = { from = 'Comment' } } },
       })
-      -- local bqf_config = api.nvim_create_augroup('bqf_config', { clear = true })
-      -- api.nvim_create_autocmd('FileType', {
-      --   group = bqf_config,
-      --   pattern = 'qf',
-      --   callback = function() vim.cmd([[ runtime after/ftplugin/qf/bqf.vim ]]) end,
-      -- })
-      -- api.nvim_create_autocmd({ 'FileType', 'BufWinEnter', 'DiagnosticChanged' }, {
-      --   -- buffer = 0,
-      --   pattern = { 'qf' },
-      --   callback = function(ev)
-      --     local ft = vim.bo[ev.buf].filetype
-      --     vim.treesitter.start(ev.buf, vim.treesitter.language.get_lang(ft))
-      --   end,
-      -- })
       require('bqf').setup(opts)
     end,
   },
@@ -253,16 +232,32 @@ return {
       })
     end,
   },
-  -- {
-  --   'pteroctopus/faster.nvim',
-  --   lazy = false,
-  --   opts = {},
-  -- },
   {
+    ---@module "neogen"
     'danymat/neogen',
     cmd = { 'Neogen' },
-    dependencies = 'nvim-treesitter/nvim-treesitter',
-    opts = {},
+    dependencies = { 'L3MON4D3/LuaSnip' },
+    opts = {
+      snippet_engine = 'luasnip',
+      languages = {
+        lua = {
+          template = { annotation_convention = 'emmylua' },
+        },
+        python = {
+          template = { annotation_convention = 'numpydoc' },
+          -- template = { annotation_convention = "reST" },
+          -- template = { annotation_convention = "google_docstrings" },
+        },
+        julia = { template = { annotation_convention = 'julia' } },
+        go = { template = { annotation_convention = 'godoc' } },
+      },
+    },
+    keys = {
+      { '<localleader>aa', function() require('neogen').generate() end, desc = 'Annotate thing' },
+      { '<localleader>af', function() require('neogen').generate { type = 'func' } end, desc = 'Annotate function' },
+      { '<localleader>ac', function() require('neogen').generate { type = 'class' } end, desc = 'Annotate class' },
+      { '<localleader>at', function() require('neogen').generate { type = 'type' } end, desc = 'Annotate type' },
+    },
   },
   {
     'chrishrb/gx.nvim',
@@ -277,10 +272,5 @@ return {
         search_engine = 'google',
       },
     },
-  },
-  {
-    'folke/todo-comments.nvim',
-    event = 'VeryLazy',
-    opts = {},
   },
 }

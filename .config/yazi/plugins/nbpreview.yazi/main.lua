@@ -15,8 +15,8 @@ function M:peek(job)
 			"--images",
 
 			-- SPECIAL CUSTOMIZATIONS --
-			"--color-system=standard",
-			"--theme=ansi_dark",
+			"--color-system=truecolor", -- standard, 256, truecolor, windows, none, auto
+			"--theme=material", --material, monokai, dracula, zenburn, nord{,-darker}, lightbulb, github-dark,
 			tostring(job.file.url),
 		})
 		:stdout(Command.PIPED)

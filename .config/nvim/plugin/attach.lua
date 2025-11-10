@@ -100,10 +100,8 @@ local function create_on_list(client)
   end
 end
 
-local lsp_attach_group = api.nvim_create_augroup('eo-lsp-attach', { clear = true })
 api.nvim_create_autocmd('LspAttach', {
-  -- group = api.nvim_create_augroup('eo-lsp-attach', { clear = true }),
-  group = lsp_attach_group,
+  group = api.nvim_create_augroup('eo-lsp-attach', { clear = true }),
   desc = 'LSP Actions',
   callback = function(event)
     local buf = event.buf
@@ -121,16 +119,13 @@ api.nvim_create_autocmd('LspAttach', {
 
     -- _map('<leader>dt', 'Toggle diagnostics', function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end)
 
-    --[[ next to keymaps are reversed where `[d` goes forward, only due to physiology & 
-        `[` is easier to press over and over again... yes I have many errors in the code :(
-    --]]
-
     _map('[d', 'Diag: goto prev', function() vim.diagnostic.jump { count = 1 } end)
 
     _map(']d', 'Diag: goto next', function() vim.diagnostic.jump { count = -1 } end)
 
     -- _map('gd', 'lsp: [g]oto [d]ef', function() lsp.buf.definition() end)
-    _map('gd', '[g]oto [d]ef', function() require('glance').open('definitions') end)
+    -- _map('gd', '[g]oto [d]ef', function() require('glance').open('definitions') end)
+    _map('gd', '[g]oto [d]ef', function() Snacks.picker.lsp_definitions() end)
     -- vim.lsp.buf.definition = require('glance').open('definitions')
 
     -- if client and client_supports_method(client, M.textDocument_definition, event.buf) then
@@ -138,13 +133,16 @@ api.nvim_create_autocmd('LspAttach', {
     -- end
 
     -- _map('gD', 'lsp: [g]oto type [d]ef', function() lsp.buf.type_definition() end)
-    _map('gD', '[g]oto type [d]ef', function() require('glance').open('type_definitions') end)
+    _map('gD', '[g]oto type [d]ef', function() Snacks.picker.lsp_declarations() end)
+    -- _map('gD', '[g]oto type [d]ef', function() require('glance').open('type_definitions') end)
 
     -- _map('gi', 'lsp: [g]oto [i]mplementation', function() lsp.buf.implementation() end)
-    _map('gi', '[g]oto [i]mplementation', function() require('glance').open('implementations') end)
+    _map('gI', '[g]oto type [d]ef', function() Snacks.picker.lsp_implementations() end)
+    -- _map('gi', '[g]oto [i]mplementation', function() require('glance').open('implementations') end)
 
     -- _map('gr', '[g]oto [r]references', function() lsp.buf.references { includeDeclaration = false } end)
-    _map('gr', '[g]oto [r]references', function() require('glance').open('references') end)
+    _map('gr', '[g]oto type [d]ef', function() Snacks.picker.lsp_references() end)
+    -- _map('gr', '[g]oto [r]references', function() require('glance').open('references') end)
 
     _map('<leader>rn', '[r]e[n]ame all symbol references', function() lsp.buf.rename() end)
 
@@ -158,42 +156,6 @@ api.nvim_create_autocmd('LspAttach', {
       lsp.inlay_hint.enable(not is_enabled, { bufnr = event.buf })
     end)
 
-    _map('<leader>chg', '[c]hange inlay [h]int [g]lobally', function()
-      local is_enabled = lsp.inlay_hint.is_enabled()
-      lsp.inlay_hint.enable(not is_enabled)
-    end)
-
-    -- local function rename_file(client)
-    --   local old_fname = api.nvim_buf_get_name(0)
-    --   vim.ui.input({ prompt = 'New file name:' }, function(name)
-    --     if name == nil then return end
-    --     local new_fname = ('%s/%s'):format(vim.fs.dirname(old_fname), name)
-    --     local params = {
-    --       files = {
-    --         { oldUri = 'file://' .. old_fname, newUri = 'file://' .. new_fname },
-    --       },
-    --     }
-    --     ---@diagnostic disable-next-line: missing-parameter `bufnr` is optional
-    --     local response = client:request_sync(M.workspace_willRenameFiles, params, 1000)
-    --     if not response then
-    --       vim.notify(fmt('No response from %s client for %s', client.name), 'info', { title = 'LSP' })
-    --       return
-    --     end
-    --     if response.err then
-    --       vim.notify(
-    --         fmt('Failed to rename %s to %s: %s', old_fname, new_fname, response.err),
-    --         'error',
-    --         { title = 'LSP' }
-    --       )
-    --     else
-    --       lsp.util.apply_workspace_edit(response.result, client.offset_encoding)
-    --       lsp.util.rename(old_fname, new_fname)
-    --     end
-    --   end)
-    -- end
-
-    -- _map('<leader>cfN', 'lsp: [c]hange [f]ile[n]ame', function() rename_file(client) end)
-
     -- This function resolves a difference between nvim nightly (>=0.11) and stable (0.10)
     ---@param client vim.lsp.Client
     ---@param method vim.lsp.protocol.Method
@@ -201,14 +163,12 @@ api.nvim_create_autocmd('LspAttach', {
     ---@return boolean
     local function client_supports_method(client, method, bufnr) return client:supports_method(method, bufnr) end
 
-    -- local client = assert(lsp.get_client_by_id(event.data.client_id))
     local client = lsp.get_client_by_id(event.data.client_id)
 
     local client_extension = extensions[client.name]
     if client_extension ~= nil then client_extension.on_attach { client, bufnr = event.buf } end
-    -- if client_extension ~= nil then client_extension.on_attach { client, bufnr = buf } end
 
-    -- if client and client_supports_method(client, M.textDocument_completion) then
+    -- if client_supports_method(client, M.textDocument_completion, event.buf) then
     --   lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
     -- end
 
@@ -217,19 +177,16 @@ api.nvim_create_autocmd('LspAttach', {
     end
 
     if client and client_supports_method(client, M.textDocument_documentHighlight, event.buf) then
-      -- if client and client_supports_method(client, M.textDocument_documentHighlight, buf) then
       local highlight_augroup = api.nvim_create_augroup('eo-lsp-highlight', { clear = false })
 
       api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
         buffer = event.buf,
-        -- buffer = buf,
         callback = lsp.buf.document_highlight,
         group = highlight_augroup,
       })
 
       api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
         buffer = event.buf,
-        -- buffer = buf,
         callback = lsp.buf.clear_references,
         group = highlight_augroup,
       })
@@ -243,20 +200,13 @@ api.nvim_create_autocmd('LspAttach', {
       })
     end
 
-    -- if client and client_supports_method(client, M.textDocument_documentSymbol, buf) then
-    --   require('nvim-navic').attach(client, buf)
-    -- end
-
     if client and client_supports_method(client, M.textDocument_codeLens, event.buf) then
-      -- if client and client_supports_method(client, M.textDocument_codeLens, buf) then
       local codeLens_augroup = api.nvim_create_augroup('eo-lsp-codeaction', { clear = false })
       api.nvim_clear_autocmds { buffer = buf, group = codeLens_augroup }
       api.nvim_create_autocmd({ 'CursorHold', 'TextChanged', 'InsertLeave', 'LspAttach', 'BufEnter' }, {
         group = codeLens_augroup,
         buffer = event.buf,
         callback = function() lsp.codelens.refresh { bufnr = event.buf } end,
-        -- buffer = buf,
-        -- callback = function() lsp.codelens.refresh { bufnr = buf } end,
         desc = 'lsp: refresh codelens',
       })
     end
@@ -265,22 +215,18 @@ api.nvim_create_autocmd('LspAttach', {
       vim.lsp['inlay_hint'] ~= nil
       and client
       and client_supports_method(client, M.textDocument_inlayHint, event.buf)
-      -- and client_supports_method(client, M.textDocument_inlayHint, buf)
     then
       vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
-      -- vim.lsp.inlay_hint.enable(true, { bufnr = buf })
     end
 
     if
       client
       and diagnostic.is_enabled ~= nil
       and client_supports_method(client, M.textdocument_diagnostic, event.buf)
-      -- and client_supports_method(client, M.textdocument_diagnostic, buf)
     then
       local lspformat_augroup = api.nvim_create_augroup('eo-lsp-format', { clear = false })
       api.nvim_create_autocmd('CursorHold', {
         buffer = event.buf,
-        -- buffer = buf,
         callback = function()
           diagnostic.open_float(nil, {
             focusable = false,
@@ -293,7 +239,8 @@ api.nvim_create_autocmd('LspAttach', {
             border = 'rounded',
             source = 'always',
             prefix = ' ',
-            scope = 'cursor',
+            -- scope = 'cursor',
+            scope = 'line',
           })
         end,
         group = lspformat_augroup,

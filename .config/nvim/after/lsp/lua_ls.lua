@@ -60,7 +60,6 @@ end
 
 ---@type vim.lsp.Config
 return {
-  -- capabilities = require('eo.lsp.capabilities').make_capabilities(),
   ---@param client vim.lsp.Client
   cmd = { 'lua-language-server' },
   filetypes = { 'lua' },
@@ -70,15 +69,6 @@ return {
     'selene.yml',
     '.git',
   },
-  -- root_markers = {
-  --   {
-  --     '.luarc.json',
-  --     'luarc.json',
-  --     '.stylua.toml',
-  --     'stylua.toml',
-  --   },
-  --   '.git',
-  -- },
   on_init = function(client)
     client.server_capabilities.documentFormattingProvider = false --|> conform stylua
     client.server_capabilities.documentRangeFormattingProvider = false --|> conform stylua
@@ -112,7 +102,7 @@ return {
         setType = false,
         -- paramType = true,
         paramName = 'Disable', -- 'Disable' | 'Literal'
-        -- semicolon = 'Disable',
+        semicolon = 'Disable',
         arrayIndex = 'Disable', -- show hints ('auto') only when table is >3 items, or tbl is mixed; 'Disable'
       },
       format = { enable = false },
@@ -152,13 +142,14 @@ return {
         preloadFileSize = 50000,
         checkThirdParty = false,
         -- [[ looks like lazydev shall work? ]]
+        -- or pull in all of 'runtimepath'. NOTE: this is a lot slower and will cause issues when working on your own configuration (see https://github.com/neovim/nvim-lspconfig/issues/3189)
+
         -- library = {
         --   vim.env.VIMRUNTIME,
         --   -- Depending on the usage, you might want to add additional paths here.
         --   -- "${3rd}/luv/library"
         --   -- "${3rd}/busted/library",
         -- },
-        -- or pull in all of 'runtimepath'. NOTE: this is a lot slower and will cause issues when working on your own configuration (see https://github.com/neovim/nvim-lspconfig/issues/3189)
         -- library = vim.api.nvim_get_runtime_file("", true)
       },
       telemetry = { enable = false },

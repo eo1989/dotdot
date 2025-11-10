@@ -23,4 +23,6 @@ download() {
   aria2c -x "$connections" "$1"
 }
 
+download $@
+
 # vim: set ft=zsh sw=4 ts=8 sts=4 et ai:

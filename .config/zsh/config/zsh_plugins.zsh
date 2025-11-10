@@ -5,7 +5,65 @@
 # load various completions of clis installed via homebrew
 # needs to be run *before* compinit/zsh-autocomplete
 # export FPATH="$ZDOTDIR/completions:$BREW_PREFIX/share/zsh/site-functions:$BREW_PREFIX/share/zsh-completions:$HOME/.zfunc:$FPATH"
-export FPATH="${BREW_PREFIX}/share/zsh-completions:/Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/completions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions:$HOME/.zfunc:$FPATH"
+export FPATH="$BREW_PREFIX/share/zsh-completions:/Applications/kitty.app/Contents/Resources/kitty/shell-integration/zsh/completions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions:$HOME/.zfunc:$FPATH"
+
+
+# ZSH-AUTOPAIR
+. "${BREW_PREFIX}/share/zsh-autopair/autopair.zsh" 2>/dev/null
+
+# ZSH-COMPLETIONS
+# also loads compinit stuff, therefore has to be loaded before most plugins // maybe it can be
+# loaded after to get the original UX back? this new one sucks.
+# NOTE: This has to be called before any calls to compinit
+. "${BREW_PREFIX}/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" 2>/dev/null
+
+autoload -Uz compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+
+if exists uv; then
+    eval "$(uv --generate-shell-completion zsh)"
+fi
+
+if exists pipx; then
+    eval "$(register-python-argcomplete pipx)"
+fi
+
+if exists pip; then
+    eval "$(pip completion --zsh)"
+fi
+
+if exists thefuck; then
+    eval "$(thefuck --alias)"
+fi
+
+if exists gh; then
+    eval "$(gh completion -s zsh)"
+fi
+
+# if exists npm; then
+#     eval "$(npm completion)"
+# fi
+
+if exists navi; then
+    eval "$(navi widget zsh)"
+    bindkey -r "" _navi_widget
+fi
+
+if exists zoxide; then
+    source $HOME/.config/zoxide/zoxide-config
+    eval "$(zoxide init zsh)"
+fi
+
+if exists mdsf; then
+    eval "$(mdsf completions zsh)"
+fi
+
+
+# if exists bob; then
+#     eval "$(bob complete zsh)"
+# fi
+
+
 
 # ZSH-SYNTAX-HIGHLIGHTING
 # DOCS https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/regexp.md
@@ -15,6 +73,7 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS=(
     brackets
     regexp
 )
+
 # pattern
 # line
 # cursor
@@ -45,14 +104,6 @@ bindkey '^E' autosuggest-accept
 # dont accept zsh-autosuggestions when using Vim's `A`
 # export ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=("${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[@]/vi-add-eol/}")
 
-
-# ZSH-COMPLETIONS
-# also loads compinit stuff, therefore has to be loaded before most plugins // maybe it can be
-# loaded after to get the original UX back? this new one sucks.
-. "${BREW_PREFIX}/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" 2>/dev/null
-
-# ZSH-AUTOPAIR
-. "${BREW_PREFIX}/share/zsh-autopair/autopair.zsh" 2>/dev/null
 
 # ZSH-HISTORY-SUBSTRING-SEARCH
 . "${BREW_PREFIX}/share/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null

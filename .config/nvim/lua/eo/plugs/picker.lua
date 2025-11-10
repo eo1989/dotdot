@@ -103,6 +103,7 @@ eo.fzf = { dropdown = dropdown, cursor_dropdown = cursor_dropdown }
 return {
   {
     'ibhagwan/fzf-lua',
+    enabled = false,
     priority = 151,
     lazy = false,
     cmd = 'FzfLua',

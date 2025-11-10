@@ -58,7 +58,7 @@ return {
     ft = 'python',
     keys = {
       {
-        '<leader>cp',
+        '<localleader>ai',
         function() require('inlayhint-filler').fill() end,
         desc = 'Insert the inlay-hint under cursor into the buffer',
         mode = { 'n', 'v' },
@@ -73,9 +73,9 @@ return {
     cmd = { 'UVInit', 'UVRunFile', 'UVRunSelection', 'UVRunFunction' },
     ft = 'python',
     opts = {
-      auto_activate_venv = false,
+      auto_activate_venv = true,
       auto_commands = true,
-      notify_activate_venv = false,
+      notify_activate_venv = true,
       picker_integration = true,
 
       -- keymaps to register (set to false to disable)
@@ -87,10 +87,10 @@ return {
         run_selection = true, -- Run selected code (<leader>vs)
         run_function = true, -- Run function (<leader>vf)
         venv = true, -- Environment management (<leader>ve)
-        init = true, -- Initialize uv project (<leader>vi)
-        add = true, -- Add a package (<leader>va)
-        remove = true, -- Remove a package (<leader>vd)
-        sync = true, -- Sync packages (<leader>vc)
+        init = false, -- Initialize uv project (<leader>vi)
+        add = false, -- Add a package (<leader>va)
+        remove = false, -- Remove a package (<leader>vd)
+        sync = false, -- Sync packages (<leader>vc)
       },
       execution = {
         run_command = 'uv run python',

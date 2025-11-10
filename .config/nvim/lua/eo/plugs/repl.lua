@@ -42,14 +42,34 @@ return {
   --     },
   --   },
   -- },
-  'GCBallesteros/Notebooknavigator.nvim',
+  {
+    'nvim-mini/mini.hipatterns',
+    event = 'VeryLazy',
+    dependencies = { 'GCBallesteros/Notebooknavigator.nvim' },
+    opts = function()
+      local nn = require('notebook-navigator')
+      local opts = { highlighters = { cells = nn.minihipatterns_spec } }
+      return opts
+    end,
+  },
+  {
+    'GCBallesteros/Notebooknavigator.nvim',
+    event = 'VeryLazy',
+    opts = {
+      cell_markers = {
+        python = '# %%',
+        julia = '#\\s\\=%%',
+      },
+      syntax_highlight = true,
+    },
+  },
   {
     'GCBallesteros/jupytext.nvim',
     event = { 'BufReadCmd *.ipynb' },
     priority = 999,
     -- lazy = false,
     -- ft = { 'ipynb' },
-    -- lazy = vim.fn.argc(-1) == 0, -- load jupytext early when opening a file from cmdline
+    lazy = vim.fn.argc(-1) == 0, -- load jupytext early when opening a file from cmdline
     opts = {
       -- style = 'hydrogen',
       custom_language_formatting = {
@@ -97,6 +117,7 @@ return {
 
       -- if vim.b[bufnr].filetype == 'julia' then
       --   vim.g.slime_cell_delimiter = '#\\s\\=%%'
+
       -- elseif vim.b[bufnr].filetype == 'python' then
       vim.g.slime_cell_delimiter = '# %%'
       -- end

@@ -10,13 +10,14 @@
 
 # List all the parent directories that contain the projects here
 read -r -d '' parent_dirs << EOM
-$HOME/oj/
-$HOME/projects/*/
+$HOME/
+$HOME/Dev/*/
 EOM
 
 # Other scattered project directories
 read -r -d '' other_dirs << EOM
 $HOME/.config
+$HOME/Documents/*/
 EOM
 
 if [[ $# -eq 1 ]]; then

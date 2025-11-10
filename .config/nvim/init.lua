@@ -101,22 +101,18 @@ local home = uv.os_homedir()
 package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?/init.lua;'
 package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?.lua;'
 
-if env.NVIM then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
-
 -- local specs = {
 --   { import = 'eo.plugs' },
 -- }
 -- local lazy = require('lazy')
 require('lazy').setup {
   spec = {
-    -- { import = 'eo' },
     { import = 'eo.plugs' },
-    -- { import = 'eo.plugs.luasnip' },
+    -- { import = 'eo.lsp' },
+    -- { import = 'eo.ts_node_action' },
     { import = 'eo.langs' },
-    -- { import = 'overseer' },
   },
   ui = {
-    -- border = g.border,
     border = 'rounded',
     wrap = true,
   },
@@ -184,13 +180,13 @@ require('lazy').setup {
   state = fn.stdpath('state') .. '/lazy/state.json',
 }
 
+-- if env.NVIM_CONFIG then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
+
 if eo.KITTY_SCROLLBACK then
   require('eo.kitty.scrollback')
   return
 end
 
--- vim.notify = require('notify')
--- cmd.packadd('cfilter')
 -- cmd.colorscheme('tokyonight-storm')
 cmd.colorscheme('catppuccin-macchiato')
 

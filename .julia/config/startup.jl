@@ -1,32 +1,71 @@
 using Pkg: Pkg
-using Revise
+# using Revise
+
 atreplinit() do repl
-    if isfile("Project.toml")
-        # @eval using Pkg: Pkg
-        @info "Activating project in $(pwd())"
-        Pkg.activate(".")
-        Pkg.instantiate(".")
-    end
-
-    @eval import REPL
-    if !isdefined(repl, :interface)
-        repl.interface = REPL.setup_interface(repl)
-    end
-
     try
+        @eval begin
+            # macros for utilizing test env
+            @eval using TestEnv
+            macro testenv()
+                return :(TestEnv.activate())
+            end
+            macro testenv(body)
+                return :(
+                    TestEnv.activate() do
+                        $body
+                    end
+                )
+            end
+        end
+
         @eval using OhMyREPL
-        OhMyREPL.enable_autocomplete_brackets(true) # only in vscode!
-        OhMyREPL.enable_fzf(true)
-        OhMyREPL.enable_highlight_markdown(true)
-        @async (sleep(0.1); Prompt.insert_keybindings())
-        #=  NOTE: all darker colorschemes I may like
-            Monokai{16,24bit,256}, OneDark, Tomorrow{,24bit}, Dracula, Distinguished, GithubDark{,Dimmed}, BoxyMonokai256, Base16MarterialDarker, Tomorrow{,24bit,Day,NightBright{,24bit}}
-        =#
         colorscheme!("Monokai24bit")
-        REPL.numbetered_prompt!(OhMyREPL.input_prompt!(string(VERSION) * " λ:", :green))
+        @async OhMyREPL.input_prompt!(string(VERSION) * "λ: ", :green)
+        OhMyREPL.enable_pass!("RainbowBrackets", true)
+        OhMyREPL.enable_pass!("Markdown", true)
+        OhMyREPL.enable_pass!("Fzf", true)
     catch e
-        @warn "error importing OhMyREPL"
+        @warn "error while importing OhMyREPL" e
+
+        if haskey(ENV, "KITTY_LISTEN_ON")
+            @eval import KittyTerminalImages
+            KittyTerminalImages.pushKittyDisplay()
+        end
+
+        if haskey(ENV, "TERM_PROGRAM") && ENV["TERM_PROGRAM"] == "vscode"
+            OhMyREPL.enable_autocomplete_brackets(false)
+        else
+            # not in vscode repl
+            using Revise
+        end
+
+        if isfile("Project.toml")
+            # @eval using Pkg: Pkg
+            @info "Activating project in $(pwd())"
+            Pkg.activate(".")
+            Pkg.instantiate(".")
+        end
+
+        @eval using REPL
+        if !isdefined(repl, :interface)
+            repl.interface = REPL.setup_interface(repl)
+        end
     end
+
+    # try
+    #     @eval using OhMyREPL
+    #     OhMyREPL.enable_autocomplete_brackets(true) # only in vscode!
+    #     OhMyREPL.enable_fzf(true)
+    #     OhMyREPL.enable_highlight_markdown(true)
+    #     @async (sleep(0.1); Prompt.insert_keybindings())
+    #     #=  NOTE: all darker colorschemes I may like
+    #         Monokai{16,24bit,256}, OneDark, Tomorrow{,24bit}, Dracula, Distinguished, GithubDark{,Dimmed}, BoxyMonokai256, Base16MarterialDarker, Tomorrow{,24bit,Day,NightBright{,24bit}}
+    #     =#
+    #     colorscheme!("Monokai24bit")
+    #     REPL.numbetered_prompt!(OhMyREPL.input_prompt!(string(VERSION) * " λ:", :green))
+    # catch e
+    #     @warn "error importing OhMyREPL"
+    # end
 
 
     # try
@@ -70,15 +109,15 @@ atreplinit() do repl
 end
 
 
-try
-    # import Term: install_term_stacktrace, install_term_logger, install_term_repr
-    import Term: install_term_repr
-    # install_term_stacktrace()
-    # install_term_logger()
-    install_term_repr()
-catch e
-    @warn "Error initializing term" exception = (e, catch_backtrace())
-end
+# try
+#     # import Term: install_term_stacktrace, install_term_logger, install_term_repr
+#     import Term: install_term_repr
+#     # install_term_stacktrace()
+#     # install_term_logger()
+#     install_term_repr()
+# catch e
+#     @warn "Error initializing term" exception = (e, catch_backtrace())
+# end
 
 # using OhMyREPL
 # using REPL
@@ -92,23 +131,24 @@ end
 # Using OhMyREPL, InteractiveCodeSearch, Plots
 
 # InteractiveCodeSearch.
-#  import OhMyREPL
-#  import REPL
-#  import REPL.LineEdit
-#  import JLFzf
-#  const mykeys = Dict{Any, Any}(
-#      # primary history search: most recent 1st
-#      "^R" => function (mistate, o, c)
-#          line = JLFzf.inter_fzf(JLFzf.read_repl_hist(),
-#          "--read0",
-#          "--tiebreak = index",
-#          "--height = 80%");
-#          JLFzf.insert_history_to_repl(mistate, line)
-#      end,
-#  )
-#  function customize_keys(repl)
-#      repl.interface = REPL.setup_interface(repl; extra_repl_keymap = mykeys)
-#  end
+
+# import OhMyREPL
+# import REPL
+# import REPL.LineEdit
+# import JLFzf
+# const mykeys = Dict{Any, Any}(
+#     # primary history search: most recent 1st
+#     "^R" => function (mistate, o, c)
+#         line = JLFzf.inter_fzf(JLFzf.read_repl_hist(),
+#         "--read0",
+#         "--tiebreak = index",
+#         "--height = 80%");
+#         JLFzf.insert_history_to_repl(mistate, line)
+#     end,
+# )
+# function customize_keys(repl)
+#     repl.interface = REPL.setup_interface(repl; extra_repl_keymap = mykeys)
+# end
 
 # using Dates
 # input_prompt() = "julia-" * string(Dates.now()) * >
@@ -218,12 +258,12 @@ end
 # ------------------------------------------------------------------------------
 ## Clear screen leaving prompt at the bottom
 # ------------------------------------------------------------------------------
-function clr()
-    for i in 1:60
-        println()
-    end
-    return
-end
+# function clr()
+#     for i in 1:60
+#         println()
+#     end
+#     return
+# end
 
 # utility
 ls(x) = readdir(x)
@@ -234,7 +274,7 @@ fnty = fn ∘ ty
 
 iscallable(op) = !isempty(methods(op))
 push(x::Tuple, val) = (x..., val)
-linspace(zi::Number, ze::Number, n::Integer) = Array(range(zi, stop = ze, length = n))
+linspace(zi::Number, ze::Number, n::Integer) = Array(range(zi, stop=ze, length=n))
 
 # TODO: make macro @capture_out include("script.jl")
 function capture_out(script::AbstractString)

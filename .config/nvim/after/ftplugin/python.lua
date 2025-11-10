@@ -1,6 +1,6 @@
-vim.treesitter.start()
 local api, bo, cmd, optl = vim.api, vim.bo, vim.cmd, vim.opt_local
 local map = vim.api.nvim_set_keymap or vim.keymap.set
+
 
 -- cmd([[call matchadd('TabLineSel', '\%80v', 79)]])
 -- local options = {
@@ -46,6 +46,8 @@ setlocal includeexpr=substitute(v:fname,'\\.','/','g')
 -- need to do this in an autocmd. see https://stackoverflow.com/a/37889460/4151392
 optl.indentkeys:remove { '<:>' }
 optl.indentkeys:append { '=else:' }
+
+vim.treesitter.start()
 
 -- https://github.com/echasnovski/nvim/blob/master/after/ftplugin/python.lua
 -- g['pyindent_open_paren'] = 'shiftwidth()'

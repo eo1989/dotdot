@@ -84,8 +84,7 @@ zstyle -e ':autocomplete:*:*' list-lines 'reply=( $(( LINES / 2 )) )'
 #───────────────────────────────────────────────────────────────────────────────
 # BINDINGS
 
-# BUG: https://github.com/marlonrichert/zsh-autocomplete/issues/749
-# was answered though
+# BUG: https://github.com/marlonrichert/zsh-autocomplete/issues/749 was answered though
 
 # on empty buffer, `tab` opens `cd` completion menu, otherwise, select completion.
 # (This is better than `AUTO_CD`, since `zstyle ':completion:*' group-order` doesnt affect AUTO_CD, but is normal `cd`, which we emulate here.)

@@ -5,6 +5,11 @@ local defaults = require('defaults')
 ---@type LazySpec
 return {
   {
+    'folke/todo-comments.nvim',
+    event = 'VeryLazy',
+    opts = {},
+  },
+  {
     'folke/snacks.nvim',
     priority = 9999,
     lazy = false,
@@ -16,14 +21,15 @@ return {
       dashboard = { enabled = false },
       dim = { enabled = false },
       explorer = { enabled = false },
-      git = { enabled = false },
+      git = { enabled = true },
       gitbrowse = { enabled = true },
       indent = { enabled = true },
       input = { enabled = false },
       layout = { enabled = false },
       lazygit = { enabled = false },
       notifier = { enabled = false },
-      picker = { enabled = false }, --[[ needed for Snacks.picker.lsp_definition() & such ]]
+      --[[ needed for Snacks.picker.lsp_definition() & such ]]
+      picker = { enabled = true },
       profiler = { enabled = true },
       quickfile = { enabled = true },
       rename = { enabled = false },
@@ -32,7 +38,18 @@ return {
         underline = true,
       },
       scratch = { enabled = true },
-      scroll = { enabled = false },
+      scroll = {
+        enabled = true,
+        animate = {
+          duration = { step = 5, total = 100 },
+          easing = 'inQuad',
+        },
+        animate_repeat = {
+          delay = 50,
+          duration = { step = 5, total = 50 },
+          easing = 'inQuad',
+        },
+      },
       statuscolumn = { enabled = false },
       terminal = { enabled = false },
       toggle = { enabled = true },
@@ -94,6 +111,65 @@ return {
     },
     keys = {
       {
+        '<leader>ff',
+        function()
+          -- Snacks.picker.smart()
+          Snacks.picker.files()
+        end,
+        desc = 'Find Files',
+      },
+      {
+        '<leader>fb',
+        function() Snacks.picker.buffers() end,
+        desc = 'Find Buffers',
+      },
+      -- {
+      --   '<leader>fc',
+      --   function() Snacks.picker.files { cwd = vim.fn.stdpath('config') } end,
+      --   desc = 'Config files',
+      -- },
+      {
+        '<leader>fc',
+        function() Snacks.picker.files { cwd = vim.g.nvim_dir } end,
+        desc = 'Config files',
+      },
+      {
+        '<leader>fC',
+        function() Snacks.picker.commands() end,
+        desc = 'Search Commands',
+      },
+      {
+        '<leader>fi',
+        function() Snacks.picker.diagnostics_buffer() end,
+        desc = 'Search diagnostics (buffer)',
+      },
+      {
+        '<leader>fh',
+        function() Snacks.picker.help() end,
+        desc = 'Search help',
+      },
+      {
+        '<leader>fva',
+        function() Snacks.picker.autocmds() end,
+        desc = 'Search Autocmds',
+      },
+      {
+        '<leader>fvk',
+        function() Snacks.picker.keymaps() end,
+        desc = 'Search Keymaps',
+      },
+      {
+        '<leader>fs',
+        function() Snacks.picker.grep() end,
+        desc = 'search Word',
+      },
+      {
+        '<leader>ss',
+        function() Snacks.picker.lsp_symbols() end,
+        desc = 'LSP: Document Symbols',
+      },
+
+      {
         '<leader>qq',
         function() Snacks.bufdelete() end,
         desc = 'Delete buffer',
@@ -103,11 +179,11 @@ return {
         function() Snacks.scratch() end,
         desc = 'Scratch buffer',
       },
-      {
-        '<localleader>.',
-        function() Snacks.scratch.select() end,
-        desc = 'Scratch buffer',
-      },
+      -- {
+      --   '<localleader>.',
+      --   function() Snacks.scratch.select() end,
+      --   desc = 'Scratch buffer',
+      -- },
       {
         ']]',
         function() Snacks.words.jump(1) end,
@@ -209,248 +285,12 @@ return {
       })
     end,
   },
-  -- {
-  --   'folke/sidekick.nvim',
-  --   enabled = false,
-  --   opts = {
-  --     -- add any options here
-  --     cli = {
-  --       mux = {
-  --         backend = 'zellij',
-  --         enabled = true,
-  --       },
-  --     },
-  --   },
-  --   -- keys = {
-  --   --   -- {
-  --   --   --   '<tab>',
-  --   --   --   function()
-  --   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
-  --   --   --     if not require('sidekick').nes_jump_or_apply() then
-  --   --   --       return '<Tab>' -- fallback to normal tab
-  --   --   --     end
-  --   --   --   end,
-  --   --   --   expr = true,
-  --   --   --   desc = 'Goto/Apply Next Edit Suggestion',
-  --   --   -- },
-  --   --   --------------------------------------------------------------------------------------
-  --   --   -- {
-  --   --   --   '<tab>',
-  --   --   --   function()
-  --   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
-  --   --   --     if not require('sidekick').nes_jump_or_apply() then
-  --   --   --       return -- jumped or applied
-  --   --   --     end
-  --   --   --
-  --   --   --     -- if your using neovims native inline completions
-  --   --   --     if vim.lsp.inline_completion.get() then
-  --   --   --       return
-  --   --   --     end
-  --   --   --
-  --   --   --     -- any other things (like snippets) you want to do on <tab> go here.
-  --   --   --
-  --   --   --     -- fallback to normal tab
-  --   --   --     return "<tab>"
-  --   --   --   end,
-  --   --   --   expr = true,
-  --   --   --   desc = 'Goto/Apply Next Edit Suggestion',
-  --   --   -- },
-  --   --   --------------------------------------------------------------------------------------
-  --   --   {
-  --   --     '<c-.>',
-  --   --     function() require('sidekick.cli').toggle() end,
-  --   --     desc = 'Sidekick Toggle',
-  --   --     mode = { 'n', 't', 'i', 'x' },
-  --   --   },
-  --   --   {
-  --   --     '<leader>aa',
-  --   --     function() require('sidekick.cli').toggle() end,
-  --   --     desc = 'Sidekick Toggle CLI',
-  --   --   },
-  --   --   {
-  --   --     '<leader>as',
-  --   --     function() require('sidekick.cli').select() end,
-  --   --     -- Or to select only installed tools:
-  --   --     -- require("sidekick.cli").select({ filter = { installed = true } })
-  --   --     desc = 'Select CLI',
-  --   --   },
-  --   --   {
-  --   --     '<leader>ad',
-  --   --     function() require('sidekick.cli').close() end,
-  --   --     desc = 'Detach a CLI Session',
-  --   --   },
-  --   --   {
-  --   --     '<leader>at',
-  --   --     function() require('sidekick.cli').send { msg = '{this}' } end,
-  --   --     mode = { 'x', 'n' },
-  --   --     desc = 'Send This',
-  --   --   },
-  --   --   {
-  --   --     '<leader>af',
-  --   --     function() require('sidekick.cli').send { msg = '{file}' } end,
-  --   --     desc = 'Send File',
-  --   --   },
-  --   --   {
-  --   --     '<leader>av',
-  --   --     function() require('sidekick.cli').send { msg = '{selection}' } end,
-  --   --     mode = { 'x' },
-  --   --     desc = 'Send Visual Selection',
-  --   --   },
-  --   --   {
-  --   --     '<leader>ap',
-  --   --     function() require('sidekick.cli').prompt() end,
-  --   --     mode = { 'n', 'x' },
-  --   --     desc = 'Sidekick Select Prompt',
-  --   --   },
-  --   --   -- Example of a keybinding to open Claude directly
-  --   --   {
-  --   --     '<leader>ac',
-  --   --     function() require('sidekick.cli').toggle { name = 'claude', focus = true } end,
-  --   --     desc = 'Sidekick Toggle Claude',
-  --   --   },
-  --   -- },
-  --   config = function()
-  --     require('sidekick').setup {
-  --       nes = {
-  --         enabled = false,
-  --       },
-  --     }
-  --
-  --     eo.command('Sidekick', function(args)
-  --       local subcommand = args.fargs[1]
-  --
-  --       local actions = {
-  --         select = function() require('sidekick.cli').select {} end,
-  --         toggle = function() require('sidekick.cli').toggle {} end,
-  --         close = function() require('sidekick.cli').close {} end,
-  --       }
-  --
-  --       local fn = actions[subcommand or 'toggle']
-  --       if not fn then
-  --         vim.notify(string.format('No such subcommand %s', subcommand), L.WARN, {})
-  --         return
-  --       end
-  --       fn()
-  --     end, { nargs = '*' })
-  --   end,
-  --   cmd = 'Sidekick',
-  -- },
-  -- {
-  --   'folke/edgy.nvim',
-  --   enabled = false,
-  --   event = 'VeryLazy',
-  --   init = function()
-  --     vim.opt.laststatus = 3
-  --     vim.opt.splitkeep = 'screen'
-  --   end,
-  --   opts = {
-  --     bottom = {
-  --       {
-  --         ft = 'toggleterm',
-  --         size = { height = 0.3 },
-  --         filter = function(buf, win) return vim.api.nvim_win_set_config(win).relative == '' end,
-  --       },
-  --       -- {
-  --       --   ft = 'lazyterm',
-  --       --   title = 'LazyTerm',
-  --       --   size = { height = 0.3 },
-  --       --   filter = function(buf) return not vim.b[buf].lazyterm_cmd end,
-  --       -- },
-  --       'Trouble',
-  --       { ft = 'qf', title = 'QuickFix' },
-  --       {
-  --         ft = 'help',
-  --         size = { height = 20 },
-  --         filter = function(buf) return vim.bo[buf].buftype == 'help' end,
-  --       },
-  --       { ft = 'spectre_panel', size = { height = 0.4 } },
-  --       {
-  --         title = 'Neo-Tree Git',
-  --         ft = 'neo-tree',
-  --         filter = function(buf) return vim.b[buf].neo_tree_source == 'git_status' end,
-  --         pinned = true,
-  --         collapsed = true, -- show window as closed/collapsed on start
-  --         open = 'Neotree position=bottom git_status',
-  --       },
-  --       {
-  --         title = 'Neo-Tree Buffers',
-  --         ft = 'neo-tree',
-  --         filter = function(buf) return vim.b[buf].neo_tree_source == 'buffers' end,
-  --         pinned = true,
-  --         collapsed = true, -- show window as closed/collapsed on start
-  --         open = 'Neotree position=bottom buffers',
-  --       },
-  --     },
-  --     left = {
-  --       -- {
-  --       --   title = 'Neo-Tree',
-  --       --   ft = 'neo-tree',
-  --       --   filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
-  --       --   size = { height = 0.5 }, -- half the screen?
-  --       -- },
-  --       {
-  --         title = function()
-  --           local buf_name = vim.api.nvim_buf_get_name(0) or '[No Name]'
-  --           return vim.fn.fnamemodify(buf_name, ':t')
-  --         end,
-  --         ft = 'Outline',
-  --         pinned = true,
-  --         open = 'SymbolsOutlineOpen',
-  --       },
-  --       -- any other neo-tree windows
-  --       -- 'neo-tree',
-  --     },
-  --     right = {
-  --       {
-  --         title = 'Neo-Tree Files',
-  --         ft = 'neo-tree',
-  --         filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
-  --         size = { height = 0.25 },
-  --         open = 'NeoTree position=right toggle',
-  --       },
-  --       -- 'neo-tree',
-  --     },
-  --   },
-  -- },
   {
-    'folke/trouble.nvim',
-    -- event = 'VeryLazy',
-    lazy = true,
-    opts = {}, -- for default options, refer to the configuration section for custom setup.
-    cmd = 'Trouble',
-    keys = {
-      -- {
-      --   '<leader>xx',
-      --   '<cmd>Trouble diagnostics toggle<cr>',
-      --   desc = 'Diagnostics (Trouble)',
-      -- },
-      {
-        '<leader>xx',
-        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-        desc = 'Buffer Diagnostics (Trouble)',
-      },
-      {
-        '<localleader>cs',
-        '<cmd>Trouble symbols toggle focus=false win.position=bottom<cr>',
-        desc = 'Symbols',
-      },
-      {
-        '<localleader>cl',
-        '<cmd>Trouble lsp toggle focus=false win.position=bottom<cr>',
-        desc = 'LSP Defs|refs ..',
-      },
-      {
-        '<leader>xL',
-        '<cmdle loclist toggle<cr>',
-        desc = 'LocList',
-      },
-      -- { '<leader>xQ', '<cmd>Trouble qflist toggle<cr>', desc = 'QfList' },
-    },
-  },
-  {
+    ---@module "noice"
     'folke/noice.nvim',
     enabled = true,
-    event = { 'BufReadPost', 'VimEnter' },
+    -- event = { 'BufReadPost', 'VimEnter' },
+    event = { 'BufRead', 'VimEnter' },
     -- lazy = true,
     dependencies = {
       { 'MunifTanjim/nui.nvim' },
@@ -470,58 +310,59 @@ return {
         kind_icons = true,
       },
       lsp = {
-        hover = {
-          enabled = true,
-          silent = false, -- set to true to not show a message if hover isnt available
-          ---@type NoiceViewOptions
-          opts = {
-            border = {
-              style = defaults.ui.border.name,
-            },
-            position = { row = 2, col = 2 },
-          },
-        },
         progress = {
           enabled = true,
           -- dont show the language server client
           ---@type NoiceFormat|string
-          format = {
-            {
-              '{progress}',
-              key = 'progress.percentage',
-              contents = {
-                { '{data.progress.message} ' },
-              },
-            },
-            '({data.progress.percentage}%) ',
-            { '{spinner} ', hl_group = 'NoiceLspProgressSpinner' },
-            { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
-          },
+          -- format = {
+          --   {
+          --     '{progress}',
+          --     key = 'progress.percentage',
+          --     contents = {
+          --       { '{data.progress.message} ' },
+          --     },
+          --   },
+          --   '({data.progress.percentage}%) ',
+          --   { '{spinner} ', hl_group = 'NoiceLspProgressSpinner' },
+          --   { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
+          -- },
           ---@type NoiceFormat|string
-          format_done = {
-            { '✔ ', hl_group = 'NoiceLspProgressSpinner' },
-            { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
-          },
+          -- format_done = {
+          --   { '✔ ', hl_group = 'NoiceLspProgressSpinner' },
+          --   { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
+          -- },
         },
         override = {
           ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
           ['vim.lsp.util.stylize_markdown'] = true,
           ['cmp.entry.get_documentation'] = true,
         },
+        hover = {
+          enabled = false,
+          silent = false, -- set to true to not show a message if hover isnt available
+          ---@type NoiceViewOptions
+          -- opts = {
+          --   border = {
+          --     style = defaults.ui.border.name,
+          --   },
+          --   -- position = { row = 2, col = 2 },
+          -- },
+        },
         documentation = {
           enabled = true,
-          opts = {
-            border = { style = border },
-            position = { row = 2 },
-          },
+          -- opts = {
+          --   -- border = { style = border },
+          --   border = { style = defaults.ui.border.name },
+          --   -- position = { row = 2 },
+          -- },
         },
         signature = {
-          enabled = true,
+          enabled = false,
           auto_open = {
             enabled = true,
             trigger = true, -- Automatically show signature help when typing a trigger character from the LSP
             luasnip = true, -- Will open signature help when jumping to Luasnip insert nodes
-            throttle = 50, -- Debounce lsp signature help request by 50ms
+            throttle = 50, -- Debounce lsp signature help request by 25ms
           },
           opts = {
             position = { row = 1, col = 2 },
@@ -556,6 +397,8 @@ return {
         history = { view = 'split' },
       },
       presets = {
+        bottom_search = false,
+        command_palette = true,
         inc_rename = false,
         long_message_to_split = true,
         lsp_doc_border = false,
@@ -636,8 +479,6 @@ return {
         },
       },
     },
-    --   return opts
-    -- end,
     config = function(_, opts)
       map({ 'n', 'i', 's' }, '<c-d>', function()
         if not require('noice.lsp').scroll(4) then return '<c-d>' end
@@ -649,21 +490,13 @@ return {
 
       map('n', '<localleader>n', function() require('noice').cmd('Errors') end, { silent = true })
 
-      map(
-        'n',
-        '<ESC>',
-        function() require('notify').dismiss() end,
-        { desc = 'Dismiss popup & clear hlsearch', nowait = true, silent = true }
-      )
+      map('n', '<ESC>', function()
+        require('notify').dismiss()
+        require('noice').cmd('dismiss')
+        vim.cmd([[NoiceDismiss]])
+      end, { desc = 'Dismiss popup & clear hlsearch', nowait = true, silent = true })
 
-      -- map('n', '<esc>', function()
-      --   -- if not require('copilot-lsp.nes').clear() then
-      --   --   require('noice')['cmd']('dismiss')
-      --   if not require('noice').cmd('dismiss') then
-      --     require('notify').dismiss()
-      --     return
-      --   end
-      -- end, { desc = 'clear copilot and everything else or fallback', nowait = true, silent = true })
+      map('n', '<localleader>m', function() require('noice').cmd('dismiss') end)
 
       require('noice').setup(opts)
       -- map('n', '<leader>n', function()
@@ -686,3 +519,241 @@ return {
     end,
   },
 }
+
+-- {
+--   'folke/sidekick.nvim',
+--   enabled = false,
+--   opts = {
+--     -- add any options here
+--     cli = {
+--       mux = {
+--         backend = 'zellij',
+--         enabled = true,
+--       },
+--     },
+--   },
+--   -- keys = {
+--   --   -- {
+--   --   --   '<tab>',
+--   --   --   function()
+--   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
+--   --   --     if not require('sidekick').nes_jump_or_apply() then
+--   --   --       return '<Tab>' -- fallback to normal tab
+--   --   --     end
+--   --   --   end,
+--   --   --   expr = true,
+--   --   --   desc = 'Goto/Apply Next Edit Suggestion',
+--   --   -- },
+--   --   --------------------------------------------------------------------------------------
+--   --   -- {
+--   --   --   '<tab>',
+--   --   --   function()
+--   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
+--   --   --     if not require('sidekick').nes_jump_or_apply() then
+--   --   --       return -- jumped or applied
+--   --   --     end
+--   --   --
+--   --   --     -- if your using neovims native inline completions
+--   --   --     if vim.lsp.inline_completion.get() then
+--   --   --       return
+--   --   --     end
+--   --   --
+--   --   --     -- any other things (like snippets) you want to do on <tab> go here.
+--   --   --
+--   --   --     -- fallback to normal tab
+--   --   --     return "<tab>"
+--   --   --   end,
+--   --   --   expr = true,
+--   --   --   desc = 'Goto/Apply Next Edit Suggestion',
+--   --   -- },
+--   --   --------------------------------------------------------------------------------------
+--   --   {
+--   --     '<c-.>',
+--   --     function() require('sidekick.cli').toggle() end,
+--   --     desc = 'Sidekick Toggle',
+--   --     mode = { 'n', 't', 'i', 'x' },
+--   --   },
+--   --   {
+--   --     '<leader>aa',
+--   --     function() require('sidekick.cli').toggle() end,
+--   --     desc = 'Sidekick Toggle CLI',
+--   --   },
+--   --   {
+--   --     '<leader>as',
+--   --     function() require('sidekick.cli').select() end,
+--   --     -- Or to select only installed tools:
+--   --     -- require("sidekick.cli").select({ filter = { installed = true } })
+--   --     desc = 'Select CLI',
+--   --   },
+--   --   {
+--   --     '<leader>ad',
+--   --     function() require('sidekick.cli').close() end,
+--   --     desc = 'Detach a CLI Session',
+--   --   },
+--   --   {
+--   --     '<leader>at',
+--   --     function() require('sidekick.cli').send { msg = '{this}' } end,
+--   --     mode = { 'x', 'n' },
+--   --     desc = 'Send This',
+--   --   },
+--   --   {
+--   --     '<leader>af',
+--   --     function() require('sidekick.cli').send { msg = '{file}' } end,
+--   --     desc = 'Send File',
+--   --   },
+--   --   {
+--   --     '<leader>av',
+--   --     function() require('sidekick.cli').send { msg = '{selection}' } end,
+--   --     mode = { 'x' },
+--   --     desc = 'Send Visual Selection',
+--   --   },
+--   --   {
+--   --     '<leader>ap',
+--   --     function() require('sidekick.cli').prompt() end,
+--   --     mode = { 'n', 'x' },
+--   --     desc = 'Sidekick Select Prompt',
+--   --   },
+--   --   -- Example of a keybinding to open Claude directly
+--   --   {
+--   --     '<leader>ac',
+--   --     function() require('sidekick.cli').toggle { name = 'claude', focus = true } end,
+--   --     desc = 'Sidekick Toggle Claude',
+--   --   },
+--   -- },
+--   config = function()
+--     require('sidekick').setup {
+--       nes = {
+--         enabled = false,
+--       },
+--     }
+--
+--     eo.command('Sidekick', function(args)
+--       local subcommand = args.fargs[1]
+--
+--       local actions = {
+--         select = function() require('sidekick.cli').select {} end,
+--         toggle = function() require('sidekick.cli').toggle {} end,
+--         close = function() require('sidekick.cli').close {} end,
+--       }
+--
+--       local fn = actions[subcommand or 'toggle']
+--       if not fn then
+--         vim.notify(string.format('No such subcommand %s', subcommand), L.WARN, {})
+--         return
+--       end
+--       fn()
+--     end, { nargs = '*' })
+--   end,
+--   cmd = 'Sidekick',
+-- },
+-- {
+--   'folke/edgy.nvim',
+--   enabled = false,
+--   event = 'VeryLazy',
+--   init = function()
+--     vim.opt.laststatus = 3
+--     vim.opt.splitkeep = 'screen'
+--   end,
+--   opts = {
+--     bottom = {
+--       {
+--         ft = 'toggleterm',
+--         size = { height = 0.3 },
+--         filter = function(buf, win) return vim.api.nvim_win_set_config(win).relative == '' end,
+--       },
+--       -- {
+--       --   ft = 'lazyterm',
+--       --   title = 'LazyTerm',
+--       --   size = { height = 0.3 },
+--       --   filter = function(buf) return not vim.b[buf].lazyterm_cmd end,
+--       -- },
+--       'Trouble',
+--       { ft = 'qf', title = 'QuickFix' },
+--       {
+--         ft = 'help',
+--         size = { height = 20 },
+--         filter = function(buf) return vim.bo[buf].buftype == 'help' end,
+--       },
+--       { ft = 'spectre_panel', size = { height = 0.4 } },
+--       {
+--         title = 'Neo-Tree Git',
+--         ft = 'neo-tree',
+--         filter = function(buf) return vim.b[buf].neo_tree_source == 'git_status' end,
+--         pinned = true,
+--         collapsed = true, -- show window as closed/collapsed on start
+--         open = 'Neotree position=bottom git_status',
+--       },
+--       {
+--         title = 'Neo-Tree Buffers',
+--         ft = 'neo-tree',
+--         filter = function(buf) return vim.b[buf].neo_tree_source == 'buffers' end,
+--         pinned = true,
+--         collapsed = true, -- show window as closed/collapsed on start
+--         open = 'Neotree position=bottom buffers',
+--       },
+--     },
+--     left = {
+--       -- {
+--       --   title = 'Neo-Tree',
+--       --   ft = 'neo-tree',
+--       --   filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
+--       --   size = { height = 0.5 }, -- half the screen?
+--       -- },
+--       {
+--         title = function()
+--           local buf_name = vim.api.nvim_buf_get_name(0) or '[No Name]'
+--           return vim.fn.fnamemodify(buf_name, ':t')
+--         end,
+--         ft = 'Outline',
+--         pinned = true,
+--         open = 'SymbolsOutlineOpen',
+--       },
+--       -- any other neo-tree windows
+--       -- 'neo-tree',
+--     },
+--     right = {
+--       {
+--         title = 'Neo-Tree Files',
+--         ft = 'neo-tree',
+--         filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
+--         size = { height = 0.25 },
+--         open = 'NeoTree position=right toggle',
+--       },
+--       -- 'neo-tree',
+--     },
+--   },
+-- },
+-- {
+--   'folke/trouble.nvim',
+--   -- event = 'VeryLazy',
+--   lazy = true,
+--   opts = {}, -- for default options, refer to the configuration section for custom setup.
+--   cmd = 'Trouble',
+--   keys = {
+--     -- {
+--     --   '<leader>xx',
+--     --   '<cmd>Trouble diagnostics toggle<cr>',
+--     --   desc = 'Diagnostics (Trouble)',
+--     -- },
+--     {
+--       '<leader>xx',
+--       '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+--       desc = 'Buffer Diagnostics (Trouble)',
+--     },
+--     {
+--       '<localleader>cs',
+--       '<cmd>Trouble symbols toggle focus=false win.position=bottom<cr>',
+--       desc = 'Symbols',
+--     },
+--     {
+--       '<localleader>cl',
+--       '<cmd>Trouble lsp toggle focus=false win.position=bottom<cr>',
+--       desc = 'LSP Defs|refs ..',
+--     },
+--     {
+--       '<leader>xL',
+--       '<cmdle loclist toggle<cr>',
+--       desc = 'LocList',
+--     },
+--   },
+-- },

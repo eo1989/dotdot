@@ -1,0 +1,496 @@
+{
+  "workbench.sideBar.location": "right",
+  "files.autoSave": "afterDelay",
+  // "editor.fontFamily": "'CaskaydiaCove Nerd Font', 'FiraCode Nerd Font', 'VictorMono Nerd Font', monospace",
+  "editor.fontFamily": "'FiraCode Nerd Font Propo', 'VictorMono Nerd Font'",
+  // "editor.fontLigatures": "'calt', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09', 'ss10', 'ss11', 'ss12', 'cv12', 'calt', 'liga', 'dlig'",
+  // "editor.fontLigatures": "'ss01' on, 'ss02' on, 'ss03' on, 'ss04' on, 'ss05' on, 'ss06' on, 'ss07' on, 'ss08' on, 'ss10' on, 'ss11' on, 'ss12' on, 'ss27' on, 'cv01' on, 'cv03' on, 'calt' on, 'liga' on, 'dlig' on",
+  "editor.fontLigatures": "'calt' on, 'liga' on, 'dlig' on, 'ss03' on, 'ss05' on, 'ss06' on, 'ss07' on, 'ss09' on, 'cv16' on, 'cv27' on, 'cv28' on, 'cv29' on, 'cv30' on, 'cv31' on",
+  // "editor.fontLigatures": "'calt' on, 'liga' on, 'dlig' on", // ==== |> ==> @  & *** * -> | >>== |== ||== \\
+  "editor.defaultFoldingRangeProvider": "ms-vscode.anycode",
+  "editor.inlayHints.padding": true,
+  "terminal.integrated.enableImages": true,
+  "terminal.integrated.fontLigatures.featureSettings": "'calt' on, 'liga' on, 'dlig' on",
+  "jupyter.kernelManagement.enabled": true,
+  "jupyter.kernels.trusted": [
+    "~/.local/pipx/venvs/jupyterlab/share/jupyter/kernels/python3/kernel.json"
+  ],
+  // "editor.smoothScrolling": true,
+  "search.searchEditor.focusResultsOnSearch": true,
+  "editor.guides.bracketPairsHorizontal": "active",
+  "editor.scrollbar.horizontal": "visible",
+  "editor.scrollbar.ignoreHorizontalScrollbarInContentHeight": true,
+  "editor.overviewRulerBorder": true,
+  "editor.formatOnSave": true,
+  "files.autoGuessEncoding": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "gitlens.telemetry.enabled": false,
+  "AREPL.telemetry": false,
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "telemetry.telemetryLevel": "off",
+  "telemetry.feedback.enabled": false,
+  "editor.experimental.preferTreeSitter.regex": true,
+  "editor.experimental.preferTreeSitter.ini": true,
+  "editor.experimental.preferTreeSitter.css": true,
+  "editor.experimental.preferTreeSitter.typescript": true,
+  "code-runner.enableAppInsights": false,
+  "jupyter.enableExtendedPythonKernelCompletions": true,
+  "markdown.math.enabled": false,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.supportDocstringTemplate": true,
+  "python.terminal.shellIntegration.enabled": true,
+  "python.testing.pytestEnabled": true,
+  "pythonTestExplorer.outputs.showOutputsOnRun": true,
+  "pythonTestExplorer.testFramework": "pytest",
+  "pythonTestExplorer.testplanEnabled": true,
+  "vim.camelCaseMotion.enable": true,
+  "vim.easymotion": true,
+  "vim.incsearch": true,
+  "vim.useCtrlKeys": true,
+  "vim.foldfix": true,
+  "vim.gdefault": true,
+  "vim.highlightedyank.enable": true,
+  "vim.hlsearch": true,
+  "vim.leader": "<Space>",
+  "vim.replaceWithRegister": true,
+  "vim.smartRelativeLine": true,
+  "vim.sneak": true,
+  "vim.sneakReplacesF": true,
+  "vim.sneakUseIgnorecaseAndSmartcase": true,
+  "vim.useSystemClipboard": true,
+  "vim.visualstar": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["k", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.visualModeKeyBindings": [
+    { "before": [">"], "commands": ["editor.action.indentLines"] },
+    { "before": ["<"], "commands": ["editor.action.outdentLines"] },
+    // move selected lines while staying in vis mode
+    // { "before": ["J"], "commands": ["editor.action.moveLinesDownAction"] },
+    // { "before": ["K"], "commands": ["editor.action.moveLinesUpAction"] }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    // nohlsearch
+    // {
+    //   "before": [ "<ESC>" ],
+    //   "commands": ["editor.action.removeHighlight"]
+    // },
+    // splits
+    {
+      "before": ["leader", "|"],
+      "commands": [":vsplit"]
+    },
+    {
+      "before": ["leader", "-"],
+      "commands": [":split"]
+    },
+    // show & hide sidebar
+    {
+      "before": ["leader", "e"],
+      "commands": ["workbench.action.toggleSidebarVisibility"]
+    },
+    {
+      "before": ["leader", "f", "f"],
+      "commands": ["workbench.action.quickOpen"]
+    },
+    // close current tab
+    {
+      "before": ["leader", "b", "d"],
+      "commands": ["workbench.action.closeActiveEditor"]
+    }
+  ],
+  "extensions.experimental.affinity": {
+    "vscodevim.vim": 1
+  },
+  "jupyter.allowUnauthorizedRemoteConnection": true,
+  "inlineSQL.lintSQLFiles": true,
+  "quarto.render.renderOnSave": true,
+  "quarto.render.previewType": "external",
+  "terminal.integrated.commandsToSkipShell": ["language-julia.interrupt"],
+  "workbench.panel.showLabels": false,
+  "notebook.defaultFormatter": "charliermarsh.ruff",
+  "files.associations": {
+    "*.rmd": "markdown"
+  },
+  "julia.execution.codeInREPL": true,
+  "julia.execution.resultType": "REPL",
+  "julia.inlayHints.static.enabled": true,
+  "julia.symbolCacheDownload": true,
+  "julia.enableTelemetry": false,
+  "julia.executablePath": "/opt/homebrew/bin/julia",
+  "julia.persistentSession.alwaysCopy": true,
+  "julia.runtimeCompletions": true,
+  "julia.inlayHints.static.variableTypes.enabled": false,
+  "terminal.integrated.gpuAcceleration": "auto",
+  "terminal.integrated.suggest.cdPath": "relative",
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "keyword",
+          "comment",
+          // "variable",
+          // "variable.language",
+          // "variable.parameter",
+          "string",
+          "meta.function",
+          "entity.name.function",
+          // "entity.name.class",
+          // "entity.name.import",
+          // "entity.other.attribute-name",
+          // "meta.function-call",
+          // "meta.class",
+          // "meta.import",
+          // "meta.block",
+          // "meta.decorator",
+          // "meta.annotation",
+          "constant",
+          // "storage",
+          // "support.function",
+          // "support.class",
+          // "support.type",
+          "markup"
+        ], // Applies to all scopes
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": [
+          // "variable.language",
+          // "variable.parameter",
+          // "string",
+          // "entity.name.function",
+          "entity.name.attribute",
+          // "entity.name.class",
+          // "entity.name.import",
+          // "entity.other.attribute-name",
+          // "meta.function-call",
+          "meta.class",
+          // "meta.import",
+          // "meta.block",
+          "meta.decorator"
+          // "meta.annotation",
+          // "constant",
+          // "storage",
+          // "support.function",
+          // "support.class",
+          // "support.type",
+          // "markup"
+        ], // Applies to all scopes
+        "settings": {
+          "fontStyle": "italic bold"
+        }
+      }
+    ]
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.rulers": [
+      {
+        "column": 80,
+        "color": "#705A8C"
+      }
+    ]
+  },
+  "[json]": {
+    // "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    // "editor.overviewRulerBorder": true,
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    },
+    "editor.rulers": [{ "column": 80 }]
+  },
+  "julia.NumThreads": "auto",
+  // "julia.languageServerExecutablePath": "~/.julia/environments/nvim-lspconfig/bin/julia",
+  "[julia]": {
+    "editor.defaultFormatter": "julialang.language-julia",
+    "editor.rulers": [{ "column": 100 }]
+  },
+  "terminal.integrated.env.osx": {
+    "PATH": "/Users/eo/.local/bin:/Users/eo/.local/share:/Users/eo/.local/share/bob/nightly/bin:/Users/eo/.pyenv/shims:/opt/homebrew/Cellar/pyenv-virtualenv/1.2.4/shims:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/opt/llvm/bin:/opt/homebrew/opt/curl/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/opt/node/bin:/Users/eo/.julia/juliaup:/Users/eo/.cargo/bin:/opt/homebrew/opt/grep/libexec/gnubin:/opt/homebrew/opt/gnu-sed/libexec/gnubin:/opt/homebrew/opt/gnu-which/libexec/gnubin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/opt/homebrew/opt/gnu-getopt/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/Users/eo/.luarocks/bin:/Users/eo/Library/pnpm:/Applications/kitty.app/Contents/MacOS:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/opt/fzf/bin"
+  },
+  "AREPL.skipLandingPage": true,
+  "python.defaultInterpreterPath": "/Users/eo/.pyenv/versions/3.12.7/envs/Gen",
+  "terminal.integrated.hideOnStartup": "whenEmpty",
+  "terminal.integrated.macOptionIsMeta": true,
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"],
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "/opt/homebrew/bin/zsh",
+      "args": ["-l"],
+      "icon": "zap",
+      "env": {
+        "ZDOTDIR": "$HOME/.config/zsh",
+        "PATH": "$HOME/.local/bin:$HOME/.local/share:$HOME/.local/share/bob/nightly/bin:$HOME/.pyenv/shims:/opt/homebrew/Cellar/pyenv-virtualenv/1.2.4/shims:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/opt/llvm/bin:/opt/homebrew/opt/curl/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/opt/node/bin:$HOME/.cargo/bin:/opt/homebrew/opt/grep/libexec/gnubin:/opt/homebrew/opt/gnu-sed/libexec/gnubin:/opt/homebrew/opt/gnu-which/libexec/gnubin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/opt/homebrew/opt/gnu-getopt/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$HOME/.luarocks/bin:$HOME/Library/pnpm:/Applications/kitty.app/Contents/MacOS:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/opt/fzf/bin"
+        // "PYENV_ROOT": "$HOME/.pyenv",
+        // "PYTHONPATH": "$HOME/.pyenv/versions/3.12.7/envs/Gen/lib/python3.12/site-packages"
+      }
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": null
+  },
+  "settingsSync.ignoredExtensions": [
+    "foam.foam-vscode",
+    "ms-python.isort",
+    "shd101wyy.markdown-preview-enhanced",
+    "mongodb.mongodb-vscode",
+    "snippington.snp-pandas-basic",
+    "donjayamanne.python-environment-manager",
+    "ms-python.mypy-type-checker",
+    "szpro.ultimatehover",
+    "rmdashrfv.amethyst",
+    "vsls-contrib.gistfs",
+    "bierner.github-markdown-preview",
+    "bierner.markdown-mermaid",
+    "bierner.markdown-preview-github-styles",
+    "bierner.markdown-yaml-preamble",
+    "george-alisson.html-preview-vscode",
+    "neverik.go-critic",
+    "dbankier.vscode-instant-markdown",
+    "narasimapandiyan.jetbrainsmono",
+    "donjayamanne.vscode-jupytext",
+    "magicstack.magicpython",
+    "telesoho.vscode-markdown-paste-image",
+    "thomanq.math-snippets",
+    "mermaidchart.vscode-mermaid-chart",
+    "monokai.theme-monokai-pro-vscode",
+    "rexcor.neorose-vimpine",
+    "zeshuaro.vscode-python-poetry",
+    "tushortz.python-extended-snippets",
+    "brian-crant.python-logger-vscode",
+    "ericsia.pythonsnippets3",
+    "martiros.python-snippets",
+    "jock.svg",
+    "evgeniypeshkov.syntax-highlighter",
+    "jgclark.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+    "jithurjacob.nbpreviewer",
+    "adpyke.codesnap",
+    "igorsbitnev.error-gutters",
+    "justusadam.language-haskell",
+    "ms-python.pylint",
+    "patrick91.python-dependencies-vscode",
+    "analytic-signal.snippets-plotly",
+    "ms-vscode.powershell",
+    "gihansiriwardhana.error-help",
+    "mikestead.dotenv",
+    "deibit.devdocs",
+    "evzen-wybitul.magic-racket",
+    "equinusocio.vsc-material-theme",
+    "equinusocio.vsc-material-theme-icons",
+    "cqh.surround-python",
+    "ms-vscode-remote.remote-wsl",
+    "analytic-signal.preview-pdf",
+    "qufiwefefwoyn.kanagawa",
+    "alefragnani.project-manager",
+    "nexsabre.vscode-python-snippets",
+    "rpinski.shebang-snippets",
+    "jebbs.plantuml",
+    "kaih2o.python-resource-monitor",
+    "emilast.logfilehighlighter",
+    "mdk.vega-preview"
+  ],
+  "settingsSync.ignoredSettings": [
+    "terminal.integrated.accessibleViewFocusOnCommandExecution"
+  ],
+  "terminal.integrated.shellIntegration.enabled": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "pythonIndent.useTabOnHangingIndent": true,
+  "restructuredtext.pythonRecommendation.disabled": true,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "jupyter.askForKernelRestart": false,
+  "vim.targets.enable": true,
+  "evenBetterToml.formatter.compactEntries": true,
+  "vim.joinspaces": false,
+  // "workbench.colorCustomizations": {
+
+  //   "statusBar.background": "#5f0000",
+  //   "statusBar.noFolderBackground": "#5f0000",
+  //   "statusBar.debuggingBackground": "#5f0000",
+  //   "statusBar.foreground": "#ffffff",
+  //   "statusBar.debuggingForeground": "#ffffff"
+  // },
+  "git.enableSmartCommit": true,
+  "editor.semanticTokenColorCustomizations": {
+    "enabled": true
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "quarto": false,
+    "python": false,
+    "julia": false
+  },
+  "editor.tabCompletion": "onlySnippets",
+  "editor.suggest.preview": true,
+  "editor.suggest.showColors": false,
+  "editor.suggest.showStatusBar": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": true,
+  "workbench.hover.delay": 1250,
+  "workbench.welcomePage.walkthroughs.openOnInstall": false,
+  "workbench.tree.renderIndentGuides": "always",
+  "workbench.editor.enablePreviewFromCodeNavigation": true,
+  "workbench.editor.splitInGroupLayout": "vertical",
+  "window.autoDetectHighContrast": false,
+  "search.smartCase": true,
+  "search.useGlobalIgnoreFiles": true,
+  "search.useParentIgnoreFiles": true,
+  "debug.showVariableTypes": true,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.enableFileLinks": "notRemote",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.ignoreBracketedPasteMode": true,
+  "notebook.lineNumbers": "on",
+  "notebook.output.minimalErrorRendering": true,
+  "keyboard.touchbar.enabled": false,
+  "security.workspace.trust.banner": "never",
+  "security.workspace.trust.untrustedFiles": "open",
+  "anycode.language.features": {
+    "folding": true,
+    "diagnostics": true,
+    "completions": true,
+    "definitions": true,
+    "references": true,
+    "highlights": true,
+    "outline": true,
+    "workspaceSymbols": true
+  },
+  // "AREPL.envFile": "/Users/eo/.config/zsh/.env",
+  "dataWrangler.outputRenderer.columnInsights.displayByDefault": true,
+  "dataWrangler.outputRenderer.enabled": true,
+  "dataWrangler.outputRenderer.enabledTypes": {
+    "numpy.ndarray": true,
+    "torch.Tensor": true,
+    "tensorflow.python.framework.ops.EagerTensor": true,
+    "xarray.core.dataarray.DataArray": true,
+    "polars.dataframe.frame.DataFrame": true,
+    "polars.series.series.Series": true,
+    "pyspark.sql.dataframe.DataFrame": true,
+    "pyspark.sql.connect.dataframe.DataFrame": true,
+    "builtins.list": true,
+    "builtins.dict": true
+  },
+  "dataWrangler.outputRenderer.pagination.defaultSize": 25,
+  "dataWrangler.startInEditModeForNotebookEntrypoints": true,
+  "dataWrangler.experiments.autoDetectCsvDelimiter": true,
+  "dataWrangler.experiments.copilot.enabled": true,
+  "dataWrangler.experiments.datatypes.pyspark": true,
+  "dataWrangler.experiments.fastCsvParsing": true,
+  "docsView.documentationView.updateMode": "sticky",
+  "jupyter.notebookRunGroups.groupCount": 0,
+  "markdown.extension.completion.enabled": true,
+  "python.analysis.extraCommitChars": true,
+  "python.analysis.regenerateStdLibIndices": true,
+  "python.createEnvironment.trigger": "off",
+  "python.envFile": "${workspaceFolder}/.env,${home}/.config/zsh/.env",
+  "rainbow_csv.csv_lint_detect_trailing_spaces": true,
+  "path-intellisense.autoTriggerNextSuggestion": true,
+  "editor.inlineSuggest.edits.allowCodeShifting": "never",
+  // "workbench.list.smoothScrolling": true,
+  // "terminal.integrated.smoothScrolling": true,
+  // "notebook.stickyScroll.enabled": true,
+  // "editor.scrollPredominantAxis": false,
+  "notebook.consolidatedRunButton": true,
+  "pythonIndent.trimLinesWithOnlyWhitespace": true,
+  "application.shellEnvironmentResolutionTimeout": 25,
+  "[quarto]": {
+    "editor.wordWrap": "wordWrapColumn"
+  },
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.lineNumbers": "relative",
+  "editor.rulers": [
+    {
+      "column": 80,
+      "color": "#705A8C"
+    }
+  ],
+  "editor.suggestSelection": "first",
+  "files.autoSaveWhenNoErrors": true,
+  "workbench.experimental.cloudChanges.autoStore": "onShutdown",
+  "workbench.list.defaultFindMatchType": "contiguous",
+  "workbench.reduceMotion": "auto",
+  "workbench.view.showQuietly": {
+    "workbench.panel.output": true
+  },
+  "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
+  "jupyter.interactiveWindow.creationMode": "perFile",
+  "workbench.editor.centeredLayoutAutoResize": false,
+  "notebook.formatOnCellExecution": true,
+  "evenBetterToml.formatter.allowedBlankLines": 1,
+  "evenBetterToml.formatter.columnWidth": 80,
+  "jupyter.widgetScriptSources": ["jsdelivr.com", "unpkg.com"],
+  "editor.cursorSmoothCaretAnimation": "on",
+  "window.systemColorTheme": "dark",
+  "catppuccin.bracketMode": "rainbow",
+  "github.copilot.selectedCompletionModel": "",
+  "python.analysis.gotoDefinitionInStringLiteral": false,
+  "search.searchEditor.singleClickBehaviour": "peekDefinition",
+  "workbench.colorTheme": "Ayu Mirage Bordered",
+  "terminal.integrated.fontLigatures.enabled": true,
+  "workbench.settings.applyToAllProfiles": [
+    "terminal.integrated.fontLigatures.featureSettings",
+    "terminal.integrated.fontLigatures.enabled"
+  ],
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.showSlider": "always",
+  "evenBetterToml.semanticTokens": true,
+  "editor.semanticHighlighting.enabled": true,
+  "editor.definitionLinkOpensInPeek": true,
+  "chat.checkpoints.showFileChanges": true,
+  "remote.downloadExtensionsLocally": true,
+  "remote.tunnels.access.preventSleep": true,
+  "explorer.confirmDragAndDrop": false,
+  "window.closeWhenEmpty": true,
+  "window.density.editorTabHeight": "compact",
+  "jupyter.interactiveWindow.textEditor.normalizeSelection": true,
+  "workbench.preferredDarkColorTheme": "Ayu Mirage Bordered",
+  "extensions.autoRestart": true,
+  "editor.fontSize": 13,
+  "editor.experimentalGpuAcceleration": "on",
+  "editor.lightbulb.enabled": "on",
+  "editor.peekWidgetDefaultFocus": "editor",
+  "editor.renderLineHighlight": "all",
+  "editor.renderLineHighlightOnlyWhenFocus": true,
+  "editor.selectionHighlightMultiline": true,
+  "editor.showDeprecated": false,
+  "julia.focusPlotNavigator": true,
+  "julia.inlayHints.static.parameterNames.enabled": "all",
+  "julia.persistentSession.shell": "zsh",
+  "julia.languageServerExecutablePath": "/Users/eo/.julia/environments/nvim-lspconfig/bin/julia",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "notebook.output.wordWrap": true,
+  "jupyter.interactiveWindow.notebookRepl": true,
+  "gather.gatherToScript": true,
+  "quarto.visualEditor.markdownWrap": "column",
+  "notebook.cellToolbarLocation": {
+    "jupyter-notebook": "left",
+    "default": "left"
+  },
+  "notebook.markup.fontFamily": "\"CaskaydiaCove Nerd Font\"",
+  "notebook.output.fontFamily": "\"CaskaydiaCove Nerd Font\"",
+  "terminal.integrated.fontFamily": "'VictorMono Nerd Font', 'FiraCode Nerd Font Propo', \"CaskaydiaCove Nerd Font\"",
+  "extensions.ignoreRecommendations": true
+}

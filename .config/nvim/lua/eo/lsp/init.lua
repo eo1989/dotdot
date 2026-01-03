@@ -1,5 +1,16 @@
--- if not eo then return end
 local env, fn, fs = vim.env, vim.fn, vim.fs
+
+vim.lsp.config('*', {
+  capabilities = require('eo.lsp.capabilities').make_capabilities(),
+})
+
+-- local code_actions = {
+--   'quickfix',
+--   'refactor.rewrite',
+--   'source',
+--   'source.fixAll',
+--   'source.organizeImports',
+-- }
 
 -- Return the stem part of the path, ie: without any extension
 ---@param path string
@@ -18,11 +29,6 @@ local env, fn, fs = vim.env, vim.fn, vim.fs
 --   return fs.joinpath(vim.env.XDG_CONFIG_HOME or fs.abspath(fn.expand('~') .. '/.config/'), path)
 -- end
 
-vim.lsp.config('*', {
-  -- -@diagnostic disable-next-line: param-type-mismatch
-  capabilities = require('eo.lsp.capabilities').make_capabilities(),
-} --[[@as vim.lsp.Config]])
-
 local disabled = {
   emmylua_ls = true,
   sith_lsp = true,
@@ -30,25 +36,28 @@ local disabled = {
   ty = true,
   ['ltex-lsp_plus'] = true,
   pyright = true,
+  pyrefly = true,
+  -- basedpyright = false,
+  typos_lsp = true,
+  codebook = true,
 }
 
 local configured = {
   'basedpyright',
   'bashls',
   'biome',
-  'dockerls',
   'gopls',
+  'dotls',
   'jsonls',
   'julials',
   'lua_ls',
   'marksman',
-  'markdown_oxide',
-  'ltex-lsp-plus',
-  'pyright',
+  -- 'pyright',
   'ruff',
+  'rumdl',
   'rust_analyzer',
   'sqlls',
-  'tailwindcss',
+  -- 'tailwindcss',
   'taplo',
   'tombi',
   'ty',
@@ -58,27 +67,26 @@ local configured = {
 }
 
 local function init()
-  vim.iter(configured):each(vim.schedule_wrap(function(servers)
-    if disabled[configured] then return end
-
-    vim.lsp.enable(configured, true)
+  vim.iter(configured):each(vim.schedule_wrap(function(server_name)
+    if disabled[server_name] then return end
+    vim.lsp.enable(server_name)
   end))
 end
 
 if vim.g.did_very_lazy ~= nil then
   vim.schedule(init)
 else
-  vim.api.nvim_create_autocmd({ 'User' }, {
-    -- pattern = 'VeryLazy',
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'VeryLazy',
     once = true,
-    buffer = 0,
     callback = vim.schedule_wrap(init),
   })
 end
 
 -- vim.api.nvim_create_autocmd({ 'FileType', 'User' }, {
---   -- pattern = { '' },
+--   pattern = { '*' },
 --   once = true,
 --   callback = vim.schedule_wrap(init),
 -- })
--- end
+
+-- return M

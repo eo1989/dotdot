@@ -4,7 +4,6 @@ local rect = eo.ui.border.rectangle
 -- local hls = eo.highlight
 
 -- local icons = eo.ui.icons
-local _toggle_state = true
 
 local chars = { top_char = '▁', bottom_char = '▔' }
 
@@ -12,9 +11,9 @@ local chars = { top_char = '▁', bottom_char = '▔' }
 return {
   {
     'MeanderingProgrammer/render-markdown.nvim',
-    enabled = true,
-    event = 'BufEnter',
-    ft = { 'markdown', 'quarto', 'Avante', 'noice', 'rmd' },
+    version = false,
+    ft = { 'markdown', 'quarto', 'Avante', 'codecompanion' },
+    -- ft = { 'markdown', 'Avante', 'codecompanion' },
     dependencies = {
       -- { 'headlines.nvim', enabled = false },
       { 'nvim-tree/nvim-web-devicons' },
@@ -23,8 +22,9 @@ return {
     },
     config = function()
       require('render-markdown').setup {
-        file_types = { 'markdown', 'quarto', 'Avante', 'rmd', 'noice' },
-        completions = { lsp = { enabled = false } }, -- starts to mess with shit
+        file_types = { 'markdown', 'quarto', 'Avante', 'codecompanion' },
+        -- file_types = { 'markdown', 'Avante', 'codecompanion' },
+        completions = { lsp = { enabled = false }, blink = { enabled = false } },
         code = {
           enabled = true,
           sign = false, -- true | false
@@ -49,7 +49,8 @@ return {
     'HakonHarnes/img-clip.nvim',
     lazy = true,
     -- event = 'VeryLazy',
-    ft = { 'markdown', 'Avante' },
+    -- ft = { 'markdown', 'Avante' },
+    ft = { 'markdown', 'Avante', 'quarto' },
     keys = {
       {
         '<localleader>vi',
@@ -83,7 +84,14 @@ return {
       },
     },
   },
-  { 'OXY2DEV/helpview.nvim', enabled = true, lazy = false, ft = { 'help', 'vimdoc', 'text' }, opts = {} },
+  {
+    'OXY2DEV/helpview.nvim',
+    version = false,
+    enabled = true,
+    lazy = false,
+    ft = { 'help', 'vimdoc', 'txt' },
+    opts = {},
+  },
 }
 -- {
 --   'jbyuki/nabla.nvim',

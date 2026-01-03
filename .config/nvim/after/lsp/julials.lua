@@ -25,10 +25,11 @@
 --- folder of `$JULIA_DEPOT_PATH` entries. By default this simply `~/.julia/environments`
 
 -- local root_files = { { 'Project.toml', 'JuliaProject.toml' }, '.git', '.JuliaFormatter.toml' }
+-- local root_files = { { 'Project.toml', '.JuliaFormatter.toml' }, '.git' }
 
 -- local function activate_env(path)
 --   assert(vim.fn.has('nvim-0.10') == 1, 'requires Nvim 0.10 or newer')
---   local bufnr = vim.api.nvim_get_current_buf()
+--   local bufnr = vim.api.nvim_get_current_buf(0)
 --   local julials_clients = vim.lsp.get_clients { bufnr = bufnr, name = 'julials' }
 --   assert(
 --     #julials_clients > 0,
@@ -80,14 +81,24 @@
 --   end
 -- end
 
--- local cmd = {
+--[[
+  Load LanguageServer.jl: attempt to load from ~/.julia/environments/nvim-lspconfig with the 
+  regular load path as a fallback
+
+     # 1. Finds an explicitly set project (JULIA_PROJECT)
+     # 2. Look for a Project.toml file in the current working directory,
+     #    or parent directories, with $HOME as an upper boundary
+
+     # 3. First entry in the load path
+     # 4. Fallback to default global environment, this is more or less unreachable
+--]]
+
+-- local _cmd = {
 --   'julia',
 --   '--startup-file=no',
 --   '--history-file=no',
 --   '-e',
 --   [[
---     # Load LanguageServer.jl: attempt to load from ~/.julia/environments/nvim-lspconfig
---     # with the regular load path as a fallback
 --     ls_install_path = joinpath(
 --         get(DEPOT_PATH, 1, joinpath(homedir(), ".julia")),
 --         "environments", "nvim-lspconfig"
@@ -98,18 +109,12 @@
 --     depot_path = get(ENV, "JULIA_DEPOT_PATH", "")
 --     project_path = let
 --         dirname(something(
---             ## 1. Finds an explicitly set project (JULIA_PROJECT)
 --             Base.load_path_expand((
 --                 p = get(ENV, "JULIA_PROJECT", nothing);
 --                 p === nothing ? nothing : isempty(p) ? nothing : p
 --             )),
---             ## 2. Look for a Project.toml file in the current working directory,
---             ##    or parent directories, with $HOME as an upper boundary
 --             Base.current_project(),
---             ## 3. First entry in the load path
 --             get(Base.load_path(), 1, nothing),
---             ## 4. Fallback to default global environment,
---             ##    this is more or less unreachable
 --             Base.load_path_expand("@v#.#"),
 --         ))
 --     end
@@ -120,63 +125,72 @@
 --   ]],
 -- }
 
--- local new_config = vim.lsp.config.julials or {}
+-- local _new_config = vim.lsp.config.julials or {}
 
+---@type vim.lsp.Config
 return {
-  ---@type vim.lsp.Config
-  -- cmd = cmd,
-  filetypes = { 'julia' },
+  ---@param client vim.lsp.Client
+  -- cmd = _cmd,
+  -- filetypes = { 'julia' },
   single_file_support = true,
-  root_markers = {
-    {
-      'Project.toml',
-      'JuliaProject.toml',
-    },
-    '.JuliaFormatter.toml',
-    '.git',
-  },
-  on_new_config = function(new_config, _)
-    local cmd = new_config.cmd
-    local julia = vim.fn.expand('~/.julia/environments/nvim-lspconfig/bin/julia')
-    local REVISE_LANGUAGESERVER = false
-    if REVISE_LANGUAGESERVER then
-      cmd[5] = (cmd[5]):gsub(
-        'using LanguageServer',
-        'using Revise; using LanguageServer; LanguageServer.USE_REVISE[] = true'
-      )
-    elseif require('lspconfig.util').path.is_file(julia) then
-      -- if new_config then
-      new_config.cmd[1] = julia
-      -- else
-      --   cmd[1] = julia
-      -- end
-    end
-  end,
-  -- on_attach = function(client, _)
-  --   -- vim.api.nvim_buf_create_user_command(0, 'LspJuliaActivateEnv', activate_env, {
-  --   --   desc = 'Activate a Julia environment',
-  --   --   nargs = '?',
-  --   --   complete = 'file',
-  --   -- })
-  --
-  --   --[[NOTE: Just use builtin lsp formatting via JuliaFormatter bc Runic kinda meh]]
-  --
-  --   vim.bo[bufnr].formatexpr = ''
-  --   if client.server_capabilities then
-  --     client.server_capabilities.documentFormattingProvider = false
-  --     client.server_capabilities.documentRangeFormattingProvider = false
+  -- root_markers = {
+  --   { 'Project.toml' },
+  --   '.JuliaFormatter.toml',
+  --   '.git',
+  -- },
+  on_new_config = function(_, _) end,
+  -- on_new_config = function(_new_config, _)
+  --   local cmd = _new_config.cmd
+  --   local julia = vim.fn.expand('~/.julia/environments/nvim-lspconfig/bin/julia')
+  --   local REVISE_LANGUAGESERVER = false
+  --   if REVISE_LANGUAGESERVER then
+  --     cmd[5] = (cmd[5]):gsub(
+  --       'using LanguageServer',
+  --       'using Revise; using LanguageServer; LanguageServer.USE_REVISE[] = true'
+  --     )
+  --   elseif require('lspconfig.util').path.is_file(julia) then
+  --     if _new_config then
+  --       _new_config.cmd[1] = julia
+  --     else
+  --       cmd[1] = julia
+  --     end
   --   end
   -- end,
+  -- on_attach = function(client)
+  --   vim.api.nvim_buf_create_user_command(0, 'LspJuliaActivateEnv', activate_env, {
+  --     desc = 'Activate a Julia environment',
+  --     nargs = '?',
+  --     complete = 'file',
+  --   })
+  --
+  --   -- vim.bo[bufnr].formatexpr = ''
+  --   -- if client.server_capabilities then
+  --   client.server_capabilities.documentFormattingProvider = true
+  --   client.server_capabilities.documentRangeFormattingProvider = true
+  --   -- end
+  -- end,
   settings = {
+    enableTelemetry = false,
     julia = {
       symbolCacheDownload = true,
       enableTelemetry = false,
-      completionmode = 'qualify',
+      -- completionmode = 'qualify',
+      single_file_support = true,
+      useRevise = true,
+      format = { indent = 4 },
+      lsp = {
+        autoStart = true,
+        provideFormatter = false,
+      },
       lint = {
-        missingrefs = 'none',
+        missingrefs = 'none', -- 'none' | 'all'
+        -- NumThreads = 16,
+        iter = true,
+        lazy = true,
+        modname = true,
       },
       inlayHints = {
-        runtime = { enabled = true },
+        runtime = { enabled = false },
         static = {
           {
             enabled = true,

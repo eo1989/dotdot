@@ -40,7 +40,8 @@
     "undefined-doc-name",
     "unused-local",
     "need-check-nil",
-    "unused-function"
+    "unused-function",
+        "redundant-return-value"
   ],
   "workspace.checkThirdParty": false,
   "completion.autoRequire": false,

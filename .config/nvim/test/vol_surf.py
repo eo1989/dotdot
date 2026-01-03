@@ -35,14 +35,13 @@ def if_missing_install(package) -> None:
 
 
 def main():
-
     try:
         from volvisualizer.volatility import Volatility
     except ImportError as e:
         print(f"Couldnt load volvisualizer: {e}")
 
     spooz = Volatility(
-        ticker="^SPX", start_date="2025-06-01", wait=1, monthlies=True, q=0.013
+        ticker="^SPX", start_date="2025-09-01", wait=1, monthlies=True, q=0.013,
     )
 
     return spooz.visualize(graphtype="surface", surfacetype="mesh")

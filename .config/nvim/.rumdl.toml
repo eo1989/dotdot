@@ -1,0 +1,116 @@
+[global]
+enable = ["MD001", "MD027", "MD056", "MD011", "MD014", "MD039", "MD038", "MD045", "MD042", "MD047", "MD020", "MD051", "MD034", "MD037", "MD005", "MD018", "MD021", "MD019", "MD028", "MD023", "MD032"]
+
+[MD003]
+style = "consistent"
+
+[MD004]
+style = "consistent"
+
+[MD007]
+indent = 2
+start-indent = 2
+start-indented = false
+style = "fixed"
+
+[MD009]
+br-spaces = 2
+list-item-empty-lines = false
+strict = false
+
+[MD010]
+code-blocks = true
+ignore-code-languages = []
+spaces-per-tab = 1
+
+[MD012]
+maximum = 1
+
+[MD013]
+code-blocks = true
+headings = true
+line-length = 80
+strict = false
+tables = true
+
+[MD022]
+lines-above = 1
+lines-below = 1
+
+[MD024]
+siblings-only = false
+
+[MD025]
+front-matter-title = "^\s*title\s*[:=]"
+level = 1
+
+[MD026]
+punctuation = ".,;:!。，；：！"
+
+[MD029]
+style = "one_or_ordered"
+
+[MD030]
+ol-multi = 1
+ol-single = 1
+ul-multi = 1
+ul-single = 1
+
+[MD031]
+list-items = true
+
+[MD033]
+allowed-elements = []
+
+[MD035]
+style = "consistent"
+
+[MD036]
+punctuation = ".,;:!?。，；：！？"
+
+[MD040]
+allowed-languages = ["python", "julia", "lua", "bash", "text", "markdown"]
+language-only = false
+
+[MD041]
+front-matter-title = "^\s*title\s*[:=]"
+level = 1
+
+[MD043]
+headings = []
+match-case = false
+
+[MD044]
+code-blocks = true
+html-elements = true
+names = []
+
+[MD046]
+style = "consistent"
+
+[MD048]
+style = "consistent"
+
+[MD049]
+style = "consistent"
+
+[MD050]
+style = "consistent"
+
+[MD052]
+shortcut-syntax = false
+
+[MD053]
+ignored-definitions = ["//"]
+
+[MD054]
+autolink = true
+collapsed = true
+full = true
+inline = true
+shortcut = true
+url-inline = true
+
+[MD055]
+style = "consistent"
+

@@ -34,7 +34,7 @@ forwardlayer(x, ω, ω₀, f) = f.(ω*x .+ ω₀)
 function forward_network!(y, x, ω₁, ω₂, ω₃, ω¹, ω², ω⁴, f = relu)
     # whole chain
     x₁ = forwardlayer(x, ω₁, ω¹, f)
-    x\_
+    x
 end
 
 

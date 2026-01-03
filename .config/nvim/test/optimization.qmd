@@ -3,12 +3,13 @@ author: Ernest Orlowski
 format:
   html:
     code-fold: true
-jupyter: julia-1.11
+# jupyter: julia-1.12
+engine: julia
 ---
 
-### Parametric Plots
+#  Parametric Plots
 
-Plot function pair (x(u), y(u)).
+Plot function pair $(x(u), y(u))$.
 see @fig-parametric for example.
 
 ```{julia}
@@ -29,6 +30,7 @@ plot(
 
 
 ### Parameter Estimation w/ RxInfer.jl
+
 ```{julia}
 using Interact
 

@@ -1,27 +1,26 @@
 import pandas as pd
 import yfinance as yf
-from pyrate_limiter import Duration, Limiter, RequestRate
 
+# from pyrate_limiter import Duration, Limiter, RequestRate
 # from requests import Session
-from requests_cache import CacheMixin, SQLiteCache
-from requests_ratelimiter import LimiterMixin, MemoryQueueBucket
+# from requests_cache import CacheMixin, SQLiteCache
+# from requests_ratelimiter import LimiterMixin, MemoryQueueBucket
 from sqlmodel.orm import session
 
-
-class CachedLimiterSession(Session):
-    pass
+# class CachedLimiterSession(Session):
+#     pass
 
 
 # session.Session()
 
 
-sesh = CachedLimiterSession(
-    limiter=Limiter(
-        RequestRate(2, Duration.SECOND * 5)
-    ),  # max 2 requests per 5 sec
-    bucket_class=MemoryQueueBucket,
-    backend=SQLiteCache("yfinance_.cache"),
-)
+# sesh = CachedLimiterSession(
+#     limiter=Limiter(
+#         RequestRate(2, Duration.SECOND * 5)
+#     ),  # max 2 requests per 5 sec
+#     bucket_class=MemoryQueueBucket,
+#     backend=SQLiteCache("yfinance_.cache"),
+# )
 
 
 def getTickerData(ticker) -> pd.DataFrame:

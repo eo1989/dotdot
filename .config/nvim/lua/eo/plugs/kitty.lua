@@ -18,6 +18,7 @@ local function kitty_terms()
   local kutils = require('kitty.utils')
   Terms = require('kitty.terms')
 
+  ---@type KittyTerminal
   Terms.setup {
     dont_attach = not not vim.g.kitty_scrollback,
     attach = {
@@ -33,6 +34,7 @@ local function kitty_terms()
 
         -- TODO:
         -- require('rust-tools').config.options.tools.executor = K.rust_tools_executor()
+
         _G.Term = kutils.staticify(Terms.get_terminal(0), {})
         Term.make_cmd('Make')
       end,
@@ -40,15 +42,17 @@ local function kitty_terms()
     },
   }
 
-  local map = vim.keymap.set
+  -- local map = vim.keymap.set
   map('n', 'mK', function() Term.run() end, { desc = 'Kitty Run' })
-  map('n', 'mk', function() Term.make() end, { desc = 'Kitty Make' })
+  -- map('n', 'mk', function() Term.make() end, { desc = 'Kitty Make' })
   -- map('n', 'mkk', function() Term.make_last() end, { desc = 'Kitty ReMake' })
 
   -- TODO: S-CR and C-CR can be used
 
+  local code_block = require('lib.buffer').code_block()
+
   map('n', 'mr', function() return Term.send_operator() end, { expr = true, desc = 'Kitty Send' })
-  map('x', 'R', function() return Term.send_operator() end, { expr = true, desc = 'Kitty Send' })
+  map('x', 'R', function() return Term.send_operator { type = code_block } end, { expr = true, desc = 'Kitty Send' })
   -- map(
   --   'n',
   --   'mrr',
@@ -94,7 +98,7 @@ local function kitty_terms()
   -- )
   map(
     'n',
-    '<localleader>ohf',
+    '<localleader>Ol',
     function() Term.hints { type = 'path', launch = 'nvim' } end,
     { desc = 'hinted file From Kitty in Nvim' }
   )
@@ -113,7 +117,7 @@ local function kitty_terms()
   -- map('n', '<c-;>', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
   -- map('n', '<localleader>oK', '<cmd>Kitty<cr>', { desc = 'Kitty Open' })
   -- map('n', '<localleader>oKC', function() Term.cmd('cd ' .. vim.fn.getpwd()) end, { desc = 'Kitty CWD' })
-  map('n', '<localleader>ok', function() Term.move('this-tab') end, { desc = 'Kitty To This Tab' })
+  map('n', '<localleader>Ot', function() Term.move('this-tab') end, { desc = 'Kitty To This Tab' })
   -- map('n', '<localleader>oKN', function() Term.move('new-tab') end, { desc = 'Kitty To New Tab' })
   -- map('n', '<localleader>oKW', function() Term.move('new-window') end, { desc = 'Kitty To New OSWin' })
   -- map('ca', 'K', ":=require'kitty.current_win'", { desc = 'Kitty Control' })
@@ -133,7 +137,7 @@ return {
     -- opts = {},
     keys = {
       {
-        '<localleader>ok',
+        '<localleader>Ok',
         ":require('kitty').open()<CR>",
         desc = 'kitty open',
       },

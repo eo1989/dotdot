@@ -289,10 +289,11 @@ for _, mode in ipairs { 'n', 'v' } do
   map(mode, 'L', 'g_', { noremap = true })
 end
 
--- Remap for dealing with word wrap
 -- map('n', 'k', [[v:count == 0 ? 'gk' : 'k']], { expr = true })
-map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : '') . 'gk']], { expr = true, silent = true })
 -- map('n', 'j', [[v:count == 0 ? 'gj' : 'j']], { expr = true })
+
+-- Remap for dealing with word wrap
+map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : '') . 'gk']], { expr = true, silent = true })
 map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : '') . 'gj']], { expr = true, silent = true })
 
 -- Better viewing
@@ -315,12 +316,12 @@ map('n', '0', "getline('.')[0 : col('.') - 2] =~# '^\\s\\+$' ? '0' : '^'", { exp
 map('v', '$', 'g_', { noremap = true })
 
 -- stylua: ignore start
-local oopts = { nowait = true, noremap = true, silent = true }
-map('n', [[<localleader><localleader>"]], [[ciw"<c-r>""<esc>]], { desc = 'surround with double quotes', opts })
-map('n', '<localleader><localleader>`',   [[ciw`<c-r>"`<esc>]], { desc = 'surround with backticks', opts })
-map('n', "<localleader><localleader>'",   [[ciw'<c-r>"'<esc>]], { desc = 'surround with single quotes', opts })
-map('n', '<localleader><localleader>)',   [[ciw(<c-r>")<esc>]], { desc = 'surround with parens', opts })
-map('n', '<localleader><localleader>}',   [[ciw{<c-r>"}<esc>]], { desc = 'surround with curly braces', opts })
+-- local oopts = { nowait = true, noremap = true, silent = true }
+-- map('n', [[<localleader><localleader>"]], [[ciw"<c-r>""<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with double quotes' })
+-- map('n', [[<localleader><localleader>`]], [[ciw`<c-r>"`<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with backticks' })
+-- map('n', [[<localleader><localleader>']], [[ciw'<c-r>"'<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with single quotes' })
+-- map('n', [[<localleader><localleader>)]], [[ciw(<c-r>")<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with parens' })
+-- map('n', [[<localleader><localleader>}]], [[ciw{<c-r>"}<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with curly braces' })
 -- stylua: ignore end
 
 -- Better escape using jk in insert and terminal mode
@@ -340,7 +341,7 @@ eo.augroup('AddTerminalMappings', {
       map('t', '<C-l>', [[<cmd>wincmd l<cr>]], opts)
       map('t', ']t', '<cmd>tablast<cr>')
       map('t', '[t', '<cmd>tabnext<cr>')
-      map('t', '<S-Tab>', '<cmd>bprev<cr>')
+      map('t', '<leader><S-Tab>', '<cmd>bprev<cr>')
       map('t', '<leader><Tab>', '<cmd>close \\| :bnext<cr>')
     end
   end,
@@ -464,4 +465,4 @@ end
 -- map('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
 -- map('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })
 
-map('n', '<leader>qr', function() vim.cmd([[restart]]) end, { desc = ':restart', silent = true, noremap = true })
+map('n', '<leader>qr', function() vim.cmd([[restart]]) end, { desc = 'restart', silent = true, noremap = true })

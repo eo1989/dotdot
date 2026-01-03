@@ -43,7 +43,6 @@ local languagess = {
   'jsdoc',
   'json',
   'json5',
-  'jsonc',
   'jsx',
   'julia',
   'just',
@@ -53,7 +52,7 @@ local languagess = {
   'luap',
   'make',
   'markdown',
-  'markdwon_inline',
+  'markdown_inline',
   'mermaid',
   'ocaml',
   'pem',
@@ -83,10 +82,9 @@ local languagess = {
   'swift',
   'svelte',
   'superhtml',
-  'todotext',
+  'todotxt',
   'terraform',
   'toml',
-  'todotext',
   'typst',
   'tsv',
   'tsx',
@@ -111,18 +109,15 @@ local languagess = {
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    -- priority = 1000,
     lazy = false,
-    -- lazy = vim.fn.argc(-1) == 0,
     branch = 'main',
-    -- main = 'nvim-treesitter.configs',
     version = false,
     build = ':TSUpdate',
     config = function() require('nvim-treesitter').update(languagess) end,
-    -- opts_extend = { 'ensure_installed' },
     dependencies = {
       {
         'nvim-treesitter/nvim-treesitter-textobjects',
+        version = false,
         branch = 'main',
         opts = {},
         keys = {
@@ -180,7 +175,6 @@ return {
             function() require('nvim-treesitter-textobjects.select').select_textobject('@local.scope', 'locals') end,
             desc = 'Select local scope',
             mode = { 'n', 'v', 'x', 'o' },
-            -- mode = { 'n', 'x', 'o' },
           },
           {
             ']b',
@@ -208,17 +202,22 @@ return {
           },
         },
       },
-      'JoosepAlviste/nvim-ts-context-commentstring',
+      {
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        version = false,
+      },
       {
         -- 'PriceHiller/nvim-treesitter-endwise',
         -- 'RRethy/nvim-treesitter-endwise',
         'AbaoFromCUG/nvim-treesitter-endwise', -- finally a fork that supports nvim-ts main!
         branch = 'main',
+        version = false,
         -- 'brianhuster/treesitter-endwise.nvim',
         -- branch = 'fix/iter-matches',
         -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         -- event = { 'InsertEnter' },
-        event = 'VeryLazy',
+        -- event = 'VeryLazy',
+        lazy = false,
         ft = { 'ruby', 'lua', 'vim', 'bash', 'elixir', 'fish', 'julia' }, -- only langs currently supported anyway
         config = function()
           -- vim.g.treesitter_endwise_filetypes = { 'ruby', 'lua', 'vim', 'bash', 'elixir', 'fish', 'julia' }
@@ -229,9 +228,10 @@ return {
       {
         'andymass/vim-matchup',
         enabled = true,
-        -- lazy = true,
-        event = 'VeryLazy',
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        lazy = false,
+        version = false,
+        -- event = 'VeryLazy',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
         config = function()
           vim.g['matchup_enabled'] = true
           vim.g['matchup_surround_enabled'] = true
@@ -250,9 +250,10 @@ return {
       },
       {
         'm-demare/hlargs.nvim',
-        -- lazy = false,
+        lazy = false,
+        version = false,
         -- priority = 1000,
-        event = 'VeryLazy',
+        -- event = 'VeryLazy',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = {
           hl_priority = 1001,
@@ -270,9 +271,8 @@ return {
         'https://gitlab.com/HiPhish/rainbow-delimiters.nvim.git',
         submodules = false,
         version = false,
-        event = 'VeryLazy',
-        -- lazy = false,
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        -- event = 'VeryLazy',
+        lazy = false,
         config = function()
           local rainbow_delimiters = require('rainbow-delimiters')
 
@@ -280,19 +280,31 @@ return {
           vim.g.rainbow_delimiters = {
             strategy = {
               [''] = rainbow_delimiters.strategy.global,
+              commonlisp = rainbow_delimiters.strategy['local'],
             },
             query = {
-              [''] = rainbow_delimiters.strategy['local'],
+              [''] = 'rainbow_delimiters',
+              -- lua = 'rainbow-blocks',
+              lua = 'rainbow-delimiters',
+              latex = 'rainbow-blocks',
+              julia = 'rainbow-blocks',
             },
-            -- blacklist = { 'txt', 'c', 'cpp' },
+            highlight = {
+              'RainbowDelimiterRed',
+              'RainbowDelimiterYellow',
+              'RainbowDelimiterBlue',
+              'RainbowDelimiterOrange',
+              'RainbowDelimiterGreen',
+              'RainbowDelimiterViolet',
+              'RainbowDelimiterCyan',
+            },
           }
-          rainbow_delimiters.enable(0)
-          if rainbow_delimiters.is_enabled(0) ~= 0 then rainbow_delimiters.toggle(0) end
         end,
       },
       {
         'CKolkey/ts-node-action',
         lazy = true,
+        version = false,
         dependencies = { 'tpope/vim-repeat' },
         opts = function() return { julia = require('eo.ts_node_action.fts.julia') } end,
         keys = {
@@ -301,8 +313,8 @@ return {
       },
       {
         'Wansmer/treesj',
+        version = false,
         lazy = true,
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         cmd = { 'TSJSplit', 'TSJJoin' },
         opts = {
           use_default_keymaps = false,
@@ -324,7 +336,7 @@ return {
       },
       {
         'Wansmer/sibling-swap.nvim',
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        version = false,
         opts = {
           max_join_length = 120,
           check_syntax_error = true,
@@ -336,14 +348,12 @@ return {
         keys = {
           {
             '[w',
-            -- function() require('sibling-swap').swap_with_left() end,
-            [[:lua require('sibling-swap').swap_with_left()<CR>]],
+            [[<cmd>lua require('sibling-swap').swap_with_left()<CR>]],
             { desc = 'Swap with Left', silent = true },
           },
           {
             ']w',
-            [[:lua require('sibling-swap').swap_with_right()<CR>]],
-            -- [[<cmd>lua require('sibling-swap').swap_with_right()<CR>]],
+            [[<cmd>lua require('sibling-swap').swap_with_right()<CR>]],
             { desc = 'Swap with Right', silent = true },
           },
         },
@@ -351,22 +361,36 @@ return {
       {
         'numToStr/Comment.nvim',
         lazy = false,
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter' },
         opts = function(opts)
           local ok, integration = pcall(require, 'ts_context_commentstring.integrations.comment_nvim')
           if ok then opts.pre_hook = integration.create_pre_hook() end
         end,
         keys = { 'gcc', { 'gc', mode = { 'x', 'n', 'o' } } },
       },
+      {
+        'nvim-treesitter/nvim-treesitter-context',
+        lazy = true,
+        version = false,
+        config = function()
+          require('treesitter-context').setup {
+            enable = false,
+            max_lines = 3,
+            multiwindow = true,
+          }
+        end,
+      },
     },
   },
+  { 'calops/hmts.nvim', version = false, lazy = true, opts = {} },
   {
     'maxbol/treesorter.nvim',
     cmd = 'TSort',
+    version = false,
   },
   {
     'dsully/treesitter-jump.nvim',
     lazy = false,
+    version = false,
     enabled = true,
     keys = {
       { '%', function() require('treesitter-jump').jump() end },
@@ -375,37 +399,33 @@ return {
   },
   {
     ---@module 'treesitter-modules'
+    ---@type ts.mod.UserConfig
     'MeanderingProgrammer/treesitter-modules.nvim',
     enabled = true,
+    version = false,
     lazy = false,
-    priority = 1000,
+    -- priority = 1000,
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    ---@type ts.mod.UserConfig
-    opts = function(_, opts)
-      opts = vim.tbl_deep_extend('force', {
-        auto_install = vim.tbl_values { languagess },
-        ensure_installed = vim.tbl_values { languagess },
-        fold = { enable = true },
-        highlight = {
-          enable = true,
-          additional_vim_regex_highlighting = false,
+    opts = {
+      auto_install = true,
+      ensure_installed = languagess,
+      fold = { enable = true },
+      highlight = { enable = true, additional_vim_regex_highlighting = false },
+      -- autopairs = { enable = true },
+      indent = {
+        enable = true,
+        disable = { 'python', 'yaml' },
+      },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          -- due to blink, it cant be Tab.
+          init_selection = '<CR>',
+          node_incremental = '<CR>',
+          scope_incremental = false,
+          node_decremental = '<BS>',
         },
-        autopairs = { enable = true },
-        indent = {
-          enable = true,
-          disable = { 'python', 'yaml' },
-        },
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            -- due to blink, it cant be Tab.
-            init_selection = '<CR>',
-            node_incremental = '<CR>',
-            scope_incremental = false,
-            node_decremental = '<BS>',
-          },
-        },
-      }, opts)
-    end,
+      },
+    },
   },
 }

@@ -41,13 +41,13 @@ local function dropdown(opts)
     fzf_opts = { ['--layout'] = 'reverse' },
     winopts = {
       title_pos = opts.winopts.title and 'center' or nil,
-      height = 0.8,
-      width = 0.8,
-      row = 0.1,
+      height = 0.75,
+      width = 0.85,
+      row = 0.2,
       preview = {
         hidden = 'nohidden',
         layout = 'vertical',
-        flip_columns = 120,
+        flip_columns = 160,
         horizontal = 'right:75%',
         vertical = 'up:75%',
       },
@@ -66,34 +66,34 @@ local function cursor_dropdown(opts)
   }, opts))
 end
 
-local function list_sessions()
-  local fzf = require('fzf-lua')
-  local ok, persisted = eo.pcall(require, 'persisted')
-  if not ok then return end
-  local sessions = persisted.list()
-  fzf.fzf_exec(
-    vim.tbl_map(function(s) return s.name end, sessions),
-    dropdown {
-      winopts = { title = format_title('Sessions', '󰆔'), height = 0.33, row = 0.5 },
-      previewer = false,
-      actions = {
-        ['default'] = function(selected)
-          local session = vim.iter(sessions):find(function(s) return s.name == selected[1] end)
-          if not session then return end
-          persisted.load { session = session.file_path }
-        end,
-        ['ctrl-d'] = {
-          function(selected)
-            local session = vim.iter(sessions):find(function(s) return s.name == selected[1] end)
-            if not session then return end
-            fn.delete(vim.fn.expand(session.file_path))
-          end,
-          fzf.actions.resume,
-        },
-      },
-    }
-  )
-end
+-- local function list_sessions()
+--   local fzf = require('fzf-lua')
+--   local ok, persisted = eo.pcall(require, 'persisted')
+--   if not ok then return end
+--   local sessions = persisted.list()
+--   fzf.fzf_exec(
+--     vim.tbl_map(function(s) return s.name end, sessions),
+--     dropdown {
+--       winopts = { title = format_title('Sessions', '󰆔'), height = 0.33, row = 0.5 },
+--       previewer = false,
+--       actions = {
+--         ['default'] = function(selected)
+--           local session = vim.iter(sessions):find(function(s) return s.name == selected[1] end)
+--           if not session then return end
+--           persisted.load { session = session.file_path }
+--         end,
+--         ['ctrl-d'] = {
+--           function(selected)
+--             local session = vim.iter(sessions):find(function(s) return s.name == selected[1] end)
+--             if not session then return end
+--             fn.delete(vim.fn.expand(session.file_path))
+--           end,
+--           fzf.actions.resume,
+--         },
+--       },
+--     }
+--   )
+-- end
 
 eo.fzf = { dropdown = dropdown, cursor_dropdown = cursor_dropdown }
 ------------------------------------------------------------------------------------------------------------------------
@@ -104,15 +104,26 @@ return {
   {
     'ibhagwan/fzf-lua',
     enabled = false,
-    priority = 151,
+    -- priority = 151,
     lazy = false,
     cmd = 'FzfLua',
     dependencies = {
-      'nvim-web-devicons',
-      'lspkind.nvim',
-      'mfussenegger/nvim-dap',
-      'nvim-treesitter/nvim-treesitter-context',
-      'MeanderingProgrammer/render-markdown.nvim',
+      { 'nvim-tree/nvim-web-devicons' },
+      { 'onsails/lspkind.nvim' },
+      { 'mfussenegger/nvim-dap' },
+      {
+        'nvim-treesitter/nvim-treesitter-context',
+        lazy = true,
+        version = false,
+        config = function()
+          require('treesitter-context').setup {
+            enable = true,
+            max_lines = 3,
+          }
+          -- map('n', '[c', function() require('treesitter-context').go_to_context(vim.v.count1) end, { silent = true })
+        end,
+      },
+      { 'MeanderingProgrammer/render-markdown.nvim' },
     },
     -- stylua: ignore start
     keys = {
@@ -121,12 +132,13 @@ return {
       { '<leader>ff',     file_picker,                                              desc = 'find files' },
       { '<leader>fb',     function() fzf_lua.buffers() end,                         desc = 'buffers' },
       { '<leader>fz',     function() fzf_lua.zoxide() end,                          desc = 'zoxide' },
-      { '<leader>fs',     function() fzf_lua.grep_visual() end, mode = 'v',         desc = 'search visual selection' },
-      { '<leader>fs',     function() fzf_lua.grep_cword({word_match = "-w" }) end,  desc = 'search word under cursor'},
+      { '<leader>fs',     function() fzf_lua.grep_visual() end, mode = {'v', 'x'},  desc = 'search visual selection' },
+      { '<leader>fs',     function() fzf_lua.grep_cword() end, mode = 'v',          desc = 'search word under cursor'},
+      { '<leader>fS',     function() fzf_lua.live_grep() end,                       desc = 'live grep' },
       { '<leader>fvh',    function() fzf_lua.highlights() end,                      desc = 'highlights' },
       { '<leader>fvk',    function() fzf_lua.keymaps() end,                         desc = 'keymaps' },
       { '<leader>fva',    function() fzf_lua.autocmds() end,                        desc = 'autocommands' },
-      { '<leader>file',   function() fzf_lua.diagnostics_workspace() end,           desc = 'workspace diagnostics' },
+      -- { '<leader>fd',     function() fzf_lua.diagnostics_workspace() end,           desc = 'workspace diagnostics' },  -- typos: ignore
       { '<leader>fll',    function() fzf_lua.lsp_finder() end,                      desc = 'lsp finder' },
       { '<leader>fld',    function() fzf_lua.lsp_document_symbols() end,            desc = 'document symbols' },
       { '<leader>fls',    function() fzf_lua.lsp_live_workspace_symbols() end,      desc = 'workspace symbols' },
@@ -134,11 +146,12 @@ return {
       { '<leader>fgb',    function() fzf_lua.git_branches() end,                    desc = 'branches' },
       { '<leader>fgc',    function() fzf_lua.git_commits() end,                     desc = 'commits' },
       { '<leader>fgB',    function() fzf_lua.git_bcommits() end,                    desc = 'buffer commits' },
-      { '<leader>fS',     function() fzf_lua.live_grep() end,                       desc = 'live grep' },
       { '<leader>fc',     function() file_picker(vim.g.nvim_dir) end,               desc = 'nvim config' },
     },
-    -- { '<localleader>p', fzf_lua.registers,                            desc = 'Registers' },
     -- stylua: ignore end
+    -- typos: ignore
+    -- { '<leader>fs',     function() fzf_lua.grep_cword({word_match = "-w" }) end,  desc = 'search word under cursor'},
+    -- { '<localleader>p', fzf_lua.registers,                            desc = 'Registers' },
 
     config = function()
       local devicon = require('nvim-web-devicons')
@@ -180,31 +193,32 @@ return {
           bat = {
             cmd = 'bat',
             -- args = '--color=always --style=numbers,changes,grid,snips,filename',
-            args = '--color=always --style=snips,filename',
-            theme = 'Visual Studio Dark+',
+            args = '--color=always --style=filename',
+            -- theme = 'Visual Studio Dark+',
+            theme = 'Sublime Snazzy',
           },
           builtin = {
             treesitter = {
-              enabled = true,
+              enabled = false,
               -- context = {
-              --   max_lines = 0,
-              --   -- trim_scope = 'inner',
+              --   max_lines = 1,
+              --   trim_scope = 'inner',
               -- },
             },
-            toggle_behavior = 'extend',
+            toggle_behavior = 'default',
             extensions = {
-              ['png'] = { 'chafa', '{file}' },
-              ['svg'] = { 'chafa', '{file}' },
-              ['jpg'] = { 'chafa', '{file}' },
+              ['png'] = { 'icat', '{file}' },
+              ['svg'] = { 'timg' },
+              ['jpg'] = { 'icat', '{file}' },
               -- ['jpg'] = { 'ueberzug' },
             },
             -- ext_ft_override = { ['qmd'] = 'md', ['jmd'] = 'md', ['rmd'] = 'md' },
-            ext_ft_override = { ['jmd'] = 'md', ['rmd'] = 'md' },
+            -- ext_ft_override = { ['jmd'] = 'md', ['rmd'] = 'md' },
             render_markdown = {
               enabled = true,
               filetypes = {
-                -- ['markdown'] = true,
-                ['quarto'] = true,
+                ['markdown'] = true,
+                -- ['quarto'] = true,
               },
             },
           },
@@ -219,23 +233,22 @@ return {
           -- height = 0.45,
           -- width = 0.45,
           preview = {
-            hidden = 'nohidden',
+            -- hidden = 'nohidden',
             layout = 'flex',
-            flip_columns = 120,
-            horizontal = 'right:75%',
-            vertical = 'up:75%',
+            flip_columns = 160,
+            horizontal = 'right:55%',
+            vertical = 'down:45%',
           },
           treesitter = true,
-          -- border = ui.current.border,
-          border = 'rounded',
           on_create = function()
-            vim.keymap.set('t', '<C-n>', '<Down>', { silent = true, buffer = 0 })
-            vim.keymap.set('t', '<C-p>', '<Up>', { silent = true, buffer = 0 })
+            vim.keymap.set('t', '<C-n>', '<Down>', { silent = true, buffer = 0, nowait = true, remap = false })
+            vim.keymap.set('t', '<C-p>', '<Up>', { silent = true, buffer = 0, nowait = true, remap = false })
           end,
         },
         keymap = {
           -- stylua: ignore start
           builtin = {
+            ['<Esc>']       = 'abort',
             ['<M-g']        = 'preview-page-reset',
             ['<C-/>']       = 'toggle-help',
             ['<C-e>']       = 'toggle-preview',
@@ -257,13 +270,13 @@ return {
           },
           fzf = {
             ['ctrl-q']      = 'select-all+accept',
-            ["ctrl-z"]      = "abort",
+            -- ["ctrl-z"]      = "abort",
             ["ctrl-f"]      = "half-page-down",
             ["ctrl-b"]      = "half-page-up",
             ["ctrl-a"]      = "beginning-of-line",
             ["ctrl-e"]      = "end-of-line",
-            ["ctrl-j"]      = 'Down',
-            ["ctrl-k"]      = 'Up',
+            -- ["ctrl-j"]      = 'Down',
+            -- ["ctrl-k"]      = 'Up',
             ["alt-a"]       = "toggle-all",
             ["alt-g"]       = "first",
             ["alt-G"]       = "last",
@@ -328,7 +341,8 @@ return {
           },
         },
         lsp = {
-          cwd_only = true, -- ??
+          async_or_timeout = 500,
+          cwd_only = true,
           symbols = {
             symbol_style = 1,
             symbol_icons = lsp_kind.symbol_map,
@@ -341,6 +355,10 @@ return {
               '@type',
             },
           },
+          -- previewer = 'codeaction_native',
+          -- preview_pager = (
+          --   'delta --side-by-side --width="$FZF_PREVIEW_COLUMNS"' .. "--hunk-header-style='omit' --file-style='omit' "
+          -- ),
         },
         jumps = dropdown {
           winopts = { title = '   Jumps ', preview = { hidden = 'nohidden' } },
@@ -407,7 +425,7 @@ return {
           -- actions = { enter = actions.cd },
         },
       }
-      eo.command('SessionList', list_sessions)
+      -- eo.command('SessionList', list_sessions)
     end,
   },
   {

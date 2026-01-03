@@ -104,4 +104,4 @@ M.attach_lightbulb = function(bufnr, client_id)
   })
 end
 
-return M
+-- return M

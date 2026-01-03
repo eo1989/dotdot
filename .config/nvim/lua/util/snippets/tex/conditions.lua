@@ -1,7 +1,7 @@
+local M = {}
 local has_treesitter, ts = pcall(require, 'vim.treesitter')
 local get_node_at_cursor = require('util.snippets.treesitter').get_node_at_cursor
 local make_condition = require('luasnip.extras.conditions').make_condition
-local M = {}
 
 --- Checks whether the cursor is in a zone defined by environments and nodes
 ---@param zone_environments table[boolean] environments that specify the zone
@@ -99,7 +99,9 @@ M.after_math_variable = make_condition(function(_, _, _)
   return M.in_mathzone(nil, nil, nil)
 end)
 
-local ALIGNEMENT_ENVIRONMENTS = { -- in_alignment
+-- in_alignment
+
+local ALIGNEMENT_ENVIRONMENTS = {
   align = true,
   [ [[align*]] ] = true,
   flalign = true,

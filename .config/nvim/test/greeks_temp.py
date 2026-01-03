@@ -1,7 +1,8 @@
-# %%
 import matplotlib.pylab as plt
 import numpy as np
 from scipy.stats import norm
+
+np.printoptions(precision=4)
 
 # %%
 s = np.linspace(1.5, 4.0, 200)

@@ -52,27 +52,58 @@ local augroup = eo.augroup
 -- neovim does not currently correctly report the related locations for diagnostics.
 -- TODO: once a PR for this is merged delete this workaround
 
-local function show_related_locations(diag)
-  local related_info = diag.relatedInformation
-  if not related_info or #related_info == 0 then return diag end
-  for _, info in ipairs(related_info) do
-    diag.message = ('%s\n%s(%d:%d)%s'):format(
-      diag.message,
-      fn.fnamemodify(vim.uri_to_fname(info.location.uri), ':p:.'),
-      info.location.range.start.line + 1,
-      info.location.range.start.character + 1,
-      not eo.falsy(info.message) and (': %s'):format(info.message) or ''
-    )
-  end
-  return diag
-end
+-- local function show_related_locations(diag)
+--   local related_info = diag.relatedInformation
+--   if not related_info or #related_info == 0 then return diag end
+--   for _, info in ipairs(related_info) do
+--     diag.message = ('%s\n%s(%d:%d)%s'):format(
+--       diag.message,
+--       fn.fnamemodify(vim.uri_to_fname(info.location.uri), ':p:.'),
+--       info.location.range.start.line + 1,
+--       info.location.range.start.character + 1,
+--       not eo.falsy(info.message) and (': %s'):format(info.message) or ''
+--     )
+--   end
+--   return diag
+-- end
 
-local handler = lsp.handlers[M.textDocument_publishDiagnostics]
+-- local original_handler = lsp.handlers[M.textDocument_publishDiagnostics]
 ---@diagnostic disable-next-line: duplicate-set-field
-lsp.handlers[M.textDocument_publishDiagnostics] = function(err, result, ctx)
-  result.diagnostics = vim.tbl_map(show_related_locations, result.diagnostics)
-  handler(err, result, ctx)
-end
+-- lsp.handlers[M.textDocument_publishDiagnostics] = function(err, result, ctx)
+--   result.diagnostics = vim.tbl_map(show_related_locations, result.diagnostics)
+--   handler(err, result, ctx)
+-- end
+-- lsp.handlers[M.textDocument_publishDiagnostics] = function(_, result, ctx, config)
+--   vim.tbl_map(function(item)
+--     if item.relatedInformation and #item.relatedInformation > 0 then
+--       vim.tbl_map(function(k)
+--         if k.location then
+--           local tail = vim.fn.fnamemodify(vim.uri_to_fname(k.location.uri), ':t')
+--           k.message = tail
+--             .. '('
+--             .. (k.location.range.start.line + 1)
+--             .. ', '
+--             .. (k.location.range.start.character + 1)
+--             .. '): '
+--             .. k.message
+--
+--           if k.location.uri == vim.uri_from_bufnr(0) then
+--             table.insert(result.diagnostics, {
+--               code = item.code,
+--               message = k.message,
+--               range = k.location.range,
+--               severity = vim.lsp.protocol.DiagnosticSeverity.Hint,
+--               source = item.source,
+--               relatedInformation = {},
+--             })
+--           end
+--         end
+--         item.message = item.message .. '\n' .. k.message
+--       end, item.relatedInformation)
+--     end
+--   end, result.diagnostics)
+--   original_handler(_, result, ctx, config)
+-- end
 
 --[[
 -- from dhruvmanila's dotfiles:
@@ -99,18 +130,6 @@ end
 
 -- lsp.handlers['textDocument/hover'] = lsp.with(lsp.handlers.hover, { border = 'rounded' })
 -- lsp.handlers['textDocument/signatureHelp'] = lsp.with(lsp.handlers.signature_help, { border = border })
-
--- lsp.handlers['textDocument/hover'] = function(err, res, ctx, _)
---   local _, winid = lsp.handlers.hover(err, res, ctx, {
---     -- border = 'rounded',
---     border = 'shadow',
---     silent = true, -- disable 'No information available' notification
---   })
---   api.nvim_set_option_value('conceallevel', 3, {
---     scope = 'local',
---     win = winid,
---   })
--- end
 
 lsp.handlers['window/logMessage'] = function(_, content, _)
   if content.type == 3 then
@@ -362,7 +381,7 @@ end
 
 --- The custom namespace is so that ALL diagnostics across all namespaces can be aggregated
 --- including diagnostics from plugins
-local ns = api.nvim_create_namespace('severe-diagnostics')
+-- local ns = api.nvim_create_namespace('severe-diagnostics')
 
 --- Restricts nvim's diagnostic signs to only the single most severe one per line
 --- see `:help vim.diagnostic`
@@ -386,28 +405,28 @@ local signs_handler = diagnostic.handlers.signs
 --   hide = function(_, bufnr) signs_handler.hide(ns, bufnr) end,
 -- })
 
-diagnostic.handlers.signs = {
-  show = function(_, bufnr, _, opts)
-    local diags = diagnostic.get(bufnr)
-
-    local max_severity_per_line = {}
-    for _, d in pairs(diags) do
-      local m = max_severity_per_line[d.lnum]
-      if not m or d.severity < m.severity then max_severity_per_line[d.lnum] = d end
-    end
-
-    local filtered_diagnostics = vim.tbl_values(max_severity_per_line)
-    signs_handler.show(ns, bufnr, filtered_diagnostics, opts)
-  end,
-  hide = function(_, bufnr) signs_handler.hide(ns, bufnr) end,
-}
+-- diagnostic.handlers.signs = {
+--   show = function(_, bufnr, _, opts)
+--     local diags = diagnostic.get(bufnr)
+--
+--     local max_severity_per_line = {}
+--     for _, d in pairs(diags) do
+--       local m = max_severity_per_line[d.lnum]
+--       if not m or d.severity < m.severity then max_severity_per_line[d.lnum] = d end
+--     end
+--
+--     local filtered_diagnostics = vim.tbl_values(max_severity_per_line)
+--     signs_handler.show(ns, bufnr, filtered_diagnostics, opts)
+--   end,
+--   hide = function(_, bufnr) signs_handler.hide(ns, bufnr) end,
+-- }
 
 -----------------------------------------------------------------------------//
 -- Diagnostic Configuration
 -----------------------------------------------------------------------------//
 
-local max_width = math.min(math.floor(vim.o.columns * 0.7), 100)
-local max_height = math.min(math.floor(vim.o.lines * 0.3), 30)
+-- local max_width = math.min(math.floor(vim.o.columns * 0.7), 100)
+-- local max_height = math.min(math.floor(vim.o.lines * 0.3), 30)
 
 -----------------------------------------------------------------------------//
 -- Signs
@@ -432,33 +451,33 @@ diagnostic.config {
     --   [S.ERROR] = 'DiagnosticSignErrorLine',
     -- },
   },
-  virtual_text = false and {
-    severity = { min = S.WARN },
-    spacing = 6,
-    prefix = function(d)
-      -- local level = diagnostic.severity[d.severity]
-      local level = S[d.severity]
-      return icons[level:lower()]
-    end,
-    -- format = function(diag)
-    --   local code = diag.code and fmt('[%s]', diag.code) or ''
-    --   return fmt('%s %s', code, diag.message)
-    -- end,
-    -- suffix = function(diag)
-    --   if not diag then return '' end
-    --   local codeOrSource = (tostring(diag.code or diag.source or ''))
-    --   if codeOrSource == '' then return '' end
-    --   return (' [%s]'):format(codeOrSource:gsub('%.$', ''))
-    -- end,
-  },
+  -- virtual_text = false and {
+  --   severity = { min = S.WARN },
+  --   spacing = 6,
+  --   prefix = function(d)
+  --     -- local level = diagnostic.severity[d.severity]
+  --     local level = S[d.severity]
+  --     return icons[level:lower()]
+  --   end,
+  --   -- format = function(diag)
+  --   --   local code = diag.code and fmt('[%s]', diag.code) or ''
+  --   --   return fmt('%s %s', code, diag.message)
+  --   -- end,
+  --   -- suffix = function(diag)
+  --   --   if not diag then return '' end
+  --   --   local codeOrSource = (tostring(diag.code or diag.source or ''))
+  --   --   if codeOrSource == '' then return '' end
+  --   --   return (' [%s]'):format(codeOrSource:gsub('%.$', ''))
+  --   -- end,
+  -- },
   float = {
     -- namespace = 0,
-    max_width = max_width,
-    max_height = max_height,
-    border = 'rounded',
+    -- max_width = max_width,
+    -- max_height = max_height,
+    border = 'rounded' or border,
     title = { { '  ', 'DiagnosticFloatTitleIcon' }, { 'Problems ', 'DiagnosticFloatTitle' } },
     focusable = false, -- no need to enter these windows
-    header = '',
+    -- header = '',
     scope = 'line', -- to keep inline with diagflow.nvim
     prefix = function(diag)
       local level = S[diag.severity]
@@ -467,21 +486,18 @@ diagnostic.config {
     end,
     ---[[ www.github.com/willothy/nvim-config/blob/main/lua/configs/lsp/lspconfig.lua ]]
     source = true, --' if_many'
-    -- header = setmetatable({}, {
-    --   __index = function(_, k)
-    --     local arr = {
-    --       fmt(
-    --         'Diagnostics: %s %s',
-    --         require('nvim-web-devicons').get_icon_by_filetype(vim.bo.filetype),
-    --         vim.bo.filetype
-    --       ),
-    --       'Title',
-    --     }
-    --     return arr[k]
-    --   end,
-    -- }),
+    header = setmetatable({}, {
+      __index = function(_, k)
+        local arr = {
+          fmt(
+            'Diagnostics: %s %s',
+            require('nvim-web-devicons').get_icon_by_filetype(vim.bo.filetype),
+            vim.bo.filetype
+          ),
+          'Title',
+        }
+        return arr[k]
+      end,
+    }),
   },
-  --[[ supposedly makes diagnostics background transparent]]
-
-  -- on_ready = function() vim.cmd([[highlight DiagnosticVirtualText guibg=NONE]]) end,
 }

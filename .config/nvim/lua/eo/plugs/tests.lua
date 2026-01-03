@@ -6,13 +6,12 @@ return {
   {
     'nvim-neotest/neotest',
     enabled = true,
-    version = '*',
+    version = false,
     dependencies = {
-      'nvim-neotest/nvim-nio',
-      'nvim-neotest/neotest-python',
-      -- 'nvim-neotest/neotest-go',
-      'nvim-lua/plenary.nvim',
-      'stevearc/overseer.nvim',
+      { 'nvim-neotest/nvim-nio' },
+      { 'nvim-neotest/neotest-python' },
+      { 'nvim-lua/plenary.nvim' },
+      -- { 'stevearc/overseer.nvim' },
     },
     -- keys = {
     --   {
@@ -83,18 +82,14 @@ return {
         -- floating = {
         --   border = eo.ui.current.border,
         -- },
-        quickfix = { enabled = false, open = true },
+        quickfix = { enabled = true, open = true },
         output = {
           enabled = true,
-          open_on_run = false,
+          open_on_run = true,
         },
-        status = {
-          enabled = true,
-        },
-        consumers = { overseer = require('neotest.consumers.overseer') },
+        status = { enabled = true },
+        -- consumers = { overseer = require('neotest.consumers.overseer') },
         adapters = {
-          -- require('neotest-plenary'),
-          -- require('neotest-go'),
           require('neotest-python') {
             dap = { justMyCode = false },
             -- Use whatever Python is on the path from the virtualenv.
@@ -124,9 +119,10 @@ return {
           -- running = misc.running or '󰴲',
           -- failed = misc.running or '',
           -- unknown = misc.unknown or '❓',
-          passed = '󰄴 ',
-          running = '󰴲 ',
-          failed = ' ',
+          passed = eo.ui.icons.misc.check or '󰄴 ',
+          running = '󰴲',
+          -- failed = '',
+          failed = eo.ui.icons.lsp.error or ' ',
           unknown = '❓',
           running_animated = vim.tbl_map(
             function(s) return s .. ' ' end,
@@ -134,20 +130,25 @@ return {
           ),
         },
       }
-      map('n', '<localleader>tn', function() neotest.run.run {} end, { desc = 'neotest: run' })
+      -- map('n', '<localleader>tn', function() neotest.run.run {} end, { desc = 'neotest: run' })
       map(
         'n',
-        '<localleader>tt',
+        '<localleader>tr',
         function() neotest.run.run { vim.api.nvim_buf_get_name(0) } end,
         { desc = 'neotest: run buf' }
       )
       map('n', '<localleader>ta', function()
-        for _, adaptor_id in ipairs(require('neotest').run.adaptors()) do
-          require('neotest').run.run { suite = true, adaptor = adaptor_id }
+        for _, adaptor_id in ipairs(require('neotest').run.adapters()) do
+          require('neotest').run.run { suite = true, adapter = adaptor_id }
         end
       end, { desc = 'neotest: run adapter/suite' })
       map('n', '<localleader>tl', function() neotest.run.run_last() end, { desc = 'neotest: run last' })
-      map('n', '<localleader>td', function() neotest.run.run { strategy = 'dap' } end, { desc = 'neotest: run w/ dap' })
+      map(
+        'n',
+        '<localleader>td',
+        function() neotest.run.run { vim.fn.expand('%'), strategy = 'dap' } end,
+        { desc = 'neotest: run w/ dap' }
+      )
       map('n', '<localleader>tp', function() neotest.summary.toggle() end, { desc = 'neotest: toggle summary' })
       map(
         'n',
@@ -155,7 +156,7 @@ return {
         function() neotest.output.open { short = true } end,
         { desc = 'neotest: open output' }
       )
-      -- map('n', '<localleader>ts', function() neotest.run.stop() end)
+      map('n', '<localleader>ts', function() neotest.run.stop() end)
     end,
   },
 }

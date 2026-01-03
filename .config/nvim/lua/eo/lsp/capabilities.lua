@@ -2,6 +2,9 @@
 
 local function make_capabilities()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+  -- local capabilities
+
   -- local capabilities = vim.tbl_deep_extend(
   --   'force',
   --   vim.lsp.protocol.make_client_capabilities(),
@@ -51,7 +54,15 @@ local function make_capabilities()
 
   -- vim.tbl_deep_extend('force', {}, capabilities.textDocument.completion, completion.textDocument.completion)
 
-  return require('blink.cmp').get_lsp_capabilities(capabilities, false)
+  -- local has_blink, blink = pcall(require, 'blink.cmp')
+
+  return require('blink.cmp').get_lsp_capabilities(capabilities, true)
+
+  -- if has_blink then
+  --   return blink.get_lsp_capabilities(capabilities, true)
+  -- else
+  --   return capabilities = vim.lsp.protocol.make_client_capabilities()
+  -- end
 end
 
 return {

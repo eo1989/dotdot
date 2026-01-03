@@ -1,4 +1,4 @@
-local go = vim.go
+local g, go = vim.g, vim.go
 
 --[[
 Schema		Description ~

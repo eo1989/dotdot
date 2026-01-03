@@ -1,12 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/hougesen/mdsf/main/schemas/v0.10.5/mdsf.schema.json",
+  "$schema": "https://raw.githubusercontent.com/hougesen/mdsf/main/schemas/v0.11.0/mdsf.schema.json",
   "languages": {
     "c": "clang-format",
     "cpp": "clang-format",
-    "json": ["biome:lint", "biome:check", "biome:format", "prettier"],
-    "jsonc": ["biome:lint", "biome:check", "biome:format", "prettier"],
-    "julia": ["juliaformatter.jl", "runic"],
-    "python": [ "ruff:check", "ruff:format" ],
+    "json": ["biome:lint", "biome:check", ["biome:format", "prettier"]],
+    "jsonc": ["biome:lint", "biome:check",[ "biome:format", "prettier"]],
+    "julia": [["juliaformatter.jl", "runic"]],
+    "python": [ "ruff:format" ],
     "shell": [
       [
         "shfmt",
@@ -18,52 +18,55 @@
         "sqlfluff:fix",
         "sqlfluff:lint",
         "sqlfluff:format",
+        "sqruff",
+        "sqruff",
         "sql-formatter",
         "sqlint",
         "sqlfmt",
-        "sqruff",
         "sleek"
       ]
-    ]
+    ],
+    "*": ["typos"]
   }
 }
-    // "csharp": "csharpier",
-    // "go": [
-    //   [
-    //     "gci",
-    //     "goimports-reviser",
-    //     "goimports"
-    //   ],
-    //   [
-    //     "gofumpt",
-    //     "gofmt"
-    //   ]
-    // ],
-    // "java": "google-java-format",
-    // "javascript": "prettier",
-    // "python": [
-    //   // [
-    //   //   "usort",
-    //   //   "isort"
-    //   // ],
-    //   // "blue",
-    //   // "black",
-    //   // "yapf"
-    //   // "autopep8",
-    //   // "pyink"
-    //   [
-    //     "ruff:format"
-    //   ]
-    // ],
-    // "ruby": [
-    //   [
-    //     "rubocop",
-    //     "rufo",
-    //     "rubyfmt",
-    //     "standardrb"
-    //   ]
-    // ],
-    // "rust": "rustfmt",
-    // "toml": "taplo",
-    // "typescript": "prettier"
-    // "yaml": "prettier"
+// "python": [ "ruff:check", "ruff:format" ],
+// "csharp": "csharpier",
+// "go": [
+//   [
+//     "gci",
+//     "goimports-reviser",
+//     "goimports"
+//   ],
+//   [
+//     "gofumpt",
+//     "gofmt"
+//   ]
+// ],
+// "java": "google-java-format",
+// "javascript": "prettier",
+// "python": [
+//   // [
+//   //   "usort",
+//   //   "isort"
+//   // ],
+//   // "blue",
+//   // "black",
+//   // "yapf"
+//   // "autopep8",
+//   // "pyink"
+//   [
+//     "ruff:format"
+//   ]
+// ],
+// "ruby": [
+//   [
+//     "rubocop",
+//     "rufo",
+//     "rubyfmt",
+//     "standardrb"
+//   ]
+// ],
+// "rust": "rustfmt",
+// "toml": "taplo",
+// "typescript": "prettier"
+// "yaml": "prettier"

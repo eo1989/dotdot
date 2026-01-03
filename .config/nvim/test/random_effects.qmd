@@ -1,15 +1,25 @@
 ---
 author: Ernest Orlowski
 format: html
-# engine: julia
-jupyter: julia-1.11
+engine: julia
+# jupyter: julia-1.11
 ---
-
 
 # Testing quarto with multiple languages
 
 ## Julia
+
 - From "Statistics with Julia" pg.165, Listing 4.21: Q-Q Plots
 ```{julia}
 using Random, Distributions, StatsPlots, Plots, Measures; pyplot()
+Random.seed!
+```
+
+```{julia}
+b1, b2 = 0.5, 2
+
+dist1, dist2 = Beta(b1, b1), Beta(b2, b2)
+
+n = 2_000
+data1 = rand(band)
 ```

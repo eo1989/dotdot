@@ -1,24 +1,23 @@
 local api, bo, cmd, optl = vim.api, vim.bo, vim.cmd, vim.opt_local
-local map = vim.api.nvim_set_keymap or vim.keymap.set
-
+local map = _G.map or vim.keymap.set
 
 -- cmd([[call matchadd('TabLineSel', '\%80v', 79)]])
 -- local options = {
 -- stylua: ignore start
-bo.tabstop = 4                    -- ts
-bo.textwidth = 79                 -- tw
-bo.shiftwidth = 4                 -- sw
-bo.softtabstop = 4                -- sts
-bo.expandtab = true               -- et
-bo.autoindent = true              -- ai
-optl.smarttab = true                --
+-- bo.tabstop = 8                    -- ts
+-- bo.textwidth = 79                 -- tw
+-- bo.shiftwidth = 4                 -- sw
+-- bo.softtabstop = 4                -- sts
+-- bo.expandtab = true               -- et
+-- bo.autoindent = true              -- ai
+-- optl.smarttab = true                --
 -- optl.conceallevel = 2             -- cole
-optl.colorcolumn = '+1'           -- cc
+-- optl.colorcolumn = '+1'           -- cc
 -- optl.foldmethod = 'syntax'        -- fdm  -- syntax?
 -- stylua: ignore end
 
 local options = {
-  tabstop = 4,
+  tabstop = 8,
   textwidth = 79,
   shiftwidth = 4,
   softtabstop = 4,
@@ -47,7 +46,7 @@ setlocal includeexpr=substitute(v:fname,'\\.','/','g')
 optl.indentkeys:remove { '<:>' }
 optl.indentkeys:append { '=else:' }
 
-vim.treesitter.start()
+-- vim.treesitter.start()
 
 -- https://github.com/echasnovski/nvim/blob/master/after/ftplugin/python.lua
 -- g['pyindent_open_paren'] = 'shiftwidth()'

@@ -356,3 +356,49 @@ function eo.get_client(name)
     ('No %s client found for the current buffer'):format(name)
   )
 end
+
+---@return "windows" | "unix" | "mac" | "wsl" | nil
+function eo.is_windows()
+  local uname = vim.uv.os_uname()
+  if uname.sysname:find('Windows') then
+    return 'windows'
+  elseif uname.sysname == 'Darwin' then
+    return 'mac'
+  elseif uname.sysname == 'Linux' then
+    if uname.release:lower():find('microsoft') then
+      return 'wsl'
+    else
+      return 'unix'
+    end
+  elseif uname.sysname == 'FreeBSD' then
+    return 'unix'
+  end
+
+  return nil
+end
+
+---Helper function as son LSPs like `ltex` dont support ignore files
+---@param client vim.lsp.Client
+---@param bufnr integer
+-- function eo.detachIfObsidianOrIcloud(client, bufnr)
+--   local path = api.nvim_buf_get_name(bufnr)
+--   local obsiDir = vim.fs.find('.obsidian', { path = path, upward = true, type = 'directory' }) > 0
+--   local iCloudDocs = vim.startswith(path, os.getenv('HOME') .. '/Library/Mobile Documents/')
+--   if obsiDir or (iCloudDocs and client.name ~= 'ltex_plus') then
+--     -- defer to ensure client is already attached
+--     vim.defer_fn(function() vim.lsp.buf_detach_client(bufnr, client.id) end, 500)
+--   end
+-- end
+
+-- function eo.load_gh_token()
+--   if vim.env.GITHUB_TOKEN then return end
+--   local tokenPath = os.getenv('HOME')
+--     .. '~/Library/Mobile Documents/com-apple-CloudDocs/Dotfolder/private dotfiles/github-token.txt'
+--   local file = io.open(tokenPath, 'r')
+--   if not file then
+--     vim.notify('Couldnt find file for `GITHUB_TOKEN`.', l.ERROR)
+--     return
+--   end
+--   vim.env.GITHUB_TOKEN = file:read('*l') -- read first line
+--   file:close()
+-- end

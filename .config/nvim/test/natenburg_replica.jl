@@ -1,10 +1,9 @@
-using Plots, Distributions, PlotThemes, DataFrames
+import PlotlyBase: Plot
+using Plots, Distributions, DataFrames, Random, StatsPlots, Measures; pyplot()
 using KittyTerminalImages
 
-# PlotThemes.default_theme!()
-# PlotThemes.default_theme!()
-theme(:juno)
-Plots.scalefontsizes(1.3)
+# theme(:juno)
+# Plots.scalefontsizes(1.3)
 
 x = 1:7
 y = [3, 1, 4, 1, 5, 9, 2]
@@ -25,7 +24,31 @@ norm([-1, -2, -3])
 
 norm([-1, -2, -3], 1)
 
+norm(v::Vector, p::Number) = 
+    mapreduce(+, v) do x
+        abs(x)^p
+    end^(1/p)
+    
 
+
+## From stats w/ julia
+Random.seed!(42)
+
+b1, b2 = 0.5, 2
+dist1, dist2 = Beta(b1, b1), Beta(b2, b2)
+
+n = 2_000
+data1 = rand(dist1, n)
+data2 = rand(dist2, n)
+
+stephist(data1, bins = 15, label = "beta($b1, $b1)", c = :red, normed = true)
+
+p1 = stephist!(data2, bins = 15, label = "beta($b2,$b2)", c = :blue, xlabel = "x", ylabel = "Density", normed = true)
+
+p2 = qqplot(data1, data2, c= :black, ms = 1, msw = 0, xlabel = "Quantiles for beta($b1, $b1) sample", ylabel = "Quantiles for beta($b2, $b2) sample", legend = false )
+
+plot(p1, p2, size = (800, 400), margin = 5mm)
+##
 
 
 # %% [markdown]
@@ -90,7 +113,7 @@ foo(1, b = 2; :bar => 3, :baz => 4)
 # one of more function calls and receiving functions picks the keyword arguments it needs.
 
 # Sometimes its convenient for a function to take a variable number of arguments. The syntax
-# to supply the arguments as a tuple is taht the last argument is followed by an ellipsis`...`
+# to supply the arguments as a tuple is that the last argument is followed by an ellipsis`...`
 # The variables `args` is bound to a tuple of all the trailing values passed to the function.
 foo(a, b, c, args...) = args
 foo(1, 2, 3)  # ()
@@ -102,7 +125,7 @@ foo((1, 2, 3, 4, 5, 6)...)  # (4, 5, 6)
 foo([1, 2, 3, 4, 5, 6]...)  # (4, 5, 6)
 
 # The above example shows that the splied arguments can also take the place of fixed arguments.
-# in fact the function call taking a spliced argument list doesnt ahve to take a variable number
+# in fact the function call taking a spliced argument list doesnt have to take a variable number
 # of arguments at all.
 
 
@@ -120,25 +143,25 @@ function BSM(S, K, t, r, q, σ)
     return c, theta
 end
 
-spot = 0.2:0.1:15
-k = 5
-r = 0.03
-q = 0.09
+spot = S = 0.2:0.01:20
+K = 5
+r = 0.035
+q = 0.013
 q2 = 0.12
-t = 1
-σ = 0.3
+t = 5/252
+σ = 0.32
 
 # compute option
-opt_val = BSM.(spot, k, t, r, q, σ)
-df = DataFrame(BSM.(spot, k, t, r, q, σ))
+opt_val = BSM.(spot, K, t, r, q, σ)
+df = DataFrame(BSM.(spot, K, t, r, q, σ))
 rename!(df, :2 => :theta)
 theta = df[!, :theta]
 
-df1 = DataFrame(BSM.(spot, k, t, r, q2, σ))
+df1 = DataFrame(BSM.(spot, K, t, r, q2, σ))
 rename!(df1, :2 => :theta1)
 theta1 = df1[!, :theta1]
 
-x = [i < 0 ? i : 0 for i in [val[1] for val in opt_val] .- [val for val in max.(spot .- k, 0)]]
+x = [i < 0 ? i : 0 for i in [val[1] for val in opt_val] .- [val for val in max.(spot .- K, 0)]]
 area = [val[1] for val in opt_val] .- x
 
 # plot option
@@ -154,7 +177,7 @@ plot(
 )
 
 # plot intrinsic value
-plot!(spot, [val for val in max.(spot .- k, 0)], label = "Intrinsic Value", legend = :topleft, linestyle = :dash)
+plot!(spot, [val for val in max.(spot .- K, 0)], label = "Intrinsic Value", legend = :topleft, linestyle = :dash)
 
 ## color the area where there is negative time value
 plot!(
@@ -163,7 +186,7 @@ plot!(
 )
 
 # plot a second option with a different dividend
-plot!(spot, [val[1] for val in BSM.(spot, k, t, r, q2, σ)], label = "Theoretical Value with dividend = $(round(q2 * 100, digits = 4))%", title = "Natenberg replica")
+plot!(spot, [val[1] for val in BSM.(spot, K, t, r, q2, σ)], label = "Theoretical Value with dividend = $(round(q2 * 100, digits = 4))%", title = "Natenberg replica")
 
 # shade area where theta is positive
 vspan!(

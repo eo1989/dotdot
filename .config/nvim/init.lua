@@ -35,6 +35,7 @@ local namespace = {
   -- System name
   ---@type 'Darwin'|'Windows_NT'|'Linux'
   OS_UNAME = vim.uv.os_uname().sysname,
+  -- OS_UNAME = is_windows() == 'Darwin',
 
   -- Path to the home directory
   ---@type string
@@ -50,6 +51,9 @@ local namespace = {
 _G.eo = eo or namespace
 _G.map = vim.keymap.set
 _G.P = vim.print
+
+--[[ for now.. ]]
+-- _G.ev = require('lib.event')
 
 g.os = vim.uv.os_uname().sysname
 
@@ -101,10 +105,6 @@ local home = uv.os_homedir()
 package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?/init.lua;'
 package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?.lua;'
 
--- local specs = {
---   { import = 'eo.plugs' },
--- }
--- local lazy = require('lazy')
 require('lazy').setup {
   spec = {
     { import = 'eo.plugs' },
@@ -115,12 +115,12 @@ require('lazy').setup {
   ui = {
     border = 'rounded',
     wrap = true,
+    title_pos = 'center',
   },
   defaults = {
     lazy = false,
-    version = '*',
-    -- version = false,
-    cond = not eo.KITTY_SCROLLBACK, -- disable lazy loading for kitty scrollback
+    version = false,
+    -- cond = not eo.KITTY_SCROLLBACK, -- disable lazy loading for kitty scrollback
   },
   install = {
     missing = true,
@@ -182,10 +182,10 @@ require('lazy').setup {
 
 -- if env.NVIM_CONFIG then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
 
-if eo.KITTY_SCROLLBACK then
-  require('eo.kitty.scrollback')
-  return
-end
+-- if eo.KITTY_SCROLLBACK then
+--   require('eo.kitty.scrollback')
+--   return
+-- end
 
 -- cmd.colorscheme('tokyonight-storm')
 cmd.colorscheme('catppuccin-macchiato')
@@ -201,34 +201,5 @@ map('n', '<leader>U', function()
     -- pcall(require('nvim-treesitter.install').install { with_sync = true }),
 
     require('nvim-treesitter.install').update(),
-  } -- update ts parsers
+  }
 end, { desc = 'update plugins & TS parsers', silent = true })
-
--- doesnt work after nvim-treesitter branch='main' anymore.
--- vim.api.nvim_create_user_command(
---   'TSR',
---   function()
---     vim.cmd([[
---     write
---     edit
---     TSBufEnable highlight
---     ]])
---   end,
---   {}
--- )
-
--- function SourcePluginFiles()
---   local plugin_path = fn.stdpath('config') .. '/plugin'
---   -- local scandir = uv.fs_scandir(fn.stdpath('config') .. '/plugin')
---   local scandir = uv.fs_scandir(plugin_path)
---   if not scandir then
---     vim.notify_once('Error: Couldnt open plugin directory..?', vim.log.levels.WARN)
---     return
---   end
---   while true do
---     local name, type = uv.fs_scandir_next(scandir)
---     if not name then break end
---     if type == 'file' and name:match('%.lua$') then cmd('luafile ' .. plugin_path .. '/' .. name) end
---   end
---   print('Sourced all the lua files in: ' .. plugin_path)
--- end

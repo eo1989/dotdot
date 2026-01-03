@@ -1,0 +1,9 @@
+---@type vim.lsp.Config
+-- return {
+--   -- cmd = { 'sql-language-server', 'up', '--method' .. 'stdio' },
+--   cmd = { 'sqls' },
+--   filetypes = { 'sql', 'mysql' },
+--   ---@param client vim.lsp.Client
+--   single_file_support = true,
+--   settings = {},
+-- }

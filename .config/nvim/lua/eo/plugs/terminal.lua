@@ -87,29 +87,6 @@ return {
       responsiveness = {
         horizontal_breakpoint = 100,
       },
-      -- shell = function()
-      --   local ft = vim.bo.filetype
-      --   -- vim.print("Filetype: " .. ft)
-      --   if ft == 'python' then
-      --     shell = 'ptipython'
-      --   elseif ft == 'julia' then
-      --     shell = 'julia'
-      --   elseif ft == 'r' then
-      --     shell = 'r'
-      --   elseif ft == 'toggleterm' then
-      --     return shell
-      --   else
-      --     shell = vim.o.shell
-      --   end
-      --   return shell
-      -- end,
-      -- size = bit.bor(25,  function(term)
-      --   if term.direction == 'horizontal' then
-      --     return 20
-      --   elseif term.direction == 'vertical' then
-      --     return math.floor(vim.o.columns * 0.3)
-      --   end
-      -- end),
       size = function(term)
         if term.direction == 'horizontal' then
           return 20

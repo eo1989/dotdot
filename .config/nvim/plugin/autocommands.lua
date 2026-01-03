@@ -60,6 +60,7 @@ local smart_close_filetypes = eo.p_table {
   ['tsplayground'] = true,
   ['startuptime'] = true,
   ['fzf'] = true,
+  ['FzfLua'] = true,
   ['fzf-lua'] = true,
   ['trouble'] = true,
 }
@@ -125,33 +126,6 @@ eo.augroup('SmartClose', {
 --     if package.loaded['image.nvim'] ~= 1 then
 --       cmd(fmt('silent! "%s | :bw"', vim.g.open_command .. ' ' .. fn.expand('%')))
 --     end
---   end,
--- })
--- eo.augroup('Treesitter', {
---   event = { 'FileType' },
---   -- callback = function(ctx)
---   --   local ft = ctx.match
---   --   local lang = vim.treesitter.language.get_lang(ft)
---   --   if vim.tbl_contains(require('nvim-treesitter.config').get_available(), lang) then
---   --     require('nvim-treesitter').install(lang):await(function()
---   --       vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
---   --       vim.bo.indentexpr = 'v:lua.require("nvim-treesitter".indentexpr())'
---   --       vim.treesitter.start()
---   --     end)
---   --   end
---   --   local no_indent = {'bash', 'zsh', 'python'}
---   --   if has_started and not vim.list_contains(no_indent, ft) then
---   --     vim.bo.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
---   --     -- vim.treesitter.start(ctx.buf, ctx.match)
---   --   end
---   -- end,
---   command = function(ctx)
---     local bufnr = ctx.buf
---     -- if not pcall(vim.treesitter.start, bufnr) then return end
---     vim.treesitter.start(bufnr)
---     vim.wo.foldmethod = 'expr'
---     vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
---     vim.bo[bufnr].indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
 --   end,
 -- })
 
@@ -223,6 +197,7 @@ local save_excluded = {
   'lua.luapad',
   'gitcommit',
   'NeogitCommitMessage',
+  'sniprun',
 }
 
 local function can_save()

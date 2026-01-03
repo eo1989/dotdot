@@ -3,21 +3,29 @@ local opts = { noremap = true, silent = true }
 
 ---@type LazySpec
 return {
-  {
-    'kawre/neotab.nvim',
-    cond = not vim.g.vscode or not vim.b.bigfile,
-    event = 'InsertEnter',
-    opts = {},
-  },
+  -- {
+  --   'kawre/neotab.nvim',
+  --   cond = not vim.g.vscode or not vim.b.bigfile,
+  --   event = 'InsertEnter',
+  --   opts = {},
+  -- },
   {
     'L3MON4D3/LuaSnip',
     version = 'v2.*',
     -- lazy = false,
-    event = 'InsertEnter', -- let blink handle this bit
+    -- event = { 'InsertEnter', 'VeryLazy' }, -- let blink handle this bit
+    -- event = { 'InsertEnter' },
     build = { 'make install_jsregexp' },
     dependencies = {
-      'kawre/neotab.nvim',
-      'rafamadriz/friendly-snippets',
+      -- 'kawre/neotab.nvim',
+      {
+        'kawre/neotab.nvim',
+        cond = not vim.g.vscode or not vim.b.bigfile,
+        -- event = 'InsertEnter',
+        opts = {},
+      },
+      { 'rafamadriz/friendly-snippets' },
+      { 'qjebbs/vscode-plantuml' },
     },
     config = function()
       local ls = require('luasnip')
@@ -25,12 +33,12 @@ return {
       local extras = require('luasnip.extras')
       local fmt = require('luasnip.extras.fmt').fmt
       local node = require('luasnip.util.util')
-      local node_util = require('luasnip.nodes.util')
       local ft_functions = require('luasnip.extras.filetype_functions')
       local util = require('luasnip.util.util')
+      local node_util = require('luasnip.nodes.util')
 
       ---@type LuaSnip
-      ls.config.setup {
+      ls.setup {
         keep_roots = true,
         link_roots = true,
         link_children = true,
@@ -69,12 +77,12 @@ return {
           conds = require('luasnip.extras.conditions'),
           postfix = require('luasnip.extras.postfix').postfix,
           ms = ls.multi_snippet,
-          k = require('luasnip.nodes.key_indexer').key_indexer,
+          k = require('luasnip.nodes.key_indexer'),
           -- s = function(...)
           --   local snip = ls.s(...)
           --   table.insert(getfenv(2).ls_file_snippets, snip)
           -- end,
-          utils = require('util.snippets'),
+          -- utils = require('util.snippets'),
         },
         -- specifically from akinsho, and L3MON4D3.
         ext_opts = {
@@ -82,9 +90,7 @@ return {
           --[[ passive/ 'hl_group' from https://github.com/leiserfg/dots/blob/master/.config/nvim/lua/my/plugins/LuaSnip.lua ]]
           [types.insertNode] = {
             active = { virt_text = { { 'λ', 'Type' } }, hl_mode = 'combine' },
-            -- passive = { hl_group = 'Substitute' },
             unvisited = {
-              -- virt_text = { { '|', 'Conceal' } },
               virt_text_pos = 'inline',
             },
           },
@@ -92,13 +98,6 @@ return {
             active = { virt_text = { { '●', 'Operator' } }, hl_mode = 'combine' },
             -- active = { virt_text = { { 'choiceNode', 'IncSearch' } } }, -- or 'LspInlayHint' maybe?
             unvisited = { virt_text = { { '󰇷', 'DiagnosticVirtualTextError' } } },
-          },
-          [types.exitNode] = {
-            -- passive = { hl_group = 'Substitute' },
-            unvisited = {
-              virt_text = { { '|', 'Type' } },
-              virt_text_pos = 'inline',
-            },
           },
         },
         parser_nested_assembler = function(_, snippetNode)
@@ -181,7 +180,7 @@ return {
         if ls.choice_active() then ls.change_choice(1) end
       end)
 
-      map({ 's', 'i' }, '<c-j>', function()
+      map({ 's', 'i' }, '<c-f>', function()
         if not ls.expand_or_jumpable() then return '<Tab>' end
         ls.expand_or_jump()
       end, { expr = true })
@@ -192,9 +191,12 @@ return {
       end, { expr = true })
 
       require('luasnip.loaders.from_lua').lazy_load()
-      require('luasnip.loaders.from_vscode').lazy_load()
       require('luasnip.loaders.from_vscode').lazy_load {
-        paths = vim.fn.stdpath('config') .. '/snips',
+        paths = { './snips' },
+        -- fs_event_providers = { 'autocmd', 'libuv' },
+      }
+      require('luasnip.loaders.from_vscode').lazy_load {
+        -- paths = vim.fn.stdpath('config') .. '/snips',
         fs_event_providers = { 'autocmd', 'libuv' },
       }
       -- require('luasnip.loaders.from_vscode').lazy_load {
@@ -205,20 +207,20 @@ return {
         fs_event_providers = { 'autocmd', 'libuv' },
       }
 
-      local luasnip_aug = api.nvim_create_augroup('ClearLuasnipSession', { clear = true })
-      api.nvim_create_autocmd('CursorHold', {
-        desc = 'Deactivate snippet after leaving insert/select mode',
-        pattern = '*',
-        group = luasnip_aug,
-        callback = function()
-          vim.cmd.LuaSnipUnlinkCurrent { mods = { emsg_silent = true } }
-          vim.snippet.stop()
-        end,
-      })
+      -- local luasnip_aug = api.nvim_create_augroup('ClearLuasnipSession', { clear = true })
+      -- api.nvim_create_autocmd('CursorHold', {
+      --   desc = 'Deactivate snippet after leaving insert/select mode',
+      --   pattern = '*',
+      --   group = luasnip_aug,
+      --   callback = function()
+      --     vim.cmd.LuaSnipUnlinkCurrent { mods = { emsg_silent = true } }
+      --     vim.snippet.stop()
+      --   end,
+      -- })
 
       ls.filetype_extend('NeogitCommitMessage', { 'gitcommit' })
       ls.filetype_extend('typescriptreact', { 'javascript', 'typescript' })
-      ls.filetype_extend('python', { 'ipynb' })
+      -- ls.filetype_extend('python', { 'ipynb' })
     end,
   },
 }

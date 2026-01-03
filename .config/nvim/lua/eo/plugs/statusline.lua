@@ -69,7 +69,9 @@ _G.linter_status = safe_linter_status
 ---@type LazySpec
 return {
   {
+    ---@module 'lualine'
     'nvim-lualine/lualine.nvim',
+    version = false,
     event = 'VeryLazy',
     -- lazy = false,
     dependencies = {

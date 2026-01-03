@@ -2,6 +2,7 @@ local function get_std_envs()
   local envs = {}
   if vim.env.VIRTUAL_ENV then envs['VIRTUAL_ENV'] = table.concat({ vim.env.VIRTUAL_ENV, 'bin', 'python' }, '/') end
   local sys = vim.fn.exepath('python3') or vim.fn.exepath('python') or '/bin/python'
+  -- TODO: Change to use uv!
   envs['System'] = sys
   return envs
 end
@@ -18,8 +19,10 @@ end
 
 local function get_python_client()
   local pylance = vim.lsp.get_clients { name = 'pylance' }
-  local pyright = vim.lsp.get_clients { name = 'pyright' }
+  -- local pyright = vim.lsp.get_clients { name = 'pyright' }
   local bpyright = vim.lsp.get_clients { name = 'basedpyright' }
+  local typy = vim.lsp.get_clients { name = 'ty' }
+  local ruff = vim.lsp.get_clients { name = 'ruff' }
   if #clients > 0 then return clients[1] end
 end
 

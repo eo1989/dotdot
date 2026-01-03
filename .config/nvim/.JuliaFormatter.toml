@@ -1,0 +1,66 @@
+indent = 4
+margin = 92
+always_for_in = true
+# If true, whitespace is added for type definitions. Make this true if you prefer
+# Union{A <: B, C} to Union{A<:B,C}.
+whitespace_typedefs = true
+# If true, whitespace is added for binary operations in indices. Make this true if you
+# prefer arr[a + b] to arr[a+b]. Additionally, if there's a colon : involved
+# parenthesis will be added to the LHS and RHS.
+whitespace_ops_in_indices = true
+whitespace_in_kwargs = true
+remove_extra_newlines = true
+# If true, import expressions are rewritten to using expressions in the following cases:
+# import A
+#
+# import A, B, C
+#
+# is rewritten to:
+#
+# using A: A
+#
+# using A: A
+# using B: B
+# using C: C
+import_to_using = false
+# if true, `x |> f` is rewritten to `f(x)`
+pipe_to_function_call = false
+# Transforms a short function definition `f(arg1, arg2) = body` to a *long* function def
+# if the short function def exceeds the maximum margin. or if `force_long_function_def` = true
+# *long* function =>
+# function f(arg1, arg2)
+#     body
+# end
+short_to_long_function_def = false
+force_long_function_def = false
+# transforms the long function example above back to the short version
+long_to_short_function_def = false
+# function foo()
+#     expr1
+#     expr2
+# end
+#
+# to
+#
+# function foo()
+#     expr1
+#     return expr2
+# end
+always_use_return = false
+# annotates fields in a type definition with `::Any` if no type annotation is provided.
+# struct A
+#     arg1
+# end
+#
+# to
+#
+# struct A
+#     arg1::Any
+# end
+annotate_untyped_files_with_any = true
+format_docstrings = false
+# align_* = false
+conditional_to_if = true
+separate_kwargs_with_semicolon = true
+# If there is julia inside the folder then fk it. format the markdown/quarto too.
+format_markdown = true

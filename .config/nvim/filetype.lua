@@ -15,7 +15,7 @@ vim.filetype.add {
     ['PklProject'] = 'pkl',
     ['NEOGIT_COMMIT_EDITMSG'] = 'NeogitCommitMessage',
     ['.psqlrc'] = 'conf',
-    ['launch.json'] = 'jsonc',
+    -- ['launch.json'] = 'jsonc',
     Podfile = 'ruby',
     Brewfile = 'ruby',
     ['MANIFEST.in'] = 'pymanifest',
@@ -25,8 +25,8 @@ vim.filetype.add {
     -- dsully/nvim/blob/main/filetype.lua ex:
     -- set specific ft to enable ruff_lsp & taplo to attach as lang servers
     ['poetry.lock'] = 'toml',
-    ['pyproject.toml'] = 'toml.pyproject',
-    ['ruff.toml'] = 'toml.ruff',
+    -- ['pyproject.toml'] = 'toml',
+    -- ['ruff.toml'] = 'toml.ruff',
     ['uv.lock'] = 'toml',
     ['.flake8'] = 'ini',
     -- ['.zshrc'] = 'sh',
@@ -37,7 +37,7 @@ vim.filetype.add {
     ['.*/%.github[%w/]+workflows[%w/]+.*%.ya?ml'] = 'yaml.github',
     -- ['.*/.github/workflows/.*%yaml'] = 'yaml.ghaction',
     -- ['.*/.github/workflows/.*%yml'] = 'yaml.ghaction',
-    ['.yml$'] = function(path) return path:find('compose') and 'yaml.docker-compose' or 'yaml' end,
+    -- ['.yml$'] = function(path) return path:find('compose') and 'yaml.docker-compose' or 'yaml' end,
     ['*.dockerignore'] = 'gitignore',
     ['.*requirements%.in'] = 'requirements',
     ['.*requirements.*%.in'] = 'requirements',
@@ -45,8 +45,8 @@ vim.filetype.add {
     -- ['.*requirements%.txt'] = 'requirements',
     -- ['.*requirements.*%.txt'] = 'requirements',
     -- ['.*/%.vscode/.*%.json'] = 'json5', -- stevearc dotfiles -> these json files freq have comments
-    ['.*/%.?vscode/settings.json'] = 'jsonc', -- dhruvmanilla dotfiles
-    ['.*/zed/settings.json'] = 'jsonc',
+    -- ['.*/%.?vscode/settings.json'] = 'jsonc', -- dhruvmanilla dotfiles
+    -- ['.*/zed/settings.json'] = 'jsonc',
     ['.*%.conf'] = 'conf',
     ['.*%.theme'] = 'conf',
     ['.*%.gradle'] = 'groovy',

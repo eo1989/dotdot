@@ -3,7 +3,8 @@ local env, fn, fs = os.getenv('HOME'), vim.fn, vim.fs
 ---@type vim.lsp.Config
 return {
   name = 'ts_query_ls',
-  cmd = fn.expand('~') .. '/Dev/scripts/ts_query_ls/target/release/ts_query_ls', -- not in $PATH
+  -- cmd = fn.expand('~') .. '/Dev/scripts/ts_query_ls/target/release/ts_query_ls', -- not in $PATH
+  cmd = 'ts_query_ls',
   filetypes = { 'query' },
   root_dir = fs.root(0, { '.tsqueryrc.json', 'queries' }),
   root_markers = { '.tsqueryrc.json', '.git' },

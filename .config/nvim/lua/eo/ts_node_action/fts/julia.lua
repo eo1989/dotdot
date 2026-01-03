@@ -1,5 +1,3 @@
-
-
 local ret_san = function(input)
   if type(input) == 'string' then return vim.fn.split(input, '\n') end
   local ret = {}
@@ -38,7 +36,7 @@ local toggle_multiline = actions.toggle_multiline(padding)[1][1]
 local toggle_operator = actions.toggle_operator(operators)[1][1]
 local helpers = require('ts-node-action.helpers')
 
-local toggle_julia_bool = function(node) return tostring(helpers.node_text(node) ~= 'true') end
+local toggle_julia_boolean = function(node) return tostring(helpers.node_text(node) ~= 'true') end
 
 local function julia_make_begin(list, prefix, suffix)
   prefix = prefix or ''
@@ -372,10 +370,10 @@ end
 
 return {
   vector_expression = { { toggle_multiline, name = 'Toggle Vector Multiline' } },
-  matrix_expression = { { matrix_toggle_multiline, name = 'Toggle Matrix Multiline' } },
-  argument_list = { { argument_list, name = 'Toggle argument list multiline' } },
   parameter_list = { { toggle_multiline, name = 'Toggle Parameter Multiline' } },
   tuple_expression = { { toggle_multiline, name = 'Toggle Tuple Multiline' } },
+  matrix_expression = { { matrix_toggle_multiline, name = 'Toggle Matrix Multiline' } },
+  argument_list = { { argument_list, name = 'Toggle argument list multiline' } },
   boolean_literal = { { toggle_julia_boolean, name = 'Toggle bool' } },
   identifier = { { cycle_case, name = 'Cycle Case' } },
   operator = { { toggle_operator, name = 'Toggle Operator' } },

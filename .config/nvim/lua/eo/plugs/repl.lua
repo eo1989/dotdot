@@ -1,74 +1,26 @@
--- local map = map or vim.keymap.set
-
--- ~~lhkphuc/dotfiles/blob/master/nvim/lua/plugins/repl.lua~~ not using cell_marker anymore.
 --[[
--- In a native script, we mimic a notebook cell by defining a marker
--- Its commonly defined in many editors and programed to use a space and two percent (%) signs after the comment symbol.
--- for python, julia, etc, that would be a line starting with `# %%`
---]]
--- local code_cell = [[# %%]]
+'klafyvel/nvim-smuggler',
+'nvim-mini/mini.hipatterns',
+'GCBallesteros/Notebooknavigator.nvim',
+'nolleh/sqlflick.nvim',
+'mportdata/squealer.nvim',
+'chunleng/nvim-dap-kitter-launcher',
+]]
 
 ---@type LazySpec
 return {
   -- {
-  --   'klafyvel/nvim-smuggler',
-  --   enabled = false,
-  --   ft = 'julia',
-  --   -- event = { 'BufReadPost', 'BufRead *.jl' },
-  --   dependencies = { 'nvim-neotest/nvim-nio' },
-  --   keys = {
-  --     {
-  --       '<localleader>sv',
-  --       ':SmuggleVisual<CR>',
-  --       desc = 'Smuggle Range jl',
-  --       mode = { 'v', 'x' },
-  --       ft = 'julia',
-  --     },
-  --     -- {
-  --     --   '<localleader>sg',d
-  --     --   ':SmuggleEvalByBlocks<CR>',
-  --     --   desc = 'Smuggle Blocks jl',
-  --     --   ft = 'julia',
-  --     -- },
-  --   },
-  --   opts = {
-  --     {
-  --       ui = {
-  --         -- mappings = {},
-  --         -- result_line_length = nil,
-  --         -- result_hl_group = nil,
-  --         display_results = false,
-  --       },
-  --     },
-  --   },
+  --   'jannis-baum/jupyviv.nvim',
+  --   ft = { 'ipynb' },
+  --   event = { 'BufReadCmd *.ipynb' },
+  --   config = function() require('jupyviv').setup() end,
   -- },
-  {
-    'nvim-mini/mini.hipatterns',
-    event = 'VeryLazy',
-    dependencies = { 'GCBallesteros/Notebooknavigator.nvim' },
-    opts = function()
-      local nn = require('notebook-navigator')
-      local opts = { highlighters = { cells = nn.minihipatterns_spec } }
-      return opts
-    end,
-  },
-  {
-    'GCBallesteros/Notebooknavigator.nvim',
-    event = 'VeryLazy',
-    opts = {
-      cell_markers = {
-        python = '# %%',
-        julia = '#\\s\\=%%',
-      },
-      syntax_highlight = true,
-    },
-  },
   {
     'GCBallesteros/jupytext.nvim',
     event = { 'BufReadCmd *.ipynb' },
     priority = 999,
     -- lazy = false,
-    -- ft = { 'ipynb' },
+    ft = { 'ipynb' },
     lazy = vim.fn.argc(-1) == 0, -- load jupytext early when opening a file from cmdline
     opts = {
       -- style = 'hydrogen',
@@ -281,3 +233,57 @@ return {
     end,
   },
 }
+
+-- {
+--   'klafyvel/nvim-smuggler',
+--   enabled = false,
+--   ft = 'julia',
+--   -- event = { 'BufReadPost', 'BufRead *.jl' },
+--   dependencies = { 'nvim-neotest/nvim-nio' },
+--   keys = {
+--     {
+--       '<localleader>sv',
+--       ':SmuggleVisual<CR>',
+--       desc = 'Smuggle Range jl',
+--       mode = { 'v', 'x' },
+--       ft = 'julia',
+--     },
+--     -- {
+--     --   '<localleader>sg',d
+--     --   ':SmuggleEvalByBlocks<CR>',
+--     --   desc = 'Smuggle Blocks jl',
+--     --   ft = 'julia',
+--     -- },
+--   },
+--   opts = {
+--     {
+--       ui = {
+--         -- mappings = {},
+--         -- result_line_length = nil,
+--         -- result_hl_group = nil,
+--         display_results = false,
+--       },
+--     },
+--   },
+-- },
+-- {
+--   'nvim-mini/mini.hipatterns',
+--   event = 'VeryLazy',
+--   dependencies = { 'GCBallesteros/Notebooknavigator.nvim' },
+--   opts = function()
+--     local nn = require('notebook-navigator')
+--     local opts = { highlighters = { cells = nn.minihipatterns_spec } }
+--     return opts
+--   end,
+-- },
+-- {
+--   'GCBallesteros/Notebooknavigator.nvim',
+--   event = 'VeryLazy',
+--   opts = {
+--     cell_markers = {
+--       python = '# %%',
+--       julia = '#\\s\\=%%',
+--     },
+--     syntax_highlight = true,
+--   },
+-- },

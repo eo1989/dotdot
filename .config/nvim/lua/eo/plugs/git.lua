@@ -170,6 +170,7 @@ return {
   },
   {
     'lewis6991/gitsigns.nvim',
+    version = false,
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       local gitsigns = require('gitsigns')
@@ -218,7 +219,7 @@ return {
           bmap('n', '<localleader>hw',    gs.toggle_word_diff,                          { desc = 'Git: toggle word diff'                    })
           bmap('n', '<localleader>gS',    gs.stage_buffer,                              { desc = 'Git: stage entire buffer'                 })
           bmap('n', '<localleader>gre',   gs.reset_buffer,                              { desc = 'Git: reset entire buffer'                 })
-          bmap('n', '<localleader>td',    gs.toggle_deleted,                            { desc = 'Git: show deleted lines'                  })
+          bmap('n', '<localleader>gd',    gs.toggle_deleted,                            { desc = 'Git: show deleted lines'                  })
           -- bmap('n', '<localleader>gbl',   function() gs.blame_line({full = true}) end,  { desc = 'Git: blame current line'                  })
           bmap('n', '<localleader>gb',    function() gs.blame_line() end,               { desc = 'Git: blame current line'                  })
           bmap('n', '<localleader>gQ',    function() gs.setqflist('all') end,           { desc = 'Git: list modified in quickfix'           })

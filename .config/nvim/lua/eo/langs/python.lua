@@ -17,17 +17,17 @@ return {
     lazy = false,
     -- priority = 999,
   },
-  -- {
-  --   'microsoft/python-type-stubs',
-  --   ft = 'python',
-  --   lazy = false,
-  --   -- priority = 999,
-  -- },
+  {
+    'microsoft/python-type-stubs',
+    ft = 'python',
+    -- lazy = true,
+    -- priority = 999,
+  },
   {
     'linux-cultist/venv-selector.nvim',
     enabled = true,
     branch = 'main',
-    ft = { 'python', 'quarto', 'markdown' },
+    -- ft = { 'python', 'quarto', 'markdown' },
     cmd = 'VenvSelect',
     dependencies = {
       'neovim/nvim-lspconfig',

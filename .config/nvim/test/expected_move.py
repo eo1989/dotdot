@@ -40,13 +40,15 @@ def parse_args():
     return args.stock, args.days
 
 
-def get_expected_move(stock_name, days):
+def get_expected_move(stock_name: str, days: str = "1d"):
     stock = yf.Ticker(stock_name)
 
-    history = stock.history(period="1d")
+    history = stock.history(period=days)
     pre_close = float(history.Close[0])
-    print(f"Last close price: {pre_close}")
+    print(f"Last close price: {pre_close}:.2d")
 
     response_content = req.get(
         f"https://marketchameleon.com/Overview/{stock_name}/IV/"
     ).content
+
+    return response_content

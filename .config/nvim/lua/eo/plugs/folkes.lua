@@ -1,13 +1,18 @@
 local L = vim.lsp.log_levels
 local api, aug, highlight, border = vim.api, eo.augroup, eo.highlight, eo.ui.current.border
 local defaults = require('defaults')
+local defborder = defaults.ui.border.chars
 
 ---@type LazySpec
 return {
   {
     'folke/todo-comments.nvim',
     event = 'VeryLazy',
-    opts = {},
+    opts = {
+      lang = {
+        typst = { '// %s', '/* %s */' },
+      },
+    },
   },
   {
     'folke/snacks.nvim',
@@ -15,41 +20,79 @@ return {
     lazy = false,
     ---@type snacks.Config
     opts = {
-      animate = { enabled = true },
-      bigfile = { enabled = true },
+      animate = {
+        enabled = true,
+        ---@field style? "out"|"up_down"|"down"|"up"
+        style = 'out',
+        duration = {
+          step = 5, -- ms per step, default = 20
+          total = 100, -- max. duration, default = 500
+        },
+      },
+      indent = {
+        enabled = true,
+        only_scope = false, -- only show indent guides of the scope
+        only_current = false, -- only show indent guides in the current window
+      },
+      scope = {
+        enabled = true,
+      },
+      bigfile = {
+        enabled = true,
+        --[[
+        -- from:
+        -- https://github.com/hat0uma/dotfiles/blob/main/.config/nvim/lua/plugins/snacks/init.lua
+        -- ]]
+        notify = true,
+        size = 1 * 1024 * 1024,
+        -- Enable or disable features when big file detected
+        ---@param ctx {buf: number, ft:string}
+        setup = function(ctx)
+          vim.cmd([[NoMatchParen]])
+          Snacks.util.wo(0, { foldmethod = 'manual', statuscolumn = '', conceallevel = 0 })
+          vim.schedule(function() vim.bo[ctx.buf].syntax = ctx.ft end)
+          -- if pcall(require, 'ibl') then require('indent_blankline.commands').disable() end
+        end,
+      },
       bufdelete = { enabled = true },
       dashboard = { enabled = false },
       dim = { enabled = false },
       explorer = { enabled = false },
       git = { enabled = true },
       gitbrowse = { enabled = true },
-      indent = { enabled = true },
       input = { enabled = false },
-      layout = { enabled = false },
-      lazygit = { enabled = false },
-      notifier = { enabled = false },
-      --[[ needed for Snacks.picker.lsp_definition() & such ]]
-      picker = { enabled = true },
-      profiler = { enabled = true },
-      quickfile = { enabled = true },
+      layout = { enabled = true },
+      lazygit = { enabled = true },
+      notifier = {
+        enabled = false,
+        timeout = 1200,
+        style = 'fancy', -- "compact"|"fancy"|"minimal"
+        icons = {
+          error = eo.ui.icons.lsp.error or ' ' or defaults.icons.diagnostics.error,
+          warn = eo.ui.icons.lsp.warn or ' ' or defaults.icons.diagnostics.warn,
+          info = eo.ui.icons.lsp.info or ' ' or defaults.icons.diagnostics.info,
+          debug = ' ' or defaults.icons.diagnostics.debug,
+          trace = ' ' or defaults.icons.diagnostics.trace,
+        },
+        top_down = false, -- default true
+      },
+      picker = {
+        enabled = true,
+        -- config = {},
+        layout = {
+          cycle = true,
+          --[[ $COLUMNS == 71 when terminal takes up half of the vertical screen RE ]]
+          -- preset = function() return vim.o.columns >= 150 and 'default' or 'vertical' end,
+
+          preset = function() return vim.o.columns > 60 and 'vertical' or 'default' end,
+          -- win = { preview = { vertical = true } },
+        },
+      },
+      profiler = { enabled = false },
+      quickfile = { enabled = false },
       rename = { enabled = false },
-      scope = {
-        enabled = true,
-        underline = true,
-      },
       scratch = { enabled = true },
-      scroll = {
-        enabled = true,
-        animate = {
-          duration = { step = 5, total = 100 },
-          easing = 'inQuad',
-        },
-        animate_repeat = {
-          delay = 50,
-          duration = { step = 5, total = 50 },
-          easing = 'inQuad',
-        },
-      },
+      scroll = { enabled = false },
       statuscolumn = { enabled = false },
       terminal = { enabled = false },
       toggle = { enabled = true },
@@ -64,82 +107,40 @@ return {
         },
       },
       image = {
-        -- define these here, so that we don't need to load the image module
         enabled = true,
         wo = {
           winhighlight = 'FloatBorder:WhichKeyBorder',
         },
         doc = {
           inline = false,
-          -- render the image in a floating window
-          -- only used if `opts.inline` is disabled
           -- float = true,
           max_width = 80,
           max_height = 40,
         },
-        math = {
-          enabled = true,
-          -- in the templates below, `${header}` comes from any section in your document,
-          -- between a start/end header comment. Comment syntax is language-specific.
-          -- * start comment: `// snacks: header start`
-          -- * end comment:   `// snacks: header end`
-          -- typst = {
-          --   tpl = [[
-          --   #set page(width: auto, height: auto, margin: (x: 2pt, y: 2pt))
-          --   #show math.equation.where(block: false): set text(top-edge: "bounds", bottom-edge: "bounds")
-          --   #set text(size: 12pt, fill: rgb("${color}"))
-          --   ${header}
-          --   ${content}]],
-          -- },
-          -- latex = {
-          --   font_size = 'large', -- see https://www.sascha-frank.com/latex-font-size.html
-          --   -- for latex documents, the doc packages are included automatically,
-          --   -- but you can add more packages here. Useful for markdown documents.
-          --   packages = { 'amsmath', 'amssymb', 'amsfonts', 'amscd', 'mathtools' },
-          --   tpl = [[
-          --   \documentclass[preview,border=2pt,varwidth,12pt]{standalone}
-          --   \usepackage{${packages}}
-          --   \begin{document}
-          --   ${header}
-          --   { \${font_size} \selectfont
-          --     \color[HTML]{${color}}
-          --   ${content}}
-          --   \end{document}]],
-          -- },
-        },
+        math = { enabled = true },
       },
     },
     keys = {
       {
         '<leader>ff',
         function()
-          -- Snacks.picker.smart()
-          Snacks.picker.files()
+          Snacks.picker.files { layout = 'ivy' }
+          -- Snacks.picker.files()
         end,
-        desc = 'Find Files',
+        desc = 'Smart(?) Find Files',
       },
       {
         '<leader>fb',
         function() Snacks.picker.buffers() end,
         desc = 'Find Buffers',
       },
-      -- {
-      --   '<leader>fc',
-      --   function() Snacks.picker.files { cwd = vim.fn.stdpath('config') } end,
-      --   desc = 'Config files',
-      -- },
       {
         '<leader>fc',
         function() Snacks.picker.files { cwd = vim.g.nvim_dir } end,
         desc = 'Config files',
       },
       {
-        '<leader>fC',
-        function() Snacks.picker.commands() end,
-        desc = 'Search Commands',
-      },
-      {
-        '<leader>fi',
+        '<leader>fd',
         function() Snacks.picker.diagnostics_buffer() end,
         desc = 'Search diagnostics (buffer)',
       },
@@ -149,12 +150,7 @@ return {
         desc = 'Search help',
       },
       {
-        '<leader>fva',
-        function() Snacks.picker.autocmds() end,
-        desc = 'Search Autocmds',
-      },
-      {
-        '<leader>fvk',
+        '<leader>fk',
         function() Snacks.picker.keymaps() end,
         desc = 'Search Keymaps',
       },
@@ -164,11 +160,26 @@ return {
         desc = 'search Word',
       },
       {
-        '<leader>ss',
-        function() Snacks.picker.lsp_symbols() end,
-        desc = 'LSP: Document Symbols',
+        '<leader>fS',
+        function() Snacks.picker.grep_word() end,
+        desc = 'search Word',
+        mode = { 'v', 'x' },
       },
-
+      {
+        '<leader>fp',
+        function() Snacks.picker.lazy() end,
+        desc = 'Search for Plugin spec',
+      },
+      {
+        '<leader>fgb',
+        function() Snacks.picker.git_branches() end,
+        desc = 'git branches',
+      },
+      {
+        '<leader>fgc',
+        function() Snacks.picker.git_log() end,
+        desc = 'git commits',
+      },
       {
         '<leader>qq',
         function() Snacks.bufdelete() end,
@@ -179,15 +190,9 @@ return {
         function() Snacks.scratch() end,
         desc = 'Scratch buffer',
       },
-      -- {
-      --   '<localleader>.',
-      --   function() Snacks.scratch.select() end,
-      --   desc = 'Scratch buffer',
-      -- },
       {
         ']]',
-        function() Snacks.words.jump(1) end,
-        -- noremap = true,
+        function() Snacks.words.jump(vim.v.count1) end,
         desc = 'Next reference',
         mode = { 'n', 't' },
         silent = true,
@@ -195,23 +200,12 @@ return {
       },
       {
         '[[',
-        function() Snacks.words.jump(-1) end,
-        -- noremap = true,
+        function() Snacks.words.jump(-vim.v.count1) end,
         desc = 'Prev reference',
         mode = { 'n', 't' },
         silent = true,
         nowait = true,
       },
-      -- {
-      --   '<localleader>z',
-      --   function() Snacks.zen() end,
-      --   desc = 'Toggle Zen mode',
-      -- },
-      -- {
-      --   '<localleader>Z',
-      --   function() Snacks.zen.zoom() end,
-      --   desc = 'Toggle Zoom',
-      -- },
       -- {
       --   '<localleader>lg',
       --   function() Snacks.lazygit() end,
@@ -265,7 +259,7 @@ return {
             .option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
             :map('<localleader>uc')
 
-          Snacks.toggle.treesitter():map('<localleader>uT')
+          Snacks.toggle.treesitter():map('<localleader>ut')
 
           Snacks.toggle
             .option('background', { off = 'light', on = 'dark', name = 'Dark background' })
@@ -274,6 +268,21 @@ return {
           Snacks.toggle.indent():map('<localleader>ug')
 
           Snacks.toggle.dim():map('<localleader>uD')
+
+          local tsc = require('treesitter-context')
+          Snacks.toggle
+            .new({
+              name = 'Treesitter Context',
+              get = tsc.enabled,
+              set = function(state)
+                if state then
+                  tsc.enable()
+                else
+                  tsc.disable()
+                end
+              end,
+            })
+            :map('<localleader>uT')
 
           local autoformat_toggle = require('snacks').toggle.new {
             name = 'Format on Save',
@@ -286,15 +295,36 @@ return {
     end,
   },
   {
-    ---@module "noice"
     'folke/noice.nvim',
+    ---@module "noice"
     enabled = true,
-    -- event = { 'BufReadPost', 'VimEnter' },
-    event = { 'BufRead', 'VimEnter' },
-    -- lazy = true,
+    version = false,
+    event = { 'BufReadPost', 'VimEnter' },
     dependencies = {
-      { 'MunifTanjim/nui.nvim' },
-      { 'rcarriga/nvim-notify' },
+      {
+        'MunifTanjim/nui.nvim',
+        version = false,
+      },
+      {
+        'rcarriga/nvim-notify',
+        enabled = true,
+        version = false,
+        opts = {
+          stages = 'fade_in_slide_out',
+          top_down = false,
+          timeout = 1000,
+          -- on_open = function(win)
+          --   if not api.nvim_win_is_valid(win) then return end
+          --   api.nvim_win_set_config(win, { border = 'rounded', focusable = false })
+          -- end,
+          -- render = function(...)
+          --   local notification = select(2, ...)
+          --   local style = eo.falsy(notification.title[1]) and 'minimal' or 'default'
+          --   require('notify.render')[style](...)
+          -- end,
+          render = 'wrapped-compact',
+        },
+      },
     },
     opts = {
       cmdline = {
@@ -312,49 +342,16 @@ return {
       lsp = {
         progress = {
           enabled = true,
-          -- dont show the language server client
-          ---@type NoiceFormat|string
-          -- format = {
-          --   {
-          --     '{progress}',
-          --     key = 'progress.percentage',
-          --     contents = {
-          --       { '{data.progress.message} ' },
-          --     },
-          --   },
-          --   '({data.progress.percentage}%) ',
-          --   { '{spinner} ', hl_group = 'NoiceLspProgressSpinner' },
-          --   { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
-          -- },
-          ---@type NoiceFormat|string
-          -- format_done = {
-          --   { '✔ ', hl_group = 'NoiceLspProgressSpinner' },
-          --   { '{data.progress.title} ', hl_group = 'NoiceLspProgressTitle' },
-          -- },
         },
-        override = {
-          ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-          ['vim.lsp.util.stylize_markdown'] = true,
-          ['cmp.entry.get_documentation'] = true,
-        },
-        hover = {
-          enabled = false,
-          silent = false, -- set to true to not show a message if hover isnt available
-          ---@type NoiceViewOptions
-          -- opts = {
-          --   border = {
-          --     style = defaults.ui.border.name,
-          --   },
-          --   -- position = { row = 2, col = 2 },
-          -- },
-        },
+        -- override = {
+        --   ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+        --   ['vim.lsp.util.stylize_markdown'] = true,
+        --   ['cmp.entry.get_documentation'] = true,
+        -- },
+        hover = { enabled = false, silent = true },
         documentation = {
-          enabled = true,
-          -- opts = {
-          --   -- border = { style = border },
-          --   border = { style = defaults.ui.border.name },
-          --   -- position = { row = 2 },
-          -- },
+          enabled = false,
+          view = 'hover',
         },
         signature = {
           enabled = false,
@@ -364,38 +361,32 @@ return {
             luasnip = true, -- Will open signature help when jumping to Luasnip insert nodes
             throttle = 50, -- Debounce lsp signature help request by 25ms
           },
-          opts = {
-            position = { row = 1, col = 2 },
-          },
         },
+      },
+      health = { checker = true },
+      smart_move = {
+        enabled = false, -- disable this behavior here
+        excluded_filetypes = { 'cmp_menu', 'cmp_docs', 'notify' },
       },
       views = {
         vsplit = { size = { width = 'auto' } },
         split = { win_options = { winhighlight = { Normal = 'Normal' } } },
-        popup = {
-          border = { style = 'rounded', padding = { 0, 1 } },
-        },
+        popup = { border = { style = 'rounded', padding = { 0, 1 } } },
         cmdline_popup = {
           position = { row = 5, col = '50%' },
           size = { width = 'auto', height = 'auto' },
           border = { style = 'rounded', padding = { 0, 1 } },
         },
-        confirm = {
-          border = { style = 'rounded', padding = { 0, 1 }, text = { top = '' } },
-        },
+        confirm = { border = { style = 'rounded', padding = { 0, 1 }, text = { top = '' } } },
         popupmenu = {
           relative = 'editor',
           position = { row = 10, col = '50%' },
           size = { width = 60, height = 10 },
           border = { style = border, padding = { 1, 1 } },
-          -- border = { style = 'rounded', padding = { 1, 1 } },
           win_options = { winhighlight = { Normal = 'NormalFloat', FloatBorder = 'FloatBorder' } },
         },
       },
       redirect = { view = 'popup', filter = { event = 'msg_show' } },
-      commands = {
-        history = { view = 'split' },
-      },
       presets = {
         bottom_search = false,
         command_palette = true,
@@ -447,7 +438,7 @@ return {
               { event = 'msg_show', find = '^E486:' },
               { event = 'notify', max_height = 1 },
             },
-          }, -- minimise pattern not found messages
+          },
         },
         {
           view = 'notify',
@@ -492,268 +483,12 @@ return {
 
       map('n', '<ESC>', function()
         require('notify').dismiss()
-        require('noice').cmd('dismiss')
-        vim.cmd([[NoiceDismiss]])
+        vim.cmd('NoiceDismiss')
       end, { desc = 'Dismiss popup & clear hlsearch', nowait = true, silent = true })
 
       map('n', '<localleader>m', function() require('noice').cmd('dismiss') end)
 
       require('noice').setup(opts)
-      -- map('n', '<leader>n', function()
-      --   require('noice.commands').dismiss()
-      -- end)
-
-      -- map({ 'n', 'i', 'v' }, '<ESC>', function()
-      --   if not vim.cmd.NoiceDismiss then return '<ESC>' end
-      -- end, { desc = 'Clear Noice Popups', expr = true, silent = true })
-
-      -- map({ 'n', 'v', 'i' }, '<D-0>', vim.cmd.NoiceDismiss, { desc = 'All notifications', silent = true })
-
-      -- map('n', '<ESC>', function()
-      --   if not require('noice').disable() then return vim.keycode('<ESC>') end
-      -- end, { silent = true, expr = true })
-
-      -- map('c', '<M-CR>', function() require('noice').redirect(fn.getcmdline()) end, {
-      --   desc = 'redirect Cmdline',
-      -- })
     end,
   },
 }
-
--- {
---   'folke/sidekick.nvim',
---   enabled = false,
---   opts = {
---     -- add any options here
---     cli = {
---       mux = {
---         backend = 'zellij',
---         enabled = true,
---       },
---     },
---   },
---   -- keys = {
---   --   -- {
---   --   --   '<tab>',
---   --   --   function()
---   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
---   --   --     if not require('sidekick').nes_jump_or_apply() then
---   --   --       return '<Tab>' -- fallback to normal tab
---   --   --     end
---   --   --   end,
---   --   --   expr = true,
---   --   --   desc = 'Goto/Apply Next Edit Suggestion',
---   --   -- },
---   --   --------------------------------------------------------------------------------------
---   --   -- {
---   --   --   '<tab>',
---   --   --   function()
---   --   --     -- if there is a next edit, jump to it, otherwise apply it if any
---   --   --     if not require('sidekick').nes_jump_or_apply() then
---   --   --       return -- jumped or applied
---   --   --     end
---   --   --
---   --   --     -- if your using neovims native inline completions
---   --   --     if vim.lsp.inline_completion.get() then
---   --   --       return
---   --   --     end
---   --   --
---   --   --     -- any other things (like snippets) you want to do on <tab> go here.
---   --   --
---   --   --     -- fallback to normal tab
---   --   --     return "<tab>"
---   --   --   end,
---   --   --   expr = true,
---   --   --   desc = 'Goto/Apply Next Edit Suggestion',
---   --   -- },
---   --   --------------------------------------------------------------------------------------
---   --   {
---   --     '<c-.>',
---   --     function() require('sidekick.cli').toggle() end,
---   --     desc = 'Sidekick Toggle',
---   --     mode = { 'n', 't', 'i', 'x' },
---   --   },
---   --   {
---   --     '<leader>aa',
---   --     function() require('sidekick.cli').toggle() end,
---   --     desc = 'Sidekick Toggle CLI',
---   --   },
---   --   {
---   --     '<leader>as',
---   --     function() require('sidekick.cli').select() end,
---   --     -- Or to select only installed tools:
---   --     -- require("sidekick.cli").select({ filter = { installed = true } })
---   --     desc = 'Select CLI',
---   --   },
---   --   {
---   --     '<leader>ad',
---   --     function() require('sidekick.cli').close() end,
---   --     desc = 'Detach a CLI Session',
---   --   },
---   --   {
---   --     '<leader>at',
---   --     function() require('sidekick.cli').send { msg = '{this}' } end,
---   --     mode = { 'x', 'n' },
---   --     desc = 'Send This',
---   --   },
---   --   {
---   --     '<leader>af',
---   --     function() require('sidekick.cli').send { msg = '{file}' } end,
---   --     desc = 'Send File',
---   --   },
---   --   {
---   --     '<leader>av',
---   --     function() require('sidekick.cli').send { msg = '{selection}' } end,
---   --     mode = { 'x' },
---   --     desc = 'Send Visual Selection',
---   --   },
---   --   {
---   --     '<leader>ap',
---   --     function() require('sidekick.cli').prompt() end,
---   --     mode = { 'n', 'x' },
---   --     desc = 'Sidekick Select Prompt',
---   --   },
---   --   -- Example of a keybinding to open Claude directly
---   --   {
---   --     '<leader>ac',
---   --     function() require('sidekick.cli').toggle { name = 'claude', focus = true } end,
---   --     desc = 'Sidekick Toggle Claude',
---   --   },
---   -- },
---   config = function()
---     require('sidekick').setup {
---       nes = {
---         enabled = false,
---       },
---     }
---
---     eo.command('Sidekick', function(args)
---       local subcommand = args.fargs[1]
---
---       local actions = {
---         select = function() require('sidekick.cli').select {} end,
---         toggle = function() require('sidekick.cli').toggle {} end,
---         close = function() require('sidekick.cli').close {} end,
---       }
---
---       local fn = actions[subcommand or 'toggle']
---       if not fn then
---         vim.notify(string.format('No such subcommand %s', subcommand), L.WARN, {})
---         return
---       end
---       fn()
---     end, { nargs = '*' })
---   end,
---   cmd = 'Sidekick',
--- },
--- {
---   'folke/edgy.nvim',
---   enabled = false,
---   event = 'VeryLazy',
---   init = function()
---     vim.opt.laststatus = 3
---     vim.opt.splitkeep = 'screen'
---   end,
---   opts = {
---     bottom = {
---       {
---         ft = 'toggleterm',
---         size = { height = 0.3 },
---         filter = function(buf, win) return vim.api.nvim_win_set_config(win).relative == '' end,
---       },
---       -- {
---       --   ft = 'lazyterm',
---       --   title = 'LazyTerm',
---       --   size = { height = 0.3 },
---       --   filter = function(buf) return not vim.b[buf].lazyterm_cmd end,
---       -- },
---       'Trouble',
---       { ft = 'qf', title = 'QuickFix' },
---       {
---         ft = 'help',
---         size = { height = 20 },
---         filter = function(buf) return vim.bo[buf].buftype == 'help' end,
---       },
---       { ft = 'spectre_panel', size = { height = 0.4 } },
---       {
---         title = 'Neo-Tree Git',
---         ft = 'neo-tree',
---         filter = function(buf) return vim.b[buf].neo_tree_source == 'git_status' end,
---         pinned = true,
---         collapsed = true, -- show window as closed/collapsed on start
---         open = 'Neotree position=bottom git_status',
---       },
---       {
---         title = 'Neo-Tree Buffers',
---         ft = 'neo-tree',
---         filter = function(buf) return vim.b[buf].neo_tree_source == 'buffers' end,
---         pinned = true,
---         collapsed = true, -- show window as closed/collapsed on start
---         open = 'Neotree position=bottom buffers',
---       },
---     },
---     left = {
---       -- {
---       --   title = 'Neo-Tree',
---       --   ft = 'neo-tree',
---       --   filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
---       --   size = { height = 0.5 }, -- half the screen?
---       -- },
---       {
---         title = function()
---           local buf_name = vim.api.nvim_buf_get_name(0) or '[No Name]'
---           return vim.fn.fnamemodify(buf_name, ':t')
---         end,
---         ft = 'Outline',
---         pinned = true,
---         open = 'SymbolsOutlineOpen',
---       },
---       -- any other neo-tree windows
---       -- 'neo-tree',
---     },
---     right = {
---       {
---         title = 'Neo-Tree Files',
---         ft = 'neo-tree',
---         filter = function(buf) return vim.b[buf].neo_tree_source == 'filesystem' end,
---         size = { height = 0.25 },
---         open = 'NeoTree position=right toggle',
---       },
---       -- 'neo-tree',
---     },
---   },
--- },
--- {
---   'folke/trouble.nvim',
---   -- event = 'VeryLazy',
---   lazy = true,
---   opts = {}, -- for default options, refer to the configuration section for custom setup.
---   cmd = 'Trouble',
---   keys = {
---     -- {
---     --   '<leader>xx',
---     --   '<cmd>Trouble diagnostics toggle<cr>',
---     --   desc = 'Diagnostics (Trouble)',
---     -- },
---     {
---       '<leader>xx',
---       '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
---       desc = 'Buffer Diagnostics (Trouble)',
---     },
---     {
---       '<localleader>cs',
---       '<cmd>Trouble symbols toggle focus=false win.position=bottom<cr>',
---       desc = 'Symbols',
---     },
---     {
---       '<localleader>cl',
---       '<cmd>Trouble lsp toggle focus=false win.position=bottom<cr>',
---       desc = 'LSP Defs|refs ..',
---     },
---     {
---       '<leader>xL',
---       '<cmdle loclist toggle<cr>',
---       desc = 'LocList',
---     },
---   },
--- },

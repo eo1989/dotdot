@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 local DEBUG_INFO_KINDS = {
   'tokens',

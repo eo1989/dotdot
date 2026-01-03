@@ -1,9 +1,10 @@
 ---@type LazySpec
 return {
+  ---@module 'which-key'
   'folke/which-key.nvim',
   version = false,
-  -- dependencies = { 'mrjones2014/legendary.nvim' },
   event = { 'VeryLazy' },
+  ---@type wk.Config
   opts = {
     preset = 'helix',
     setup = {

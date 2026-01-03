@@ -1,4 +1,4 @@
-local cmd, fn, fmt, map = vim.cmd, vim.fn, string.format, vim.keymap.set
+local bo, cmd, fn, fmt, map, wo = vim.bo, vim.cmd, vim.fn, string.format, vim.keymap.set, vim.wo
 
 local options = {
   tabstop = 8,
@@ -15,11 +15,11 @@ local window_local_only = {
 }
 
 for k, v in pairs(options) do
-  vim.bo[k] = v
+  bo[k] = v
 end
 
 for k, v in pairs(window_local_only) do
-  vim.wo[k] = v
+  wo[k] = v
 end
 
 cmd.inoreabbrev('<buffer> True true')
@@ -42,21 +42,21 @@ cmd.inoreabbrev('<buffer> None nil')
 -- vim.opt.includeexpr = 'v:lua.find_required_path(v:fname)'
 -- vim.opt.includeexpr = 'substitute(v:fname, "\\\\.", "/", "g")'
 
-local function find(word, ...)
-  for _, str in ipairs { ... } do
-    local match_start, match_end = string.find(word, str)
-    if match_start then return str, match_start, match_end end
-  end
-end
-
-local function open_help(tag) pcall(vim.cmd.help, tag) end
-
 --- Stolen from nlua.nvim this function attempts to open
 --- vim help docs if an api or vim.fn function otherwise it
 --- shows the lsp hover doc
 --- @param word string
 --- @param callback function
 local function keyword(word, callback)
+  local function find(word, ...)
+    for _, str in ipairs { ... } do
+      local match_start, match_end = string.find(word, str)
+      if match_start then return str, match_start, match_end end
+    end
+  end
+
+  local function open_help(tag) pcall(vim.cmd.help, tag) end
+
   local original_iskeyword = vim.bo.iskeyword
 
   vim.bo.iskeyword = vim.bo.iskeyword .. ',.'
@@ -106,7 +106,24 @@ eo.ftplugin_conf {
         s = {
           add = { "['", "']" },
         },
-        f = { add = { 'function() ', ' end' } },
+        f = {
+          add = { 'function() ', ' end' },
+          -- find = function() return require('nvim-surround.config').get_selection { motion = 'af' } end,
+          -- delete = function()
+          --   local ft = bo.filetype
+          --   local patt
+          --   if ft == 'lua' then
+          --     patt = '^(.-function.-%b())().*(end)()$'
+          --   else
+          --     vim.notify('No function-surround defined for ' .. ft)
+          --     patt = '()()()()'
+          --   end
+          --   return require('nvim-surround.config').get_selections {
+          --     char = 'f',
+          --     pattern = patt,
+          --   }
+          -- end,
+        },
         F = {
           add = function()
             return {

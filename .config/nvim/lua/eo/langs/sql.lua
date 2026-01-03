@@ -2,16 +2,38 @@
 ---@type LazySpec
 return {
   {
-    'lifepillar/pgsql.vim',
-    lazy = false,
+    ---@module "sqls"
+    'nanotee/sqls.nvim',
+    ft = { 'sql', 'mysql' },
+    event = { 'VeryLazy' },
     enabled = true,
   },
   {
+    'nolleh/sqlflick.nvim',
+    ft = { 'sql', 'mysql', 'plsql' },
+    lazy = true,
+    enabled = false,
+  },
+  {
+    'mportdata/squealer.nvim',
+    ft = { 'sql', 'mysql', 'plsql' },
+    lazy = true,
+    enabled = false,
+  },
+  {
+    'lifepillar/pgsql.vim',
+    ft = { 'sql', 'mysql', 'plsql' },
+    lazy = false,
+    enabled = false,
+  },
+  {
+    ---@module "vim_dadbod_completion"
     'kristijanhusak/vim-dadbod-ui',
     event = 'VeryLazy',
     dependencies = {
-      { 'tpope/vim-dadbod', lazy = true },
-      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+      { 'tpope/vim-dadbod' },
+      -- { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+      { 'kristijanhusak/vim-dadbod-completion' },
     },
     cmd = {
       'DBUI',
@@ -23,14 +45,5 @@ return {
       vim.g.db_ui_use_nerd_fonts = 1
       vim.g.db_ui_show_database_icon = 1
     end,
-  },
-  {
-    -- 'tpope/vim-dadbod',
-    -- lazy = true,
-    -- event = 'BufRead *.sql',
-    -- opts = {
-    --   -- db_completion = function() require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } } end,
-    --   -- db_completion = function() require('cmp').setup.filetype { sources = { { name = 'vim-dadbod-completion' } } } end,
-    -- },
   },
 }

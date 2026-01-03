@@ -29,13 +29,14 @@
 ---@type vim.lsp.Config
 return {
   cmd = { 'taplo', 'lsp', 'stdio' },
-  filetypes = { 'toml', 'toml.pyproject' },
+  filetypes = { 'toml' },
+  root_markers = { '.toml', { '.git' } },
   init_options = {
     cachePath = vim.env.XDG_CACHE_HOME .. '/taplo',
   },
   ---@param client vim.lsp.Client
   single_file_support = true,
-  on_attach = function(client)
+  on_attach = function(client, _)
     -- disable formatting in favor of `tombi` || prettier
     -- Disable until the issue below is addressed.
     if client.server_capabilities then
@@ -44,7 +45,7 @@ return {
       client.server_capabilities.documentOnTypeFormattingProvider = false
     end
 
-    vim.api.nvim_set_keymap('n', '<localleader>vs', function()
+    vim.keymap.set('n', '<localleader>vs', function()
       local bufnr = vim.api.nvim_get_current_buf()
 
       client:request(
@@ -60,9 +61,8 @@ return {
         end,
         bufnr
       )
-    end, { desc = 'Show associated TOML schema' })
+    end, { buffer = vim.api.nvim_get_current_buf() or 0, desc = 'Show associated TOML schema' })
   end,
-  root_markers = { '.toml', { '.git' } },
   root_dir = function(bufnr, on_dir)
     local bufname = vim.api.nvim_buf_get_name(bufnr)
 
@@ -82,6 +82,9 @@ return {
           ['starship.toml)'] = 'https://starship.rs/config-schema.json',
           ['**/action.toml'] = 'https://json.schemastore.org/github-action.json',
           ['**/workflow*.toml'] = 'https://json.schemastore.org/github-workflow.json',
+        },
+        catalogs = {
+          'https://www.schemastore.org/api/json/catalog.json',
         },
         cache = {
           diskExpiration = 60 * 60 * 24,

@@ -20,7 +20,14 @@
     "pending",
     "hs",
     "spoon",
-    "map"
+    "map",
+    "snippet",
+    "t",
+    "sn",
+    "i",
+    "s",
+    "fmta",
+    "d"
   ],
   "diagnostics.disable": [
     "missing-fields",
@@ -41,11 +48,12 @@
     "unused-local",
     "need-check-nil",
     "unused-function",
-        "redundant-return-value"
+    "redundant-return-value"
   ],
   "workspace.checkThirdParty": false,
   "completion.autoRequire": false,
   "completion.callSnippet": "Replace",
   "completion.keywordSnippet": "Replace",
-  "completion.workspaceWord": true
+  "completion.workspaceWord": true,
+  "workspace.library": ["/Users/eo/.config/nvim"]
 }

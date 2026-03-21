@@ -51,7 +51,7 @@ eo.ui.icons = {
     error = '✗', --' ', -- '✗'
     warn = ' ', -- 
     info = ' ', -- ℹ 󰙎  󰋼
-    hint = '󰌶', --  ⚑
+    hint = ' ', --  ⚑󰌶
   },
   git = {
     add = ' ', -- ' ',' ', 
@@ -76,8 +76,7 @@ eo.ui.icons = {
     open_folder = ' ',
   },
   misc = {
-    -- 
-    passed = '󰄴 ', -- 
+    passed = '󰄴 ', --   -- 
     running = '󰴲 ',
     failed = '💥', -- 
     unknown = '❓', -- 
@@ -308,4 +307,5 @@ function eo.ui.decorations.set_colorcolumn(bufnr, fn)
 end
 
 ----------------------------------------------------------------------------------------------------
-eo.ui.current = { border = eo.ui.border.line }
+-- eo.ui.current = { border = eo.ui.border.line }
+eo.ui.current = { border = eo.ui.border.rectangle }

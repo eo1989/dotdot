@@ -20,14 +20,15 @@ local function dump_file_debug_info(kind)
     },
     nil,
     function()
-      vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath('log'), 'lsp.pyright.log'))
+      vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath('log'), 'lsp.basedpyright.log'))
       vim.api.nvim_set_keymap('n', 'q', '<Cmd>quit<CR>', { buffer = true })
+      vim.api.nvim_set_keymap('n', '<ESC>', '<Cmd>quit<CR>', { buffer = true })
       vim.lsp.set_log_level(current_lsp_log_level)
     end
   )
 end
 
--- setup buffer local commands for the `based|pyright` extension features.
+-- setup buffer local commands for the `basedpyright` extension features.
 ---@param _ vim.lsp.Client
 ---@param bufnr integer | number | 0
 function M.on_attach(_, bufnr)

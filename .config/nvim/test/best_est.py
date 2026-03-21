@@ -1,17 +1,16 @@
 """Utility functions first."""
 # pyright: ignore[*]
 
-
 import numpy as np
 from numba import njit
 from numba.typed import List
 
 # from typing import Tuple, Dict, Any, Optional
 
-ONE_OV_SQRT_2PI = 0.3989422804014327  # 1.0/sqrt(2.0*pi)
-ONE_OV_SQRT_2 = 0.7071067811865475  # 1.0/sqrt(2.0)
+ONE_OVR_SQRT_2PI = 0.3989422804014327  # 1.0/sqrt(2.0*pi)
+ONE_OVR_SQRT_2 = 0.7071067811865475  # 1.0/sqrt(2.0)
 SQRT_2 = 1.41421356237  # = sqrt(2)
-TWO_OV_PI = 0.63661977236  # = 2.0/pi
+TWO_OVR_PI = 0.63661977236  # = 2.0/pi
 
 
 @njit(cache=False, fastmath=True)
@@ -64,12 +63,12 @@ def erfcc(x: float | np.ndarray) -> float | np.ndarray:
 
 @njit(cache=False, fastmath=True)
 def ncdf(x: float | np.ndarray) -> float | np.ndarray:
-    return 1.0 - 0.5 * erfcc(ONE_OV_SQRT_2 * x)
+    return 1.0 - 0.5 * erfcc(ONE_OVR_SQRT_2 * x)
 
 
 @njit(cache=False, fastmath=True)
 def npdf(x: float | np.ndarray) -> float | np.ndarray:
-    return ONE_OV_SQRT_2PI * np.exp(-0.5 * np.square(x))
+    return ONE_OVR_SQRT_2PI * np.exp(-0.5 * np.square(x))
 
 
 @njit(cache=False, fastmath=True)
@@ -83,7 +82,7 @@ def inv_erf(x: float | np.ndarray) -> float | np.ndarray:
     largest relative error is about 1.3 · 10−4
     """
     a = 0.147
-    const = TWO_OV_PI / a
+    const = TWO_OVR_PI / a
     log_one_minus_x2 = np.log(1.0 - np.square(x))
     invf = np.sqrt(
         -const
@@ -152,7 +151,9 @@ def compute_bsm_vanilla_price(
 
 
 bsm_price_vector = np.vectorize(
-    compute_bsm_vanilla_price, doc="Vectorized `bsm_vanilla_price` function"
+    pyfunc=compute_bsm_vanilla_price,
+    doc="Vectorized `bsm_vanilla_price` function",
+    cache=True,
 )
 
 

@@ -10,6 +10,7 @@ engine: julia
 ## Julia
 
 - From "Statistics with Julia" pg.165, Listing 4.21: Q-Q Plots
+
 ```{julia}
 using Random, Distributions, StatsPlots, Plots, Measures; pyplot()
 Random.seed!

@@ -1,4 +1,4 @@
--- local M = {}
+local M = {}
 --- VSCode-like lightbulb.
 --- Implementation inspired from https://github.com/nvimdev/lspsaga.nvim/blob/a751b92b5d765a99fe3a42b9e51c046f81385e15/lua/lspsaga/codeaction/lightbulb.lua
 
@@ -6,6 +6,7 @@ local api, lsp, uv = vim.api, vim.lsp, vim.uv
 local lb_name = 'nvim/lighbulb'
 local lb_namespace = api.nvim_create_namespace(lb_name)
 local lb_icon = require('defaults').icons.diagnostics.hint
+-- local def = require('defaults').
 local lb_group = api.nvim_create_augroup(lb_name, {})
 local code_action_method = lsp.protocol.Methods.textDocument_codeAction
 
@@ -104,4 +105,4 @@ M.attach_lightbulb = function(bufnr, client_id)
   })
 end
 
--- return M
+return M

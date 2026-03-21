@@ -1,3 +1,4 @@
+# ruff: ignore[F8]
 import matplotlib.pylab as plt
 import numpy as np
 from scipy.stats import norm
@@ -5,15 +6,15 @@ from scipy.stats import norm
 np.printoptions(precision=4)
 
 # %%
-s = np.linspace(1.5, 4.0, 200)
-k = 2.5
-r = 0.0
+s = np.linspace(325, 450, 2.5)
+k = 400
+r = 0.0375
 
 
-iv_front = 11.00  # 1100%
-iv_back = 2.8
-T_front = 1 / 365
-T_back = 28 / 365
+iv_front = 1.28  # 128% on the 400C
+iv_back = 1.08
+T_front = 2 / 252
+T_back = 28 / 252
 
 
 # %%

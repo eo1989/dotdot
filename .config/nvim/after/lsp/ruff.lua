@@ -20,31 +20,36 @@ local fn = vim.fn
 return {
   cmd = { 'ruff', 'server' },
   filetypes = { 'python' },
-  ---@param client vim.lsp.Client
-  on_attach = function(client)
-    -- if client.server_capabilities then
-    client.server_capabilities.hoverProvider = false
-    --[[ conform might actually need to use the lsp so ...]]
-    -- client.server_capabilities.documentFormattingProvider = false -- Conform ruff_format
-    -- client.server_capabilities.documentRangeFormattingProvider = false
-    client.server_capabilities.renameProvider = false --[[ checking ty experimental ]]
-    client.server_capabilities.definitionProvider = false
-    client.server_capabilities.referencesProvider = false
-    client.server_capabilities.notebookDocumentSync = false
-    -- end
-  end,
+  single_file_support = true,
   root_markers = {
     {
+      'pyproject.toml',
       'ruff.toml',
       '.ruff.toml',
-      'pyproject.toml',
-      '.venv',
       'requirements.txt',
+      'uv.lock',
+      '.venv',
       'setup.py',
+      'setup.cfg',
+      'pyrightconfig.json',
+      'Pipfile',
     },
     '.git',
   },
-  single_file_support = true,
+  on_attach = function(client, bufnr)
+    -- if client.server_capabilities then
+    if client.name == 'ruff' then
+      client.server_capabilities.hoverProvider = false
+      --[[ conform might actually need to use the lsp so ...]]
+      -- client.server_capabilities.documentFormattingProvider = false -- Conform ruff_format
+      -- client.server_capabilities.documentRangeFormattingProvider = false
+      -- client.server_capabilities.renameProvider = false --[[ checking ty experimental ]]
+      -- client.server_capabilities.definitionProvider = false
+      -- client.server_capabilities.referencesProvider = false
+      client.server_capabilities.notebookDocumentSync = false
+    end
+    -- end
+  end,
   init_options = {
     loglevel = 'debug',
     logFile = fn.stdpath('log') .. '/lsp.ruff.log',
@@ -90,9 +95,6 @@ return {
         },
         select = {
           'I',
-          -- 'AIR',
-          -- 'PLW',
-          -- 'PLR',
         },
         preview = true,
       },
@@ -102,15 +104,10 @@ return {
           'UP039',
           'TRY',
           'SIM',
-          -- 'S311',
           'S3',
           'S101',
           'RET505',
           'RET504',
-          -- 'PLR5501',
-          -- 'PLR2004',
-          -- 'PLR0915',
-          -- 'PLR0913',
           'PLR',
           'PIE',
           'I',
@@ -140,10 +137,6 @@ return {
           'S10',
           'RET505',
           'RET504',
-          -- 'PLR5501',
-          -- 'PLR2004',
-          -- 'PLR0915',
-          -- 'PLR0913',
           'PLR',
           'PIE',
           'I',
@@ -164,6 +157,7 @@ return {
   },
   capabilities = {
     general = {
+      -- positionEncodings = { 'utf-8', 'utf-16','utf-32' }, -- default
       positionEncodings = { 'utf-16' },
     },
   },

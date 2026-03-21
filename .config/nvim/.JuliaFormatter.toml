@@ -1,9 +1,10 @@
+# sc
 indent = 4
 margin = 92
 always_for_in = true
 # If true, whitespace is added for type definitions. Make this true if you prefer
 # Union{A <: B, C} to Union{A<:B,C}.
-whitespace_typedefs = true
+whitespace_typedefs = false
 # If true, whitespace is added for binary operations in indices. Make this true if you
 # prefer arr[a + b] to arr[a+b]. Additionally, if there's a colon : involved
 # parenthesis will be added to the LHS and RHS.
@@ -31,7 +32,7 @@ pipe_to_function_call = false
 # function f(arg1, arg2)
 #     body
 # end
-short_to_long_function_def = false
+short_to_long_function_def = true
 force_long_function_def = false
 # transforms the long function example above back to the short version
 long_to_short_function_def = false
@@ -58,7 +59,7 @@ always_use_return = false
 #     arg1::Any
 # end
 annotate_untyped_files_with_any = true
-format_docstrings = false
+format_docstrings = true
 # align_* = false
 conditional_to_if = true
 separate_kwargs_with_semicolon = true

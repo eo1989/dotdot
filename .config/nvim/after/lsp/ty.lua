@@ -8,33 +8,39 @@ local fn, fs = vim.fn, vim.fs
 
 ---@type vim.lsp.Config
 return {
-  ---@param client vim.lsp.Client
   cmd = { 'ty', 'server' },
   filetypes = { 'python' },
-  ---@param client vim.lsp.Client
+  handlers = {
+    ['window/showMessage'] = function(_, result)
+      if result and result.type == vim.lsp.protocol.MessageType.Error then
+        return -- silence error notifications from ty
+      end
+    end,
+  },
   single_file_support = true,
-  root_markers = { { 'ty.toml', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt' }, '.git' },
-  -- root_dir = fs.root(0, { 'pyproject.toml', '.git' }),
+  root_markers = { 'pyproject.toml', 'ty.toml', 'Pipfile', 'setup.py', 'setup.cfg', 'requirements.txt' },
+  ---@param client vim.lsp.Client
   on_attach = function(client)
     -- let treesitter handle semantic tokens
     -- client.server_capabilities.semanticTokensProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-    client.server_capabilities.documentOnTypeFormattingProvider = nil
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.hoverProvider = nil
-    client.server_capabilities.inlayHintProvider = nil
-    client.server_capabilities.completionProvider = nil
+    -- client.server_capabilities.documentRangeFormattingProvider = false
+    -- client.server_capabilities.documentOnTypeFormattingProvider = nil
+    -- client.server_capabilities.documentFormattingProvider = false
+    -- client.server_capabilities.hoverProvider = nil
+    -- client.server_capabilities.inlayHintProvider = nil
+    -- client.server_capabilities.completionProvider = nil
+    if client.server_capabilities then
+    end
   end,
-  init_options = {
-    logLevel = 'debug',
-    logFile = fn.stdpath('log') .. '/lsp.ty.log',
-    settings = {
-      ty = {
-        experimental = {
-          rename = false,
-          autoImport = false,
-        },
-      },
+  -- Silence ty server panics (e.g. https://github.com/astral-sh/ty/issues/2401)
+  on_error = function(_, _) end,
+  settings = {
+    ty = {
+      diagnosticMode = 'workspace',
+      -- experimental = {
+      --   rename = false,
+      --   autoImport = false,
+      -- },
     },
   },
 }

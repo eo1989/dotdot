@@ -1,5 +1,5 @@
 local optl = vim.opt_local
--- local bo = vim.bo
+local bo = vim.bo
 
 -- vim.g.slime_cell_delimiter = '#\\s\\=%%'
 vim.b['slime_cell_delimiter'] = '#\\s\\=%%'
@@ -17,11 +17,11 @@ vim.g.navic_silence = true
 -- bo.autoindent = true
 -- optl.smarttab = true
 
-optl.colorcolumn = '+1'
+-- optl.colorcolumn = '+1'
 
 local options = {
   tabstop = 8,
-  textwidth = 91, -- virt-column should show at 92 where most linters/formatters are set
+  textwidth = 92, -- virt-column should show at 92 where most linters/formatters are set
   shiftwidth = 4,
   softtabstop = 4,
   expandtab = true,

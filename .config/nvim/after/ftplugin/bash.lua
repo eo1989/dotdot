@@ -10,6 +10,7 @@ local options = {
 }
 local window_local_only = {
   colorcolumn = '+1',
+  conceallevel = 2,
 }
 
 for k, v in pairs(options) do

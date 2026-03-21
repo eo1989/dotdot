@@ -1,11 +1,7 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
-local fn, g, o, opt, uv, v = vim.fn, vim.g, vim.o, vim.opt, vim.uv, vim.v
--- local icons = eo.ui.icons
--- local misc = icons.misc
 
--- vim.g.mapleader = ' '
--- vim.g.maplocalleader = ','
+local env, fn, g, o, opt, uv, v = vim.env, vim.fn, vim.g, vim.o, vim.opt, vim.uv, vim.v
 
 -- cmd([[ set path=.,,,$PWD/**]])
 -- cmd([[ set path=.,,**,$PWD/**,~/.config/nvim/**]])
@@ -17,35 +13,98 @@ opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
 --                                            ├───┘
 --                                            └ recognize unordered lists
 
+vim.g.python3_host_prog = fn.expand('~/.pyenv/versions/gen/bin/python')
+
+g.mapleader = ' '
+g.maplocalleader = ','
+g.vim_json_conceal = false --[[ from https://github.com/benlubas/.dotfiles/blob/main/nvim/lua/benlubas/set.lua ]]
+-- opt.omnifunc = 'lua:vim.lsp.omnifunc'
+
+function _G.dump(...)
+  local objects = vim.tbl_map(vim.inspect, { ... })
+  print(unpack(objects))
+end
+
+local map = vim.keymap
+
+map.del('n', 'grt')
+map.del('n', 'gri')
+map.del('n', 'grr')
+map.del('n', 'grn')
+map.del({ 'n', 'x' }, 'gra')
+map.del('n', 'gO')
+map.del('n', ']b')
+map.del('n', '[b')
+map.del('n', ']B')
+map.del('n', '[B')
+map.del('n', ']l')
+map.del('n', '[l')
+map.del('n', ']L')
+map.del('n', '[L')
+map.del('n', ']q')
+map.del('n', '[q')
+map.del('n', ']Q')
+map.del('n', '[Q')
+
+-- vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+
+opt.completeopt = 'menu,menuone,preview'
+
+opt.clipboard = 'unnamedplus'
+
+g.border = not vim.g.vscode and eo.ui.current.border or 'rounded'
+
+-- vim.o.winborder = g.border
+
 g.query_lint_on = {}
 g.typst_embedded_languages = { 'python', 'r', 'julia' }
 
-o.cursorline = true
-vim.env.SHELL = '/opt/homebrew/bin/zsh'
+g.markdown_fenced_languages = {
+  'go',
+  'zsh',
+  'bash',
+  'lua',
+  'python',
+  'julia',
+  'sql',
+  'yaml',
+  'ruby',
+}
+
+-- Support for semantic highlighting https://github.com/neovim/neovim/pull/21100
+g.lsp_semantic_enabled = 1
+
+g.vimsyn_embed = 'alpPrj'
+g.vimsyn_folding = 'afhlpPr'
+
+g.nvim_dir = fn.expand('~/.config/nvim')
+env.NVIM_CONFIG = g.nvim_dir
+
+opt.cursorline = true
 opt.shell = '/opt/homebrew/bin/zsh'
 -- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
 opt.wrap = false
 opt.wrapscan = true
 opt.wrapmargin = 2
--- o.textwidth = 80
+-- o.numberwidth = 4 -- default 4
+
+-- o.textwidth = 100
 opt.colorcolumn = '+1'
 -- o.wrapscan = true
--- opt.matchpairs:append('<:>')
+opt.matchpairs:append('<:>')
 -- opt.syntax = 'enable'
 opt.incsearch = true
 opt.smarttab = true
-g.vimsyn_embed = 'alpPrj'
-g.vimsyn_folding = 'afhlpPr'
-opt.path:append { '**' } --'**'
+-- opt.path:append { '**' } --'**'
+o.path = '**'
 opt.synmaxcol = 300
 opt.whichwrap = 'h,l'
-opt.clipboard = { 'unnamedplus' }
 opt.showmatch = true
 opt.ignorecase = true
 opt.smartcase = true
 opt.infercase = true
 opt.expandtab = true -- convert all tabs that are typed into spaces
-opt.shiftwidth = 2
+-- opt.shiftwidth = 2
 -- o.smartindent = true -- add <tab> depending on syntax (C/C++)
 opt.autoindent = true
 opt.shiftround = true
@@ -90,11 +149,11 @@ opt.guicursor = {
 opt.titleold = fn.fnamemodify(uv.os_getenv('SHELL'), ':t') or ''
 opt.title = true
 opt.titlelen = 70
-opt.cursorlineopt = { 'both' }
+-- opt.cursorlineopt = { 'both' }
 opt.updatetime = 300
 opt.timeout = true
-opt.timeoutlen = 300
-opt.ttimeoutlen = 50
+opt.timeoutlen = 400
+opt.ttimeoutlen = 100
 opt.switchbuf = 'useopen,uselast'
 
 opt.showmode = false
@@ -116,8 +175,9 @@ opt.sessionoptions = {
 
 opt.viewoptions = { 'cursor', 'folds' }
 o.virtualedit = 'block,onemore' -- allow cursor to move where there is no text in visual block mode
-opt.jumpoptions = { 'stack' } -- make jumplist behave like a browser stack
-opt.list = true -- invisible chars
+-- o.jumpoptions = { 'stack' } -- make jumplist behave like a browser stack
+
+o.list = true -- invisible chars
 opt.listchars = {
   eol = nil,
   tab = '  ', -- Alternatives: '▷ ▷',
@@ -168,11 +228,11 @@ vim.cmd([[ set formatoptions-=rot ]])
 -- try to edit the content of your fold and the foldmethod=manual then it will
 -- recompute the fold which when using nvim-ufo means it will be closed again...
 
-o.foldlevelstart = 3
-o.foldlevelstart = 9
+o.foldlevelstart = 99
 o.foldlevel = 99
-opt.foldmethod = 'expr'
-opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+o.foldenable = true
+o.foldmethod = 'expr'
+o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 
 -- function eo.ui.foldtext()
 --   local fold = vim.treesitter.foldtext() --[=[@as string[][]]=]
@@ -197,23 +257,21 @@ opt.fillchars = {
 }
 
 opt.mouse = 'a'
+
 o.mousefocus = false
 o.mousemoveevent = true
 opt.mousescroll = { 'ver:1', 'hor:6' }
 opt.autowrite = false
 
--- o.conceallevel = 2
+opt.conceallevel = 2
 o.concealcursor = 'niv'
 o.breakindentopt = 'sbr'
 o.linebreak = true -- lines wrap at words rather than random chars
-o.signcolumn = 'yes:2'
-o.ruler = false
--- o.cmdheight = 2
--- oncomouse/dotfiles/blob/master/conf/vim/init.lua
-o.cmdheight = 1
-if fn.has('nvim-0.9') == 1 and opt.cmdheight == 0 then opt.showcmdloc = 'statusline' end
--- showcmdloc default: 'lawt', statusline, tabline (requires 'showtabline' enabled)
-o.showbreak = [[↪ ]] -- Options include -> '…', '↳ ', '→','↪ '
+opt.signcolumn = 'yes'
+-- o.foldcolumn = 'auto:2'
+-- o.ruler = false or 'statusline'
+
+o.showbreak = [[↪ ]] -- Options include -> '…', '↳ ', '→','↪'
 o.confirm = false
 o.laststatus = 3
 o.showtabline = 1
@@ -221,6 +279,7 @@ opt.rnu = true
 opt.nu = true
 o.pumblend = 10 -- make popup window translucent
 o.pumheight = 30
+o.pumwidth = 90
 o.previewheight = 30
 o.hlsearch = true
 o.autowriteall = true -- automatically :write before running commands and changing files
@@ -238,12 +297,16 @@ opt.shortmess = {
   I = true, -- don't give intro message when starting vim
   a = true, -- use abbreviations in messages eg. `[RO]` instead of `[readonly]`
 }
+opt.spell = false
+opt.spellcapcheck = ''
+opt.spellfile = fn.stdpath('config') .. '/spellfile.add'
+
 o.wildcharm = ('\t'):byte()
+
 -- o.wildmode = 'longest:full,full:full'
+
 o.wildmode = 'longest,full:full'
--- o.wildmode = 'longest:list,full'
--- vim.o.wildmode = 'longest,list,full' -- stevearc dotfiles
--- o.wildmode = 'longest,full'
+
 o.wildignorecase = true -- Ignore case when completing file names and directories
 -- Binary
 opt.wildignore = {
@@ -278,33 +341,31 @@ opt.wildignore = {
   'tags.lock',
 }
 -- opt.wildoptions = { 'pum', 'fuzzy' }
+
 opt.wildoptions = { 'pum' }
-o.scrolloff = 3
+o.scrolloff = 4
 o.sidescrolloff = 6
 o.sidescroll = 1
 
 if eo and not eo.falsy(fn.executable('rg')) then
-  vim.o.grepprg = [[rg --glob "!{.git,.venv,node_modules}" --no-heading --vimgrep --smart-case --follow $*]]
+  o.grepprg = [[rg --glob "!{.git,.venv,node_modules}" --no-heading --vimgrep --smart-case --follow $*]]
   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 elseif eo and not eo.falsy(fn.executable('ag')) then
-  vim.o.grepprg = [[ag --nogroup --nocolor --vimgrep]]
+  o.grepprg = [[ag --nogroup --nocolor --vimgrep]]
   opt.grepformat = opt.grepformat ^ { '%f:%l:%c:%m' }
 end
 
-vim.g.markdown_fenced_languages = {
-  'go',
-  'zsh=sh',
-  'bash=sh',
-  'lua',
-  'python',
-  'julia',
-  'sql',
-  'yaml',
-  'ruby',
-}
+-- o.cmdheight = 2
+-- oncomouse/dotfiles/blob/master/conf/vim/init.lua
+-- o.cmdheight = 1
+-- if fn.has('nvim-0.12') == 1 and opt.cmdheight == 0 then opt.showcmdloc = 'statusline' end
+-- showcmdloc default: 'last', statusline, tabline (requires 'showtabline' enabled)
 
--- Support for semantic highlighting https://github.com/neovim/neovim/pull/21100
-g.lsp_semantic_enabled = 1
+-- opt.cmdheight = vim.g.noice == true and 0
+opt.cmdheight = 0
+opt.laststatus = 0
+o.showcmdloc = 'statusline'
+-- o.cmdheight = 0
 
 -- vim.cmd([[ syntax on plugin on indent on ]])
 -- vim.treesitter.start()

@@ -1,0 +1,16 @@
+[full_analysis]
+debounce = 2.0
+# Use JuliaFormatter instead of Runic
+formatter = "JuliaFormatter"
+
+# Suppress unused argument warnings
+[[diagnostic.patterns]]
+# pattern = "lowering/unused-argument"
+pattern = "{toplevel|inference}/.*"  # lowering/unused-argument | {toplevel|inference}/.*
+match_by = "code"
+match_type = "literal"  # literal | regex
+severity = "off"
+path = "test/**/*.jl"
+
+[testrunner]
+executable = "/Users/eo/.julia/bin/testrunner"

@@ -1,4 +1,5 @@
-#!uv run python
+#!/Users/eo/.local/bin/uv run -s
+
 
 import os
 import subprocess
@@ -6,11 +7,14 @@ import sys
 from datetime import date, datetime
 
 import matplotlib as mpl
-from rich import print
+
+# from rich import print
+# from rich.console import Console
+# from rich.panel import Panel
 
 # import matplotlib.pyplot as plt
 
-mpl.use(backend="macosx")
+mpl.use(backend="qt6")
 
 
 def if_missing_install(package) -> None:
@@ -35,16 +39,27 @@ def if_missing_install(package) -> None:
 
 
 def main():
+    _today = date.today().strftime("%Y-%m-%d")
     try:
         from volvisualizer.volatility import Volatility
     except ImportError as e:
         print(f"Couldnt load volvisualizer: {e}")
 
-    spooz = Volatility(
-        ticker="^SPX", start_date="2025-09-01", wait=1, monthlies=True, q=0.013,
+    SPOOZ = Volatility(
+        ticker="^SPX",
+        # start_date="2026-01-05",
+        start_date=_today,
+        wait=1,
+        monthlies=True,
+        q=0.013,
     )
 
-    return spooz.visualize(graphtype="surface", surfacetype="mesh")
+    QQQ = Volatility(
+        ticker="QQQ",
+        start_date=_today,
+    )
+
+    # return SPOOZ.visualize(graphtype="surface", surfacetype="mesh")
 
 
 if __name__ == "__main__":

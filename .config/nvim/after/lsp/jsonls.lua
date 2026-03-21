@@ -23,6 +23,14 @@ return {
   filetypes = { 'json', 'jsonc' },
   root_markers = { '.git' },
   single_file_support = true,
+  on_attach = function(client, _)
+    if client.server_capabilities then
+      client.server_capabilities.documentHighlightProvider = false
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
+      client.server_capabilities.documentOnTypeFormattingProvider = false
+    end
+  end,
   --[[---@type table<vim.lsp.protocol.Methods, lsp.Handler> ]]
   -- handlers = {
   --   ---@type lsp.Handler

@@ -1,6 +1,7 @@
 [project]
 name = "dotdot"
 requires-python = ">=3.12"
+dynamic = ["version"]
 
 # [tool.poetry]
 # python = "^3.12"                          # "^3.12"
@@ -16,6 +17,10 @@ pythonVersion = ">=3.12"
 pythonPlatform = "Darwin"
 typeCheckingMode = "off"
 useLibraryCodeForTypes = true
+
+[tool.black]
+line-length = 80
+target-version = ["py312", "py313", "py314"]
 
 [tool.mdformat]
 number = true
@@ -52,7 +57,8 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-fixable = ["ALL"]
+# fixable = ["ALL"]
+fixable = ["E", "F"]
 unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 extend-select = ["UP"]
@@ -64,6 +70,7 @@ ignore = [
   "INP",
   "PIE",
   "F4",
+  "F8",
   "E4",
   "E5",
   "E7",
@@ -77,6 +84,9 @@ convention = "numpy"
 [tool.ruff.format]
 quote-style = "double"
 skip-magic-trailing-comma = false
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
 # blank-line-before-module-docstring = true
 # trailing-comma = true
 
@@ -92,6 +102,14 @@ exclude = [
   "vendor",
   "dist",
   "build",
+  ".venv",
+  ".ruff_cache",
+  ".pytest_cache",
+  ".CondaPkg",
+  ".ipynb_checkpoints",
+  ":-",
+  "__pycache__",
+  "*_files",
 ]
 respect-gitignore = true
 
@@ -116,11 +134,7 @@ headings = true  # Include headings in line length check
 # names = ["rumdl", "Markdown", "GitHub"]  # Proper names that should be capitalized correctly
 code-blocks = false  # Check code blocks for proper names (default: false, skips code blocks)
 
-# [tool.black]
-# line-length = 80
-# target-version = ['py312']
 [tool.typos.default]
-# [[default]]
 extend-ignore-re = [
   # Custom ignore regex patterns: https://github.com/crate-ci/typos/blob/master/docs/reference.md#example-configurations
   ".*(?:#|--|//|/*).*(?:spellchecker|typos):\\s?ignore[^\\n]*\\n",

@@ -1,0 +1,261 @@
+local api = vim.api
+local cwd = vim.fn.getcwd
+local highlight = eo.highlight
+local border = eo.ui.current.border
+local icons = eo.ui.icons.separators
+
+local neogit = eo.reqidx('neogit')
+local gitlinker = eo.reqidx('gitlinker')
+local function browser_open() return { action_callback = require('gitlinker.actions').open_in_browser } end
+
+---@type LazyPluginSpec
+return {
+  {
+    'esmuellert/codediff.nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    cmd = 'CodeDiff',
+  },
+  {
+    'lewis6991/gitsigns.nvim',
+    version = false,
+    event = { 'BufReadPost', 'BufNewFile' },
+    config = function()
+      require('gitsigns').setup {
+        signs = {
+          add = { text = '▐' },
+          change = { text = '▐' },
+          delete = { text = '▐' },
+          topdelete = { text = '▐' },
+          changedelete = { text = '▐' },
+          untracked = { text = '░' },
+        },
+        -- current_line_blame = not cwd():match('dotfiles'),
+        current_line_blame_formatter = ' <author>, <author_time> · <summary>',
+        preview_config = { border = 'rounded' },
+        --[[NOTE: Gitsigns doesnt play well with ipynb files at all, as per jupytext.nvim docs:
+        --  its best to deactivate gitsigns for .ipynb files via the on_attach callback below
+        --  https://github.com/goerz/jupytext.nvim?tab=readme-ov-file#compatibility
+        --]]
+        on_attach = function(bufnr)
+          if api.nvim_buf_get_name(bufnr):match('%.ipynb') then
+            -- dont attach for .ipynb, since these are converted with jupytext.nvim
+            return false
+          end
+
+          -- local gs = package.loaded.gitsigns
+          local gs = require('gitsigns')
+
+          local function bmap(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+
+          -- stylua: ignore start
+          bmap('n', '<localleader>hu',    gs.undo_stage_hunk,                           { desc = 'Git: undo stage'                          })
+          bmap('n', '<localleader>hi',    gs.preview_hunk_inline,                       { desc = 'Git: preview current hunk'                })
+          bmap('n', '<localleader>hb',    gs.toggle_current_line_blame,                 { desc = 'Git: toggle current line blame'           })
+          bmap('n', '<localleader>gd',    gs.diffthis,                                  { desc = 'Git: diff this'                           })
+          bmap('n', '<localleader>gD',    '<cmd>Gitsigns diffthis ~',                   { desc = 'Git: diff this ~'                         })
+          bmap('n', '<localleader>hw',    gs.toggle_word_diff,                          { desc = 'Git: toggle word diff'                    })
+          bmap('n', '<localleader>gS',    gs.stage_buffer,                              { desc = 'Git: stage entire buffer'                 })
+          bmap('n', '<localleader>gre',   gs.reset_buffer,                              { desc = 'Git: reset entire buffer'                 })
+          bmap('n', '<localleader>gd',    gs.toggle_deleted,                            { desc = 'Git: show deleted lines'                  })
+          -- bmap('n', '<localleader>gbl',   function() gs.blame_line({full = true}) end,  { desc = 'Git: blame current line'                  })
+          bmap('n', '<localleader>gb',    function() gs.blame_line() end,               { desc = 'Git: blame current line'                  })
+          bmap('n', '<localleader>gQ',    function() gs.setqflist('all') end,           { desc = 'Git: list modified in quickfix'           })
+          bmap('n', '<localleader>gq',    gs.setqflist,                                 { desc = 'Git: quickfix'                            })
+          bmap('v' , '<localleader>hs',   function() gs.stage_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'Git: stage git hunk'})
+          bmap('v' , '<localleader>hr',   function() gs.reset_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, { desc = 'Git: reset hunk'    })
+          bmap({ 'o', 'x' }, 'ih',        ':<C-U>Gitsigns select_hunk<CR>',             { desc = 'Git: select hunk'                         })
+          -- stylua: ignore stop
+
+
+          bmap('n', ']h', function()
+            --   vim.cmd.normal { ']h', bang = true }
+            if vim.wo.diff then
+              return "]h"
+            end
+            vim.schedule(function() gs.nav_hunk { 'next', preview = false, count = 1 }  end)
+            return "<ignore>"
+          end, { expr = true })
+
+          bmap('n', '[h', function()
+            --   vim.cmd.normal { '[h', bang = true }
+            if vim.wo.diff then
+              return "[h"
+            end
+            vim.schedule(function() gs.nav_hunk { 'prev', preview = false, count = 1 } end)
+            return "<ignore>"
+          end, { expr = true })
+        end,
+      }
+    end,
+  },
+  {
+    ---@module "neogit"
+    'NeogitOrg/neogit',
+    enabled = true,
+    version = false,
+    cmd = 'Neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+    },
+    keys = {
+      -- stylua ignore start
+      { '<localleader>gs', function() neogit.open() end, desc = 'open status buffer' },
+      { '<localleader>gc', function() neogit.open { 'commit' } end, desc = 'open commit buffer' },
+      { '<localleader>gl', function() neogit.popups.pull.create() end, desc = 'open pull popup' },
+      { '<localleader>gp', function() neogit.popups.push.create() end, desc = 'open push popup' },
+      -- stylua ignore end
+    },
+    ---@type NeogitConfig
+    opts = {
+      disable_signs = false,
+      disable_hint = true,
+      disable_commit_confirmation = true,
+      disable_builtin_notifications = true,
+      disable_insert_on_commit = false,
+      signs = {
+        section = { ' ', '󰘕 ' }, -- "󰁙 ", "󰁊 "
+        item = { '▸', '▾' },
+        hunk = { '󰐕', '󰍴' },
+      },
+      integrations = {
+        diffview = true,
+        fzf_lua = true,
+        snacks = true,
+        telescope = false,
+        mini_pick = false,
+      },
+      ---@ rest are from pricehiller/dots
+      --- https://github.com/PriceHiller/dots/blob/Development/users/price/dots/.config/nvim/lua/plugins/configs/neogit.lua
+      -- auto_refresh = true, -- default
+      -- preview_buffer = { kind = "split" }, -- default
+      -- filewatcher = { enabled = true }, -- default
+      graph_style = 'kitty', -- "ascii", "unicode", "kitty"(!)
+      mappings = {
+        popup = {
+          ['l'] = false,
+          ['L'] = 'LogPopup',
+        },
+      },
+    },
+    config = function(_, opts)
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'Neogit*',
+        desc = 'Handle Neogit Refreshes',
+        callback = function() neogit.status:refresh() end,
+      })
+      require('neogit').setup(opts)
+    end,
+  },
+  {
+    'akinsho/git-conflict.nvim',
+    version = false,
+    enabled = false,
+    event = { 'VeryLazy', 'BufReadPost' },
+    opts = {
+      disable_diagnostics = true,
+      default_mappings = true,
+      default_commands = true,
+      -- must have a background color otherwise the default color will be used
+      highlights = {
+        incoming = 'Visual',
+        current = 'Visual',
+        ancestor = 'Visual',
+      },
+    },
+  },
+  -- {
+  --   'sindrets/diffview.nvim',
+  --   enabled = false,
+  --   version = false,
+  --   cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
+  --   keys = {
+  --     { '<localleader>gd', '<Cmd>DiffviewOpen<CR>', desc = 'diffview: open', mode = 'n' },
+  --     { '<localleader>gh', [[:'<'>DiffviewFileHistory<CR>]], desc = 'diffview: file history', mode = 'v' },
+  --     {
+  --       '<localleader>gh',
+  --       '<Cmd>DiffviewFileHistory<CR>',
+  --       desc = 'diffview: file history',
+  --       mode = 'n',
+  --     },
+  --   },
+  --   opts = {
+  --     default_args = { DiffviewFileHistory = { '%' } },
+  --     enhanced_diff_hl = true,
+  --     hooks = {
+  --       diff_buf_read = function()
+  --         local opt = vim.opt_local
+  --         opt.wrap, opt.list, opt.relativenumber = false, false, false
+  --         opt.colorcolumn = ''
+  --       end,
+  --     },
+  --     keymaps = {
+  --       view = { q = '<Cmd>DiffviewClose<CR>' },
+  --       file_panel = { q = '<Cmd>DiffviewClose<CR>' },
+  --       file_history_panel = { q = '<Cmd>DiffviewClose<CR>' },
+  --     },
+  --   },
+  --   config = function(_, opts)
+  --     highlight.plugin('diffview', {
+  --       { DiffAddedChar = { bg = 'NONE', fg = { from = 'diffAdded', attr = 'bg', alter = 0.3 } } },
+  --       { DiffChangedChar = { bg = 'NONE', fg = { from = 'diffChanged', attr = 'bg', alter = 0.3 } } },
+  --       { DiffviewStatusAdded = { link = 'DiffAddedChar' } },
+  --       { DiffviewStatusModified = { link = 'DiffChangedChar' } },
+  --       { DiffviewStatusRenamed = { link = 'DiffChangedChar' } },
+  --       { DiffviewStatusUnmerged = { link = 'DiffChangedChar' } },
+  --       { DiffviewStatusUntracked = { link = 'DiffAddedChar' } },
+  --     })
+  --     require('diffview').setup(opts)
+  --   end,
+  -- },
+  -- {
+  --   -- 'ruifm/gitlinker.nvim',
+  --   'linrongbin16/gitlinker.nvim',
+  --   enabled = false,
+  --   version = false,
+  --   dependencies = { 'nvim-lua/plenary.nvim' },
+  --   keys = {
+  --     {
+  --       '<localleader>gu',
+  --       function() gitlinker.get_buf_range_url('n') end,
+  --       desc = 'gitlinker: copy line to clipboard',
+  --       mode = 'n',
+  --     },
+  --     {
+  --       '<localleader>gu',
+  --       function() gitlinker.get_buf_range_url('v') end,
+  --       desc = 'gitlinker: copy range to clipboard',
+  --       mode = 'v',
+  --     },
+  --     {
+  --       '<localleader>go',
+  --       function() gitlinker.get_repo_url(browser_open()) end,
+  --       desc = 'gitlinker: open in browser',
+  --     },
+  --     {
+  --       '<localleader>go',
+  --       function() gitlinker.get_buf_range_url('n', browser_open()) end,
+  --       desc = 'gitlinker: open current line in browser',
+  --     },
+  --     {
+  --       '<localleader>go',
+  --       function() gitlinker.get_buf_range_url('v', browser_open()) end,
+  --       desc = 'gitlinker: open current selection in browser',
+  --       mode = 'v',
+  --     },
+  --   },
+  --   opts = {
+  --     mappings = nil,
+  --     callbacks = {
+  --       ['github-work'] = function(url_data) -- Resolve the host for work repositories
+  --         url_data.host = 'github.com'
+  --         return require('gitlinker.hosts').get_github_type_url(url_data)
+  --       end,
+  --     },
+  --   },
+  -- },
+}

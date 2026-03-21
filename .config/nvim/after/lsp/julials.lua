@@ -180,17 +180,17 @@ return {
       format = { indent = 4 },
       lsp = {
         autoStart = true,
-        provideFormatter = false,
+        provideFormatter = true,
       },
       lint = {
         missingrefs = 'none', -- 'none' | 'all'
-        -- NumThreads = 16,
+        NumThreads = 8,
         iter = true,
         lazy = true,
         modname = true,
       },
       inlayHints = {
-        runtime = { enabled = false },
+        runtime = { enabled = true },
         static = {
           {
             enabled = true,

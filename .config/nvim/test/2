@@ -1,53 +1,31 @@
 sniprun_started_id=1
+5×10 Matrix{Float64}:
+  0.909876    0.994679   -0.550818   -0.133698   0.810777   -1.52597    0.506884   0.223283     0.287364   1.12009
+ -0.0415782  -0.6584      0.355549   -1.30098    0.0524221  -1.44219    0.903617   0.00858852  -0.285425  -0.837776
+ -0.127536   -0.716823   -0.0565515   0.705284  -0.614537   -1.69463    1.35988    0.188365    -0.335045  -1.34817
+ -0.785627   -1.09178     1.0964      0.545188   1.30145    -0.700744  -0.441285  -0.439945    -2.74936   -0.259813
+ -0.248136   -0.0538345   0.516724    0.377161   1.80944     0.29111    1.08574   -1.97518     -0.436552   1.30652
+10-element Vector{Float64}:
+ 0.8847561962880558
+ 0.5021988381861366
+ 0.551023077683973
+ 0.5289730389034062
+ 0.6560625378145872
+ 0.43206551927719095
+ 0.23239384585510403
+ 0.47756440506795494
+ 0.9176676028874462
+ 0.6411162021841514
+5-element Vector{Float64}:
+  2.0091547827685905
+ -2.0333726539128367
+ -2.0320857036506483
+ -2.8020090608777997
+  1.2966131838077901
 sniprun_finished_id=1
 sniprun_started_id=2
-Plots.PyPlotBackend()
+f (generic function with 1 method)
+86
 sniprun_finished_id=2
 sniprun_started_id=3
 sniprun_finished_id=3
-sniprun_started_id=4
-1:7
-7-element Vector{Int64}:
- 3
- 1
- 4
- 1
- 5
- 9
- 2
-sniprun_finished_id=4
-sniprun_started_id=5
-norm (generic function with 2 methods)
-sniprun_finished_id=5
-sniprun_started_id=6
-3.7416573867739413
-sniprun_finished_id=6
-sniprun_started_id=7
-6.0
-sniprun_finished_id=7
-sniprun_started_id=8
-norm (generic function with 2 methods)
-sniprun_finished_id=8
-sniprun_started_id=9
-TaskLocalRNG()
-sniprun_finished_id=9
-sniprun_started_id=10
-(0.5, 2)
-sniprun_finished_id=10
-sniprun_started_id=11
-2000
-sniprun_finished_id=11
-sniprun_started_id=12
-sniprun_finished_id=12
-sniprun_started_id=13
-sniprun_finished_id=13
-sniprun_started_id=14
-sniprun_finished_id=14
-sniprun_started_id=15
-sniprun_finished_id=15
-sniprun_started_id=16
-sniprun_finished_id=16
-sniprun_started_id=17
-sniprun_finished_id=17
-sniprun_started_id=18
-sniprun_finished_id=18

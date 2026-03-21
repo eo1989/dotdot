@@ -2,47 +2,83 @@
 base = "lua51"
 name = "luasnip"
 
+[snippet]
+any = true
+
 [s]
 any = true
+
 [sn]
 any = true
+
 [t]
 any = true
+
 [f]
 any = true
+
 [i]
 any = true
+
 [c]
 any = true
+
 [d]
 any = true
+
 [r]
 any = true
+
 [l]
 any = true
+
 [rep]
 any = true
+
 [p]
 any = true
+
 [m]
 any = true
+
 [n]
 any = true
+
 [dl]
 any = true
+
 [fmt]
 any = true
+
 [fmta]
 any = true
+
 [conds]
 any = true
+
 [types]
 any = true
+
 [events]
 any = true
+
 [parse]
 any = true
+
+[px_add]
+any = true
+
+[s_add]
+any = true
+
+[parse_add]
+any = true
+
+[ins_generate]
+any = true
+
 [ai]
 any = true
+
 [postfix]
 any = true

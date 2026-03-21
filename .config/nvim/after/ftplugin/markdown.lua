@@ -1,7 +1,7 @@
 -- local cmd = vim.api.nvim_buf_create_user_command
 
 -- vim.opt_local.conceallevel = 0
-vim.wo.conceallevel = 0
+-- vim.wo.conceallevel = 0
 
 vim.b.slime_cell_delimiter = '```'
 -- local ok, quarto = pcall(require, 'quarto')
@@ -33,13 +33,13 @@ eo.ftplugin_conf {
         ['~'] = {
           add = function()
             local config = require('nvim-surround.config')
-            local result = config.get_input("Markdown code block language: ")
+            local result = config.get_input('Markdown code block language: ')
             return {
-              { "```\n" .. result, '' },
-              { "", "```" },
+              { '```\n' .. result, '' },
+              { '', '```' },
             }
           end,
-        }
+        },
       },
     }
   end,

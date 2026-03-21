@@ -1,35 +1,268 @@
----@diagnostic disable: deprecated
 if not eo then return end
 
-local api = vim.api
+local map = vim.keymap.set
+
+local api, fn = vim.api, vim.fn
 local trim_spaces = false
 
--- local cmp = require('blink.cmp')
--- local function show_and_select(opts)
---   cmp.show(opts)
---   ---[[ run cmp.select_next as soon as the window is open ]]
---   local select_immediately_cb
---   select_immediately_cb = function()
---     cmp.select_next()
---     require('blink.cmp.completion.windows.menu').open_emitter:off(select_immediately_cb)
---   end
---   require('blink.cmp.completion.windows.menu').open_emitter:on(select_immediately_cb)
--- end
--- map('i', '<C-n>', function()
---   if not require('blink.cmp.completion.windows.menu').win:is_open() then
---     return '<C-n>'
---   else
---     cmp.select_next()
---   end
--- end, { expr = true })
--- map('i', '<C-p>', function()
---   if not require('blink.cmp.completion.windows.menu').win:is_open() then
---     return '<C-p>'
---   else
---     cmp.select_prev()
---   end
--- end, { expr = true })
+-- clear ui state
+-- clear search highlight
+-- clear cmdline
+-- close float win
+-- map('n', [[<Esc>]], function()
+--   local close_noft = true
+--   vim.cmd('nohlsearch')
+--   vim.snippet.stop()
+--   if package.loaded['luasnip'] then vim.cmd([[LuaSnipUnlinkCurrent]]) end
+--   if package.loaded['neo-tree'] then vim.cmd('Neotree close') end
+-- end)
 
+---for replacing certain <C-x> .. keymaps
+---@param keys string
+-- local feedkeys = function(keys) api.nvim_feedkeys(vim.keycode(keys), 'n', true) end
+
+---is the completion menu open?
+-- local pumvisible = function() return tonumber(vim.fn.pumvisible()) ~= 0 end
+
+-- map('i', '<Tab>', function()
+--   if pumvisible() then
+--     feedkeys('<C-n>')
+--   else
+--     feedkeys('<Tab>')
+--   end
+-- end)
+
+-- map('i', '<S-Tab>', function()
+--   if pumvisible() then
+--     feedkeys('<C-p>')
+--   else
+--     feedkeys('<S-Tab>')
+--   end
+-- end)
+
+-- map('i', '<CR>', function()
+--   if pumvisible() then
+--     feedkeys('<C-y>')
+--   else
+--     feedkeys('<CR>')
+--   end
+-- end)
+
+map('n', '<leader>so', function()
+  local ft = vim.bo.filetype
+  if ft == 'lua' then
+    vim.cmd([[luafile %]])
+  elseif ft == 'vim' then
+    vim.cmd.source('%')
+    --   return
+  end
+  vim.notify('Sourced ' .. fn.expand('%'))
+end)
+
+map('n', 'ycc', [[ycc:normal gcc<CR>p]], {
+  desc = 'Duplicate line below, commenting first',
+})
+
+for _, mode in ipairs { 'n', 'v' } do
+  map(mode, 'H', '^', { noremap = true })
+  map(mode, 'L', 'g_', { noremap = true })
+end
+
+-- Remap for dealing with word wrap
+-- map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : '') . 'gk']], { expr = true, silent = true })
+-- map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : '') . 'gj']], { expr = true, silent = true })
+
+map({ 'n', 'x', 'o' }, 'j', [[v:count?(v:count>5?"m'".v:count:'').'j':'gj']], { expr = true, silent = true })
+map({ 'n', 'x', 'o' }, 'k', [[v:count?(v:count>5?"m'".v:count:'').'k':'gk']], { expr = true, silent = true })
+
+-- Better viewing
+map('n', 'g,', 'g,zvzz')
+map('n', 'g;', 'g;zvzz')
+
+map('n', 'n', 'nzzzv')
+map('n', 'N', 'Nzzzv')
+
+-- Scrolling
+map('n', '<C-d>', '<C-d>zz')
+map('n', '<C-u>', '<C-u>zz')
+
+-- Zero should go to the first non-blank character not to the first column (which could be blank)
+-- but if already at the first character then jump to the beginning
+--@see: https://github.com/yuki-yano/zero.nvim/blob/main/lua/zero.lua
+map('n', '0', "getline('.')[0 : col('.') - 2] =~# '^\\s\\+$' ? '0' : '^'", { expr = true, noremap = true })
+
+-- when going to the end of the line in visual mode ignore whitespace characters
+map('v', '$', 'g_', { noremap = true })
+
+-- Better escape using jk in insert and terminal mode
+map('i', 'kj', [[col('.') == 1 ? '<esc>' : '<esc>l']], { expr = true, nowait = true })
+
+eo.augroup('AddTerminalMappings', {
+  event = { 'TermOpen' },
+  pattern = { 'term://*' },
+  command = function()
+    if vim.bo.filetype == '' or vim.bo.filetype == 'toggleterm' then
+      local opts = { silent = true, buffer = 0 }
+      map('t', '<ESC>', [[<C-\><C-n>]], opts)
+      -- map('t', 'kj', [[<C-\><C-n>]], opts)
+      map('t', 'kj', [[col('.') == 1 ? '<esc>' : '<esc>l']], { silent = true, buffer = 0, expr = true, nowait = true })
+      map('t', '<C-h>', [[<cmd>wincmd h<cr>]], opts)
+      map('t', '<C-j>', [[<cmd>wincmd j<cr>]], opts)
+      map('t', '<C-k>', [[<cmd>wincmd k<cr>]], opts)
+      map('t', '<C-l>', [[<cmd>wincmd l<cr>]], opts)
+      map('t', ']t', '<cmd>tabNext<cr>')
+      map('t', '[t', '<cmd>tabprevious<cr>')
+      map('t', '<leader><S-Tab>', '<cmd>bprev<cr>')
+      map('t', '<leader><Tab>', '<cmd>close \\| :bnext<cr>')
+    end
+  end,
+})
+
+map('n', '<leader>tn', '<cmd>tabedit %<CR>', { noremap = true })
+map('n', '<leader>tc', '<cmd>tabclose<CR>', { noremap = true })
+map('n', '<leader>to', '<cmd>tabonly<CR>', { noremap = true })
+
+-- map('t', ']t', '<cmd>tabNext<cr>')
+-- map('t', '[t', '<cmd>tabprevious<cr>')
+
+map('x', 'ie', [[gg0eG$]], { noremap = true })
+map('o', 'ie', [[<cmd>execute "normal! m`"<bar>keepjumps normal! ggVG<CR>]], { noremap = true })
+
+-- Add undo break-points
+map('i', ',', ',<c-g>u')
+map('i', '.', '.<c-g>u')
+map('i', ';', ';<c-g>u')
+
+-- Better indent
+map({ 'n', 'v' }, '<', '<gv')
+map({ 'n', 'v' }, '>', '>gv')
+
+-- macros and stuff?
+map('n', 'Q', '@q')
+map('x', 'Q', ':norm! @q<CR>')
+
+map('x', '/', '<ESC>/\\%V')
+
+-- in case bufferline isnt setup or for whatever 4932849023840x10^3982498 reasons my config decides to fubar my day...
+map('n', '<leader><Tab>', ':bn<CR>', { silent = true })
+map('n', '<leader><S-Tab>', ':bp<CR>', { silent = true })
+
+-- Paste over currently selected text without yanking it
+map('v', 'p', '"_dp')
+
+map('n', '<leader>cc', function() vim.o.cursorcolumn = not vim.o.cursorcolumn end)
+
+-- Insert blank line
+-- stylua: ignore start
+map('n', ']<Space>', [[:put =repeat(nr2char(10), v:count1)<cr>]],    { desc = 'add space below', silent = true })
+map('n', '[<Space>', [[:put! =repeat(nr2char(10), v:count1)<cr>'[]], { desc = 'add space below', silent = true })
+-- stylua: ignore end
+
+-- Auto indent
+map('n', 'i', function()
+  if #vim.fn.getline('.') == 0 then
+    return [["_cc]]
+  else
+    return 'i'
+  end
+end, { expr = true })
+
+map('n', 'g>', [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = 'show message history', noremap = true })
+
+map('n', 'zO', [[zCzO]], { noremap = true })
+
+-- TLDR: Conditionally modify character at end of line
+-- Description:
+-- This function takes a delimiter character and:
+--   * removes that character from the end of the line if the character at the end
+--     of the line is that character
+--   * removes the character at the end of the line if that character is a
+--     delimiter that is not the input character and appends that character to
+--     the end of the line
+--   * adds that character to the end of the line if the line does not end with
+--     a delimiter
+-- Delimiters:
+-- - ","
+-- - ";"
+---@param chars string
+---@return function
+local function modify_line_end_delimiter(chars)
+  local delims = { ',', ';' }
+  return function()
+    local line = api.nvim_get_current_line()
+    local last_char = line:sub(-1)
+    if last_char == chars then
+      api.nvim_set_current_line(line:sub(1, #line - 1))
+    elseif vim.tbl_contains(delims, last_char) then
+      api.nvim_set_current_line(line:sub(1, #line - 1) .. chars)
+    else
+      api.nvim_set_current_line(line .. chars)
+    end
+  end
+end
+
+map('n', '<localleader>,', modify_line_end_delimiter(','), { desc = "add ',' to the end of line", noremap = true })
+
+map('n', '<localleader>;', modify_line_end_delimiter(';'), { desc = "add ';' to the end of line", noremap = true })
+
+map('n', '<localleader>E', '<Cmd>Inspect<CR>', { desc = 'Inspect the cursor position', noremap = true })
+
+map('n', '<M-k>', ':move-2<CR>==', { noremap = true, silent = true })
+map('n', '<M-j>', ':move+<CR>==', { noremap = true, silent = true })
+map('x', '<M-j>', ":move'>+<CR>='[gv", { noremap = true, silent = true })
+map('x', '<M-k>', ":move-2<CR>='[gv", { noremap = true, silent = true })
+
+map('v', 'J', [[:move '>+1<CR>gv=gv]], { silent = true })
+map('v', 'K', [[:move '<-2<CR>gv=gv]], { silent = true })
+
+map('n', '<D-s>', [[:w<cr>]], { desc = '  🔥', silent = true })
+map('i', '<D-s>', [[<Esc><bar>w<cr>]], { desc = '  🔥', silent = true })
+
+-- windows
+map(
+  'n',
+  '<localleader>wh',
+  '<C-W>t <C-W>K',
+  { desc = 'change two horizontally split windows to vertical splits', noremap = true }
+)
+
+map(
+  'n',
+  '<localleader>wv',
+  '<C-W>t <C-W>H',
+  { desc = 'change two vertically split windows to horizontal splits', noremap = true }
+)
+
+map('n', '<leader>[', [[:%s/\<<C-r>=expand("<cword>")<CR>\>/]], { silent = false, desc = 'file replace word' })
+
+map('n', '<leader>]', [[:s/\<<C-r>=expand("<cword>")<CR>\>/]], { silent = false, desc = 'line replace word' })
+
+map('v', '<leader>[', [["zy:%s/<C-r><C-o>"/]], { silent = false, desc = 'visual replace word' })
+
+if vim.fn.bufwinnr(1) then
+  map('n', '<A-h>', '<C-W>>')
+  map('n', '<A-l>', '<C-W><')
+end
+
+-- map('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
+-- map('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })
+
+-- map('n', '<localleader>qr', vim.cmd.restart, { desc = 'restart', silent = true, noremap = true })
+map('n', '<leader>qr', vim.cmd.restart, { desc = 'restart', silent = true, noremap = true })
+
+map('n', '<localleader>pm', '<cmd>Lazy<cr>', { desc = 'Lazy manage' })
+
+--NOTE: Next time copy down the link you found this at. 😐
+map('n', '<leader>U', function()
+  return {
+    pcall(require('lazy').sync), -- update lazy
+    -- pcall(require('nvim-treesitter.install').install { with_sync = true }),
+
+    require('nvim-treesitter.install').update(),
+  }
+end, { desc = 'update plugins & TS parsers', silent = true })
+
+-- #################################################################################################
 -- map("v", [[<leader>rt]], function() require('toggleterm').send_lines_to_terminal("visual", trim_spaces, { args = vim.v.count }) end)
 -- map("v", [[<leader>tr]], function() require('toggleterm').send_lines_to_terminal("visual_selectiojjjjn", trim_spaces, { args = vim.v.count }) end)
 
@@ -281,40 +514,8 @@ capabilities ]]
 --     e = { ':e $MYVIMRC | :cd %:p:h | vsplit . | wincmd j<CR>', '[e]dit vimrc' },
 --   },
 -- }, { mode = 'n', prefix = '<localleader>' })
-
--- --#################################################################################################
-
-for _, mode in ipairs { 'n', 'v' } do
-  map(mode, 'H', '^', { noremap = true })
-  map(mode, 'L', 'g_', { noremap = true })
-end
-
 -- map('n', 'k', [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 -- map('n', 'j', [[v:count == 0 ? 'gj' : 'j']], { expr = true })
-
--- Remap for dealing with word wrap
-map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : '') . 'gk']], { expr = true, silent = true })
-map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : '') . 'gj']], { expr = true, silent = true })
-
--- Better viewing
-map('n', 'g,', 'g,zvzz')
-map('n', 'g;', 'g;zvzz')
-
-map('n', 'n', 'nzzzv')
-map('n', 'N', 'Nzzzv')
-
--- Scrolling
-map('n', '<C-d>', '<C-d>zz')
-map('n', '<C-u>', '<C-u>zz')
-
--- Zero should go to the first non-blank character not to the first column (which could be blank)
--- but if already at the first character then jump to the beginning
---@see: https://github.com/yuki-yano/zero.nvim/blob/main/lua/zero.lua
-map('n', '0', "getline('.')[0 : col('.') - 2] =~# '^\\s\\+$' ? '0' : '^'", { expr = true, noremap = true })
-
--- when going to the end of the line in visual mode ignore whitespace characters
-map('v', '$', 'g_', { noremap = true })
-
 -- stylua: ignore start
 -- local oopts = { nowait = true, noremap = true, silent = true }
 -- map('n', [[<localleader><localleader>"]], [[ciw"<c-r>""<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with double quotes' })
@@ -323,146 +524,3 @@ map('v', '$', 'g_', { noremap = true })
 -- map('n', [[<localleader><localleader>)]], [[ciw(<c-r>")<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with parens' })
 -- map('n', [[<localleader><localleader>}]], [[ciw{<c-r>"}<esc>]], { nowait = true, noremap = true, silent = true, desc = 'surround with curly braces' })
 -- stylua: ignore end
-
--- Better escape using jk in insert and terminal mode
-map('i', 'kj', [[col('.') == 1 ? '<esc>' : '<esc>l']], { expr = true, nowait = true })
-
-eo.augroup('AddTerminalMappings', {
-  event = { 'TermOpen' },
-  pattern = { 'term://*' },
-  command = function()
-    if vim.bo.filetype == '' or vim.bo.filetype == 'toggleterm' then
-      local opts = { silent = false, buffer = 0 }
-      map('t', '<ESC>', [[<C-\><C-n>]], opts)
-      map('t', 'kj', [[<C-\><C-n>]], opts)
-      map('t', '<C-h>', [[<cmd>wincmd h<cr>]], opts)
-      map('t', '<C-j>', [[<cmd>wincmd j<cr>]], opts)
-      map('t', '<C-k>', [[<cmd>wincmd k<cr>]], opts)
-      map('t', '<C-l>', [[<cmd>wincmd l<cr>]], opts)
-      map('t', ']t', '<cmd>tablast<cr>')
-      map('t', '[t', '<cmd>tabnext<cr>')
-      map('t', '<leader><S-Tab>', '<cmd>bprev<cr>')
-      map('t', '<leader><Tab>', '<cmd>close \\| :bnext<cr>')
-    end
-  end,
-})
-
-map('n', '<leader>tn', '<cmd>tabedit %<CR>', { noremap = true })
-map('n', '<leader>tc', '<cmd>tabclose<CR>', { noremap = true })
-map('n', '<leader>to', '<cmd>tabonly<CR>', { noremap = true })
-
-map('t', ']t', '<cmd>tablast<cr>')
-map('t', '[t', '<cmd>tabnext<cr>')
-
-map('x', 'ie', [[gg0eG$]], { noremap = true })
-map('o', 'ie', [[<cmd>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]], { noremap = true })
-
--- Add undo break-points
-map('i', ',', ',<c-g>u')
-map('i', '.', '.<c-g>u')
-map('i', ';', ';<c-g>u')
-
--- Better indent
-map({ 'x', 'v', 'n' }, '<', '<gv')
-map({ 'x', 'v', 'n' }, '>', '>gv')
-
--- in case bufferline isnt setup or for whatever 4932849023840x10^3982498 reasons my config decides to fubar my day...
-map('n', '<leader><Tab>', ':bn<CR>', { silent = true })
-map('n', '<leader><S-Tab>', ':bp<CR>', { silent = true })
-
--- Paste over currently selected text without yanking it
-map('v', 'p', '"_dp')
-
--- Insert blank line
--- stylua: ignore start
-map('n', ']<Space>', [[:put =repeat(nr2char(10), v:count1)<cr>]],    { desc = 'add space below', silent = true })
-map('n', '[<Space>', [[:put! =repeat(nr2char(10), v:count1)<cr>'[]], { desc = 'add space below', silent = true })
--- stylua: ignore end
-
--- Auto indent
-map('n', 'i', function()
-  if #vim.fn.getline('.') == 0 then
-    return [["_cc]]
-  else
-    return 'i'
-  end
-end, { expr = true })
-
-map('n', 'g>', [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = 'show message history', noremap = true })
-
-map('n', 'zO', [[zCzO]], { noremap = true })
-
--- TLDR: Conditionally modify character at end of line
--- Description:
--- This function takes a delimiter character and:
---   * removes that character from the end of the line if the character at the end
---     of the line is that character
---   * removes the character at the end of the line if that character is a
---     delimiter that is not the input character and appends that character to
---     the end of the line
---   * adds that character to the end of the line if the line does not end with
---     a delimiter
--- Delimiters:
--- - ","
--- - ";"
----@param chars string
----@return function
-local function modify_line_end_delimiter(chars)
-  local delims = { ',', ';' }
-  return function()
-    local line = api.nvim_get_current_line()
-    local last_char = line:sub(-1)
-    if last_char == chars then
-      api.nvim_set_current_line(line:sub(1, #line - 1))
-    elseif vim.tbl_contains(delims, last_char) then
-      api.nvim_set_current_line(line:sub(1, #line - 1) .. chars)
-    else
-      api.nvim_set_current_line(line .. chars)
-    end
-  end
-end
-
-map('n', '<localleader>,', modify_line_end_delimiter(','), { desc = "add ',' to the end of line", noremap = true })
-
-map('n', '<localleader>;', modify_line_end_delimiter(';'), { desc = "add ';' to the end of line", noremap = true })
-
-map('n', '<localleader>E', '<Cmd>Inspect<CR>', { desc = 'Inspect the cursor position', noremap = true })
-
-map('n', '<M-k>', ':move-2<CR>==', { noremap = true, silent = true })
-map('n', '<M-j>', ':move+<CR>==', { noremap = true, silent = true })
-map('x', '<M-j>', ":move'>+<CR>='[gv", { noremap = true, silent = true })
-map('x', '<M-k>', ":move-2<CR>='[gv", { noremap = true, silent = true })
-
-map('v', 'J', [[:move '>+1<CR>gv=gv]], { silent = true })
-map('v', 'K', [[:move '<-2<CR>gv=gv]], { silent = true })
-
--- windows
-map(
-  'n',
-  '<localleader>wh',
-  '<C-W>t <C-W>K',
-  { desc = 'change two horizontally split windows to vertical splits', noremap = true }
-)
-
-map(
-  'n',
-  '<localleader>wv',
-  '<C-W>t <C-W>H',
-  { desc = 'change two vertically split windows to horizontal splits', noremap = true }
-)
-
-map('n', '<leader>[', [[:%s/\<<C-r>=expand("<cword>")<CR>\>/]], { silent = false, desc = 'file replace word' })
-
-map('n', '<leader>]', [[:s/\<<C-r>=expand("<cword>")<CR>\>/]], { silent = false, desc = 'line replace word' })
-
-map('v', '<leader>[', [["zy:%s/<C-r><C-o>"/]], { silent = false, desc = 'visual replace word' })
-
-if vim.fn.bufwinnr(1) then
-  map('n', '<A-h>', '<C-W>>')
-  map('n', '<A-l>', '<C-W><')
-end
-
--- map('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
--- map('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })
-
-map('n', '<leader>qr', function() vim.cmd([[restart]]) end, { desc = 'restart', silent = true, noremap = true })

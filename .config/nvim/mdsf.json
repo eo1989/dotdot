@@ -5,7 +5,7 @@
     "cpp": "clang-format",
     "json": ["biome:lint", "biome:check", ["biome:format", "prettier"]],
     "jsonc": ["biome:lint", "biome:check",[ "biome:format", "prettier"]],
-    "julia": [["juliaformatter.jl", "runic"]],
+    "julia": ["runic", "juliaformatter.jl"],
     "python": [ "ruff:format" ],
     "shell": [
       [
@@ -18,7 +18,6 @@
         "sqlfluff:fix",
         "sqlfluff:lint",
         "sqlfluff:format",
-        "sqruff",
         "sqruff",
         "sql-formatter",
         "sqlint",

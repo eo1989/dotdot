@@ -1,0 +1,148 @@
+---@type LazyPluginSpec
+return {
+  {
+    'catppuccin/nvim',
+    priority = 999,
+    lazy = false,
+    name = 'Catppuccin',
+    opts = {
+      flavor = 'macchiato',
+      transparent_background = false,
+      term_colors = true,
+      compile = { enabled = true, path = vim.fn.stdpath('cache') .. '/catppuccin', suffix = '_compiled' },
+      styles = {
+        comments = { 'italic' },
+        conditionals = { 'italic' },
+        loops = { 'italic' },
+        functions = { 'italic', 'bold' },
+        keywords = { 'italic' },
+        variables = { 'italic' },
+        strings = {},
+        numbers = {},
+        booleans = { 'italic', 'bold' },
+        properties = {},
+        types = {},
+        operators = {},
+      },
+      -- default_integrations = true,
+      auto_integrations = true,
+      -- integrations = {
+      --   native_lsp = {
+      --     enabled = true,
+      --     virtual_text = {
+      --       errors = { 'italic' },
+      --       hints = { 'italic' },
+      --       warnings = { 'italic' },
+      --       information = { 'italic' },
+      --       ok = { 'italic' },
+      --     },
+      --     underlines = {
+      --       errors = { 'undercurl' },
+      --       hints = { 'underline' },
+      --       warnings = { 'undercurl' },
+      --       information = { 'underline' },
+      --       ok = { 'underline' },
+      --     },
+      --     inlay_hints = { background = true },
+      --   },
+      --   alpha = true,
+      --   barbecue = {
+      --     dim_dirname = true,
+      --     bold_basename = true,
+      --     dim_context = true,
+      --     alt_background = true,
+      --   },
+      --   beacon = true,
+      --   blink_cmp = true,
+      --   git_graph = true,
+      --   cmp = true,
+      --   dadbod_ui = true,
+      --   dap = true,
+      --   dap_ui = true,
+      --   diffview = true,
+      --   dropbar = {
+      --     enabled = true,
+      --     color_mode = false,
+      --   },
+      --   fidget = true,
+      --   fzf = true, -- fzf-lua
+      --   gitsigns = true,
+      --   gitgutter = true,
+      --   grug_far = true,
+      --   headlines = true,
+      --   illuminate = { enabled = true, lsp = true },
+      --   indent_blankline = {
+      --     enabled = true,
+      --     -- scope_color = "",
+      --     colored_indent_levels = true,
+      --   },
+      --   leap = true,
+      --   lsp_trouble = true,
+      --   markdown = true,
+      --   mason = true,
+      --   mini = true,
+      --   navic = {
+      --     enabled = true,
+      --     custom_bg = 'NONE',
+      --   },
+      --   neogit = true,
+      --   neotest = true,
+      --   noice = true,
+      --   neotree = true,
+      --   notify = true,
+      --   render_markdown = true,
+      --   sandwhich = true,
+      --   semantic_tokens = true,
+      --   snacks = true,
+      --   nvim_surround = true,
+      --   telescope = { enabled = true },
+      --   treesitter_context = true,
+      --   treesitter = true,
+      --   ts_rainbow = true,
+      --   ts_rainbow2 = true,
+      --   octo = true,
+      --   overseer = true,
+      --   rainbow_delimiters = true,
+      --   window_picker = true,
+      --   which_key = true,
+      --   vim_sneak = true,
+      -- },
+    },
+    config = function(_, opts)
+      require('catppuccin').setup(opts)
+      vim.cmd([[colorscheme catppuccin]])
+    end,
+  },
+  {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 999,
+    opts = {
+      style = 'storm',
+      transparent = false,
+      terminal_colors = true,
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+        functions = { italic = true, bold = true },
+        variables = { italic = true },
+        sidebars = 'transparent', -- dark, transparent, normal
+        floats = 'transparent',
+      },
+      sidebars = { 'qf', 'help', 'fzf_lua', 'overseer', 'terminal' },
+      lualine_bold = true, -- when true, section headers in lualine will be bold
+    },
+    config = function(_, opts)
+      local tokyonight = require('tokyonight')
+      tokyonight.setup(opts)
+      -- tokyonight.load()
+    end,
+  },
+  -- { 'rebelot/kanagawa.nvim', lazy = false, name = 'kanagawa' },
+  -- {
+  --   'ellisonleao/gruvbox.nvim',
+  --   name = 'gruvbox',
+  --   lazy = false,
+  --   config = function() require('gruvbox').setup() end,
+  -- },
+}

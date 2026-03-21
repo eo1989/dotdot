@@ -30,9 +30,9 @@
 return {
   cmd = { 'taplo', 'lsp', 'stdio' },
   filetypes = { 'toml' },
-  root_markers = { '.toml', { '.git' } },
+  root_markers = { { '.toml' }, '.git' },
   init_options = {
-    cachePath = vim.env.XDG_CACHE_HOME .. '/taplo',
+    cachePath = vim.env['XDG_CACHE_HOME'] .. '/taplo',
   },
   ---@param client vim.lsp.Client
   single_file_support = true,
@@ -43,6 +43,7 @@ return {
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
       client.server_capabilities.documentOnTypeFormattingProvider = false
+      client.server_capabilities.documentHighlightProvider = false
     end
 
     vim.keymap.set('n', '<localleader>vs', function()

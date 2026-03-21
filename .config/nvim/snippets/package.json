@@ -1,0 +1,30 @@
+{
+    "name": "snippets",
+    "contributes": {
+        "snippets": [
+            {
+                "language": [
+                    "tex",
+                    "json",
+                    "html",
+                    "quarto"
+                ],
+                "path": "./snippets/global.json"
+            },
+            {
+                "language": "quarto",
+                "path": "./snippets/quarto.json"
+            },
+            {
+                "language": [
+                    "json"
+                ],
+                "path": "./snippets/json.json"
+            },
+            {
+                "language": "tex",
+                "path": "./snippets/tex.json"
+            }
+        ]
+    }
+}

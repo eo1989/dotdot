@@ -377,28 +377,22 @@ function eo.is_windows()
   return nil
 end
 
----Helper function as son LSPs like `ltex` dont support ignore files
----@param client vim.lsp.Client
----@param bufnr integer
--- function eo.detachIfObsidianOrIcloud(client, bufnr)
---   local path = api.nvim_buf_get_name(bufnr)
---   local obsiDir = vim.fs.find('.obsidian', { path = path, upward = true, type = 'directory' }) > 0
---   local iCloudDocs = vim.startswith(path, os.getenv('HOME') .. '/Library/Mobile Documents/')
---   if obsiDir or (iCloudDocs and client.name ~= 'ltex_plus') then
---     -- defer to ensure client is already attached
---     vim.defer_fn(function() vim.lsp.buf_detach_client(bufnr, client.id) end, 500)
---   end
--- end
-
--- function eo.load_gh_token()
---   if vim.env.GITHUB_TOKEN then return end
---   local tokenPath = os.getenv('HOME')
---     .. '~/Library/Mobile Documents/com-apple-CloudDocs/Dotfolder/private dotfiles/github-token.txt'
---   local file = io.open(tokenPath, 'r')
---   if not file then
---     vim.notify('Couldnt find file for `GITHUB_TOKEN`.', l.ERROR)
---     return
---   end
---   vim.env.GITHUB_TOKEN = file:read('*l') -- read first line
---   file:close()
--- end
+eo.close_float_wins = function(opts)
+  opts = opts or {}
+  local fts = opts.fts or {}
+  local exclude = opts.exclude or {}
+  local noft = opts.noft == nil and true or opts.noft
+  for _, win in ipairs(api.nvim_list_wins()) do
+    local ok, config, bufnr
+    ok, config = pcall(api.nvim_win_get_config, win)
+    if ok then
+      ok, bufnr = pcall(api.nvim_win_get_buf, win)
+      if ok and config.relative ~= '' then
+        local ft = vim.bo[bufnr].filetype
+        if (ft == '' and noft) or (vim.tbl_contains(fts, ft) and not vim.tbl_contains(exclude, ft)) then
+          vim.fn.win_execute(win, 'close')
+        end
+      end
+    end
+  end
+end

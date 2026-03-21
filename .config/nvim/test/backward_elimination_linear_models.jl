@@ -1,7 +1,5 @@
 # using StatsModels, RDatasets, DataFrames, GLM, Random
-using
-
-Random.seed!(0)
+using Random.seed!(1234);
 
 n = 30
 

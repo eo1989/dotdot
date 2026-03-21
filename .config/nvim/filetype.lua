@@ -3,6 +3,7 @@ vim.filetype.add {
   extension = {
     pip = 'requirements',
     mdx = 'markdown',
+    -- qmd = 'markdown',
     cconf = 'python',
     -- jl = 'julia',
     plist = 'xml.plist', -- macOS PropertyList files
@@ -44,14 +45,24 @@ vim.filetype.add {
     ['requirements[%w_.-]+%.txt'] = 'requirements', --[[ this covers the 2 below ]]
     -- ['.*requirements%.txt'] = 'requirements',
     -- ['.*requirements.*%.txt'] = 'requirements',
+
     -- ['.*/%.vscode/.*%.json'] = 'json5', -- stevearc dotfiles -> these json files freq have comments
     -- ['.*/%.?vscode/settings.json'] = 'jsonc', -- dhruvmanilla dotfiles
     -- ['.*/zed/settings.json'] = 'jsonc',
+
+    -- stylua: ignore start
+    ['.*/%.vscode/.*%.json'] = 'jsonc', --  ┓
+                                        --  ┣ igorlfs dotfiles https://github.com/igorlfs/dotfiles/blob/main/nvim/.config/nvim/lua/filetype.lua
+    ['.*/%.zed/.*%.json'] = 'jsonc',    --  ┛
+    -- stylua: ignore stop
     ['.*%.conf'] = 'conf',
     ['.*%.theme'] = 'conf',
     ['.*%.gradle'] = 'groovy',
-    ['^.env%..*'] = 'bash',
+    -- ['^.env%..*'] = 'bash',
     ['.*aliases'] = 'bash',
+    ['%.env%.[%w_.-]+'] = 'sh',
+    ['%.dev%.[%w_.-]+'] = 'sh',
+    ['.sqruff'] = 'ini',
     ['README.(a+)$'] = function(_, _, ext)
       if ext == 'md' then
         return 'markdown'

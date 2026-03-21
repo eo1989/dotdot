@@ -11,8 +11,9 @@ local lsp = {
   File = '󰈙 ',
   Folder = ' ',
   Function = '󰊕 ',
-  Image = '󰈫',
+  -- Image = '󰈫',
   -- Interface = '󰕘 ',
+  Image = ' ',
   Interface = ' ',
   Keyword = '󰌋 ',
   Method = ' ',
@@ -35,9 +36,9 @@ local M = {
     sources = {
       'codecompanion',
       'copilot',
+      'claudecode',
     },
   },
-
   icons = {
     actions = {
       close = '󰅖 ',
@@ -278,7 +279,6 @@ local M = {
       },
     },
   },
-
   -- Various buffer and file types that should be ignored.
   ignored = {
     buffer_types = {
@@ -301,6 +301,8 @@ local M = {
       'help',
       'lazy',
       'log',
+      'neo-tree',
+      'neo-tree-popup',
       'noice',
       'notify',
       'oil',
@@ -309,6 +311,7 @@ local M = {
       'snacks_input',
       'snacks_notif',
       'snacks_picker_input',
+      'snacks_picker_preview',
       'snacks_win',
       'trouble',
       'vim',
@@ -330,7 +333,6 @@ local M = {
       'copilot',
     },
   },
-
   statusline = {
     modes = {
       ['n'] = 'N',
@@ -364,14 +366,13 @@ local M = {
       ['t'] = 'T',
       ['nt'] = 'T',
     },
-
     wordcount = {
       markdown = true,
+      quarto = true,
       text = true,
       vimwiki = true,
     },
   },
-
   ui = {
     border = {
       name = 'single',

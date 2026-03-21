@@ -1,4 +1,14 @@
-; extends
+;; extends
+; (code_fence_content) @markup.row.block
+
+; (
+;  (fenced_code_block_delimiter)
+;   (@conceal
+;     (#set! conceal "")
+;     (#set! priority 90))
+;   @markup.raw.block
+;
+;  )
 
 (list_item [
   (list_marker_plus)

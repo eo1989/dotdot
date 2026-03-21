@@ -79,10 +79,6 @@ local function keyword(word, callback)
 end
 
 map('n', 'gK', keyword, { buffer = 0 })
-map('n', '<leader>so', function()
-  vim.cmd.luafile('%')
-  vim.notify('Sourced ' .. fn.expand('%'))
-end)
 
 -- local wk = register('which-key')
 -- wk.register({

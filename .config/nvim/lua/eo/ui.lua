@@ -49,9 +49,9 @@ eo.ui.icons = {
   },
   lsp = {
     error = '✗', --' ', -- '✗'
-    warn = ' ', -- 
+    warn = '❗', --      󱈸 ! ❗ ❕
     info = ' ', -- ℹ 󰙎  󰋼
-    hint = ' ', --  ⚑󰌶
+    hint = ' ', --   ⚑ 󰌶
   },
   git = {
     add = ' ', -- ' ',' ', 
@@ -307,5 +307,5 @@ function eo.ui.decorations.set_colorcolumn(bufnr, fn)
 end
 
 ----------------------------------------------------------------------------------------------------
--- eo.ui.current = { border = eo.ui.border.line }
-eo.ui.current = { border = eo.ui.border.rectangle }
+eo.ui.current = { border = eo.ui.border.line }
+-- eo.ui.current = { border = eo.ui.border.rectangle }

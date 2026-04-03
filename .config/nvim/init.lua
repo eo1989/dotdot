@@ -2,12 +2,12 @@ local cmd, env, fn, fs, g, opt = vim.cmd, vim.env, vim.fn, vim.fs, vim.g, vim.op
 vim.loader.enable()
 
 ---@type boolean
-g.noice = false
+g.noice = nil
 -- vim.g.noice = true
 
 local namespace = {
   ui = {
-    winbar = { enable = false },
+    winbar = { enable = true },
     statuscolumn = { enable = true },
     statusline = { enable = false },
   },
@@ -67,23 +67,19 @@ g.open_command = (eo.OS_UNAME == "Darwin" and "open")
 local lazy_path = fs.joinpath(fn.stdpath('data'), 'lazy', 'lazy.nvim')
 -- local lazypath = data .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazy_path) then
-    -- stylua: ignore
-    fn.system({
-      "git",
-      "clone",
-      "--filter=blob:none",
-      "--branch=stable",
-      "https://github.com/folke/lazy.nvim.git",
-      lazy_path,
-    })
+  fn.system {
+    'git',
+    'clone',
+    '--filter=blob:none',
+    '--branch=stable',
+    'https://github.com/folke/lazy.nvim.git',
+    lazy_path,
+  }
   vim.notify('Installed lazy.nvim')
 end
 
 opt.runtimepath:prepend(lazy_path)
--- end
 
--- add luarocks to rtp
--- TODO: Add before or after sourcing all config files? before lsp? before lazy?
 local home = vim.uv.os_homedir()
 
 package.path = package.path .. ';' .. home .. '/.luarocks.share/lua/5.1/?/init.lua;'
@@ -95,8 +91,8 @@ require('lazy').setup {
     { import = 'eo.plugins.languages' },
   },
   ui = {
-    -- border = eo.ui.current.border or 'rounded',
-    border = vim.o.winborder or eo.ui.current.border,
+    border = eo.ui.current.border or 'rounded',
+    -- border = eo.ui.current.border,
     wrap = true,
     title_pos = 'center',
     pills = false,
@@ -104,20 +100,6 @@ require('lazy').setup {
     size = {
       width = 0.85,
       height = 0.85,
-    },
-    custom_keys = {
-      ['gi'] = {
-        function(plugin)
-          local repo = plugin.url:gsub('%.git$', '')
-          local line = api.nvim_get_current_line()
-          local issue = line:match('#(%d+)')
-          local commit = line:match(('%x'):rep(6) .. '+') -- `%x` = hex/hash char
-          if not issue and not commit then return end
-          local url = repo .. (issue and '/issues/' .. issue or '/commit/' .. commit)
-          vim.ui.open(url)
-        end,
-        desc = '  Open issue/commit',
-      },
     },
   },
   defaults = {
@@ -135,14 +117,8 @@ require('lazy').setup {
     frequency = 24 * 60 * 60, -- 24h
     notify = true,
   },
-  -- diff = { cmd = 'diffview.nvim' }, -- terminal git, diffview or browser
   diff = { cmd = 'terminal_git' }, -- views diffs with delta (cursor must be on the hash, tho)
   git = {
-    throttle = {
-      enabled = true,
-      rate = 10,
-      duration = 150,
-    },
     log = { '--since=3 days ago' },
   },
   pkg = {
@@ -153,62 +129,50 @@ require('lazy').setup {
       'rockspec',
     },
   },
-  rocks = { hererocks = nil },
+  rocks = {
+    enabled = true,
+    hererocks = nil,
+  },
   performance = {
     cache = { enabled = true },
     reset_packpath = true,
     rtp = {
-      -- reset = true,
+      reset = true,
       disabled_plugins = {
         'tohtml',
         'tutor',
-        -- '2html_plugin',
-        -- 'getscript',
-        -- 'getscriptPlugin',
         'gzip',
         'health',
-        -- 'logipat',
-        -- 'man',
-        -- 'matchit',
-        -- 'matchparen',
-        -- 'netrw',
-        -- 'netrwFileHandlers',
         'netrwPlugin',
-        -- 'netrwSettings',
-        -- 'rrhelper',
-        -- 'spellfile',
-        -- 'tar',
         'tarPlugin',
-        -- 'vimball',
-        -- 'vimballPlugin',
         'zip',
-        -- 'zipPlugin',
       },
     },
   },
-  readme = {
-    root = fn.stdpath('state') .. '/lazy/readme',
-    files = { 'README.md', 'lua/**/README.md' },
-    -- only generate markdown helptags for plugins that dont have docs
-    skip_if_doc_exists = true,
-  },
-  state = fn.stdpath('state') .. '/lazy/state.json',
 }
 
-vim.deprecate = function() end
-
-if env.NVIM_CONFIG then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
-
--- if eo.KITTY_SCROLLBACK then
---   require('eo.kitty.scrollback')
---   return
--- end
+-- if env.NVIM_CONFIG then return require('lazy').setup { { 'willothy/flatten.nvim', opts = {} } } end
 
 vim.cmd.colorscheme('catppuccin-macchiato')
 
--- vim.notify = require('notify')
+-- if vim.g.noice == false then require('vim._core.ui2').enable {} end
 
--- require('vim._core.ui2').enable { msg = { pos = 'box' } }
-
-if vim.g.noice == false then require('vim._core.ui2').enable { msg = { pos = 'box' } } end
+-- if vim.g.noice == false then require('vim._core.ui2').enable { msg = { pos = 'box' } } end
 -- if vim.g.noice == false then require('vim._extui').enable {} end
+
+-- '2html_plugin',
+-- 'getscript',
+-- 'getscriptPlugin',
+-- 'logipat',
+-- 'man',
+-- 'matchit',
+-- 'matchparen',
+-- 'netrw',
+-- 'netrwFileHandlers',
+-- 'netrwSettings',
+-- 'rrhelper',
+-- 'spellfile',
+-- 'tar',
+-- 'vimball',
+-- 'vimballPlugin',
+-- 'zipPlugin',

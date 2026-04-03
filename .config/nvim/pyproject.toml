@@ -92,8 +92,8 @@ docstring-code-line-length = "dynamic"
 
 [tool.rumdl]
 # Global configuration options
+extends = "~/.config/rumdl/rumdl.toml"
 line-length = 100
-disable = []
 exclude = [
   # Common directories to exclude
   ".git",
@@ -110,17 +110,23 @@ exclude = [
   ":-",
   "__pycache__",
   "*_files",
+  "*.tmp.*md"
 ]
-respect-gitignore = true
+disable = ["MD013", "MD044"]
+include = ["notes/*.*md"]
+respect_gitignore = true
+flavor = "quarto"
+
+[tool.rumdl.per-file-flavor]
+"**/*.md" = "md"
+"**/*.mdx" = "mdx"
+"notes/**/*.qmd" = "quarto"
 
 # Rule-specific configurations (uncomment and modify as needed)
-
 # [tool.rumdl.MD003]
 # style = "atx"  # Heading style (atx, atx_closed, setext)
-
 # [tool.rumdl.MD004]
 # style = "asterisk"  # Unordered list style (asterisk, plus, dash, consistent)
-
 # [tool.rumdl.MD007]
 # indent = 4  # Unordered list indentation
 
@@ -131,7 +137,6 @@ tables = true  # Exclude tables from line length check
 headings = true  # Include headings in line length check
 
 [tool.rumdl.MD044]
-# names = ["rumdl", "Markdown", "GitHub"]  # Proper names that should be capitalized correctly
 code-blocks = false  # Check code blocks for proper names (default: false, skips code blocks)
 
 [tool.typos.default]

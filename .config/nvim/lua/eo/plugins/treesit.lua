@@ -111,7 +111,7 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
-    branch = 'main',
+    -- branch = 'main',
     -- build = { ':TSInstall all', ':TSUpdate', ':TSUninstall comment' },
     build = { ':TSUpdate' },
     -- opts = {
@@ -140,12 +140,12 @@ return {
     --     },
     --   },
     -- },
-    opts_extend = { 'ensure_installed' },
-    main = 'nvim-treesitter.configs',
+    -- opts_extend = { 'ensure_installed' },
+    -- main = 'nvim-treesitter.configs',
     config = function(_, opts)
       -- require('nvim-treesitter').setup(opts)
       require('nvim-treesitter').update(languagess)
-      vim.treesitter.language.register('markdown', 'quarto')
+      -- vim.treesitter.language.register('markdown', 'quarto')
     end,
   },
   {
@@ -390,18 +390,21 @@ return {
     'numToStr/Comment.nvim',
     version = false,
     -- lazy = true,
+    lazy = true,
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'JoosepAlviste/nvim-ts-context-commentstring' },
+    --dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = function(opts)
       local ok, integration = pcall(require, 'ts_context_commentstring.integrations.comment_nvim')
       if ok then opts.pre_hook = integration.create_pre_hook() end
     end,
-    keys = { 'gcc', { 'gc', mode = { 'x', 'n', 'o', 'v' } } },
+    config = function(_, opts) require('Comment').setup() end,
+    -- keys = { 'gcc', { 'gc', mode = { 'x', 'n', 'o', 'v' } } },
   },
-  {
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    version = false,
-  },
+  -- {
+  --   'JoosepAlviste/nvim-ts-context-commentstring',
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  --   version = false,
+  -- },
   {
     'nvim-treesitter/nvim-treesitter-context',
     -- lazy = true,

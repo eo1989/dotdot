@@ -63,10 +63,13 @@ local smart_close_filetypes = eo.p_table {
   ['FzfLua'] = true,
   ['fzf-lua'] = true,
   ['trouble'] = true,
+  ['noice'] = true,
+  ['snacks-*'] = true,
 }
 
 local smart_close_buftypes = eo.p_table {
   ['nofile'] = true,
+  ['terminal'] = true,
 }
 
 local function smart_close()
@@ -83,16 +86,16 @@ eo.augroup('SmartClose', {
   event = { 'FileType' },
   command = function(args)
     local is_unmapped = fn.hasmapto('q', 'n') == 0
+    local is_unmapped_too = fn.hasmapto('<Esc>', 'n') == 0
     local buf = vim.bo[args.buf]
     local is_eligible = is_unmapped
+      or is_unmapped_too
       or vim.wo.previewwindow
       or smart_close_filetypes[buf.ft]
       or smart_close_buftypes[buf.bt]
     if is_eligible then map('n', 'q', smart_close, { buffer = args.buf, nowait = true }) end
 
-    -- map('n', '<Esc>', 'q', { noremap = true })
-
-    if is_eligible then map('n', '<ESC>', smart_close, { buffer = args.buf, nowait = true }) end
+    if is_eligible_too then map('n', '<ESC>', smart_close, { buffer = args.buf, nowait = true }) end
   end,
 }, {
   -- TODO: this is set in the ftplugin/qf.lua file ... do i leave this or leave the ftplugin/qf vim.cmd?
@@ -102,6 +105,17 @@ eo.augroup('SmartClose', {
   event = { 'BufEnter', 'WinEnter' },
   command = function()
     if fn.winnr('$') < 2 and vim.bo.buftype == 'quickfix' then
+      api.nvim_set_option_value({ 'cursorline' }, false, { scope = 'local' })
+      api.nvim_set_option_value({ 'number' }, true, { scope = 'local' })
+      api.nvim_buf_delete(0, { force = true })
+    end
+  end,
+  pattern = { '*' },
+}, {
+  --[[ SnipRun and other repl windows ]]
+  event = { 'BufEnter', 'WinEnter' },
+  command = function()
+    if fn.winnr('$') < 2 and vim.bo.buftype == 'terminal' then
       api.nvim_set_option_value({ 'cursorline' }, false, { scope = 'local' })
       api.nvim_set_option_value({ 'number' }, true, { scope = 'local' })
       api.nvim_buf_delete(0, { force = true })

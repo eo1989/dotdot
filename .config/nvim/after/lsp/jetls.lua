@@ -2,13 +2,13 @@
 return {
   cmd = {
     'jetls',
-    -- 'serve',
+    'serve',
     -- '--pip-listen=/tmp/jetls.sock',
     '--threads=auto',
     '--',
   },
   filetypes = { 'julia' },
-  -- single_file_support = true,
+  single_file_support = true,
   root_markers = { 'Project.toml' },
   settings = {
     jetls = {

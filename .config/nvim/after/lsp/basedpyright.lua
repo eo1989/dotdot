@@ -19,10 +19,31 @@ return {
   on_attach = function(client)
     -- let treesitter handle semantic tokens
     -- client.server_capabilities.semanticTokensProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-    client.server_capabilities.documentOnTypeFormattingProvider = false
-    client.server_capabilities.documentFormattingProvider = false
     -- client.server_capabilities.hoverProvider = nil
+    if client.server_capabilities then
+      client.server_capabilities.documentRangeFormattingProvider = false
+      client.server_capabilities.documentOnTypeFormattingProvider = false
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.callHierarchyProvider = nil
+      -- client.server_capabilities.codeActionProvider = nil
+      client.server_capabilities.completionProvider = nil
+      client.server_capabilities.declarationProvider = nil
+      client.server_capabilities.definitionProvider = nil
+      client.server_capabilities.documentHighlightProvider = nil
+      client.server_capabilities.documentOnTypeFormattingProvider = nil
+      client.server_capabilities.documentSymbolProvider = nil
+      client.server_capabilities.executeCommandProvider = nil
+      client.server_capabilities.hoverProvider = nil
+      client.server_capabilities.inlayHintProvider = nil
+      client.server_capabilities.notebookDocumentSync = nil
+      client.server_capabilities.renameProvider = nil
+
+      client.server_capabilities.referencesProvider = nil
+      client.server_capabilities.semanticTokensProvider = nil
+      client.server_capabilities.signatureHelpProvider = nil
+      client.server_capabilities.typeDefinitionProvider = nil
+      client.server_capabilities.workspaceSymbolProvider = nil
+    end
   end,
   root_markers = {
     {
@@ -56,37 +77,37 @@ return {
           functionReturnTypes = true,
           genericTypes = true,
         },
-        -- ignore = { '*' },
-        diagnosticSeverityOverrides = {
-          -- reportAny = 'none',
-          -- reportArgumentType = 'none',
-          -- reportAssignmentType = 'none',
-          -- reportAttributeAccessIssue = 'none',
-          -- reportDeprecated = 'none',
-          -- reportExplicitAny = 'none',
-          -- reportGeneralTypeIssues = 'none',
-          -- reportMissingTypeStubs = 'none',
-          -- reportOptionalMemberAccess = 'none',
-          -- reportUndefinedVariable = 'none',
-          -- reportUnreachable = 'none',
-          -- reportUnusedCallResult = 'none',
-          -- reportUnusedFunction = 'none',
-          -- reportUnusedImport = 'none',
-          reportAny = false,
-          reportArgumentType = false,
-          reportAssignmentType = false,
-          reportAttributeAccessIssue = false,
-          reportDeprecated = false,
-          reportExplicitAny = false,
-          reportGeneralTypeIssues = false,
-          reportMissingTypeStubs = false,
-          reportOptionalMemberAccess = false,
-          reportUndefinedVariable = false,
-          reportUnreachable = false,
-          reportUnusedCallResult = false,
-          reportUnusedFunction = false,
-          reportUnusedImport = false,
-        },
+        ignore = { '*' },
+        -- diagnosticSeverityOverrides = {
+        --   -- reportAny = 'none',
+        --   -- reportArgumentType = 'none',
+        --   -- reportAssignmentType = 'none',
+        --   -- reportAttributeAccessIssue = 'none',
+        --   -- reportDeprecated = 'none',
+        --   -- reportExplicitAny = 'none',
+        --   -- reportGeneralTypeIssues = 'none',
+        --   -- reportMissingTypeStubs = 'none',
+        --   -- reportOptionalMemberAccess = 'none',
+        --   -- reportUndefinedVariable = 'none',
+        --   -- reportUnreachable = 'none',
+        --   -- reportUnusedCallResult = 'none',
+        --   -- reportUnusedFunction = 'none',
+        --   -- reportUnusedImport = 'none',
+        --   reportAny = false,
+        --   reportArgumentType = false,
+        --   reportAssignmentType = false,
+        --   reportAttributeAccessIssue = false,
+        --   reportDeprecated = false,
+        --   reportExplicitAny = false,
+        --   reportGeneralTypeIssues = false,
+        --   reportMissingTypeStubs = false,
+        --   reportOptionalMemberAccess = false,
+        --   reportUndefinedVariable = false,
+        --   reportUnreachable = false,
+        --   reportUnusedCallResult = false,
+        --   reportUnusedFunction = false,
+        --   reportUnusedImport = false,
+        -- },
         loglevel = 'error',
         stubpath = fn.expand('~') .. '/.local/share/nvim/lazy/python-type-stubs/stubs',
       },

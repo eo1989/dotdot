@@ -23,8 +23,8 @@ return {
       require('render-markdown').setup {
         file_types = { 'markdown', 'quarto', 'Avante', 'codecompanion' },
         -- file_types = { 'markdown', 'Avante', 'codecompanion' },
-        -- completions = { lsp = { enabled = true }, blink = { enabled = false } },
-        completions = { lsp = { enabled = true } },
+        completions = { lsp = { enabled = true }, blink = { enabled = false } },
+        -- completions = { lsp = { enabled = true } },
         restart_highlighter = true,
         code = {
           enabled = true,
@@ -32,8 +32,8 @@ return {
           style = 'full', -- 'full', 'normal'
           width = 'full', -- 'full' | 'block'
           language_pad = 2, -- 0 | 0.5
-          above = chars['top_char'],
-          below = chars['bottom_char'],
+          above = chars.top_char,
+          below = chars.bottom_char,
           left_margin = 0,
           left_pad = 0, -- 0 | 1
           right_pad = 2,
@@ -66,11 +66,11 @@ return {
         html = {
           enabled = true,
           comment = {
-            conceal = false,
+            conceal = true,
           },
         },
-        win_options = { conceallevel = { rendered = 2 } },
-        overrides = { -- see if this will work for lsp hovers: hiding code block lines
+        win_options = { conceallevel = { rendered = 3 } },
+        overrides = { -- see if this will work for lsp hovers: hiding code block lines --[[ NOPE! ]]
           buftype = {
             nofile = {
               code = {
@@ -111,14 +111,14 @@ return {
           url_encode_path = true,
           template = '![$CURSOR]($FILE_PATH)',
           drag_and_drop = {
-            download_images = false,
+            download_images = true,
           },
         },
         quarto = {
           url_encode_path = true,
           template = '![$CURSOR]($FILE_PATH)',
           drag_and_drop = {
-            download_images = false,
+            download_images = true,
           },
         },
       },
@@ -133,53 +133,6 @@ return {
     opts = {},
   },
 }
--- {
---   'jbyuki/nabla.nvim',
---   enabled = false,
---   -- ft = { 'markdown', 'latex', 'quarto', 'ipynb' },
---   keys = function()
---     local enabled = false
---     return {
---       {
---         '<localleader>vn',
---         function() require('nabla').popup() end,
---         desc = 'Nabla popup',
---         ft = { 'markdown', 'latex', 'quarto' },
---       },
---       {
---         '<localleader>vN',
---         function()
---           if enabled then
---             require('nabla').disable_virt()
---           else
---             require('nabla').enable_virt()
---             local id = vim.api.nvim_create_augroup('nabla_live_popup', { clear = true })
---             vim.api.nvim_create_autocmd('CursorHold', {
---               callback = function() require('nabla').popup() end,
---               buffer = 0,
---               group = id,
---             })
---           end
---           enabled = not enabled
---         end,
---         desc = 'nabla virtual',
---         ft = { 'markdown', 'latex', 'quarto' },
---       },
---     }
---   end,
--- },
--- {
---   'OXY2DEV/markview.nvim',
---   enabled = false,
---   event = 'BufRead',
---   dependencies = {
---     'saghen/blink.cmp',
---     'nvim-treesitter/nvim-treesitter',
---     'nvim-tree/nvim-web-devicons',
---   },
---   ft = { 'markdown' },
---   opts = {},
--- },
 -- {
 --   'yetone/avante.nvim',
 --   enabled = false,

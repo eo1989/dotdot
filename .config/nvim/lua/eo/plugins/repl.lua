@@ -19,44 +19,44 @@ return {
   --   event = { 'BufReadCmd *.ipynb' },
   --   config = function() require('jupyviv').setup() end,
   -- },
-  {
-    'klafyvel/nvim-smuggler',
-    enabled = false,
-    ft = 'julia',
-    event = { 'BufReadCmd *.jl' },
-    dependencies = { 'nvim-neotest/nvim-nio' },
-    -- keys = {
-    --   -- {
-    --   --   '<localleader>sv',
-    --   --   ':SmuggleVisual<CR>',
-    --   --   desc = 'Smuggle Range jl',
-    --   --   mode = { 'v', 'x' },
-    --   --   ft = 'julia',
-    --   -- },
-    --   -- {
-    --   --   '<localleader>sg',d
-    --   --   ':SmuggleEvalByBlocks<CR>',
-    --   --   desc = 'Smuggle Blocks jl',
-    --   --   ft = 'julia',
-    --   -- },
-    -- },
-    opts = {
-      {
-        ui = {
-          mappings = {
-            smuggle = '<localleader>cs',
-            smuggle_range = '<localleader>cs',
-            smuggle_config = '<localleader>ce',
-            smuggle_operator = false,
-          },
-          -- result_line_length = nil,
-          -- result_hl_group = nil,
-          display_results = true,
-          display_images = true, -- uses image.nvim
-        },
-      },
-    },
-  },
+  -- {
+  --   'klafyvel/nvim-smuggler',
+  --   enabled = false,
+  --   ft = 'julia',
+  --   event = { 'BufReadCmd *.jl' },
+  --   dependencies = { 'nvim-neotest/nvim-nio' },
+  --   -- keys = {
+  --   --   -- {
+  --   --   --   '<localleader>sv',
+  --   --   --   ':SmuggleVisual<CR>',
+  --   --   --   desc = 'Smuggle Range jl',
+  --   --   --   mode = { 'v', 'x' },
+  --   --   --   ft = 'julia',
+  --   --   -- },
+  --   --   -- {
+  --   --   --   '<localleader>sg',d
+  --   --   --   ':SmuggleEvalByBlocks<CR>',
+  --   --   --   desc = 'Smuggle Blocks jl',
+  --   --   --   ft = 'julia',
+  --   --   -- },
+  --   -- },
+  --   opts = {
+  --     {
+  --       ui = {
+  --         mappings = {
+  --           smuggle = '<localleader>cs',
+  --           smuggle_range = '<localleader>cs',
+  --           smuggle_config = '<localleader>ce',
+  --           smuggle_operator = false,
+  --         },
+  --         -- result_line_length = nil,
+  --         -- result_hl_group = nil,
+  --         display_results = true,
+  --         display_images = true, -- uses image.nvim
+  --       },
+  --     },
+  --   },
+  -- },
   {
     'GCBallesteros/jupytext.nvim',
     event = { 'BufReadCmd *.ipynb' },
@@ -158,16 +158,23 @@ return {
   --[[ lkhphuc/dotfiles/blob/master/nvim/lua/plugins/repl.lua ]]
   {
     'benlubas/molten-nvim',
-    enabled = false,
+    enabled = true,
+    version = false,
     build = ':UpdateRemotePlugins',
-    event = { 'VeryLazy', 'BufReadPre', 'BufEnter' },
+    -- event = { 'VeryLazy', 'BufReadPre', 'BufEnter' },
+    event = { 'VeryLazy' },
+    ft = { 'markdown', 'quarto' },
+    dependencies = { 'folke/snacks.nvim', '3rd/image.nvim' },
     init = function()
-      vim.g.molten_image_provider = 'image.nvim'
-      vim.g.molten_output_win_height = 25
+      -- vim.g.molten_image_provider = 'image.nvim'
+      vim.g.molten_image_provider = 'snacks.nvim'
+      vim.g.molten_output_win_max_height = 18
       vim.g.molten_auto_open_output = true
       vim.g.molten_wrap_output = true
       vim.g.molten_virt_text_output = true
       vim.g.molten_virt_lines_off_by_1 = true
+      vim.g.molten_tick_rate = 142
+
       vim.api.nvim_create_autocmd('User', {
         pattern = 'MoltenInitPost',
         callback = function()
@@ -177,7 +184,17 @@ return {
           -- map('v', '<S-CR>', [[:<C-u>MoltenEvaluateVisual<CR>gv]], { desc = 'Run vSelection' })
           -- map('n', '<S-CR><S-CR>', 'vib<S-CR>]bj', { remap = true, desc = 'Run cell and move' })
           -- map('n', '<localleader>rn', '<cmd>MoltenHideOutput<CR>', { desc = 'Hide Output' })
-          -- map('n', '<localleader>ro', '<cmd>noautocmd MoltenEnterOutput<CR>', { desc = 'Show/Enter Output' })
+          map(
+            'n',
+            '<localleader>ro',
+            '<cmd>noautocmd MoltenEnterOutput<CR>',
+            { desc = 'Show/Enter Output', silent = true }
+          )
+          local open = false
+          map('n', '<localleader>rO', function()
+            open = not open
+            vim.fn.MoltenUpdateOption('auto_open_output', open)
+          end)
           -- map('n', '<localleader>ri', '<cmd>MoltenImportOutput<CR>', { desc = 'Import Notebook Output' })
           -- map(
           --   { 'v', 'x', 'o' },
@@ -188,56 +205,69 @@ return {
           -- )
           -- map('x', '<S-CR>', '<cmd>MoltenEvaluateVisual<CR>', { buffer = true, desc = 'Run xSelection' })
           -- map('n', '<S-CR><S-CR>', 'vib<S-CR>]bj', { buffer = true, remap = true, desc = 'Run cell and move' })
-          map('n', '<localleader>r', ':MoltenEvaluateOperator<CR>', { buffer = true, desc = 'Run' })
-          map({ 'v', 'x' }, '<M-CR>', ':<C-u>MoltenEvaluateVisual<CR>gv', { buffer = true, desc = 'Run vSelection' })
-          map('n', '<localleader>ri', ':MoltenImportOutput<CR>', { buffer = true, desc = 'Import Notebook Output' })
+          map('n', '<localleader>r', ':MoltenEvaluateOperator<CR>', { buffer = true, desc = 'Run', silent = true })
+          map(
+            { 'v', 'x' },
+            '<M-CR>',
+            ':<C-u>MoltenEvaluateVisual<CR>gv',
+            { buffer = true, desc = 'Run vSelection', silent = true }
+          )
+          map(
+            'n',
+            '<localleader>ri',
+            ':MoltenImportOutput<CR>',
+            { buffer = true, desc = 'Import Notebook Output', silent = true }
+          )
+          if vim.bo.ft == 'python' then
+            vim.fn.MoltenUpdateOption('molten_virt_lines_off_by_1', false)
+            vim.fn.MoltenUpdateOption('molten_virt_text_output', false)
+          end
         end,
       })
-      local imb = function(e)
-        vim.schedule(function()
-          local kernels = vim.fn.MoltenAvailableKernelss()
-          local try_kernel_name = function()
-            local metadata = vim.json.decode(io.open(e.file, 'r'):read('a'))['metadata']
-            return metadata.kernelspec.name
-          end
-          local ok, kernel_name = pcall(try_kernel_name)
-          if not ok or not vim.tbl_contains(kernels, kernel_name) then
-            kernel_name = nil
-            if venv ~= nil then kernel_name = string.match(venv, '/.+/(.+)') end
-          end
-          if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
-            vim.cmd(('MoltenInit %s'):format(kernel_name))
-          end
-          vim.cmd('MoltenImportOutput')
-        end)
-      end
+
+      -- local imb = function(e)
+      --   vim.schedule(function()
+      --     local kernels = vim.fn.MoltenAvailableKernelss()
+      --     local try_kernel_name = function()
+      --       local metadata = vim.json.decode(io.open(e.file, 'r'):read('a'))['metadata']
+      --       return metadata.kernelspec.name
+      --     end
+      --     local ok, kernel_name = pcall(try_kernel_name)
+      --     if not ok or not vim.tbl_contains(kernels, kernel_name) then
+      --       kernel_name = nil
+      --       if venv ~= nil then kernel_name = string.match(venv, '/.+/(.+)') end
+      --     end
+      --     if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
+      --       vim.cmd(('MoltenInit %s'):format(kernel_name))
+      --     end
+      --     vim.cmd('MoltenImportOutput')
+      --   end)
+      -- end
 
       --[[ automatically import output chunks from a jupyter notebook ]]
-      vim.api.nvim_create_autocmd('BufAdd', {
-        pattern = { '*.ipynb' },
-        callback = imb,
-      })
-
+      -- vim.api.nvim_create_autocmd('BufAdd', {
+      --   pattern = { '*.ipynb' },
+      --   callback = imb,
+      -- })
       --[[ this as well to catch files open like nvim ./foo.ipynb ]]
-      vim.api.nvim_create_autocmd('BufEnter', {
-        pattern = { '*.ipynb' },
-        callback = function(e)
-          if vim.api.nvim_get_vvar('vim_did_enter') ~= 1 then imb(e) end
-        end,
-      })
+      -- vim.api.nvim_create_autocmd('BufEnter', {
+      --   pattern = { '*.ipynb' },
+      --   callback = function(e)
+      --     if vim.api.nvim_get_vvar('vim_did_enter') ~= 1 then imb(e) end
+      --   end,
+      -- })
 
       --[[ change config when editing a python file ]]
       vim.api.nvim_create_autocmd('BufEnter', {
         pattern = '*.py',
         callback = function(e)
           if string.match(e.file, '.otter.') then return end
-          -- HACK: hacky af
           if require('molten.status').initialized() == 'Molten' then
             vim.fn.MoltenUpdateOption('virt_lines_off_by_1', false)
             vim.fn.MoltenUpdateOption('virt_text_output', false)
-          else
-            vim.g.molten_virt_lines_off_by_1 = false
-            vim.g.molten_virt_text_output = false
+            -- else
+            --   vim.g.molten_virt_lines_off_by_1 = false
+            --   vim.g.molten_virt_text_output = false
           end
         end,
       })
@@ -247,23 +277,22 @@ return {
         pattern = { '*.qmd', '*.md', '*.ipynb' },
         callback = function(e)
           if string.match(e.file, '.otter.') then return end
-          -- HACK: hacky af
           if require('molten.status').initialized() == 'Molten' then
             vim.fn.MoltenUpdateOption('virt_lines_off_by_1', true)
             vim.fn.MoltenUpdateOption('virt_text_output', true)
-          else
-            vim.g.molten_virt_lines_off_by_1 = true
-            vim.g.molten_virt_text_output = true
+            -- else
+            --   vim.g.molten_virt_lines_off_by_1 = true
+            --   vim.g.molten_virt_text_output = true
           end
         end,
       })
 
-      vim.api.nvim_create_autocmd('BufWritePost', {
-        pattern = { '*.ipynb' },
-        callback = function()
-          if require('molten.status').initialized() == 'Molten' then vim.cmd('MoltenExportOutput') end
-        end,
-      })
+      -- vim.api.nvim_create_autocmd('BufWritePost', {
+      --   pattern = { '*.ipynb' },
+      --   callback = function()
+      --     if require('molten.status').initialized() == 'Molten' then vim.cmd('MoltenExportOutput') end
+      --   end,
+      -- })
     end,
     config = function()
       local init = function()

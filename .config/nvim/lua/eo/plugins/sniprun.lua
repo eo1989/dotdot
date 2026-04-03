@@ -86,134 +86,140 @@ local map = vim.keymap.set or vim.api.nvim_set_keymap
 -- map({ 'v', 'x', 'o' }, '<localleader>rs', function() run_sniprun_section() end, { desc = 'SnipRun Selection' })
 -- map('<localleader>rc', run_sniprun_section, {desc = 'SR trial'})
 
+map('n', '<F5>', ':let b:caret=winsaveview() <CR> | <cmd>%SnipRun<CR>| :call winrestview(b:caret) <CR>')
+
 ---@type LazySpec
 return {
-  {
-    ---@module "sniprun"
-    'michaelb/sniprun',
-    version = false,
-    enabled = true,
-    build = 'sh ./install.sh 1',
-    -- event = { 'VeryLazy' },
-    cmd = { 'SnipRun', 'SnipInfo', 'SnipReset', 'SnipClose', 'SnipReplMemoryClean' },
-    keys = {
-      {
-        '<localleader>xx',
-        '<Plug>SnipRun',
-        -- mode = { 'v', 'x', 'o' },
-        desc = 'SR Line',
-      },
-      {
-        '<localleader>r',
-        '<Plug>SnipRunOperator',
-        desc = 'SR',
-      },
-      {
-        '<localleader>x',
-        '<Plug>SnipRun',
-        mode = { 'x', 'o' },
-        desc = 'SR',
-      },
-      {
-        '<localleader>xQ',
-        '<Plug>SnipReset',
-        desc = 'SnipRun Reset',
-      },
-      {
-        '<localleader>xX',
-        '<Plug>SnipReplMemoryClean',
-        desc = 'SnipRun Clean',
-      },
-      {
-        '<localleader>xI',
-        '<Plug>SnipInfo',
-        desc = 'SnipRun Info',
-      },
-      -- {
-      --   '<localleader>xL',
-      --   '<Plug>SnipLive',
-      --   desc = 'SnipRun Live',
-      -- },
-      {
-        '<localleader>xq',
-        '<Plug>SnipClose',
-        desc = 'SnipRun Close',
-      },
-      -- {
-      --   '<F2>',
-      --   [[<cmd>b:caret=winsaveview()<CR>|:%SnipRun<CR>|call winrestview(b:caret)<CR>]],
-      --   expr = true,
-      --   silent = true,
-      --   desc = 'SR Buffer',
-      -- },
+  ---@module "sniprun"
+  'michaelb/sniprun',
+  version = false,
+  enabled = true,
+  build = 'sh ./install.sh 1',
+  -- event = { 'VeryLazy' },
+  cmd = { 'SnipRun', 'SnipInfo', 'SnipReset', 'SnipClose', 'SnipReplMemoryClean' },
+  keys = {
+    -- {
+    --   '<F5>',
+    --   [[<cmd>let b:caret=winsaveview() <CR> | <cmd>%SnipRun<CR>| :call winrestview(b:caret) <CR>]],
+    -- },
+    {
+      '<localleader>xx',
+      -- '<Plug>SnipRun<CR>',
+      [[<cmd>lua require('sniprun').run()<CR>]],
+      -- mode = { 'v', 'x', 'o' },
+      desc = 'SR Line',
     },
-    opts = {
-      selected_interpreters = {
-        'Python3_fifo',
-        'GFM_original',
-        'Python3_original',
-        -- 'Python3_jupyter',
-        'Julia_original',
-      },
-      repl_enable = {
-        'Python3_jupyter',
-        -- 'Python3_fifo',
-        'GFM_original',
-        'Julia_original',
-        -- 'Python3_jupyter',
-        -- 'julia_jupyter',
-      },
-      -- repl_disable = { 'lua_nvim' },
-      interpreter_options = {
-        Python3_fifo = {
-          interpreter = vim.fn.expand('~/.pyenv/versions/gen/bin/python'),
-          -- interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
-          -- venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
-          venv = { vim.fn.expand('~/.pyenv/versions'), '../.venv', vim.fn.expand('~/Dev/') },
-          error_truncate = 'auto',
-        },
-        Python3_jupyter = {
-          interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
-          venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
-          error_truncate = 'auto',
-          use_on_filetypes = { 'quarto', 'markdown', 'markdown.pandoc', 'gfm' },
-        },
-        -- TODO: make this from a function
-        --
-        -- Julia_jupyter = {
-        --   -- from the docs:
-        --   -- jupyter-kernel --kernel=julia-1.8 --KernelManager.connection_file=$HOME/.cache/sniprun/julia_jupyter/kernel_sniprun.json
-        --   interpreter = vim.env.HOME .. '/.julia/juliaup/julia-1.11.4+0.aarch64.apple.darwin14/bin/julia',
-        -- },
-        Julia_original = {
-          interpreter = 'julia',
-          project = '@.',
-        },
-        GFM_original = {
-          default_filetype = 'python',
-          use_on_filetypes = { 'quarto', 'markdown', 'markdown.pandoc', 'gfm' },
-        },
-      },
-      borders = 'rounded',
-      display = {
-        'TerminalWithCode',
-        -- 'LongTempFloatingWindow',
-      },
-      display_options = {
-        terminal_widths = 25,
-        terminal_signcolumn = false,
-        terminal_line_number = false,
-        notification_timeout = 10,
-      },
-      live_mode_toggle = 'enable',
+    {
+      '<localleader>r',
+      '<>SnipRunOperator<CR>',
+      desc = 'SR',
     },
-    config = function(_, opts)
-      require('sniprun').setup(opts)
-      -- TODO: patch to use Kitty.lua
-      -- local sd = require "sniprun.display"
-      -- sd.term_close = function() end
-      -- sd.term_open = function() end
-      -- sd.write_to_term = function(message, ok) end
-    end,
+    {
+      '<localleader>x',
+      -- '<Plug>SnipRun<CR>',
+      [[<cmd>lua require('sniprun').run('v')<CR>]],
+      mode = { 'v' },
+      desc = 'SR',
+    },
+    {
+      '<localleader>xQ',
+      '<Plug>SnipReset<CR>',
+      desc = 'SnipRun Reset',
+    },
+    {
+      '<localleader>xX',
+      '<cmd>SnipReplMemoryClean<CR>',
+      desc = 'SnipRun Clean',
+    },
+    {
+      '<localleader>xI',
+      '<Plug>SnipInfo',
+      desc = 'SnipRun Info',
+    },
+    -- {
+    --   '<localleader>xL',
+    --   '<Plug>SnipLive',
+    --   desc = 'SnipRun Live',
+    -- },
+    {
+      '<localleader>xq',
+      '<Plug>SnipClose<CR>',
+      desc = 'SnipRun Close',
+    },
+    -- {
+    --   '<F2>',
+    --   [[<cmd>b:caret=winsaveview()<CR>|:%SnipRun<CR>|call winrestview(b:caret)<CR>]],
+    --   expr = true,
+    --   silent = true,
+    --   desc = 'SR Buffer',
+    -- },
   },
+  opts = {
+    selected_interpreters = {
+      'Python3_fifo',
+      'GFM_original',
+      'Python3_original',
+      -- 'Python3_jupyter',
+      'Julia_original',
+    },
+    repl_enable = {
+      'Python3_jupyter',
+      -- 'Python3_fifo',
+      'GFM_original',
+      'Julia_original',
+      -- 'Python3_jupyter',
+      -- 'julia_jupyter',
+    },
+    -- repl_disable = { 'lua_nvim' },
+    interpreter_options = {
+      Python3_fifo = {
+        interpreter = vim.fn.expand('~/.pyenv/versions/gen/bin/python'),
+        -- interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
+        -- venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
+        venv = { vim.fn.expand('~/.pyenv/versions'), '../.venv', vim.fn.expand('~/Dev/') },
+        error_truncate = 'auto',
+      },
+      Python3_jupyter = {
+        interpreter = vim.fn.expand('~/.local/pipx/venvs/jupyterlab/bin/python'),
+        venv = vim.fn.expand('~/.local/pipx/venvs/jupyterlab'),
+        error_truncate = 'auto',
+        use_on_filetypes = { 'quarto', 'markdown', 'markdown.pandoc', 'gfm' },
+      },
+      -- TODO: make this from a function
+      --
+      -- Julia_jupyter = {
+      --   -- from the docs:
+      --   -- jupyter-kernel --kernel=julia-1.8 --KernelManager.connection_file=$HOME/.cache/sniprun/julia_jupyter/kernel_sniprun.json
+      --   interpreter = vim.env.HOME .. '/.julia/juliaup/julia-1.11.4+0.aarch64.apple.darwin14/bin/julia',
+      -- },
+      Julia_original = {
+        interpreter = 'julia',
+        project = '@.',
+      },
+      GFM_original = {
+        default_filetype = 'python',
+        use_on_filetypes = { 'quarto', 'markdown', 'markdown.pandoc', 'gfm' },
+      },
+    },
+    borders = 'rounded',
+    display = {
+      'TerminalWithCode',
+      -- 'LongTempFloatingWindow',
+    },
+    display_options = {
+      terminal_widths = 25,
+      terminal_signcolumn = false,
+      terminal_line_number = false,
+      notification_timeout = 10,
+    },
+    live_mode_toggle = 'enable',
+  },
+  config = function(_, opts)
+    require('sniprun').setup(opts)
+    -- TODO: patch to use Kitty.lua
+    -- local sd = require "sniprun.display"
+    -- sd.term_close = function() end
+    -- sd.term_open = function() end
+    -- sd.write_to_term = function(message, ok) end
+  end,
 }

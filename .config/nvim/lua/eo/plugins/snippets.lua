@@ -1,5 +1,5 @@
 local api, fn = vim.api, vim.fn
-local map = _G.map or vim.keymap.set
+local map = vim.keymap.set or _G.map
 local opts = { noremap = true, silent = true }
 
 local luasnip_aug = api.nvim_create_augroup('ClearLuasnipSession', { clear = true })
@@ -19,7 +19,7 @@ return {
     'L3MON4D3/LuaSnip',
     version = 'v2.*',
     build = { 'make install_jsregexp' },
-    -- lazy = false,
+    event = { 'InsertEnter', 'VeryLazy' },
     dependencies = {
       {
         'kawre/neotab.nvim',
@@ -33,55 +33,55 @@ return {
       local types = require('luasnip.util.types')
       local node_util = require('luasnip.nodes.util')
 
-      map({ 'i', 's' }, '<C-l>', function()
+      map({ 'i', 's' }, '<C-e>', function()
         if ls.choice_active() then ls.change_choice(1) end
       end)
 
-      map({ 'i', 's' }, '<C-f>', function()
-        if not ls.expand_or_jumpable() then return '<Tab>' end
-        ls.expand_or_jump()
-      end, { expr = true })
+      -- map({ 'i', 's' }, '<C-f>', function()
+      --   if not ls.expand_or_jumpable() then return '<Tab>' end
+      --   ls.expand_or_jump()
+      -- end, { expr = true })
 
-      map({ 'i', 's' }, '<C-b>', function()
-        if not ls.jumpable(-1) then return '<S-Tab>' end
-        ls.jump(-1)
-      end, { expr = true })
+      -- map({ 'i', 's' }, '<C-b>', function()
+      --   if not ls.jumpable(-1) then return '<S-Tab>' end
+      --   ls.jump(-1)
+      -- end, { expr = true })
 
-      map({ 'i', 's' }, '<C-,>', require('luasnip.extras.select_choice'), { silent = true })
+      -- map({ 'i', 's' }, '<C-,>', require('luasnip.extras.select_choice'), { silent = true })
 
-      local select_next = false
-      map({ 'i' }, '<C-;>', function()
-        local ok, _ = pcall(ls.activate_node, {
-          strict = true,
-          select = select_next,
-        })
-        if not ok then
-          print('No code.')
-          return
-        end
-
-        if select_next then return end
-
-        local curbuf = vim.api.nvim_get_current_buf()
-        local hl_duration_ms = 100
-
-        local node = ls.session.current_nodes[curbuf]
-        local from, to = node:get_buf_position { raw = true }
-
-        -- hl snippet for 100ms
-        local id = vim.api.nvim_buf_set_extmark(curbuf, ls.session.ns_id, from[1], from[2], {
-          -- one line below, at col 0 => entire last lnie is highlighted
-          end_row = to[1],
-          end_col = to[2],
-          hl_group = 'Visual',
-        })
-
-        vim.defer_fn(function() vim.api.nvim_buf_del_extmark(curbuf, ls.session.ns_id, id) end, hl_duration_ms)
-
-        -- select if there is another press within the next second
-        select_next = true
-        vim.uv.new_timer():start(1000, 0, function() select_next = false end)
-      end)
+      -- local select_next = false
+      -- map({ 'i' }, '<C-;>', function()
+      --   local ok, _ = pcall(ls.activate_node, {
+      --     strict = true,
+      --     select = select_next,
+      --   })
+      --   if not ok then
+      --     print('No code.')
+      --     return
+      --   end
+      --
+      --   if select_next then return end
+      --
+      --   local curbuf = vim.api.nvim_get_current_buf()
+      --   local hl_duration_ms = 100
+      --
+      --   local node = ls.session.current_nodes[curbuf]
+      --   local from, to = node:get_buf_position { raw = true }
+      --
+      --   -- hl snippet for 100ms
+      --   local id = vim.api.nvim_buf_set_extmark(curbuf, ls.session.ns_id, from[1], from[2], {
+      --     -- one line below, at col 0 => entire last lnie is highlighted
+      --     end_row = to[1],
+      --     end_col = to[2],
+      --     hl_group = 'Visual',
+      --   })
+      --
+      --   vim.defer_fn(function() vim.api.nvim_buf_del_extmark(curbuf, ls.session.ns_id, id) end, hl_duration_ms)
+      --
+      --   -- select if there is another press within the next second
+      --   select_next = true
+      --   vim.uv.new_timer():start(1000, 0, function() select_next = false end)
+      -- end)
 
       ls.config.set_config {
         keep_roots = true,
@@ -96,7 +96,8 @@ return {
         delete_check_events = 'InsertEnter, TextChanged',
         -- store_selection_keys = '<Tab>',
         cut_selection_keys = '<Tab>',
-        ft_func = require('luasnip.extras.filetype_functions').from_pos_or_filetype,
+        -- ft_func = require('luasnip.extras.filetype_functions').from_pos_or_filetype,
+        -- ft_func = require('luasnip.extras.filetype_functions').from_cursor_pos,
         snip_env = {
           -- __snip_env_behavior = 'extend', -- 'extend' | 'set'
           ai = require('luasnip.nodes.absolute_indexer'),
@@ -284,9 +285,9 @@ return {
 
       eo.command('LuaSnipEdit', function() require('luasnip.loaders').edit_snippet_files() end, {})
 
-      ls.filetype_extend('NeogitCommitMessage', { 'gitcommit' })
+      -- ls.filetype_extend('NeogitCommitMessage', { 'gitcommit' })
       -- ls.filetype_extend('typescriptreact', { 'javascript', 'typescript' })
-      ls.filetype_extend('quarto', { 'markdown' })
+      -- ls.filetype_extend('quarto', { 'markdown' })
 
       require('luasnip.loaders.from_lua').lazy_load {
         paths = './luasnippets',

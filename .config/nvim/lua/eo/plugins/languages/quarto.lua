@@ -1,27 +1,6 @@
 ---@type LazySpec
 return {
   {
-    'jmbuhr/otter.nvim',
-    opts = {
-      --[[ settings are from dsully: https://github.com/dsully/nvim/blob/main/lua/plugins/otter.lua ]]
-      lsp = {
-        root_dir = function(_, bufnr)
-          -- 'Justfile',
-          -- 'pyproject.toml',
-          -- 'Makefile',
-          return vim.fs.root(bufnr or 0, {
-            '.git',
-            '_quarto.yml',
-            'package.json',
-          }) or vim.fn.getcwd(0)
-        end,
-      },
-      -- buffers = {
-      --   write_to_disk = true,
-      -- },
-    },
-  },
-  {
     'quarto-dev/quarto-nvim',
     ft = { 'quarto' },
     keys = {
@@ -65,7 +44,28 @@ return {
     },
     dependencies = {
       'nvim-lspconfig',
-      'otter.nvim',
+      -- 'otter.nvim',
+      {
+        'jmbuhr/otter.nvim',
+        opts = {
+          --[[ settings are from dsully: https://github.com/dsully/nvim/blob/main/lua/plugins/otter.lua ]]
+          -- lsp = {
+          --   root_dir = function(_, bufnr)
+          --     -- 'Justfile',
+          --     -- 'Makefile',
+          --     return vim.fs.root(bufnr or 0, {
+          --       'pyproject.toml',
+          --       '.git',
+          --       '_quarto.yml',
+          --       'package.json',
+          --     }) or vim.fn.getcwd(0)
+          --   end,
+          -- },
+          buffers = {
+            write_to_disk = true, --[[ may be required by conform's injected/rumdl/ ]]
+          },
+        },
+      },
     },
     ---@type QuartoConfig
     opts = {
@@ -92,13 +92,13 @@ return {
         enabled = true,
         default_method = 'slime', -- "molten", "slime", "iron" or <function>
         -- filetype to runner, ie. `{ python = "molten" }`.
-        -- ft_runners = {
-        --   -- { julia = function() require('smuggler') end },
-        --   { python = 'molten' },
-        --   { julia = 'molten' },
-        -- },
+        ft_runners = {
+          -- { julia = function() require('smuggler') end },
+          { python = 'molten' },
+          { julia = 'slime' },
+        },
         -- Takes precedence over `default_method`
-        -- never_run = { 'yaml' }, -- filetypes which are never sent to a code runner
+        never_run = { 'yaml' }, -- filetypes which are never sent to a code runner
       },
     },
   },

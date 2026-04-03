@@ -110,173 +110,176 @@ local function resolveOpenAIHTTPEnv()
 end
 
 return {
-  'olimorris/codecompanion.nvim',
-  cmd = { 'CodeCompanion', 'CodeCompanionChat' },
-  -- init = function() vim.g.whichkeyAddSpec { '<leader>a', group = ' AI' } end,
-  config = function(_, opts)
-    require('codecompanion').setup(opts)
-
-    spinnerNotificationWhileRequest()
-
-    setupFinishSound()
-  end,
-  keys = {
-    {
-      '<leader>ac',
-      '<cmd>CodeCompanionChat toggle<CR>',
-      desc = ' Chat (toggle)',
-      mode = { 'n', 'v' },
-      silent = true,
+  {
+    'olimorris/codecompanion.nvim',
+    cmd = { 'CodeCompanion', 'CodeCompanionChat' },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      branch = 'master',
     },
+    keys = {
+      {
+        '<leader>ac',
+        '<cmd>CodeCompanionChat toggle<CR>',
+        desc = ' Chat (toggle)',
+        mode = { 'n', 'v' },
+        silent = true,
+      },
+      {
+        '<leader><C-a>',
+        '<cmd>CodeCompanionActions<CR>',
+        desc = ' Chat (toggle)',
+        silent = true,
+        noremap = true,
+        mode = { 'n', 'v' },
+      },
     -- stylua: ignore start
-    -- stylua: ignore end
-    {
-      '<leader><C-a>',
-      '<cmd>CodeCompanionActions<CR>',
-      desc = ' Chat (toggle)',
-      silent = true,
-      noremap = true,
-      mode = { 'n', 'v' },
+    { "<leader>an", "<cmd>CodeCompanionChat<CR>", desc = " Chat (new)" },
+    { "<leader>aa", ":CodeCompanion<CR>", mode = "x", desc = " 󰘎 Prompt" },
+    -- builtin-prompts https://github.com/olimorris/codecompanion.nvim/blob/main/lua/codecompanion/config.lua
+    { "<leader>ae", function() require("codecompanion").prompt("explain") end, mode = "x", desc = " Explain" },
+    { "<leader>af", function() require("codecompanion").prompt("fix") end, mode = "x", desc = " Fix" },
+    -- my own prompts
+    { "<leader>as", function() require("codecompanion").prompt("simplify") end, mode = "x", desc = " Simplify" },
+      -- { "<leader>ap", function() require("codecompanion").prompt("proofread") end, mode = "x", desc = " Proofread" },
+      -- stylua: ignore end
     },
-    -- stylua: ignore start
-      { "<leader>an", "<cmd>CodeCompanionChat<CR>", desc = " Chat (new)" },
-      { "<leader>aa", ":CodeCompanion<CR>", mode = "x", desc = " 󰘎 Prompt" },
-      -- builtin-prompts https://github.com/olimorris/codecompanion.nvim/blob/main/lua/codecompanion/config.lua
-      { "<leader>ae", function() require("codecompanion").prompt("explain") end, mode = "x", desc = " Explain" },
-      { "<leader>af", function() require("codecompanion").prompt("fix") end, mode = "x", desc = " Fix" },
-      -- my own prompts
-      { "<leader>as", function() require("codecompanion").prompt("simplify") end, mode = "x", desc = " Simplify" },
-    -- { "<leader>ap", function() require("codecompanion").prompt("proofread") end, mode = "x", desc = " Proofread" },
-    -- stylua: ignore end
-  },
-  opts = {
-    display = {
-      diff = { enabled = true }, -- https://codecompanion.olimorris.dev/configuration/chat-buffer.html#diff
+    opts = {
+      display = {
+        diff = { enabled = true }, -- https://codecompanion.olimorris.dev/configuration/chat-buffer.html#diff
 
-      -- https://codecompanion.olimorris.dev/configuration/chat-buffer.html
-      chat = {
-        auto_scroll = true,
-        intro_message = '',
-        fold_context = true, -- BUG not working
-        icons = { chat_context = '󰔌' }, -- icon for the fold context
-        window = {
-          opts = {
-            foldlevel = 1,
-            foldmethod = 'expr',
-            foldexpr = 'v:lua.vim.treesitter.foldexpr()', -- allow folding codeblocks
-            statuscolumn = ' ', -- padding
+        -- https://codecompanion.olimorris.dev/configuration/chat-buffer.html
+        chat = {
+          auto_scroll = true,
+          intro_message = '',
+          fold_context = true, -- BUG not working
+          icons = { chat_context = '󰔌' }, -- icon for the fold context
+          window = {
+            opts = {
+              foldlevel = 1,
+              foldmethod = 'expr',
+              foldexpr = 'v:lua.vim.treesitter.foldexpr()', -- allow folding codeblocks
+              statuscolumn = ' ', -- padding
+            },
           },
         },
       },
-    },
-    strategies = {
-      inline = { adapter = 'openai' },
-      chat = {
-        adapter = 'openai',
-        keymaps = {
-          close = { modes = { n = 'q' }, opts = { nowait = true } },
-          stop = { modes = { n = '<C-c>' } },
-          clear = { modes = { n = '<C-k>', i = '<D-k>' } },
-          next_header = { modes = { n = '<C-j>', i = '<C-j>' } },
-          previous_header = { modes = { n = '<C-k>', i = '<C-k>' } },
-          fold_code = { modes = { n = 'zz' } },
-        },
-      },
-    },
-    adapters = {
-      acp = {
-        codex = function()
-          return require('codecompanion.adapters').extend('codex', {
-            defaults = {
-              auth_method = 'openai-api-key', -- "codex-api-key"
-            },
-            env = {
-              OPENAI_API_KEY = os.getenv('OPENAI_API_KEY'),
-            },
-          })
-        end,
-      },
-      -- '$HOME/Library/Mobile Documents/com~apple~CloudDocs/Dotfolder/private dotfiles/openai-api-key.txt'
-      http = {
-        openai = function()
-          return require('codecompanion.adapters').extend('openai', {
-            env = resolveOpenAIHTTPEnv(),
-            schema = {
-              model = { default = model },
-              reasoning_effort = { default = reasoning_effort },
-            },
-          })
-        end,
-      },
-    },
-    prompt_library = {
-      -- https://codecompanion.olimorris.dev/extending/prompts.html
-      ['Simplify'] = {
-        strategy = 'inline',
-        opts = {
-          modes = { 'v' },
-          short_name = 'simplify',
-          auto_submit = true,
-          stop_context_insertion = true,
-          user_prompt = false,
-        },
-        prompts = {
-          {
-            role = 'system',
-            content = function(ctx)
-              return ([[
-                I want you to act as a senior %s developer.
-
-
-                I will send you some code, and I want you to simplify
-                the code while not diminishing its readability.
-
-
-                Keep the indentation level the same, and do not change
-                for formatting style.
-              ]]):format(ctx.filetype)
-            end,
-          },
-          {
-            role = 'user',
-            content = function(ctx)
-              -- stylua: ignore
-              return require("codecompanion.helpers.actions").get_code(ctx.start_line, ctx.end_line)
-            end,
-            opts = { contains_code = true },
+      strategies = {
+        inline = { adapter = 'openai' },
+        chat = {
+          adapter = 'openai',
+          keymaps = {
+            close = { modes = { n = 'q' }, opts = { nowait = true } },
+            stop = { modes = { n = '<C-c>' } },
+            clear = { modes = { n = '<C-k>', i = '<D-k>' } },
+            next_header = { modes = { n = '<C-j>', i = '<C-j>' } },
+            previous_header = { modes = { n = '<C-k>', i = '<C-k>' } },
+            fold_code = { modes = { n = 'zz' } },
           },
         },
       },
-      -- ['Proofread'] = {
-      --   strategy = 'inline',
-      --   opts = {
-      --     modes = { 'v' },
-      --     short_name = 'proofread',
-      --     auto_submit = true,
-      --     stop_context_insertion = true,
-      --     user_prompt = false,
-      --   },
-      --   prompts = {
-      --     {
-      --       role = 'system',
-      --       content = function(_ctx)
-      --         return [[
-      --           You are an editor for the English language.
-      --           I will send you some text, and I want you to improve the
-      --           language, without changing the meaning.
-      --         ]]
-      --       end,
+      adapters = {
+        acp = {
+          codex = function()
+            return require('codecompanion.adapters').extend('codex', {
+              defaults = {
+                auth_method = 'openai-api-key', -- "codex-api-key"
+              },
+              env = {
+                OPENAI_API_KEY = os.getenv('OPENAI_API_KEY'),
+              },
+            })
+          end,
+        },
+        -- '$HOME/Library/Mobile Documents/com~apple~CloudDocs/Dotfolder/private dotfiles/openai-api-key.txt'
+        http = {
+          openai = function()
+            return require('codecompanion.adapters').extend('openai', {
+              env = resolveOpenAIHTTPEnv(),
+              -- schema = {
+              --   model = { default = model },
+              --   reasoning_effort = { default = reasoning_effort },
+              -- },
+            })
+          end,
+        },
+      },
+      -- prompt_library = {
+      --   -- https://codecompanion.olimorris.dev/extending/prompts.html
+      --   ['Simplify'] = {
+      --     strategy = 'inline',
+      --     opts = {
+      --       modes = { 'v' },
+      --       short_name = 'simplify',
+      --       auto_submit = true,
+      --       stop_context_insertion = true,
+      --       user_prompt = false,
       --     },
-      --     {
-      --       role = 'user',
-      --       content = function(ctx)
+      --     prompts = {
+      --       {
+      --         role = 'system',
+      --         content = function(ctx)
+      --           return ([[
+      --         I want you to act as a senior %s developer.
+      --
+      --
+      --         I will send you some code, and I want you to simplify
+      --         the code while not diminishing its readability.
+      --
+      --
+      --         Keep the indentation level the same, and do not change
+      --         for formatting style.
+      --         ]]):format(ctx.filetype)
+      --         end,
+      --       },
+      --       {
+      --         role = 'user',
+      --         content = function(ctx)
       --         -- stylua: ignore
       --         return require("codecompanion.helpers.actions").get_code(ctx.start_line, ctx.end_line)
-      --       end,
+      --         end,
+      --         opts = { contains_code = true },
+      --       },
       --     },
       --   },
+      --   -- ['Proofread'] = {
+      --   --   strategy = 'inline',
+      --   --   opts = {
+      --   --     modes = { 'v' },
+      --   --     short_name = 'proofread',
+      --   --     auto_submit = true,
+      --   --     stop_context_insertion = true,
+      --   --     user_prompt = false,
+      --   --   },
+      --   --   prompts = {
+      --   --     {
+      --   --       role = 'system',
+      --   --       content = function(_ctx)
+      --   --         return [[
+      --   --           You are an editor for the English language.
+      --   --           I will send you some text, and I want you to improve the
+      --   --           language, without changing the meaning.
+      --   --         ]]
+      --   --       end,
+      --   --     },
+      --   --     {
+      --   --       role = 'user',
+      --   --       content = function(ctx)
+      --   --         -- stylua: ignore
+      --   --         return require("codecompanion.helpers.actions").get_code(ctx.start_line, ctx.end_line)
+      --   --       end,
+      --   --     },
+      --   --   },
+      --   -- },
       -- },
     },
+    config = function(_, opts)
+      require('codecompanion').setup(opts)
+
+      spinnerNotificationWhileRequest()
+
+      setupFinishSound()
+    end,
   },
 }
 

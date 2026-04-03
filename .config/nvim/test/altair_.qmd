@@ -1,0 +1,17 @@
+---
+author: "Ernest Orlowski"
+format: html
+jupyter: jupyterlab_python3
+title: "Altair tutorial with Quarto"
+---
+
+These were taken from the [altair-tutorial](https://altair-viz.github.io/altair-tutorial/notebooks/Index.htmlhttps://altair-viz.github.io/altair-tutorial/notebooks/Index.html).
+
+```{python}
+import altair as alt
+from vega_datasets import data
+
+data.list_datasets()
+```
+
+

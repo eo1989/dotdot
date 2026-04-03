@@ -25,35 +25,15 @@ function _G.dump(...)
   print(unpack(objects))
 end
 
-local map = vim.keymap
-
-map.del('n', 'grt')
-map.del('n', 'gri')
-map.del('n', 'grr')
-map.del('n', 'grn')
-map.del({ 'n', 'x' }, 'gra')
-map.del('n', 'gO')
-map.del('n', ']b')
-map.del('n', '[b')
-map.del('n', ']B')
-map.del('n', '[B')
-map.del('n', ']l')
-map.del('n', '[l')
-map.del('n', ']L')
-map.del('n', '[L')
-map.del('n', ']q')
-map.del('n', '[q')
-map.del('n', ']Q')
-map.del('n', '[Q')
-
 -- vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
 opt.completeopt = 'menu,menuone,preview'
 
 opt.clipboard = 'unnamedplus'
 
-g.border = not vim.g.vscode and eo.ui.current.border or 'rounded'
+-- g.border = not vim.g.vscode and eo.ui.current.border or 'rounded'
 
+-- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
 -- vim.o.winborder = g.border
 
 g.query_lint_on = {}
@@ -80,22 +60,18 @@ g.vimsyn_folding = 'afhlpPr'
 g.nvim_dir = fn.expand('~/.config/nvim')
 env.NVIM_CONFIG = g.nvim_dir
 
-opt.cursorline = true
-opt.shell = '/opt/homebrew/bin/zsh'
--- opt.selection = 'inclusive' -- default => 'inclusive', 'exclusive' 'old' also a possible value.
+o.cursorline = true
+o.shell = '/opt/homebrew/bin/zsh'
+
 opt.wrap = false
 opt.wrapscan = true
 opt.wrapmargin = 2
--- o.numberwidth = 4 -- default 4
-
 -- o.textwidth = 100
 opt.colorcolumn = '+1'
 -- o.wrapscan = true
 opt.matchpairs:append('<:>')
--- opt.syntax = 'enable'
 opt.incsearch = true
 opt.smarttab = true
--- opt.path:append { '**' } --'**'
 o.path = '**'
 opt.synmaxcol = 300
 opt.whichwrap = 'h,l'
@@ -149,7 +125,6 @@ opt.guicursor = {
 opt.titleold = fn.fnamemodify(uv.os_getenv('SHELL'), ':t') or ''
 opt.title = true
 opt.titlelen = 70
--- opt.cursorlineopt = { 'both' }
 opt.updatetime = 300
 opt.timeout = true
 opt.timeoutlen = 400

@@ -1,5 +1,3 @@
-   
-
 ## Abstraction
 # from abc import ABC, abstractmethod
 
@@ -30,6 +28,7 @@
 
 
 ## Polymorphism
+
 
 class Shape:
     def area(self):

@@ -36,12 +36,14 @@ vim.api.nvim_create_autocmd('User', {
   end,
 })
 
+-- { 'jmbuhr/cmp-pandoc-references' },
+
 ---@type LazySpec
 return {
   {
     ---@module 'blink-cmp'
     'saghen/blink.cmp',
-    version = '1.*', -- looks like its required if you want the correct prebuilt binaries
+    version = '*', -- looks like its required if you want the correct prebuilt binaries
     -- lazy = false,
     event = { 'InsertEnter', 'CmdlineEnter', 'VeryLazy' },
     dependencies = {
@@ -62,7 +64,6 @@ return {
         dependencies = { 'nvim-lua/plenary.nvim' },
       },
       { 'kristijanhusak/vim-dadbod-completion' },
-      -- { 'jmbuhr/cmp-pandoc-references' },
       { 'erooke/blink-cmp-latex' },
       { 'kdheepak/cmp-latex-symbols' },
     },
@@ -73,10 +74,9 @@ return {
         prebuilt_binaries = { download = true },
       },
       --[[ from:
-         ~~https://github.com/hat0uma/dotfiles/blob/main/.config/nvim/lua/plugins/completion/blink.lua~~
-
+         https://github.com/hat0uma/dotfiles/blob/main/.config/nvim/lua/plugins/completion/blink.lua
          https://github.com/b0o/dotfiles/blob/main/config/nvim/lua/user/plugins/completion.lua
-        --]]
+      --]]
       ---@type blink.cmp.KeymapConfig
       keymap = {
         preset = 'super-tab',
@@ -90,6 +90,14 @@ return {
               return cmp.select_and_accept()
             end
           end,
+          function()
+            if vim.fn.pumvisible() == 1 then
+              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-y>', true, false, true), 'n', false)
+              return true
+            else
+              return false
+            end
+          end,
           'snippet_forward',
           'fallback',
         },
@@ -100,10 +108,10 @@ return {
         },
         ['<Up>'] = { 'select_prev', 'fallback' },
         ['<Down>'] = { 'select_next', 'fallback' },
-        ['<C-Space>'] = { 'show', 'show_documentation', 'hide_documentation' },
-        ['<D-i>'] = { function(cmp) cmp.show { providers = { 'copilot' } } end },
-        ['<C-p>'] = { 'select_prev', 'show', 'fallback' },
-        ['<C-n>'] = { 'show_and_insert', 'select_next', 'fallback' },
+        -- ['<C-Space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        -- ['<D-i>'] = { function(cmp) cmp.show { providers = { 'copilot' } } end },
+        -- ['<C-p>'] = { 'select_prev', 'show', 'fallback' },
+        -- ['<C-n>'] = { 'show_and_insert', 'select_next', 'fallback' },
         ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
         ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
       },
@@ -118,14 +126,9 @@ return {
       },
       signature = {
         enabled = true,
-        -- trigger = {
-        --   enabled = true,
-        --   show_on_insert = true,
-        --   show_on_trigger_character = true,
-        -- },
         window = {
           direction_priority = { 's', 'n' },
-          border = border or 'rounded',
+          border = border,
           treesitter_highlighting = true,
           -- show_documentation = true,
           winblend = 10,
@@ -170,38 +173,9 @@ return {
         },
         ---@type blink.cmp.CompletionMenuConfig
         menu = {
-          -- enabled = true,
-          -- auto_show = true,
           ---@type blink.cmp.WindowBorder
           border = border,
-          -- cmdline_position = function()
-          --   if vim.g.ui_cmdline_pos ~= nil then
-          --     local pos = vim.g.ui_cmdline_pos -- (1, 0)-indexed
-          --     return { pos[1] - 1, pos[2] }
-          --   end
-          --   local height = (vim.o.cmdheight == 0) and 1 or vim.o.cmdheight
-          --   return { vim.o.lines - height, 0 }
-          -- end,
-          -- min_width = vim.go.pumwidth > 0 and vim.go.pumwidth or nil, ---@diagnostic disable-line: assign-type-mismatch
-          -- max_height = vim.go.pumheight > 0 and vim.go.pumheight or nil, ---@diagnostic disable-line: assign-type-mismatch
-          -- min_width = 40,
-          -- max_height = 40,
           direction_priority = { 'n', 's' },
-          -- direction_priority = function()
-          --   local ctx = require('blink.cmp').get_context()
-          --   local item = require('blink.cmp').get_selected_item()
-          --   if ctx == nil or item == nil then return { 's', 'n' } end
-          --   local item_next = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
-          --   local is_multi_line = item_next:find('\n') ~= nil
-          --
-          --   -- after showing the menu upwards, maintain that direction
-          --   -- until we re-open the menu, so store the context id in a global var
-          --   if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
-          --     vim.g.blink_cmp_upwards_ctx_id = ctx.id
-          --     return { 'n', 's' }
-          --   end
-          --   return { 's', 'n' }
-          -- end,
           ---@type blink.cmp.Draw
           draw = {
             treesitter = { 'lsp' },
@@ -250,11 +224,11 @@ return {
         },
         providers = {
           --[[https://github.com/chrisgrieser/.config/blob/main/nvim/lua/plugin-specs/blink-cmp.lua]]
-          -- buffer = {
-          --   -- with '-7', typing `then` in lua prioritizes the `then .. end` snippet, effectively
-          --   -- acting as `nvim-endwise`.
-          --   score_offset = -7,
-          -- },
+          buffer = {
+            -- with '-7', typing `then` in lua prioritizes the `then .. end` snippet, effectively
+            -- acting as `nvim-endwise`.
+            score_offset = -7,
+          },
           dadbod = {
             name = 'dadbod',
             module = 'vim_dadbod_completion.blink',
@@ -383,18 +357,6 @@ return {
               return items
             end,
           },
-          -- symbols = {
-          --   name = 'symbols',
-          --   module = 'blink.compat.source',
-          --   enabled = function() return vim.tbl_contains({ 'julia', 'markdown', 'quarto' }, vim.bo.filetype) end,
-          -- },
-
-          -- references = {
-          --   name = 'pandoc_references',
-          --   module = 'cmp-pandoc-references.blink',
-          --   score_offset = 2,
-          --   enabled = function() return vim.tbl_contains({ 'markdown', 'quarto' }, vim.bo.filetype) end,
-          -- },
           latex_symbols = {
             name = 'latex_symbols',
             module = 'blink.compat.source',
@@ -492,9 +454,9 @@ return {
         -- ['dap-repl'] = false,
         -- DressingInput = false,
         -- TelescopePrompt = false,
-        ['neo-tree-popup'] = false,
+        ['neo-tree-*'] = false,
         NeogitCommitMessage = false,
-        ['snacks-input'] = false,
+        ['snacks-*'] = false,
         sh = function()
           if string.match(vim.fs.basename(api.nvim_buf_get_name(0)), '^%.env.*') then
             -- disable copilot for .env files
@@ -581,3 +543,44 @@ return {
     },
   },
 }
+
+-- symbols = {
+--   name = 'symbols',
+--   module = 'blink.compat.source',
+--   enabled = function() return vim.tbl_contains({ 'julia', 'markdown', 'quarto' }, vim.bo.filetype) end,
+-- },
+-- references = {
+--   name = 'pandoc_references',
+--   module = 'cmp-pandoc-references.blink',
+--   score_offset = 2,
+--   enabled = function() return vim.tbl_contains({ 'markdown', 'quarto' }, vim.bo.filetype) end,
+-- },
+-- enabled = true,
+-- auto_show = true,
+-- cmdline_position = function()
+--   if vim.g.ui_cmdline_pos ~= nil then
+--     local pos = vim.g.ui_cmdline_pos -- (1, 0)-indexed
+--     return { pos[1] - 1, pos[2] }
+--   end
+--   local height = (vim.o.cmdheight == 0) and 1 or vim.o.cmdheight
+--   return { vim.o.lines - height, 0 }
+-- end,
+-- min_width = vim.go.pumwidth > 0 and vim.go.pumwidth or nil, ---@diagnostic disable-line: assign-type-mismatch
+-- max_height = vim.go.pumheight > 0 and vim.go.pumheight or nil, ---@diagnostic disable-line: assign-type-mismatch
+-- min_width = 40,
+-- max_height = 40,
+-- direction_priority = function()
+--   local ctx = require('blink.cmp').get_context()
+--   local item = require('blink.cmp').get_selected_item()
+--   if ctx == nil or item == nil then return { 's', 'n' } end
+--   local item_next = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
+--   local is_multi_line = item_next:find('\n') ~= nil
+--
+--   -- after showing the menu upwards, maintain that direction
+--   -- until we re-open the menu, so store the context id in a global var
+--   if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
+--     vim.g.blink_cmp_upwards_ctx_id = ctx.id
+--     return { 'n', 's' }
+--   end
+--   return { 's', 'n' }
+-- end,

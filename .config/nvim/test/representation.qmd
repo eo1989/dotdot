@@ -1,0 +1,48 @@
+---
+author: "Ernest Orlowski"
+engine: julia
+format: html
+title: "Algorithms for Decision Making"
+---
+
+*Decisions for decision making*
+
+## Chapter 2: Representation
+
+### Degrees of belief & probability
+
+It is essential to be able to compare the plausibility of different statements
+involving problems of uncertainty. The representation that proposition $A$ is
+more plausible than proposition $B$, or If $A$ represents "my actuator failed",
+and $B$ represents "my sensor failed," would be written as $A \succ B$.
+Utilizing the basic relation $\succ$, the following may be defined:
+
+- $A \prec B \text{ iff } B \succ A$
+- $A \backsim B \text{ iff neither } A \succ B \text{ nor } B \succ A$
+- $A \succeq B \text{ iff } A \succ B \text{ or } A \backsim B$
+- $A \preceq B \text{ iff } B \succ A \text{ or } A \backsim B$
+
+We want to make certain assumptions about the relationships induced by the
+operators $\succ$, $\backsim$,& $\prec$. The assumptions of *universal
+comparability* requires exactly one of the following to hold:
+$A \succ B$, $B \backsim A$, or $A \prec B$. The assumption of *transitivity*
+requires that if $A \succeq B$ and $B \succeq C$, then $A \succeq C$. These
+transivity assumptions lead to an ability to represent plausibility by
+real-valued function $P$ that has the following two properties:
+
+$$
+\begin{align}
+P(A) > P(B) \text{ iff } A \succ B \\
+P(A) = P(B) \text{ iff } A \backsim B
+\end{align}
+$$
+
+```{python}
+import numpy as np
+import scipy.stats as st
+import matplotlib.pyplot as plt
+import seaborn as sns
+import math as mt
+
+sns.set_style(style="")
+```

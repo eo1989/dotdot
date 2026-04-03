@@ -54,6 +54,6 @@
   "completion.autoRequire": false,
   "completion.callSnippet": "Replace",
   "completion.keywordSnippet": "Replace",
-  "completion.workspaceWord": true,
-  "workspace.library": ["/Users/eo/.config/nvim"]
+  "completion.workspaceWord": true
+  // "workspace.library": ["/Users/eo/.config/nvim"]
 }

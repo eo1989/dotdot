@@ -12,16 +12,16 @@ return {
     'folke/lazydev.nvim',
     ft = 'lua',
     -- cmd = 'LazyDev',
-    -- cond = false,
     -- event = { 'LspAttach', 'VeryLazy' },
+
     priorty = 1000,
     lazy = false,
     dependencies = {
       'Bilal2453/luvit-meta',
     },
     opts = {
-      integrations = { cmp = true, lspconfig = true },
-      -- integrations = { cmp = true, lspconfig = false },
+      -- integrations = { cmp = true, lspconfig = true },
+      integrations = { cmp = true, lspconfig = false },
       library = {
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
         { path = 'snacks.nvim', words = { 'Snacks', 'snacks' } },
@@ -32,15 +32,20 @@ return {
         { path = 'which-key.nvim', words = { 'wk' } },
       },
     },
+    -- config = function(_, opts) require('lazydev').setup(opts) end,
   },
   {
     'DNLHC/glance.nvim',
     enabled = true,
-    event = { 'LspAttach', 'VeryLazy' },
+    -- event = { 'LspAttach' },
     cmd = 'Glance',
     config = function()
       local glance = require('glance')
       local actions = require('glance').actions
+
+      -- glance.register_method {
+      --   method = 'julials/client/typeHierarchy',
+      -- }
 
       glance.setup {
         preserve_win_context = true,
@@ -65,8 +70,8 @@ return {
         indent_lines = {
           enable = true,
         },
-        height = 24, -- 32 -> default = 18
-        zindex = 49, -- 45 -> default
+        height = 18, -- 32 -> default = 18
+        zindex = 45, -- 45 -> default
         border = {
           enable = false, -- adds extra space and looks ghastly
           top_char = '▁',
@@ -74,112 +79,109 @@ return {
         },
         theme = {
           enable = true,
-          mode = 'darken',
+          -- mode = 'darken',
         },
       }
     end,
   },
-  { 'b0o/schemastore.nvim' },
+  { 'b0o/schemastore.nvim', event = { 'LspAttach', 'VeryLazy' } },
   {
     'neovim/nvim-lspconfig',
-    lazy = false,
+    event = { 'BufReadPre', 'BufRead' },
+    -- lazy = false,
     version = false,
-    dependencies = {
-      'saghen/blink.cmp',
-    },
+    dependencies = { 'saghen/blink.cmp' },
     config = function()
-      -- require('eo.lsp')
-      local capabilities = nil
-      local blink = require('blink.cmp')
+      require('eo.lsp')
+
+      -- local capabilities = nil
+      -- local blink = require('blink.cmp')
 
       -- if pcall(require, 'blink.cmp') then
       -- capabilities = require('blink.cmp').get_lsp_capabilities {
 
-      capabilities = blink.get_lsp_capabilities {
-        textDocument = {
-          foldingRange = {
-            dynamicRegistration = false,
-            lineFoldingOnly = true,
-          },
-          completion = {
-            completionItem = {
-              contextSupport = true,
-              snippetSupport = true,
-              deprecatedSupport = true,
-              commitCharacterSupport = true,
-              resolveSupport = {
-                properties = {
-                  'documentation',
-                  'detail',
-                  'additionalTextEdits',
-                },
-              },
-              labelDetailsSupport = true,
-              documentationFormat = { 'markdown', 'plaintext' },
-            },
-          },
-          semanticTokens = { multilineTokenSupport = true },
-        },
-        workspace = {
-          didChangeWatchedFiles = { dynamicRegistration = false },
-          diagnostics = { refreshSupport = true },
-        },
-        experimental = {
-          hoverActions = true,
-          hoverRange = true,
-          serverStatusNotification = true,
-          codeActionGroup = true,
-          ssr = true,
-          commands = {
-            'editor.action.triggerParameterHints',
-          },
-        },
-      }
-      -- end
+      -- capabilities = blink.get_lsp_capabilities {
+      --   textDocument = {
+      --     foldingRange = {
+      --       dynamicRegistration = false,
+      --       lineFoldingOnly = true,
+      --     },
+      --     completion = {
+      --       completionItem = {
+      --         contextSupport = true,
+      --         snippetSupport = true,
+      --         deprecatedSupport = true,
+      --         commitCharacterSupport = true,
+      --         resolveSupport = {
+      --           properties = {
+      --             'documentation',
+      --             'detail',
+      --             'additionalTextEdits',
+      --           },
+      --         },
+      --         labelDetailsSupport = true,
+      --         documentationFormat = { 'markdown', 'plaintext' },
+      --       },
+      --     },
+      --     semanticTokens = { multilineTokenSupport = true },
+      --   },
+      --   workspace = {
+      --     didChangeWatchedFiles = { dynamicRegistration = false },
+      --     diagnostics = { refreshSupport = true },
+      --   },
+      --   experimental = {
+      --     hoverActions = true,
+      --     hoverRange = true,
+      --     serverStatusNotification = true,
+      --     codeActionGroup = true,
+      --     ssr = true,
+      --     commands = {
+      --       'editor.action.triggerParameterHints',
+      --     },
+      --   },
+      -- }
 
-      vim.lsp.config('*', {
-        capabilities = capabilities,
-        -- root_markers = { '*.git' },
-      } --[[@as vim.lsp.Config]])
+      -- vim.lsp.config('*', {
+      --   capabilities = capabilities,
+      -- } --[[@as vim.lsp.Config]])
 
-      local configured = {
-        'basedpyright',
-        'bashls',
-        'biome',
-        'gopls',
-        'dotls',
-        'jsonls',
-        'jetls',
-        'julials',
-        'lua_ls',
-        'marksman',
-        'markdown-oxide',
-        'pyrefly',
-        'pytest-language-server',
-        'pkl',
-        'ruff',
-        'rumdl',
-        'rust_analyzer',
-        'sqls',
-        -- 'sqlls',
-        -- 'taplo',
-        'tombi',
-        'ty',
-        'postgres_lsp', -- supabase-common/postgres-language-server
-        'yamlls',
-        -- 'zubanls',
-      }
+      -- local configured = {
+      --   'basedpyright',
+      --   'bashls',
+      --   'biome',
+      --   'gopls',
+      --   'dotls',
+      --   'jsonls',
+      --   'jetls',
+      --   'julials',
+      --   'lua_ls',
+      --   'marksman',
+      --   'ruff',
+      --   'rumdl',
+      --   'rust_analyzer',
+      --   'sqls',
+      --   'tombi',
+      --   'ty',
+      --   'postgres_lsp', -- supabase-common/postgres-language-server
+      --   'yamlls',
+      -- }
 
-      vim.iter(configured):each(vim.schedule_wrap(function(server_name)
-        -- if disabled[server_name] then return end
-        vim.lsp.enable(server_name)
-      end))
+      -- 'markdown-oxide',
+      -- 'pyrefly',
+      -- 'pytest-language-server',
+      -- 'pkl',
+      -- 'sqlls',
+      -- 'taplo',
+      -- 'zuban',
+
+      -- vim.iter(configured):each(vim.schedule_wrap(function(server_name) vim.lsp.enable(server_name) end))
     end,
   },
   {
     'rachartier/tiny-inline-diagnostic.nvim',
     -- event = 'VeryLazy',
     priorty = 1000,
+    enabled = true,
     lazy = false,
     config = function()
       require('tiny-inline-diagnostic').setup {
@@ -209,7 +211,6 @@ return {
   },
   { 'mrjones2014/lua-gf.nvim', ft = 'lua', lazy = true },
   { 'onsails/lspkind.nvim', event = { 'VeryLazy' } }, -- forgot its needed by neotree :deadass:
-  -- { 'onsails/lspkind.nvim', enabled = false },
   {
     ---@module 'barbecue'
     'utilyre/barbecue.nvim',
@@ -225,7 +226,7 @@ return {
           highlight = true,
           lsp = {
             auto_attach = true,
-            preference = { 'ty', 'julials', 'basedpyright', 'jetls' },
+            preference = { 'basedpyright', 'ty', 'julials', 'jetls' },
             -- preference = { 'basedpyright', 'jetls' },
           },
         },
@@ -293,11 +294,11 @@ return {
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
         return { timeout_ms = 500, lsp_format = 'fallback', quiet = true, stop_after_first = true }
       end,
-      -- format_after_save = function(bufnr)
-      --   -- Disable with a global or buffer-local variable
-      --   if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
-      --   return { timeout_ms = 500, lsp_format = 'fallback' }
-      -- end,
+      format_after_save = function(bufnr)
+        -- Disable with a global or buffer-local variable
+        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
+        return { timeout_ms = 500, lsp_format = 'fallback' }
+      end,
       formatters_by_ft = {
         lua = { 'stylua' },
         python = { stop_after_first = false, 'ruff_format', 'ruff_fix', 'ruff_organize_imports' },
@@ -335,29 +336,30 @@ return {
             ignore_errors = false, -- dont abort if one sell fails
             -- map of ts lang to formatters to use
             -- (defaults to the value from formatters_by_ft)
-            lang_to_formatters = {},
-            lang_to_ext = {
-              bash = 'sh',
-              c_sharp = 'cs',
-              elixir = 'exs',
-              javascript = 'js',
-              julia = 'jl',
-              latex = 'tex',
-              markdown = 'md',
-              python = 'py',
-              ruby = 'rb',
-              rust = 'rs',
-              teal = 'tl',
-              r = 'r',
-              typescript = 'ts',
-            },
-            -- lang_to_formatters = {
-            --   -- python = { 'ruff_format', 'ruff_fix', 'ruff_organize_imports' },
-            --   -- julia = { 'runic', 'jlfmt', stop_after_first = true },
-            --   -- julia = { lsp_format = 'fallback', 'jl_fmt', 'jlfmt', '_runic', stop_after_first = true }, -- prefer | first
-            --   -- yaml = { 'yq', 'prettier' },
-            --   -- r = { stop_after_first = true, 'air', 'styler' },
+            -- lang_to_ext = {
+            --   bash = 'sh',
+            --   c_sharp = 'cs',
+            --   elixir = 'exs',
+            --   javascript = 'js',
+            --   julia = 'jl',
+            --   latex = 'tex',
+            --   markdown = 'md',
+            --   python = 'py',
+            --   ruby = 'rb',
+            --   rust = 'rs',
+            --   teal = 'tl',
+            --   r = 'r',
+            --   typescript = 'ts',
             -- },
+            -- lang_to_formatters = {},
+            lang_to_formatters = {
+              -- python = { 'ruff_format', 'ruff_fix', 'ruff_organize_imports' },
+              -- julia = { '_jlfmt', 'runic', stop_after_first = true },
+              julia = { '_jlfmt' },
+              -- julia = { lsp_format = 'fallback', 'jl_fmt', 'jlfmt', '_runic', stop_after_first = true }, -- prefer | first
+              -- yaml = { 'yq', 'prettier' },
+              -- r = { stop_after_first = true, 'air', 'styler' },
+            },
           },
         },
 
@@ -415,33 +417,33 @@ return {
           }
         end,
         stylua = { args = { '--search-parent-directories', '$FILENAME' }, stdin = false },
-        mdsf_fmt = function()
-          return {
-            command = 'mdsf',
-            condition = function(_, ctx)
-              return vim.fs.find({ 'mdsf.json', 'mdsf.toml' }, {
-                path = ctx.filename,
-                upward = true,
-              })[1]
-            end,
-            cwd = require('conform.util').root_file {
-              'mdsf.json',
-              'mdsf.toml',
-            },
-            require_cwd = false,
-            args = {
-              '--stdin',
-              '$FILENAME',
-            },
-            prepend_args = {
-              '--on-missing-language-definition',
-              'ignore',
-              '--on-missing-tool-binary',
-              'ignore',
-            },
-            stdin = false,
-          }
-        end,
+        -- mdsf_fmt = function()
+        --   return {
+        --     command = 'mdsf',
+        --     condition = function(_, ctx)
+        --       return vim.fs.find({ 'mdsf.json', 'mdsf.toml' }, {
+        --         path = ctx.filename,
+        --         upward = true,
+        --       })[1]
+        --     end,
+        --     cwd = require('conform.util').root_file {
+        --       'mdsf.json',
+        --       'mdsf.toml',
+        --     },
+        --     require_cwd = false,
+        --     args = {
+        --       '--stdin',
+        --       '$FILENAME',
+        --     },
+        --     prepend_args = {
+        --       '--on-missing-language-definition',
+        --       'ignore',
+        --       '--on-missing-tool-binary',
+        --       'ignore',
+        --     },
+        --     stdin = false,
+        --   }
+        -- end,
         shfmt = { command = 'shfmt', args = { '-i', '4', '-ci' } },
         sqruff = {
           command = 'sqruff',
@@ -460,10 +462,31 @@ return {
             return { '--language', 'postgresql' }
           end
         end,
+
         --[[=[
         NOTE: looks for .JuliaFormatter.toml; to turn off formatting use `#! format:off/on`
         --]=]]
 
+        _jlfmt = function()
+          return {
+            command = 'jlfmt',
+            cwd = require('conform.util').root_file { '.JuliaFormatter.toml' },
+            -- prepend_args = { '--prioritize-config-file' },
+            args = {
+              '--style',
+              'sciml',
+              -- '--margin',
+              -- '92',
+              -- '--diff',
+              -- '--check',
+              -- '--format-markdown',
+              '--inplace',
+              '--stdin-filename',
+              '$FILENAME',
+            },
+            stdin = true,
+          }
+        end,
         jlfmt = function()
           return {
             command = 'jlfmt',
@@ -474,9 +497,9 @@ return {
               'sciml',
               -- '--margin',
               -- '92',
-              '--diff',
+              -- '--diff',
               -- '--check',
-              '--format-markdown',
+              -- '--format-markdown',
               '--inplace',
               '--stdin-filename',
               '$FILENAME',

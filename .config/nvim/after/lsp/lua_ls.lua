@@ -28,39 +28,38 @@ if resources then table.insert(runtime_path, resources .. '/lua-plugin/plugin.lu
 
 ---@type vim.lsp.Config
 return {
-  ---@param client vim.lsp.client
-  -- cmd = { 'lua-language-server' },
-  -- filetypes = { 'lua' },
+  cmd = { 'lua-language-server' },
+  filetypes = { 'lua' },
   root_markers = {
-    { '.luarc.json', '.luarc.jsonc' },
+    { '.luarc.json', '.luarc.jsonc', 'stylua.toml', '.stylua.toml' },
     '.git',
   },
+  ---@param client vim.lsp.Client
+  single_file_support = true,
   on_attach = function(client, _)
     client.server_capabilities.documentFormattingProvider = false --|> conform stylua
     client.server_capabilities.documentRangeFormattingProvider = false --|> conform stylua
   end,
-  -- on_init = function(client, _)
-  --   client.server_capabilities.documentFormattingProvider = false --|> conform stylua
-  --   client.server_capabilities.documentRangeFormattingProvider = false --|> conform stylua
-  --   if client.workspace_folders then
-  --     local path = client.workspace_folders[1].name
-  --     if
-  --       path ~= vim.fn.stdpath('config')
-  --       and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
-  --     then
-  --       return
-  --     end
-  --   end
-  -- end,
-  settings = {
-    Lua = {
+  on_init = function(client, _)
+    client.server_capabilities.documentFormattingProvider = false --|> conform stylua
+    client.server_capabilities.documentRangeFormattingProvider = false --|> conform stylua
+    if client.workspace_folders then
+      local path = client.workspace_folders[1].name
+      if
+        path ~= vim.fn.stdpath('config')
+        and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
+      then
+        return
+      end
+    end
+    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
       runtime = {
         -- Tell the language server which version of Lua you're using
         -- (most likely LuaJIT in the case of Neovim)
         version = 'LuaJIT',
         path = runtime_path,
       },
-      codeLens = { enable = false }, -- disable for now
+      codeLens = { enable = true }, -- disable for now
       misc = {},
       hover = { expandAlias = false },
       type = { castNumberToInteger = false },
@@ -99,22 +98,26 @@ return {
       },
       completion = {
         autoRequire = false,
-        keywordSnippet = 'Disable',
+        -- keywordSnippet = 'Disable',
         workspaceWord = true, -- folke -> true
         callSnippet = 'Replace',
-        showWord = 'Disable',
+        -- showWord = 'Disable',
       },
       -- Make the server aware of Neovim runtime files
       workspace = {
-        ignoreDir = 'tmp/',
+        -- ignoreDir = 'tmp/',
         useGitIgnore = false,
+        -- maxPreload = 100,000,000,
         maxPreload = 100000000,
         preloadFileSize = 50000,
         checkThirdParty = false,
-        library = lua_library_files,
+        library = { lua_library_files },
       },
       telemetry = { enable = false },
-    },
+    })
+  end,
+  settings = {
+    Lua = {},
   },
 }
 

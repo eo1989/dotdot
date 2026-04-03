@@ -18,27 +18,55 @@ return {
     end,
   },
   single_file_support = true,
-  root_markers = { 'pyproject.toml', 'ty.toml', 'Pipfile', 'setup.py', 'setup.cfg', 'requirements.txt' },
+  root_markers = {
+    {
+      'pyproject.toml',
+      'requirements.txt',
+      'ty.toml',
+      'Pipfile',
+      'setup.py',
+      'setup.cfg',
+    },
+    '.git',
+  },
   ---@param client vim.lsp.Client
-  on_attach = function(client)
-    -- let treesitter handle semantic tokens
-    -- client.server_capabilities.semanticTokensProvider = false
-    -- client.server_capabilities.documentRangeFormattingProvider = false
-    -- client.server_capabilities.documentOnTypeFormattingProvider = nil
-    -- client.server_capabilities.documentFormattingProvider = false
-    -- client.server_capabilities.hoverProvider = nil
-    -- client.server_capabilities.inlayHintProvider = nil
-    -- client.server_capabilities.completionProvider = nil
-    if client.server_capabilities then
-    end
-  end,
+  -- on_attach = function(client)
+  --   -- let treesitter handle semantic tokens
+  --   -- client.server_capabilities.semanticTokensProvider = false
+  --   -- client.server_capabilities.documentRangeFormattingProvider = false
+  --   -- client.server_capabilities.documentOnTypeFormattingProvider = nil
+  --   -- client.server_capabilities.documentFormattingProvider = false
+  --   -- client.server_capabilities.hoverProvider = nil
+  --   -- client.server_capabilities.inlayHintProvider = nil
+  --   -- client.server_capabilities.completionProvider = nil
+  --   -- if client.server_capabilities then
+  --   -- end
+  -- end,
   -- Silence ty server panics (e.g. https://github.com/astral-sh/ty/issues/2401)
   on_error = function(_, _) end,
+  init_options = {
+    logLevel = 'debug',
+    logFile = fn.stdpath('log') .. '/lsp.ty.log',
+  },
   settings = {
     ty = {
-      diagnosticMode = 'workspace',
+      disableLanguageServices = false,
+      diagnosticMode = 'openFilesOnly', -- 'off', 'openFilesOnly', 'workspace'
+      showSyntaxErrors = true,
+      inlayHints = {
+        variableTypes = true,
+        callArgumentNames = true,
+      },
+      completions = {
+        autoImport = false,
+      },
+      configuration = {
+        rules = {
+          ['unresolved-reference'] = 'warn',
+        },
+      },
       -- experimental = {
-      --   rename = false,
+      --   rename = true,
       --   autoImport = false,
       -- },
     },
